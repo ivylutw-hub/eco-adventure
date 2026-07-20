@@ -58,21 +58,33 @@
     </section>
 
     <section id="homeScreen" class="hidden">
-      <section class="eco-hero card">
+      <section class="eco-hero cartoon-hero card">
         <div class="hero-copy">
-          <p class="eyebrow">一起完成 2,844 題環保知識挑戰</p>
-          <h2><span id="welcomeName"></span>，今天要守護哪一片地球？</h2>
-          <p>每次完成 10 題並達到 80%，就能獲得 1 枚金幣。每天首次登入再送 1 枚。</p>
+          <div class="hero-badge">🌈 公開環保知識大挑戰</div>
+          <p class="eyebrow">EARTH RESCUE MISSION</p>
+          <h2><span id="welcomeName"></span>，地球守護隊集合！</h2>
+          <p>海龜被塑膠困住、森林需要救援、城市正在浪費能源。完成知識任務，一起讓地球恢復笑容！</p>
           <div class="hero-actions">
-            <button id="continueBtn" class="primary">▶ 繼續挑戰</button>
+            <button id="continueBtn" class="primary big-cta">🚀 繼續挑戰</button>
             <button id="rulesBtn" class="secondary">📘 挑戰規則</button>
           </div>
+          <div class="mini-achievements">
+            <span>🪙 達標就得金幣</span>
+            <span>🌟 累積經驗升級</span>
+            <span>🏆 挑戰公開排行</span>
+          </div>
         </div>
-        <div class="planet-scene" aria-hidden="true">
-          <div class="planet">🌍</div>
-          <span class="leaf leaf-a">🍃</span>
-          <span class="leaf leaf-b">🌿</span>
-          <span class="recycle">♻️</span>
+        <div class="cartoon-scene" aria-hidden="true">
+          <div class="sun">☀️</div>
+          <div class="cloud cloud-1">☁️</div>
+          <div class="cloud cloud-2">☁️</div>
+          <div class="earth-face">🌍</div>
+          <div class="mascot turtle">🐢</div>
+          <div class="mascot bee">🐝</div>
+          <div class="mascot fish">🐠</div>
+          <div class="recycle-sign">♻️</div>
+          <div class="grass grass-1">🌿</div>
+          <div class="grass grass-2">🌱</div>
         </div>
       </section>
 
@@ -100,6 +112,54 @@
           </div>
         </div>
         <div id="worldCards" class="world-cards"></div>
+      </section>
+
+      <section class="eco-issue-section">
+        <div class="section-title playful-title">
+          <div>
+            <p class="eyebrow">TODAY'S ECO STORIES</p>
+            <h2>今天想幫哪個環保小夥伴？</h2>
+            <p class="muted">每一個世界，都對應一個真實的環境議題。</p>
+          </div>
+        </div>
+        <div class="issue-grid">
+          <article class="issue-card ocean">
+            <div class="issue-art">🐢🌊</div>
+            <h3>海洋塑膠危機</h3>
+            <p>幫小海龜認識減塑、回收與海洋保育。</p>
+            <span>關鍵字：減塑・海洋・回收</span>
+          </article>
+          <article class="issue-card forest">
+            <div class="issue-art">🦉🌳</div>
+            <h3>森林守護行動</h3>
+            <p>和貓頭鷹一起了解生態、棲地與資源永續。</p>
+            <span>關鍵字：森林・生物・永續</span>
+          </article>
+          <article class="issue-card energy">
+            <div class="issue-art">🏙️💡</div>
+            <h3>節能城市任務</h3>
+            <p>找出城市中的浪費行為，學習節能與減碳。</p>
+            <span>關鍵字：能源・氣候・減碳</span>
+          </article>
+          <article class="issue-card recycle">
+            <div class="issue-art">♻️🦊</div>
+            <h3>資源回收大作戰</h3>
+            <p>跟狐狸隊長一起完成垃圾分類與資源再生。</p>
+            <span>關鍵字：分類・再用・循環</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="mission-strip card">
+        <div class="mission-character">🦊</div>
+        <div>
+          <p class="eyebrow">守護隊長今日提醒</p>
+          <h3>知識過關後，別忘了做一個真實的綠行動！</h3>
+          <p>例如自備水壺、隨手關燈、垃圾分類，或提醒家人少拿一個塑膠袋。</p>
+        </div>
+        <div class="mission-stamps">
+          <span>🌱</span><span>💧</span><span>♻️</span><span>🌞</span>
+        </div>
       </section>
 
       <section class="green-tips card">
