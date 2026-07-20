@@ -15,12 +15,26 @@
     </div>
     <div class="status-pills">
       <span id="cloudStatus">☁️ 連線中</span>
+      <button id="accountBtn" class="account-btn hidden" type="button">帳號</button>
       <span>🪙 <strong id="coinCount">0</strong></span>
       <span>⭐ Lv.<strong id="levelCount">1</strong></span>
     </div>
   </header>
 
   <main>
+
+    <section id="loginScreen" class="card profile-card">
+      <div class="hero-icon">🌍</div>
+      <p class="eyebrow">公開環保知識挑戰</p>
+      <h2>使用 Google 帳號登入</h2>
+      <p>登入後，換電腦或手機仍可保留金幣、等級、單元成績與排行榜紀錄。</p>
+      <button id="googleLoginBtn" class="google-btn">
+        <span class="google-mark">G</span> 使用 Google 帳號登入
+      </button>
+      <p class="privacy-note">網站只會取得 Google 提供的基本帳號資料；不會取得密碼。</p>
+      <p id="loginError" class="error" aria-live="polite"></p>
+    </section>
+
     <section id="profileScreen" class="card profile-card">
       <div class="hero-icon">🌱</div>
       <h2>建立守護者角色</h2>
@@ -92,6 +106,13 @@
         </div>
       </div>
     </section>
+
+
+    <dialog id="accountDialog">
+      <div class="dialog-head"><h2>👤 我的帳號</h2><button id="closeAccount" class="text-btn">關閉</button></div>
+      <div id="accountInfo" class="account-info"></div>
+      <button id="logoutBtn" class="danger-btn">登出 Google 帳號</button>
+    </dialog>
 
     <dialog id="leaderboardDialog">
       <div class="dialog-head"><h2>🏆 守護者排行榜</h2><button id="closeLeaderboard" class="text-btn">關閉</button></div>

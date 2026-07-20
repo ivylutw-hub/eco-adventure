@@ -2,17 +2,52 @@
   "use strict";
   const Q = window.QUESTION_BANK || [];
   const UNIT_SIZE = 10;
+  const UNITS = window.UNIT_PLAN || [];
   const TARGET = 80;
   const AVATARS = ["🌱","🐢","🐼","🦊","🐬","🦉","🐝","🌻","🐧","🦁","🐸","🐨"];
-  const UNIT_COUNT = Math.ceil(Q.length / UNIT_SIZE);
+  const UNIT_COUNT = UNITS.length || Math.ceil(Q.length / UNIT_SIZE);
   const $ = (id) => document.getElementById(id);
-  const screens = ["profileScreen","homeScreen","quizScreen","resultScreen"];
+  const screens = ["loginScreen","profileScreen","homeScreen","quizScreen","resultScreen"];
   const show = (id) => screens.forEach(s => $(s).classList.toggle("hidden", s !== id));
   const todayKey = () => new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei"}).format(new Date());
 
   let auth, db, uid = null, selectedAvatar = AVATARS[0];
   let profile = null, currentUnit = 0, currentQuestions = [], qIndex = 0;
   let selectedAnswer = null, submitted = false, correctCount = 0, wrongAnswers = [];
+
+  const googleProvider = new firebase.auth.GoogleAuthProvider();
+  googleProvider.setCustomParameters({ prompt: "select_account" });
+
+  function authErrorText(err) {
+    const code = err?.code || "";
+    if (code.includes("popup-closed")) return "登入視窗已關閉，請再試一次。";
+    if (code.includes("popup-blocked")) return "瀏覽器封鎖了登入視窗，請允許彈出式視窗。";
+    if (code.includes("unauthorized-domain")) return "目前網址尚未加入 Firebase 授權網域。";
+    if (code.includes("credential-already-in-use")) return "這個 Google 帳號已經有遊戲紀錄，請先登出後再直接登入。";
+    return "Google 登入失敗，請稍後再試。";
+  }
+
+  async function signInWithGoogle() {
+    $("loginError").textContent = "";
+    try {
+      const current = auth.currentUser;
+      if (current?.isAnonymous) {
+        // 將原本匿名帳號升級成 Google 帳號，保留相同 UID 與雲端進度
+        await current.linkWithPopup(googleProvider);
+      } else {
+        await auth.signInWithPopup(googleProvider);
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.code === "auth/credential-already-in-use") {
+        const credential = firebase.auth.GoogleAuthProvider.credentialFromError(err);
+        if (credential) await auth.signInWithCredential(credential);
+        else $("loginError").textContent = authErrorText(err);
+      } else {
+        $("loginError").textContent = authErrorText(err);
+      }
+    }
+  }
 
   $("questionTotal").textContent = Q.length.toLocaleString();
   $("avatarChoices").innerHTML = AVATARS.map((a,i)=>`<button type="button" class="avatar ${i===0?"selected":""}" data-avatar="${a}">${a}</button>`).join("");
@@ -67,15 +102,28 @@
     $("currentAvatar").textContent=profile.avatar;
     $("completedUnits").textContent=profile.completedUnits||0;
     $("bestAccuracy").textContent=`${profile.bestAccuracy||0}%`;
-    $("unitGrid").innerHTML=Array.from({length:UNIT_COUNT},(_,i)=>{
-      const best=Number(profile.unitBest?.[i]||0);
-      const stars=best===100?"★★★":best>=90?"★★★":best>=80?"★★":"☆";
-      return `<button class="unit-card card" data-unit="${i}">
-        <div class="unit-meta"><span>單元 ${i+1}</span><span class="stars">${stars}</span></div>
-        <h3>${i<15?"環境菁英訓練":"守護者挑戰"} ${i+1}</h3>
-        <div class="unit-meta"><span>${Math.min(UNIT_SIZE,Q.length-i*UNIT_SIZE)} 題</span><span>最佳 ${best}%</span></div>
-      </button>`;
-    }).join("");
+    const grouped = {};
+    UNITS.forEach((u, i) => {
+      (grouped[u.world] ||= {name:u.worldName, items:[]}).items.push({u,i});
+    });
+    $("unitGrid").innerHTML = Object.values(grouped).map(group => `
+      <section class="world-section">
+        <div class="world-heading">
+          <div><p class="eyebrow">循序漸進題庫</p><h3>${escapeHtml(group.name)}</h3></div>
+          <span>${group.items.length} 個單元</span>
+        </div>
+        <div class="world-unit-grid">
+          ${group.items.map(({u,i}) => {
+            const best = Number(profile.unitBest?.[i] || 0);
+            const stars = best === 100 ? "★★★" : best >= 90 ? "★★★" : best >= 80 ? "★★" : "☆";
+            return `<button class="unit-card card" data-unit="${i}">
+              <div class="unit-meta"><span>總單元 ${u.unit}</span><span class="stars">${stars}</span></div>
+              <h3>${escapeHtml(u.title)}</h3>
+              <div class="unit-meta"><span>${escapeHtml(u.mixLabel)}｜${u.count} 題</span><span>最佳 ${best}%</span></div>
+            </button>`;
+          }).join("")}
+        </div>
+      </section>`).join("");
     show("homeScreen");
   }
   $("unitGrid").addEventListener("click",e=>{
@@ -83,13 +131,13 @@
   });
 
   function startUnit(i){
-    currentUnit=i; currentQuestions=Q.slice(i*UNIT_SIZE,(i+1)*UNIT_SIZE);
+    currentUnit=i; const meta=UNITS[i]; currentQuestions=meta ? Q.slice(meta.start,meta.start+meta.count) : Q.slice(i*UNIT_SIZE,(i+1)*UNIT_SIZE);
     qIndex=0; correctCount=0; wrongAnswers=[]; selectedAnswer=null; submitted=false;
     show("quizScreen"); renderQuestion();
   }
   function renderQuestion(){
     const q=currentQuestions[qIndex]; selectedAnswer=null; submitted=false;
-    $("unitTitle").textContent=`單元 ${currentUnit+1}`;
+    $("unitTitle").textContent=UNITS[currentUnit] ? `${UNITS[currentUnit].worldName}｜總單元 ${UNITS[currentUnit].unit}｜${UNITS[currentUnit].mixLabel}` : `單元 ${currentUnit+1}`;
     $("questionProgress").textContent=`第 ${qIndex+1} 題／共 ${currentQuestions.length} 題`;
     $("progressBar").style.width=`${(qIndex/currentQuestions.length)*100}%`;
     $("questionLevel").textContent=q.level || "綜合";
@@ -149,6 +197,26 @@
   $("resultHomeBtn").addEventListener("click",renderHome);
   $("backHomeBtn").addEventListener("click",()=>{ if(confirm("確定離開本次挑戰嗎？目前作答不會保存。")) renderHome(); });
 
+
+  $("googleLoginBtn").addEventListener("click", signInWithGoogle);
+  $("accountBtn").addEventListener("click", () => {
+    const user = auth.currentUser;
+    $("accountInfo").innerHTML = `
+      <p>${user?.photoURL ? `<img src="${escapeHtml(user.photoURL)}" alt="">` : "👤"}
+      <strong>${escapeHtml(user?.displayName || profile?.name || "守護者")}</strong></p>
+      <p>${escapeHtml(user?.email || "")}</p>`;
+    $("accountDialog").showModal();
+  });
+  $("closeAccount").addEventListener("click", () => $("accountDialog").close());
+  $("logoutBtn").addEventListener("click", async () => {
+    $("accountDialog").close();
+    await auth.signOut();
+    profile = null; uid = null;
+    $("accountBtn").classList.add("hidden");
+    $("cloudStatus").textContent = "☁️ 尚未登入";
+    show("loginScreen");
+  });
+
   $("createProfileBtn").addEventListener("click",async()=>{
     const name=$("playerName").value.trim();
     if(!name){$("profileError").textContent="請輸入守護者暱稱。";return;}
@@ -170,16 +238,49 @@
   function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
 
   async function init(){
-    try{
+    try {
       firebase.initializeApp(window.FIREBASE_CONFIG);
-      auth=firebase.auth(); db=firebase.firestore();
-      await auth.signInAnonymously();
-      uid=auth.currentUser.uid; $("cloudStatus").textContent="☁️ 已登入";
-      profile=await loadCloud();
-    }catch(err){
-      console.error(err); $("cloudStatus").textContent="⚠️ 離線模式"; profile=loadLocal();
+      auth = firebase.auth();
+      db = firebase.firestore();
+
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          uid = null; profile = null;
+          $("cloudStatus").textContent = "☁️ 尚未登入";
+          $("accountBtn").classList.add("hidden");
+          show("loginScreen");
+          return;
+        }
+
+        // 舊版若已存在匿名帳號，先顯示登入頁，讓使用者用 Google 升級並保留進度
+        if (user.isAnonymous) {
+          uid = user.uid;
+          profile = await loadCloud();
+          $("cloudStatus").textContent = "☁️ 請升級帳號";
+          $("accountBtn").classList.add("hidden");
+          show("loginScreen");
+          return;
+        }
+
+        uid = user.uid;
+        $("cloudStatus").textContent = "☁️ Google 已登入";
+        $("accountBtn").classList.remove("hidden");
+        profile = await loadCloud();
+
+        if (profile) {
+          await dailyLoginReward();
+          renderHome();
+        } else {
+          $("playerName").value = user.displayName || "";
+          show("profileScreen");
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      $("cloudStatus").textContent = "⚠️ Firebase 連線失敗";
+      $("loginError").textContent = "目前無法連上登入服務，請重新整理頁面。";
+      show("loginScreen");
     }
-    if(profile){await dailyLoginReward();renderHome();}else show("profileScreen");
   }
   init();
 })();
