@@ -199,14 +199,14 @@
     show("worldScreen");
   }
 
-  $("worldCards").addEventListener("click",e=>{
+  $("worldCards")?.addEventListener("click",e=>{
     const card=e.target.closest("[data-world]"); if(!card) return;
     selectedWorld=Number(card.dataset.world); unitPage=1; renderWorld();
   });
-  $("backDashboardBtn").addEventListener("click",renderHome);
-  $("prevUnitPage").addEventListener("click",()=>{unitPage--;renderWorld();});
-  $("nextUnitPage").addEventListener("click",()=>{unitPage++;renderWorld();});
-  $("continueBtn").addEventListener("click",()=>{
+  $("backDashboardBtn")?.addEventListener("click",renderHome);
+  $("prevUnitPage")?.addEventListener("click",()=>{unitPage--;renderWorld();});
+  $("nextUnitPage")?.addEventListener("click",()=>{unitPage++;renderWorld();});
+  $("continueBtn")?.addEventListener("click",()=>{
     const firstIncomplete=UNITS.findIndex((u,i)=>Number(profile.unitBest?.[i]||0)<TARGET);
     if(firstIncomplete<0){selectedWorld=4;unitPage=1;renderWorld();return;}
     selectedWorld=UNITS[firstIncomplete].world;
@@ -214,12 +214,11 @@
     unitPage=Math.floor(worldIndex/UNITS_PER_PAGE)+1;
     renderWorld();
   });
-  $("rulesBtn").addEventListener("click",()=>$("rulesDialog").showModal());
-  $("closeRules").addEventListener("click",()=>$("rulesDialog").close());
-  $("homeNavBtn").addEventListener("click",renderHome);
-  $("leaderboardTopBtn").addEventListener("click",()=>$("leaderboardBtn").click());
+  $("rulesBtn")?.addEventListener("click",()=>$("rulesDialog").showModal());
+  $("closeRules")?.addEventListener("click",()=>$("rulesDialog").close());
+  $("homeNavBtn")?.addEventListener("click",renderHome);
 
-  $("unitGrid").addEventListener("click",e=>{
+  $("unitGrid")?.addEventListener("click",e=>{
     const card=e.target.closest("[data-unit]"); if(card) startUnit(Number(card.dataset.unit));
   });
 
@@ -240,13 +239,13 @@
     $("feedbackBox").className="feedback hidden"; $("feedbackBox").innerHTML="";
     $("nextQuestionBtn").classList.add("hidden");
   }
-  $("optionList").addEventListener("click",e=>{
+  $("optionList")?.addEventListener("click",e=>{
     if(submitted) return; const b=e.target.closest("[data-option]"); if(!b) return;
     selectedAnswer=Number(b.dataset.option);
     document.querySelectorAll(".option").forEach(x=>x.classList.toggle("selected",x===b));
     $("submitAnswerBtn").disabled=false;
   });
-  $("submitAnswerBtn").addEventListener("click",()=>{
+  $("submitAnswerBtn")?.addEventListener("click",()=>{
     if(selectedAnswer===null||submitted) return;
     submitted=true; const q=currentQuestions[qIndex]; const ok=selectedAnswer===q.answer;
     if(ok) correctCount++; else wrongAnswers.push({q,selected:selectedAnswer});
@@ -262,7 +261,7 @@
     $("submitAnswerBtn").classList.add("hidden"); $("nextQuestionBtn").classList.remove("hidden");
     $("nextQuestionBtn").textContent=qIndex===currentQuestions.length-1?"查看成績":"下一題";
   });
-  $("nextQuestionBtn").addEventListener("click",()=>{
+  $("nextQuestionBtn")?.addEventListener("click",()=>{
     if(qIndex<currentQuestions.length-1){qIndex++;renderQuestion();} else finishUnit();
   });
 
@@ -286,9 +285,9 @@
     show("resultScreen");
   }
 
-  $("retryBtn").addEventListener("click",()=>startUnit(currentUnit));
-  $("resultHomeBtn").addEventListener("click",renderHome);
-  $("backHomeBtn").addEventListener("click",()=>{ if(confirm("確定離開本次挑戰嗎？目前作答不會保存。")) renderHome(); });
+  $("retryBtn")?.addEventListener("click",()=>startUnit(currentUnit));
+  $("resultHomeBtn")?.addEventListener("click",renderHome);
+  $("backHomeBtn")?.addEventListener("click",()=>{ if(confirm("確定離開本次挑戰嗎？目前作答不會保存。")) renderHome(); });
 
 
   $("googleLoginBtn")?.addEventListener("click", signInWithGoogle);
@@ -339,23 +338,34 @@
   $("logoutBtn")?.addEventListener("click", logoutCurrentUser);
   $("logoutTopBtn")?.addEventListener("click", logoutCurrentUser);
 
-  $("createProfileBtn").addEventListener("click",async()=>{
+  $("createProfileBtn")?.addEventListener("click",async()=>{
     const name=$("playerName").value.trim();
     if(!name){$("profileError").textContent="請輸入守護者暱稱。";return;}
     profile=defaultProfile(name,selectedAvatar); await dailyLoginReward(); await saveCloud(); renderHome();
   });
 
-  $("leaderboardBtn").addEventListener("click",async()=>{
-    const box=$("leaderboardList"); box.innerHTML="<p>讀取中…</p>"; $("leaderboardDialog").showModal();
+  async function openLeaderboard(){
+    const box=$("leaderboardList");
+    if(!box || !$("leaderboardDialog")) return;
+    box.innerHTML="<p>讀取中…</p>";
+    $("leaderboardDialog").showModal();
     if(!db){box.innerHTML="<p>目前為離線模式，無法讀取雲端排行榜。</p>";return;}
     try{
       const snap=await db.collection("users").orderBy("exp","desc").limit(20).get();
-      let rank=0; box.innerHTML=snap.empty?"<p>尚無排行榜資料。</p>":snap.docs.map(d=>{
-        rank++; const p=d.data(); return `<div class="rank-row"><span>${rank<=3?["🥇","🥈","🥉"][rank-1]:rank}</span><span>${escapeHtml(p.avatar||"🌱")} ${escapeHtml(p.name||"守護者")}</span><strong>${Number(p.exp||0)} EXP</strong></div>`;
+      let rank=0;
+      box.innerHTML=snap.empty?"<p>尚無排行榜資料。</p>":snap.docs.map(d=>{
+        rank++;
+        const p=d.data();
+        return `<div class="rank-row"><span>${rank<=3?["🥇","🥈","🥉"][rank-1]:rank}</span><span>${escapeHtml(p.avatar||"🌱")} ${escapeHtml(p.name||"守護者")}</span><strong>${Number(p.exp||0)} EXP</strong></div>`;
       }).join("");
-    }catch(err){console.error(err);box.innerHTML="<p>排行榜暫時無法讀取，請確認 Firestore 規則已發布。</p>";}
-  });
-  $("closeLeaderboard").addEventListener("click",()=>$("leaderboardDialog").close());
+    }catch(err){
+      console.error(err);
+      box.innerHTML="<p>排行榜暫時無法讀取，請稍後再試。</p>";
+    }
+  }
+  $("leaderboardBtn")?.addEventListener("click",openLeaderboard);
+  $("leaderboardTopBtn")?.addEventListener("click",openLeaderboard);
+  $("closeLeaderboard")?.addEventListener("click",()=>$("leaderboardDialog")?.close());
 
   function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
 

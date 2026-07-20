@@ -1,4 +1,4 @@
-# 環保冒險王 v1.2.1｜Google 登入緊急修正版
+# 環保冒險王 v1.2.2｜登入初始化修正版
 
 正式題庫：2844 題，來源為《環保知識競賽題庫(1).xls》。
 
@@ -93,3 +93,10 @@ firestore.rules 與 README.md 不影響網站執行，可一併保存。
 - 修正不存在的按鈕造成 `Cannot read properties of null (reading addEventListener)`。
 - 所有可選介面元件改為安全綁定，不再因單一按鈕缺失使整個程式停止。
 - 保留 Google 登入後選擇／修改遊戲頭像及登出功能。
+
+
+## v1.2.2 修正
+- 修正首頁已移除 `leaderboardBtn`，但 JavaScript 仍強制綁定該按鈕，造成程式在 Firebase 初始化前中斷。
+- 排行榜改由共用 `openLeaderboard()` 函式開啟。
+- 所有非必要按鈕改用安全事件綁定，單一介面元素缺少時不會讓整個網站停止。
+- Google Redirect 登入、守護者頭像、角色修改與登出功能維持不變。
