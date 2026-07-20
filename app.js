@@ -13,7 +13,7 @@
 
   let auth, db, uid = null, selectedAvatar = AVATARS[0];
   let profile = null, currentUnit = 0, currentQuestions = [], qIndex = 0;
-  let selectedAnswer = null, submitted = false, answerSaved = false, correctCount = 0, wrongAnswers = [];
+  let selectedAnswer = null, submitted = false, correctCount = 0, wrongAnswers = [];
   let editSelectedAvatar = AVATARS[0];
   let selectedWorld = 1, unitPage = 1;
   const UNITS_PER_PAGE = 12;
@@ -128,9 +128,9 @@
     }
   }
   function renderHeader(){
-    $("coinCount").textContent=profile?.coins||0;
-    $("expCount").textContent=profile?.exp||0;
-    $("levelCount").textContent=Math.floor((profile?.exp||0)/500)+1;
+    if($("coinCount")) $("coinCount").textContent=profile?.coins||0;
+    if($("expCount")) $("expCount").textContent=profile?.exp||0;
+    if($("levelCount")) $("levelCount").textContent=Math.floor((profile?.exp||0)/500)+1;
   }
   function ensureLearningData(){
     profile.weaknessNotes = Array.isArray(profile.weaknessNotes) ? profile.weaknessNotes : [];
@@ -327,7 +327,6 @@
     wrongAnswers=resumeDraft?.wrongAnswers||[];
     selectedAnswer=resumeDraft?.selectedAnswer ?? null;
     submitted=false;
-    answerSaved=Boolean(resumeDraft?.answerSaved);
     show("quizScreen");
     renderQuestion(resumeDraft);
   }
@@ -344,13 +343,12 @@
     $("questionText").textContent=q.question;
     $("optionList").innerHTML=q.options.map((o,i)=>`<button class="option ${selectedAnswer===i?"selected":""}" data-option="${i}"><strong>${"ABCD"[i]}.</strong> ${escapeHtml(o)}</button>`).join("");
 
-    $("saveAnswerBtn").disabled=selectedAnswer===null;
-    $("submitAnswerBtn").disabled=!answerSaved;
-    $("saveAnswerBtn").classList.remove("hidden");
+    $("submitAnswerBtn").disabled=selectedAnswer===null;
+    $("saveUnitProgressBtn").classList.remove("hidden");
     $("submitAnswerBtn").classList.remove("hidden");
-    $("answerSaveStatus").textContent=answerSaved
-      ? "✅ 這個答案已儲存，可以送出；也可以更改後重新儲存。"
-      : "請先選擇答案，再按「儲存答案」。";
+    $("unitSaveStatus").textContent=resumeDraft
+      ? "✅ 已載入上次儲存的單元進度，可以接續作答。"
+      : "單元尚未做完時，可先儲存，之後從首頁接續作答。";
     $("feedbackBox").className="feedback hidden";
     $("feedbackBox").innerHTML="";
     $("nextQuestionBtn").classList.add("hidden");
@@ -358,32 +356,27 @@
   $("optionList")?.addEventListener("click",e=>{
     if(submitted) return; const b=e.target.closest("[data-option]"); if(!b) return;
     selectedAnswer=Number(b.dataset.option);
-    answerSaved=false;
     document.querySelectorAll(".option").forEach(x=>x.classList.toggle("selected",x===b));
-    $("saveAnswerBtn").disabled=false;
-    $("submitAnswerBtn").disabled=true;
-    $("answerSaveStatus").textContent="答案已更改，請重新按「儲存答案」。";
+    $("submitAnswerBtn").disabled=false;
+    $("unitSaveStatus").textContent="已選擇答案；可直接送出，或先儲存整個單元進度。";
   });
-  $("saveAnswerBtn")?.addEventListener("click",async()=>{
-    if(selectedAnswer===null || submitted) return;
-    answerSaved=true;
+  $("saveUnitProgressBtn")?.addEventListener("click",async()=>{
+    if(submitted) return;
     ensureLearningData();
     profile.quizDraft={
       unit:currentUnit,
       qIndex,
       selectedAnswer,
-      answerSaved:true,
       correctCount,
       wrongAnswers,
       savedAt:Date.now()
     };
     await saveCloud();
-    $("submitAnswerBtn").disabled=false;
-    $("answerSaveStatus").textContent="✅ 答案與進度已儲存，可以送出。";
+    $("unitSaveStatus").textContent=`✅ 已儲存：第 ${qIndex+1} 題／共 ${currentQuestions.length} 題。之後可從首頁繼續。`;
   });
 
   $("submitAnswerBtn")?.addEventListener("click",()=>{
-    if(selectedAnswer===null||submitted||!answerSaved) return;
+    if(selectedAnswer===null||submitted) return;
     submitted=true;
     const q=currentQuestions[qIndex];
     const ok=selectedAnswer===q.answer;
@@ -403,7 +396,14 @@
       profile.weaknessNotes.unshift(note);
       profile.weaknessNotes=profile.weaknessNotes.slice(0,100);
     }
-    profile.quizDraft=null;
+    profile.quizDraft={
+      unit:currentUnit,
+      qIndex,
+      selectedAnswer:null,
+      correctCount,
+      wrongAnswers,
+      savedAt:Date.now()
+    };
     saveCloud();
 
     document.querySelectorAll(".option").forEach((b,i)=>{
@@ -437,7 +437,7 @@
         </div>`;
     }
 
-    $("saveAnswerBtn").classList.add("hidden");
+    $("saveUnitProgressBtn").classList.add("hidden");
     $("submitAnswerBtn").classList.add("hidden");
     $("nextQuestionBtn").classList.remove("hidden");
     $("nextQuestionBtn").textContent=qIndex===currentQuestions.length-1?"查看成績":"我了解了，下一題";
@@ -445,9 +445,24 @@
   $("nextQuestionBtn")?.addEventListener("click",async()=>{
     ensureLearningData();
     profile.dailyAnswered.count=Math.min(10,(profile.dailyAnswered.count||0)+1);
-    profile.quizDraft=null;
-    await saveCloud();
-    if(qIndex<currentQuestions.length-1){qIndex++;renderQuestion();} else finishUnit();
+    if(qIndex<currentQuestions.length-1){
+      qIndex++;
+      selectedAnswer=null;
+      profile.quizDraft={
+        unit:currentUnit,
+        qIndex,
+        selectedAnswer:null,
+        correctCount,
+        wrongAnswers,
+        savedAt:Date.now()
+      };
+      await saveCloud();
+      renderQuestion();
+    }else{
+      profile.quizDraft=null;
+      await saveCloud();
+      finishUnit();
+    }
   });
 
   async function finishUnit(){
@@ -486,7 +501,6 @@
       ensureLearningData();
       profile.quizDraft={
         unit:currentUnit,qIndex,selectedAnswer,
-        answerSaved:Boolean(answerSaved&&selectedAnswer!==null),
         correctCount,wrongAnswers,savedAt:Date.now()
       };
       await saveCloud();
@@ -617,7 +631,14 @@
         profile = await loadCloud();
         if (profile) {
           await dailyLoginReward();
-          renderHome();
+          try{
+            renderHome();
+          }catch(homeErr){
+            console.error("Homepage render error:",homeErr);
+            $("cloudStatus").textContent="⚠️ 首頁載入異常";
+            if($("loginError")) $("loginError").textContent="首頁載入發生錯誤，請重新上傳最新版檔案後再整理頁面。";
+            show("loginScreen");
+          }
         } else {
           $("playerName").value = user.displayName || "";
           show("profileScreen");

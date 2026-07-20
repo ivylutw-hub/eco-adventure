@@ -93,7 +93,7 @@
           <div class="daily-progress-track"><span id="dailyProgressFill"></span></div>
         </div>
         <button id="continueBtn" class="primary mission-start-btn">開始今日挑戰</button>
-        <button id="resumeDraftBtn" class="secondary hidden">▶ 繼續已儲存的答題</button>
+        <button id="resumeDraftBtn" class="secondary hidden">▶ 繼續未完成的單元</button>
       </section>
 
       <section class="adventure-section">
@@ -181,10 +181,10 @@
         <h2 id="questionText"></h2>
         <div id="optionList" class="options"></div>
         <div class="answer-action-row">
-          <button id="saveAnswerBtn" class="secondary" disabled>💾 儲存答案</button>
+          <button id="saveUnitProgressBtn" class="secondary">💾 儲存本單元進度</button>
           <button id="submitAnswerBtn" class="primary" disabled>送出答案</button>
         </div>
-        <p id="answerSaveStatus" class="answer-save-status">請先選擇答案，再按「儲存答案」。</p>
+        <p id="unitSaveStatus" class="answer-save-status">單元尚未做完時，可先儲存，之後從首頁接續作答。</p>
         <div id="feedbackBox" class="feedback hidden"></div>
         <button id="nextQuestionBtn" class="secondary hidden">下一題</button>
       </article>
