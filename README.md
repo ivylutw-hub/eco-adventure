@@ -1,4 +1,4 @@
-# 環保冒險王 v1.2.0｜Google 登入＋自訂頭像版
+# 環保冒險王 v1.2.1｜Google 登入緊急修正版
 
 正式題庫：2844 題，來源為《環保知識競賽題庫(1).xls》。
 
@@ -85,3 +85,11 @@ firestore.rules 與 README.md 不影響網站執行，可一併保存。
 - 登入後可點右上角「我的角色」，隨時修改暱稱與頭像。
 - 修改後會同步儲存至 Firestore，排行榜與首頁立即更新。
 - 保留右上角「登出」按鈕。
+
+
+## v1.2.1 緊急修正
+- 完全移除殘留的 `signInWithPopup()`。
+- Google 登入統一使用 `signInWithRedirect()`。
+- 修正不存在的按鈕造成 `Cannot read properties of null (reading addEventListener)`。
+- 所有可選介面元件改為安全綁定，不再因單一按鈕缺失使整個程式停止。
+- 保留 Google 登入後選擇／修改遊戲頭像及登出功能。

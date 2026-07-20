@@ -27,27 +27,35 @@
     if (code.includes("operation-not-allowed")) return "Firebase 尚未啟用 Google 登入。";
     if (code.includes("network-request-failed")) return "網路連線異常，請稍後再試。";
     if (code.includes("web-storage-unsupported")) return "瀏覽器封鎖了登入所需的網站儲存空間，請允許 Cookie。";
-    if (code.includes("user-disabled")) return "這個帳號目前已停用。";
-    return `Google 登入失敗（${code || "未知錯誤"}），請重新整理後再試。`;
+    if (code.includes("user-disabled")) return "這個 Google 帳號目前已停用。";
+    return `Google 登入失敗（${code || err?.message || "未知錯誤"}），請重新整理後再試。`;
   }
 
   async function signInWithGoogle() {
-    if (loginInProgress || !auth || !googleProvider) return;
+    if (loginInProgress) return;
+    if (!auth || !googleProvider) {
+      $("loginError").textContent = "登入服務仍在初始化，請稍候 1 秒再試。";
+      return;
+    }
+
     loginInProgress = true;
     const button = $("googleLoginBtn");
     $("loginError").textContent = "";
-    button.disabled = true;
-    button.textContent = "正在前往 Google 登入…";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "正在前往 Google 登入…";
+    }
 
     try {
-      // 改用 Redirect，避免 Edge/Chrome 的彈出視窗與 COOP 衝突。
       await auth.signInWithRedirect(googleProvider);
     } catch (err) {
       console.error("Google redirect sign-in error:", err);
       $("loginError").textContent = authErrorText(err);
       loginInProgress = false;
-      button.disabled = false;
-      button.innerHTML = '<span class="google-mark">G</span> 使用 Google 帳號登入';
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = '<span class="google-mark">G</span> 使用 Google 帳號登入';
+      }
     }
   }
 
@@ -283,7 +291,7 @@
   $("backHomeBtn").addEventListener("click",()=>{ if(confirm("確定離開本次挑戰嗎？目前作答不會保存。")) renderHome(); });
 
 
-  $("googleLoginBtn").addEventListener("click", signInWithGoogle);
+  $("googleLoginBtn")?.addEventListener("click", signInWithGoogle);
   function openGuardianProfile(){
     const user = auth.currentUser;
     $("accountInfo").innerHTML = `
@@ -297,10 +305,10 @@
   }
 
   $("accountBtn")?.addEventListener("click", openGuardianProfile);
-  $("profileTopBtn").addEventListener("click", openGuardianProfile);
+  $("profileTopBtn")?.addEventListener("click", openGuardianProfile);
 
-  $("closeAccount").addEventListener("click", () => $("accountDialog").close());
-  $("saveProfileBtn").addEventListener("click", async () => {
+  $("closeAccount")?.addEventListener("click", () => $("accountDialog")?.close());
+  $("saveProfileBtn")?.addEventListener("click", async () => {
     const newName = $("editPlayerName").value.trim();
     if(!newName){
       $("editProfileMessage").textContent = "請輸入守護者暱稱。";
@@ -328,8 +336,8 @@
     $("cloudStatus").textContent = "☁️ 尚未登入";
     show("loginScreen");
   }
-  $("logoutBtn").addEventListener("click", logoutCurrentUser);
-  $("logoutTopBtn").addEventListener("click", logoutCurrentUser);
+  $("logoutBtn")?.addEventListener("click", logoutCurrentUser);
+  $("logoutTopBtn")?.addEventListener("click", logoutCurrentUser);
 
   $("createProfileBtn").addEventListener("click",async()=>{
     const name=$("playerName").value.trim();
@@ -356,15 +364,15 @@
       firebase.initializeApp(window.FIREBASE_CONFIG);
       auth = firebase.auth();
       db = firebase.firestore();
+
       googleProvider = new firebase.auth.GoogleAuthProvider();
       googleProvider.setCustomParameters({ prompt: "select_account" });
 
-      // 完成 Google Redirect 回站後的登入結果。
       try {
         await auth.getRedirectResult();
       } catch (redirectErr) {
         console.error("Google redirect result error:", redirectErr);
-        $("loginError").textContent = authErrorText(redirectErr);
+        if ($("loginError")) $("loginError").textContent = authErrorText(redirectErr);
       }
 
       auth.onAuthStateChanged(async (user) => {
@@ -373,10 +381,10 @@
           profile = null;
           $("cloudStatus").textContent = "☁️ 尚未登入";
           $("accountBtn")?.classList.add("hidden");
-          $("homeNavBtn").classList.add("hidden");
-          $("leaderboardTopBtn").classList.add("hidden");
-          $("profileTopBtn").classList.add("hidden");
-          $("logoutTopBtn").classList.add("hidden");
+          $("homeNavBtn")?.classList.add("hidden");
+          $("leaderboardTopBtn")?.classList.add("hidden");
+          $("profileTopBtn")?.classList.add("hidden");
+          $("logoutTopBtn")?.classList.add("hidden");
           show("loginScreen");
           return;
         }
@@ -384,12 +392,12 @@
         uid = user.uid;
         $("cloudStatus").textContent = "☁️ Google 已登入";
         $("accountBtn")?.classList.remove("hidden");
-        $("homeNavBtn").classList.remove("hidden");
-        $("leaderboardTopBtn").classList.remove("hidden");
-        $("profileTopBtn").classList.remove("hidden");
-        $("logoutTopBtn").classList.remove("hidden");
-        profile = await loadCloud();
+        $("homeNavBtn")?.classList.remove("hidden");
+        $("leaderboardTopBtn")?.classList.remove("hidden");
+        $("profileTopBtn")?.classList.remove("hidden");
+        $("logoutTopBtn")?.classList.remove("hidden");
 
+        profile = await loadCloud();
         if (profile) {
           await dailyLoginReward();
           renderHome();
@@ -401,7 +409,7 @@
     } catch (err) {
       console.error("Firebase init error:", err);
       $("cloudStatus").textContent = "⚠️ Firebase 連線失敗";
-      $("loginError").textContent = authErrorText(err);
+      if ($("loginError")) $("loginError").textContent = authErrorText(err);
       show("loginScreen");
     }
   }
