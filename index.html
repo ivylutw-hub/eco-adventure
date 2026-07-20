@@ -9,16 +9,23 @@
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <p class="eyebrow">EARTH GUARDIANS ACADEMY</p>
-      <h1>🌍 環保冒險王</h1>
-    </div>
-    <div class="status-pills">
-      <span id="cloudStatus">☁️ 連線中</span>
-      <button id="accountBtn" class="account-btn hidden" type="button">帳號</button>
-      <span>🪙 <strong id="coinCount">0</strong></span>
-      <span>⭐ Lv.<strong id="levelCount">1</strong></span>
-    </div>
+    <a class="brand" href="#" aria-label="環保冒險王首頁">
+      <span class="brand-logo">🌍</span>
+      <span>
+        <small>EARTH GUARDIANS ACADEMY</small>
+        <strong>環保冒險王</strong>
+      </span>
+    </a>
+    <nav class="top-actions">
+      <button id="homeNavBtn" class="nav-btn hidden" type="button">🏠 首頁</button>
+      <button id="leaderboardTopBtn" class="nav-btn hidden" type="button">🏆 排行榜</button>
+      <div class="status-pills">
+        <span id="cloudStatus">☁️ 連線中</span>
+        <span>🪙 <strong id="coinCount">0</strong></span>
+        <span>⭐ Lv.<strong id="levelCount">1</strong></span>
+      </div>
+      <button id="logoutTopBtn" class="logout-btn hidden" type="button">登出</button>
+    </nav>
   </header>
 
   <main>
@@ -50,26 +57,78 @@
     </section>
 
     <section id="homeScreen" class="hidden">
-      <div class="welcome card">
-        <div id="currentAvatar" class="large-avatar">🌱</div>
+      <section class="eco-hero card">
+        <div class="hero-copy">
+          <p class="eyebrow">一起完成 2,844 題環保知識挑戰</p>
+          <h2><span id="welcomeName"></span>，今天要守護哪一片地球？</h2>
+          <p>每次完成 10 題並達到 80%，就能獲得 1 枚金幣。每天首次登入再送 1 枚。</p>
+          <div class="hero-actions">
+            <button id="continueBtn" class="primary">▶ 繼續挑戰</button>
+            <button id="rulesBtn" class="secondary">📘 挑戰規則</button>
+          </div>
+        </div>
+        <div class="planet-scene" aria-hidden="true">
+          <div class="planet">🌍</div>
+          <span class="leaf leaf-a">🍃</span>
+          <span class="leaf leaf-b">🌿</span>
+          <span class="recycle">♻️</span>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="profile-panel card">
+          <div id="currentAvatar" class="large-avatar">🌱</div>
+          <div>
+            <p class="eyebrow">我的守護者</p>
+            <h3 id="guardianNameCard"></h3>
+            <p class="muted">累積學習，讓地球一天比一天更綠。</p>
+          </div>
+        </article>
+        <article class="metric-card card"><span>🪙</span><div><small>目前金幣</small><strong id="coinCard">0</strong></div></article>
+        <article class="metric-card card"><span>✅</span><div><small>達標單元</small><strong id="completedUnits">0</strong></div></article>
+        <article class="metric-card card"><span>🎯</span><div><small>最佳正確率</small><strong id="bestAccuracy">0%</strong></div></article>
+        <article class="metric-card card"><span>⭐</span><div><small>累積經驗</small><strong id="expCount">0</strong></div></article>
+      </section>
+
+      <section class="eco-topics">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">ENVIRONMENTAL MISSIONS</p>
+            <h2>四大環保挑戰世界</h2>
+            <p class="muted">選一個世界後，再查看該世界的單元；首頁不再一次顯示全部 285 個單元。</p>
+          </div>
+        </div>
+        <div id="worldCards" class="world-cards"></div>
+      </section>
+
+      <section class="green-tips card">
         <div>
-          <p class="eyebrow">今日任務</p>
-          <h2><span id="welcomeName"></span>，準備守護地球了嗎？</h2>
-          <p>每天第一次登入 +1 金幣；每個達標單元再 +1，沒有每日上限。</p>
+          <p class="eyebrow">今日綠行動</p>
+          <h3 id="greenTipTitle">隨手關燈，節省能源</h3>
+          <p id="greenTipText">離開房間時記得關燈，讓環保不只存在題目裡。</p>
+        </div>
+        <span class="tip-icon">💡</span>
+      </section>
+    </section>
+
+    <section id="worldScreen" class="hidden">
+      <div class="world-page-head card">
+        <button id="backDashboardBtn" class="text-btn">← 回到環保首頁</button>
+        <div>
+          <p id="worldEyebrow" class="eyebrow">WORLD</p>
+          <h2 id="worldPageTitle"></h2>
+          <p id="worldPageDescription" class="muted"></p>
         </div>
       </div>
-
-      <div class="stats-grid">
-        <article class="stat card"><span>已完成</span><strong id="completedUnits">0</strong><small>個達標單元</small></article>
-        <article class="stat card"><span>最佳正確率</span><strong id="bestAccuracy">0%</strong><small>所有挑戰紀錄</small></article>
-        <article class="stat card"><span>累積經驗</span><strong id="expCount">0</strong><small>EXP</small></article>
+      <div class="unit-toolbar">
+        <span id="worldUnitCount"></span>
+        <div class="page-controls">
+          <button id="prevUnitPage" class="secondary">← 上一頁</button>
+          <span id="unitPageLabel"></span>
+          <button id="nextUnitPage" class="secondary">下一頁 →</button>
+        </div>
       </div>
-
-      <div class="section-title">
-        <div><p class="eyebrow">WORLD 1</p><h2>環境守護訓練營</h2></div>
-        <button id="leaderboardBtn" class="secondary">🏆 排行榜</button>
-      </div>
-      <div id="unitGrid" class="unit-grid"></div>
+      <div id="unitGrid" class="world-unit-grid"></div>
     </section>
 
     <section id="quizScreen" class="hidden">
@@ -107,6 +166,18 @@
       </div>
     </section>
 
+
+
+    <dialog id="rulesDialog">
+      <div class="dialog-head"><h2>📘 挑戰規則</h2><button id="closeRules" class="text-btn">關閉</button></div>
+      <div class="rules-list">
+        <p>🌱 每個單元共 10 題。</p>
+        <p>🎯 答對率達 80% 即過關。</p>
+        <p>🪙 每個達標單元獲得 1 枚金幣，沒有每日上限。</p>
+        <p>🎁 每天第一次登入再獲得 1 枚金幣。</p>
+        <p>📚 題目依初級、中級、中高級、高級循序安排。</p>
+      </div>
+    </dialog>
 
     <dialog id="accountDialog">
       <div class="dialog-head"><h2>👤 我的帳號</h2><button id="closeAccount" class="text-btn">關閉</button></div>

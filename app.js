@@ -7,13 +7,15 @@
   const AVATARS = ["🌱","🐢","🐼","🦊","🐬","🦉","🐝","🌻","🐧","🦁","🐸","🐨"];
   const UNIT_COUNT = UNITS.length || Math.ceil(Q.length / UNIT_SIZE);
   const $ = (id) => document.getElementById(id);
-  const screens = ["loginScreen","profileScreen","homeScreen","quizScreen","resultScreen"];
+  const screens = ["loginScreen","profileScreen","homeScreen","worldScreen","quizScreen","resultScreen"];
   const show = (id) => screens.forEach(s => $(s).classList.toggle("hidden", s !== id));
   const todayKey = () => new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei"}).format(new Date());
 
   let auth, db, uid = null, selectedAvatar = AVATARS[0];
   let profile = null, currentUnit = 0, currentQuestions = [], qIndex = 0;
   let selectedAnswer = null, submitted = false, correctCount = 0, wrongAnswers = [];
+  let selectedWorld = 1, unitPage = 1;
+  const UNITS_PER_PAGE = 12;
 
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: "select_account" });
@@ -100,33 +102,98 @@
   function renderHome(){
     renderHeader();
     $("welcomeName").textContent=profile.name;
+    $("guardianNameCard").textContent=profile.name;
     $("currentAvatar").textContent=profile.avatar;
+    $("coinCard").textContent=profile.coins||0;
     $("completedUnits").textContent=profile.completedUnits||0;
     $("bestAccuracy").textContent=`${profile.bestAccuracy||0}%`;
+    $("homeNavBtn").classList.remove("hidden");
+    $("leaderboardTopBtn").classList.remove("hidden");
+    $("logoutTopBtn").classList.remove("hidden");
+    const tips=[
+      ["隨手關燈，節省能源","離開房間時記得關燈，讓環保不只存在題目裡。"],
+      ["自備水壺，減少一次性塑膠","今天出門帶上自己的水壺，少用一個塑膠杯。"],
+      ["分類回收，讓資源再生","丟垃圾前多看一眼，確認紙類、塑膠與一般垃圾是否分對。"],
+      ["珍惜食物，減少廚餘","吃多少拿多少，剩食減量也能降低環境負擔。"],
+      ["步行短程，減少碳排","短距離移動試著用步行代替搭車，也能順便活動身體。"]
+    ];
+    const tip=tips[new Date().getDate()%tips.length];
+    $("greenTipTitle").textContent=tip[0];
+    $("greenTipText").textContent=tip[1];
+
     const grouped = {};
-    UNITS.forEach((u, i) => {
-      (grouped[u.world] ||= {name:u.worldName, items:[]}).items.push({u,i});
-    });
-    $("unitGrid").innerHTML = Object.values(grouped).map(group => `
-      <section class="world-section">
-        <div class="world-heading">
-          <div><p class="eyebrow">循序漸進題庫</p><h3>${escapeHtml(group.name)}</h3></div>
-          <span>${group.items.length} 個單元</span>
-        </div>
-        <div class="world-unit-grid">
-          ${group.items.map(({u,i}) => {
-            const best = Number(profile.unitBest?.[i] || 0);
-            const stars = best === 100 ? "★★★" : best >= 90 ? "★★★" : best >= 80 ? "★★" : "☆";
-            return `<button class="unit-card card" data-unit="${i}">
-              <div class="unit-meta"><span>總單元 ${u.unit}</span><span class="stars">${stars}</span></div>
-              <h3>${escapeHtml(u.title)}</h3>
-              <div class="unit-meta"><span>${escapeHtml(u.mixLabel)}｜${u.count} 題</span><span>最佳 ${best}%</span></div>
-            </button>`;
-          }).join("")}
-        </div>
-      </section>`).join("");
+    UNITS.forEach((u,i)=>(grouped[u.world] ||= {name:u.worldName,items:[]}).items.push({u,i}));
+    const icons={1:"🌱",2:"🌳",3:"🐢",4:"🏆"};
+    const descriptions={
+      1:"初級為主，搭配少量中級題，建立環保基本觀念。",
+      2:"中級為主，搭配中高級題，提升判斷與應用能力。",
+      3:"中高級為主，搭配高級題，進入菁英守護者訓練。",
+      4:"剩餘高級題集中挑戰，準備正式環保知識競賽。"
+    };
+    $("worldCards").innerHTML=Object.entries(grouped).map(([world,group])=>{
+      const completed=group.items.filter(({i})=>Number(profile.unitBest?.[i]||0)>=TARGET).length;
+      return `<button class="world-card w${world}" data-world="${world}">
+        <span class="world-icon">${icons[world]}</span>
+        <small>WORLD ${world}</small>
+        <h3>${escapeHtml(group.name.replace(/^世界[一二三四]｜/,""))}</h3>
+        <p>${descriptions[world]}</p>
+        <small>已達標 ${completed}／${group.items.length} 單元</small>
+      </button>`;
+    }).join("");
     show("homeScreen");
   }
+
+  function renderWorld(){
+    const items=UNITS.map((u,i)=>({u,i})).filter(x=>x.u.world===selectedWorld);
+    const totalPages=Math.max(1,Math.ceil(items.length/UNITS_PER_PAGE));
+    unitPage=Math.min(Math.max(1,unitPage),totalPages);
+    const start=(unitPage-1)*UNITS_PER_PAGE;
+    const pageItems=items.slice(start,start+UNITS_PER_PAGE);
+    const info={
+      1:["🌱 綠芽初級區","先建立基礎，再慢慢接觸中級題。"],
+      2:["🌳 森林中級區","中級題為主，逐步加入中高級挑戰。"],
+      3:["🐢 守護者菁英區","中高級題為主，開始適應高級競賽題。"],
+      4:["🏆 環保競賽區","高級題集中挑戰，完成最後的環保守護任務。"]
+    }[selectedWorld];
+    $("worldEyebrow").textContent=`WORLD ${selectedWorld}`;
+    $("worldPageTitle").textContent=info[0];
+    $("worldPageDescription").textContent=info[1];
+    $("worldUnitCount").textContent=`共 ${items.length} 個單元`;
+    $("unitPageLabel").textContent=`第 ${unitPage}／${totalPages} 頁`;
+    $("prevUnitPage").disabled=unitPage===1;
+    $("nextUnitPage").disabled=unitPage===totalPages;
+    $("unitGrid").innerHTML=pageItems.map(({u,i})=>{
+      const best=Number(profile.unitBest?.[i]||0);
+      const stars=best===100?"★★★":best>=90?"★★★":best>=80?"★★":"☆";
+      return `<button class="unit-card card" data-unit="${i}">
+        <div class="unit-meta"><span>總單元 ${u.unit}</span><span class="stars">${stars}</span></div>
+        <h3>${escapeHtml(u.title)}</h3>
+        <div class="unit-meta"><span>${escapeHtml(u.mixLabel)}｜${u.count} 題</span><span>最佳 ${best}%</span></div>
+      </button>`;
+    }).join("");
+    show("worldScreen");
+  }
+
+  $("worldCards").addEventListener("click",e=>{
+    const card=e.target.closest("[data-world]"); if(!card) return;
+    selectedWorld=Number(card.dataset.world); unitPage=1; renderWorld();
+  });
+  $("backDashboardBtn").addEventListener("click",renderHome);
+  $("prevUnitPage").addEventListener("click",()=>{unitPage--;renderWorld();});
+  $("nextUnitPage").addEventListener("click",()=>{unitPage++;renderWorld();});
+  $("continueBtn").addEventListener("click",()=>{
+    const firstIncomplete=UNITS.findIndex((u,i)=>Number(profile.unitBest?.[i]||0)<TARGET);
+    if(firstIncomplete<0){selectedWorld=4;unitPage=1;renderWorld();return;}
+    selectedWorld=UNITS[firstIncomplete].world;
+    const worldIndex=UNITS.filter(u=>u.world===selectedWorld).findIndex(u=>u.unit===UNITS[firstIncomplete].unit);
+    unitPage=Math.floor(worldIndex/UNITS_PER_PAGE)+1;
+    renderWorld();
+  });
+  $("rulesBtn").addEventListener("click",()=>$("rulesDialog").showModal());
+  $("closeRules").addEventListener("click",()=>$("rulesDialog").close());
+  $("homeNavBtn").addEventListener("click",renderHome);
+  $("leaderboardTopBtn").addEventListener("click",()=>$("leaderboardBtn").click());
+
   $("unitGrid").addEventListener("click",e=>{
     const card=e.target.closest("[data-unit]"); if(card) startUnit(Number(card.dataset.unit));
   });
@@ -209,14 +276,19 @@
     $("accountDialog").showModal();
   });
   $("closeAccount").addEventListener("click", () => $("accountDialog").close());
-  $("logoutBtn").addEventListener("click", async () => {
-    $("accountDialog").close();
+  async function logoutCurrentUser(){
+    if ($("accountDialog").open) $("accountDialog").close();
     await auth.signOut();
     profile = null; uid = null;
-    $("accountBtn").classList.add("hidden");
+    $("accountBtn")?.classList.add("hidden");
+    $("homeNavBtn").classList.add("hidden");
+    $("leaderboardTopBtn").classList.add("hidden");
+    $("logoutTopBtn").classList.add("hidden");
     $("cloudStatus").textContent = "☁️ 尚未登入";
     show("loginScreen");
-  });
+  }
+  $("logoutBtn").addEventListener("click", logoutCurrentUser);
+  $("logoutTopBtn").addEventListener("click", logoutCurrentUser);
 
   $("createProfileBtn").addEventListener("click",async()=>{
     const name=$("playerName").value.trim();
