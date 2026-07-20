@@ -19,6 +19,7 @@
     <nav class="top-actions">
       <button id="homeNavBtn" class="nav-btn hidden" type="button">🏠 首頁</button>
       <button id="leaderboardTopBtn" class="nav-btn hidden" type="button">🏆 排行榜</button>
+      <button id="profileTopBtn" class="nav-btn hidden" type="button">🧑‍🌾 我的角色</button>
       <div class="status-pills">
         <span id="cloudStatus">☁️ 連線中</span>
         <span>🪙 <strong id="coinCount">0</strong></span>
@@ -42,10 +43,10 @@
       <p id="loginError" class="error" aria-live="polite"></p>
     </section>
 
-    <section id="profileScreen" class="card profile-card">
+    <section id="profileScreen" class="card profile-card hidden">
       <div class="hero-icon">🌱</div>
       <h2>建立守護者角色</h2>
-      <p>輸入暱稱，學習進度會保存在這個瀏覽器及 Firebase 雲端。</p>
+      <p>Google 登入成功後，請建立自己的守護者暱稱與遊戲頭像。之後仍可隨時修改。</p>
       <label for="playerName">守護者暱稱</label>
       <input id="playerName" maxlength="20" placeholder="例如：沄芯">
       <fieldset>
@@ -179,10 +180,31 @@
       </div>
     </dialog>
 
-    <dialog id="accountDialog">
-      <div class="dialog-head"><h2>👤 我的帳號</h2><button id="closeAccount" class="text-btn">關閉</button></div>
+    <dialog id="accountDialog" class="guardian-dialog">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">GUARDIAN PROFILE</p>
+          <h2>🧑‍🌾 我的守護者角色</h2>
+        </div>
+        <button id="closeAccount" class="text-btn">關閉</button>
+      </div>
+
       <div id="accountInfo" class="account-info"></div>
-      <button id="logoutBtn" class="danger-btn">登出 Google 帳號</button>
+
+      <label for="editPlayerName"><strong>守護者暱稱</strong></label>
+      <input id="editPlayerName" class="profile-edit-input" maxlength="20" placeholder="輸入守護者暱稱">
+
+      <fieldset class="profile-edit-fieldset">
+        <legend><strong>選擇遊戲頭像</strong></legend>
+        <p class="muted">Google 大頭貼只用來辨識帳號；排行榜與遊戲畫面會顯示你選擇的守護者頭像。</p>
+        <div id="editAvatarChoices" class="avatar-grid"></div>
+      </fieldset>
+
+      <div class="dialog-actions">
+        <button id="saveProfileBtn" class="primary">儲存角色設定</button>
+        <button id="logoutBtn" class="danger-btn">登出 Google 帳號</button>
+      </div>
+      <p id="editProfileMessage" class="profile-message" aria-live="polite"></p>
     </dialog>
 
     <dialog id="leaderboardDialog">

@@ -52,3 +52,12 @@ body{
 .rules-list{line-height:1.9}.account-info p{word-break:break-word}
 @media(max-width:1000px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.profile-panel{grid-column:1/-1}.world-cards,.world-unit-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){.topbar{position:static;gap:10px}.brand small{display:none}.brand strong{font-size:1.1rem}.status-pills{display:none}.eco-hero{grid-template-columns:1fr;padding:26px}.planet-scene{min-height:170px}.planet{font-size:6rem}.dashboard-grid,.world-cards,.world-unit-grid{grid-template-columns:1fr}.hero-actions,.unit-toolbar,.page-controls{flex-wrap:wrap}.top-actions{gap:5px}.nav-btn,.logout-btn{padding:8px 9px}.world-page-head{grid-template-columns:1fr}}
+
+.guardian-dialog{width:min(680px,94vw)}
+.profile-edit-input{width:100%;margin:8px 0 18px;padding:13px 14px;border:2px solid var(--line);border-radius:12px}
+.profile-edit-fieldset{border:0;padding:0;margin:0 0 18px}
+.dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.profile-message{min-height:24px;margin:12px 0 0;color:var(--forest);font-weight:700}
+.avatar.locked{opacity:.55;filter:grayscale(.65);cursor:not-allowed}
+.avatar .lock-mark{display:block;font-size:.65rem;margin-top:3px}
+@media(max-width:620px){.dialog-actions{grid-template-columns:1fr}}
