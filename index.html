@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#176b45">
+  <title>環保冒險王｜地球守護者學院</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">EARTH GUARDIANS ACADEMY</p>
+      <h1>🌍 環保冒險王</h1>
+    </div>
+    <div class="status-pills">
+      <span id="cloudStatus">☁️ 連線中</span>
+      <span>🪙 <strong id="coinCount">0</strong></span>
+      <span>⭐ Lv.<strong id="levelCount">1</strong></span>
+    </div>
+  </header>
+
+  <main>
+    <section id="profileScreen" class="card profile-card">
+      <div class="hero-icon">🌱</div>
+      <h2>建立守護者角色</h2>
+      <p>輸入暱稱，學習進度會保存在這個瀏覽器及 Firebase 雲端。</p>
+      <label for="playerName">守護者暱稱</label>
+      <input id="playerName" maxlength="20" placeholder="例如：沄芯">
+      <fieldset>
+        <legend>選擇頭像</legend>
+        <div id="avatarChoices" class="avatar-grid"></div>
+      </fieldset>
+      <button id="createProfileBtn" class="primary">開始冒險</button>
+      <p id="profileError" class="error" aria-live="polite"></p>
+    </section>
+
+    <section id="homeScreen" class="hidden">
+      <div class="welcome card">
+        <div id="currentAvatar" class="large-avatar">🌱</div>
+        <div>
+          <p class="eyebrow">今日任務</p>
+          <h2><span id="welcomeName"></span>，準備守護地球了嗎？</h2>
+          <p>每天第一次登入 +1 金幣；每個達標單元再 +1，沒有每日上限。</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat card"><span>已完成</span><strong id="completedUnits">0</strong><small>個達標單元</small></article>
+        <article class="stat card"><span>最佳正確率</span><strong id="bestAccuracy">0%</strong><small>所有挑戰紀錄</small></article>
+        <article class="stat card"><span>累積經驗</span><strong id="expCount">0</strong><small>EXP</small></article>
+      </div>
+
+      <div class="section-title">
+        <div><p class="eyebrow">WORLD 1</p><h2>環境守護訓練營</h2></div>
+        <button id="leaderboardBtn" class="secondary">🏆 排行榜</button>
+      </div>
+      <div id="unitGrid" class="unit-grid"></div>
+    </section>
+
+    <section id="quizScreen" class="hidden">
+      <div class="quiz-head card">
+        <button id="backHomeBtn" class="text-btn">← 返回單元</button>
+        <div>
+          <p id="unitTitle" class="eyebrow"></p>
+          <h2 id="questionProgress"></h2>
+        </div>
+        <div class="progress-track"><div id="progressBar"></div></div>
+      </div>
+
+      <article class="question-card card">
+        <span id="questionLevel" class="level-badge"></span>
+        <h2 id="questionText"></h2>
+        <div id="optionList" class="options"></div>
+        <button id="submitAnswerBtn" class="primary" disabled>送出答案</button>
+        <div id="feedbackBox" class="feedback hidden"></div>
+        <button id="nextQuestionBtn" class="secondary hidden">下一題</button>
+      </article>
+    </section>
+
+    <section id="resultScreen" class="hidden">
+      <div class="card result-card">
+        <div id="resultIcon" class="hero-icon">🎉</div>
+        <p class="eyebrow">單元完成</p>
+        <h2 id="resultTitle"></h2>
+        <div class="score-circle"><strong id="scoreText"></strong><span id="accuracyText"></span></div>
+        <p id="rewardText"></p>
+        <div id="wrongSummary" class="wrong-summary"></div>
+        <div class="button-row">
+          <button id="retryBtn" class="secondary">重新挑戰</button>
+          <button id="resultHomeBtn" class="primary">返回單元</button>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="leaderboardDialog">
+      <div class="dialog-head"><h2>🏆 守護者排行榜</h2><button id="closeLeaderboard" class="text-btn">關閉</button></div>
+      <p>依目前累積經驗值排序。</p>
+      <div id="leaderboardList"></div>
+    </dialog>
+  </main>
+
+  <footer>題目來源：使用者提供之《環保知識競賽題庫》共 <span id="questionTotal"></span> 題</footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
