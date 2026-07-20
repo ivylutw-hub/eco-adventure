@@ -17,35 +17,36 @@
 
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: "select_account" });
+  let loginInProgress = false;
 
   function authErrorText(err) {
     const code = err?.code || "";
-    if (code.includes("popup-closed")) return "登入視窗已關閉，請再試一次。";
-    if (code.includes("popup-blocked")) return "瀏覽器封鎖了登入視窗，請允許彈出式視窗。";
-    if (code.includes("unauthorized-domain")) return "目前網址尚未加入 Firebase 授權網域。";
-    if (code.includes("credential-already-in-use")) return "這個 Google 帳號已經有遊戲紀錄，請先登出後再直接登入。";
-    return "Google 登入失敗，請稍後再試。";
+    if (code.includes("popup-closed-by-user")) return "登入視窗已關閉，請再試一次。";
+    if (code.includes("popup-blocked")) return "瀏覽器封鎖了登入視窗，請允許彈出式視窗後再試。";
+    if (code.includes("unauthorized-domain")) return "目前網站網址尚未加入 Firebase 授權網域。";
+    if (code.includes("operation-not-allowed")) return "Firebase 尚未啟用 Google 登入。";
+    if (code.includes("network-request-failed")) return "網路連線異常，請稍後再試。";
+    if (code.includes("cancelled-popup-request")) return "登入程序已重新啟動，請稍候再按一次。";
+    return `Google 登入失敗（${code || "未知錯誤"}），請稍後再試。`;
   }
 
   async function signInWithGoogle() {
+    if (loginInProgress) return;
+    loginInProgress = true;
+    const button = $("googleLoginBtn");
     $("loginError").textContent = "";
+    button.disabled = true;
+    button.textContent = "正在開啟 Google 登入…";
+
     try {
-      const current = auth.currentUser;
-      if (current?.isAnonymous) {
-        // 將原本匿名帳號升級成 Google 帳號，保留相同 UID 與雲端進度
-        await current.linkWithPopup(googleProvider);
-      } else {
-        await auth.signInWithPopup(googleProvider);
-      }
+      await auth.signInWithPopup(googleProvider);
     } catch (err) {
-      console.error(err);
-      if (err.code === "auth/credential-already-in-use") {
-        const credential = firebase.auth.GoogleAuthProvider.credentialFromError(err);
-        if (credential) await auth.signInWithCredential(credential);
-        else $("loginError").textContent = authErrorText(err);
-      } else {
-        $("loginError").textContent = authErrorText(err);
-      }
+      console.error("Google sign-in error:", err);
+      $("loginError").textContent = authErrorText(err);
+    } finally {
+      loginInProgress = false;
+      button.disabled = false;
+      button.innerHTML = '<span class="google-mark">G</span> 使用 Google 帳號登入';
     }
   }
 
@@ -245,18 +246,9 @@
 
       auth.onAuthStateChanged(async (user) => {
         if (!user) {
-          uid = null; profile = null;
+          uid = null;
+          profile = null;
           $("cloudStatus").textContent = "☁️ 尚未登入";
-          $("accountBtn").classList.add("hidden");
-          show("loginScreen");
-          return;
-        }
-
-        // 舊版若已存在匿名帳號，先顯示登入頁，讓使用者用 Google 升級並保留進度
-        if (user.isAnonymous) {
-          uid = user.uid;
-          profile = await loadCloud();
-          $("cloudStatus").textContent = "☁️ 請升級帳號";
           $("accountBtn").classList.add("hidden");
           show("loginScreen");
           return;
@@ -276,7 +268,7 @@
         }
       });
     } catch (err) {
-      console.error(err);
+      console.error("Firebase init error:", err);
       $("cloudStatus").textContent = "⚠️ Firebase 連線失敗";
       $("loginError").textContent = "目前無法連上登入服務，請重新整理頁面。";
       show("loginScreen");
