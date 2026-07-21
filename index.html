@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b6b50">
-<meta name="description" content="適合國小中高年級的環境教育闖關遊戲：四大冒險關卡、2,844題完整固定題庫、玩家成長、守護基地與金門特色生物。">
+<meta name="description" content="適合國小中高年級的環境教育闖關遊戲：四大冒險關卡、2,844題固定題庫與每週排行榜、玩家成長、守護基地與金門特色生物。">
 <meta name="author" content="環保冒險王">
 <meta property="og:type" content="website">
 <meta property="og:title" content="環保冒險王｜Earth Guardian Adventure">
 <meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
 <meta property="og:image" content="social-preview.svg">
 <meta name="twitter:card" content="summary_large_image">
-<title>環保冒險王 v6.0｜Earth Guardian Adventure</title>
+<title>環保冒險王 v7.0｜每週排行榜版</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=600">
+<link rel="stylesheet" href="style.css?v=700">
 </head>
 <body>
 <div id="loginPage" class="login-page">
@@ -30,7 +30,7 @@
     <div id="loginAvatars" class="avatar-grid login-avatars"></div>
     <small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
     <button class="primary full" onclick="login()">開始冒險</button>
-    <p class="note">進度儲存在目前瀏覽器；可使用「匯出存檔」跨裝置備份。</p>
+    <p class="note">遊戲進度儲存在目前瀏覽器；完成 Firebase 設定後可參加每週排行榜。</p>
   </div>
 </div>
 
@@ -38,7 +38,7 @@
 <header>
   <div>
     <small>EARTH GUARDIAN ADVENTURE</small>
-    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v6.0</span></h1>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v7.0</span></h1>
     <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
   </div>
   <div class="header-actions">
@@ -76,6 +76,7 @@
   <button onclick="showMap()">🗺️ 冒險地圖</button>
   <button onclick="showBase()">🌍 守護基地</button>
   <button onclick="showHall()">🏆 榮耀殿堂</button>
+  <button onclick="showLeaderboard()">🥇 每週排行</button>
   <button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span id="weaknessCount" class="nav-count">0</span></button>
   <button onclick="showProfile()">👤 我的資料</button>
 </nav>
@@ -136,6 +137,22 @@
   <div id="legend" class="legend locked">👑<h3>傳奇地球守護者</h3><p>集齊四枚榮耀徽章後解鎖</p></div>
 </main>
 
+
+<main id="leaderboardPage" class="hide">
+  <div class="title leaderboard-title">
+    <div><small>WEEKLY GUARDIAN RANKING</small><h2>🥇 每週守護者排行榜</h2><p>不分班級，所有玩家共同競賽；每週一重新計算本週積分。</p></div>
+    <button class="secondary" onclick="refreshLeaderboard()">🔄 更新排行</button>
+  </div>
+  <section class="weekly-card">
+    <div><small>本週週期</small><b id="weekLabel">—</b></div>
+    <div><small>我的本週積分</small><b id="myWeeklyPoints">0</b></div>
+    <div><small>我的名次</small><b id="myWeeklyRank">—</b></div>
+  </section>
+  <div id="cloudStatus" class="cloud-status">☁️ 正在連線排行榜…</div>
+  <div class="leaderboard-rules"><b>積分規則</b><span>首次完成單元 +100</span><span>首次滿分再 +50</span><span>同一單元重玩不重複計分</span></div>
+  <div id="leaderboardList" class="leaderboard-list"></div>
+  <p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。</p>
+</main>
 
 <main id="weaknessPage" class="hide">
   <div class="title weakness-title">
@@ -251,5 +268,5 @@
   </div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="questions.js?v=600"></script><script src="app.js?v=600"></script>
+<script src="questions.js?v=570"></script><script src="app.js?v=570"></script>
 </body></html>

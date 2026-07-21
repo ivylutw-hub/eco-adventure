@@ -37,7 +37,7 @@ const FRAMES=[
 {id:'kinmen',name:'金門傳奇框',icon:'🏝️',level:50}
 ];
 const MAX_LEVEL=50;
-const KEY='ecoAdventureV60';
+const KEY='ecoAdventureV70';
 function unitCount(stageId){return (UNIT_SETS[stageId]||[]).length}
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 function defaultState(){return{loggedIn:false,name:'沄芯',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{}}}
@@ -86,7 +86,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'6.0',
+    version:'7.0',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -368,7 +368,7 @@ function renderMap(){
  });
 }
 function page(id){
- ['mapPage','stagePage','quizPage','resultPage','basePage','hallPage','profilePage','weaknessPage']
+ ['mapPage','stagePage','quizPage','resultPage','basePage','hallPage','leaderboardPage','profilePage','weaknessPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  document.getElementById(id).classList.remove('hide');
  document.body.classList.toggle('quiz-mode',id==='quizPage');
@@ -863,14 +863,8 @@ function chooseFrame(id){
 function totalCompletedUnits(){
   return S.reduce((n,s)=>n+doneSet(s.id).size,0);
 }
-function totalUnitCount(){
-  return S.reduce((n,s)=>n+unitCount(s.id),0);
-}
 function totalProgressQuestions(){
   return S.reduce((n,s)=>n+getStageQuestionProgress(s.id),0);
-}
-function totalAdventureQuestionSlots(){
-  return Object.values(UNIT_SETS).reduce((sum, units)=>sum+units.reduce((n, questions)=>n+questions.length,0),0);
 }
 function renderProfile(){
   ensureProfile();
@@ -890,8 +884,8 @@ function renderProfile(){
     <div><span>⭐</span><small>目前等級</small><b>Lv.${lv}</b></div>
     <div><span>🧠</span><small>累積答對</small><b>${st.totalCorrect||0} 題</b></div>
     <div><span>🎯</span><small>答題正確率</small><b>${accuracy}%</b></div>
-    <div><span>🧭</span><small>完成單元</small><b>${totalCompletedUnits()}/${totalUnitCount()}</b></div>
-    <div><span>📚</span><small>冒險進度</small><b>${totalProgressQuestions()}/${totalAdventureQuestionSlots()}</b></div>
+    <div><span>🧭</span><small>完成單元</small><b>${totalCompletedUnits()}/${S.reduce((n,x)=>n+unitCount(x.id),0)}</b></div>
+    <div><span>📚</span><small>冒險進度</small><b>${totalProgressQuestions()}/${S.reduce((n,x)=>n+unitCount(x.id)*10,0)}</b></div>
     <div><span>📅</span><small>遊戲天數</small><b>${st.playDays||0} 天</b></div>`;
   profileAvatars.innerHTML='';
   AVATARS.forEach(a=>{
@@ -917,3 +911,134 @@ function renderProfile(){
 
 function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 ensureProgress();ensureProfile();if(typeof st.soundEnabled!=='boolean')st.soundEnabled=true;selectedLoginAvatar=st.avatar||'fox';renderLoginAvatars();updateWeaknessBadge();save();nameInput.value=st.name;if(st.loggedIn){dailyLogin();enterGame()}
+
+/* ===== v7.0 每週排行榜（Firebase） ===== */
+let cloudDb=null, cloudAuth=null, cloudUser=null, cloudReady=false;
+function currentWeekId(date=new Date()){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const day=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  const week=Math.ceil((((d-yearStart)/86400000)+1)/7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function weekDateRange(date=new Date()){
+  const d=new Date(date); const day=d.getDay()||7;
+  d.setDate(d.getDate()-day+1); d.setHours(0,0,0,0);
+  const end=new Date(d); end.setDate(end.getDate()+6);
+  const f=x=>`${x.getMonth()+1}/${x.getDate()}`;
+  return `${f(d)}－${f(end)}`;
+}
+function ensureWeeklyLocal(){
+  const id=currentWeekId();
+  if(!st.weekly||st.weekly.weekId!==id)st.weekly={weekId:id,points:0,completedKeys:[],perfectKeys:[]};
+  st.weekly.completedKeys=Array.isArray(st.weekly.completedKeys)?st.weekly.completedKeys:[];
+  st.weekly.perfectKeys=Array.isArray(st.weekly.perfectKeys)?st.weekly.perfectKeys:[];
+  return st.weekly;
+}
+function firebaseConfigured(){
+  const c=window.ECO_FIREBASE_CONFIG||{};
+  return Boolean(c.apiKey&&c.projectId&&c.appId);
+}
+async function initCloudRanking(){
+  if(!firebaseConfigured()||typeof firebase==='undefined'){
+    setCloudStatus('offline','☁️ 尚未設定 Firebase；目前可單機遊玩，排行榜尚未啟用。');
+    return;
+  }
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
+    cloudAuth=firebase.auth(); cloudDb=firebase.firestore();
+    await cloudAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const cred=cloudAuth.currentUser?{user:cloudAuth.currentUser}:await cloudAuth.signInAnonymously();
+    cloudUser=cred.user; cloudReady=true;
+    setCloudStatus('online','☁️ 排行榜已連線');
+    await syncWeeklyProfile();
+  }catch(err){
+    console.error('Firebase 排行榜連線失敗',err);
+    setCloudStatus('offline','⚠️ 排行榜連線失敗，請檢查 Firebase 設定與規則。');
+  }
+}
+function setCloudStatus(mode,text){
+  const el=document.getElementById('cloudStatus'); if(!el)return;
+  el.className='cloud-status '+mode; el.textContent=text;
+}
+function weeklyDoc(){
+  return cloudDb.collection('weeklyRankings').doc(currentWeekId()).collection('players').doc(cloudUser.uid);
+}
+async function syncWeeklyProfile(){
+  if(!cloudReady||!st.loggedIn)return;
+  const w=ensureWeeklyLocal(); const av=avatarById(st.avatar);
+  try{
+    await weeklyDoc().set({
+      uid:cloudUser.uid,
+      name:(st.name||'環保守護者').slice(0,12),
+      avatar:av.icon,
+      level:currentLevel(),
+      points:Number(w.points)||0,
+      completedUnits:w.completedKeys.length,
+      perfectUnits:w.perfectKeys.length,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+  }catch(err){console.error('同步排行榜失敗',err)}
+}
+async function addWeeklyUnitPoints(stageId,unitIndex,first,firstPerfect){
+  const w=ensureWeeklyLocal(),key=`${stageId}|${unitIndex}`;
+  let add=0;
+  if(first&&!w.completedKeys.includes(key)){w.completedKeys.push(key);add+=100;}
+  if(firstPerfect&&!w.perfectKeys.includes(key)){w.perfectKeys.push(key);add+=50;}
+  if(!add)return;
+  w.points=(Number(w.points)||0)+add; save();
+  await syncWeeklyProfile();
+  toast(`🏆 本週積分 +${add}`);
+}
+async function refreshLeaderboard(){
+  ensureWeeklyLocal();
+  const label=document.getElementById('weekLabel'),pts=document.getElementById('myWeeklyPoints'),rank=document.getElementById('myWeeklyRank'),list=document.getElementById('leaderboardList');
+  if(label)label.textContent=`${currentWeekId()}（${weekDateRange()}）`;
+  if(pts)pts.textContent=st.weekly.points||0;
+  if(!list)return;
+  if(!cloudReady){
+    if(rank)rank.textContent='—';
+    list.innerHTML='<div class="empty-ranking">完成 Firebase 設定後，這裡會顯示所有玩家的每週排名。</div>';
+    setCloudStatus('offline','☁️ 尚未設定 Firebase；排行榜目前未啟用。');
+    return;
+  }
+  list.innerHTML='<div class="empty-ranking">正在讀取排行榜…</div>';
+  try{
+    await syncWeeklyProfile();
+    const snap=await cloudDb.collection('weeklyRankings').doc(currentWeekId()).collection('players').orderBy('points','desc').limit(100).get();
+    const rows=[];snap.forEach(doc=>rows.push(doc.data()));
+    if(!rows.length){list.innerHTML='<div class="empty-ranking">本週還沒有排名紀錄，完成第一個單元吧！</div>';return;}
+    const myIndex=rows.findIndex(x=>x.uid===cloudUser.uid); if(rank)rank.textContent=myIndex>=0?`第 ${myIndex+1} 名`:'100 名以外';
+    list.innerHTML='';
+    rows.forEach((x,i)=>{
+      const row=document.createElement('div');row.className='rank-row'+(x.uid===cloudUser.uid?' me':'');
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
+      row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${x.avatar||'🌱'}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${Number(x.points)||0}</b><small>本週積分</small></div>`;
+      list.appendChild(row);
+    });
+    setCloudStatus('online','☁️ 排行榜已更新');
+  }catch(err){console.error(err);list.innerHTML='<div class="empty-ranking">排行榜讀取失敗，請稍後再試。</div>';setCloudStatus('offline','⚠️ 排行榜讀取失敗');}
+}
+function escapeRankText(v){const d=document.createElement('div');d.textContent=String(v);return d.innerHTML;}
+function showLeaderboard(){page('leaderboardPage');refreshLeaderboard();}
+
+const _v7login=login;
+login=function(){_v7login();initCloudRanking();};
+const _v7enterGame=enterGame;
+enterGame=function(){_v7enterGame();ensureWeeklyLocal();syncWeeklyProfile();};
+const _v7saveProfileName=saveProfileName;
+saveProfileName=function(){_v7saveProfileName();syncWeeklyProfile();};
+const _v7chooseAvatar=chooseAvatar;
+chooseAvatar=function(id){_v7chooseAvatar(id);syncWeeklyProfile();};
+const _v7finish=finish;
+finish=function(){
+  ensureProgress();
+  const wasFirst=!doneSet(stage.id).has(unit);
+  const wasFirstPerfect=score===quiz.length&&!((st.coinAwarded||{})[`${stage.id}|${unit}`]);
+  const sid=stage.id,ui=unit;
+  _v7finish();
+  addWeeklyUnitPoints(sid,ui,wasFirst,wasFirstPerfect);
+};
+ensureWeeklyLocal();
+initCloudRanking();
