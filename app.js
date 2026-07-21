@@ -523,6 +523,7 @@ function submitSelectedAnswer(){
      addExp(10);
      st.mainExpAwarded[expKey]=true;
      expGained=10;
+     addWeeklyQuestionPoints(10);
    }
    markWeaknessMastered(q);
  }else{
@@ -850,6 +851,7 @@ function submitWeaknessAnswer(){
       addExp(5);
       st.weaknessExpAwarded[key]=true;
       weaknessExp=5;
+      addWeeklyQuestionPoints(5);
     }
     note.mastered=true;
     note.masteredAt=note.masteredAt||new Date().toISOString();
@@ -963,7 +965,7 @@ function renderProfile(){
 function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 ensureProgress();ensureProfile();if(typeof st.soundEnabled!=='boolean')st.soundEnabled=true;selectedLoginAvatar=st.avatar||'fox';renderLoginAvatars();updateWeaknessBadge();save();nameInput.value=st.name;if(st.loggedIn){dailyLogin();enterGame()}
 
-/* ===== v8.0 Google 登入、雲端存檔與每週排行榜（穩定版） ===== */
+/* ===== v8.2 Google 登入、雲端存檔與每週排行榜（題目積分版） ===== */
 let cloudDb=null, cloudAuth=null, cloudUser=null, cloudReady=false, cloudSaveTimer=null, cloudLoading=false;
 function currentWeekId(date=new Date()){
   const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
@@ -977,9 +979,13 @@ function weekDateRange(date=new Date()){
   const end=new Date(d);end.setDate(end.getDate()+6);const f=x=>`${x.getMonth()+1}/${x.getDate()}`;return `${f(d)}－${f(end)}`;
 }
 function ensureWeeklyLocal(){
- const id=currentWeekId();if(!st.weekly||st.weekly.weekId!==id)st.weekly={weekId:id,points:0,completedKeys:[],perfectKeys:[]};
+ const id=currentWeekId(),ruleVersion='v8.2-question-exp';
+ if(!st.weekly||st.weekly.weekId!==id||st.weekly.ruleVersion!==ruleVersion){
+   st.weekly={weekId:id,ruleVersion,points:0,completedKeys:[],perfectKeys:[]};
+ }
  st.weekly.completedKeys=Array.isArray(st.weekly.completedKeys)?st.weekly.completedKeys:[];
- st.weekly.perfectKeys=Array.isArray(st.weekly.perfectKeys)?st.weekly.perfectKeys:[];return st.weekly;
+ st.weekly.perfectKeys=Array.isArray(st.weekly.perfectKeys)?st.weekly.perfectKeys:[];
+ return st.weekly;
 }
 function firebaseConfigured(){const c=window.ECO_FIREBASE_CONFIG||{};return Boolean(c.apiKey&&c.projectId&&c.appId)}
 function loginMessage(text){const el=document.getElementById('loginCloudStatus');if(el)el.textContent=text}
@@ -1049,10 +1055,16 @@ async function syncWeeklyProfile(){
  try{await weeklyDoc().set({uid:cloudUser.uid,name:(st.name||'環保守護者').slice(0,12),avatar:av.icon,level:currentLevel(),points:Number(w.points)||0,completedUnits:w.completedKeys.length,perfectUnits:w.perfectKeys.length,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}
  catch(err){console.error('同步排行榜失敗',err)}
 }
-async function addWeeklyUnitPoints(stageId,unitIndex,first,firstPerfect){
- const w=ensureWeeklyLocal(),key=`${stageId}|${unitIndex}`;let add=0;
- if(first&&!w.completedKeys.includes(key)){w.completedKeys.push(key);add+=100}if(firstPerfect&&!w.perfectKeys.includes(key)){w.perfectKeys.push(key);add+=50}
- if(!add)return;w.points=(Number(w.points)||0)+add;save();await syncWeeklyProfile();toast(`🏆 本週積分 +${add}`);
+async function addWeeklyQuestionPoints(amount){
+ const add=Number(amount)||0;if(add<=0)return;
+ const w=ensureWeeklyLocal();w.points=(Number(w.points)||0)+add;save();
+ await syncWeeklyProfile();
+}
+async function recordWeeklyUnitProgress(stageId,unitIndex,first,firstPerfect){
+ const w=ensureWeeklyLocal(),key=`${stageId}|${unitIndex}`;let changed=false;
+ if(first&&!w.completedKeys.includes(key)){w.completedKeys.push(key);changed=true;}
+ if(firstPerfect&&!w.perfectKeys.includes(key)){w.perfectKeys.push(key);changed=true;}
+ if(changed){save();await syncWeeklyProfile();}
 }
 async function refreshLeaderboard(){
  ensureWeeklyLocal();const label=document.getElementById('weekLabel'),pts=document.getElementById('myWeeklyPoints'),rank=document.getElementById('myWeeklyRank'),list=document.getElementById('leaderboardList');
@@ -1067,7 +1079,7 @@ async function refreshLeaderboard(){
 }
 function escapeRankText(v){const d=document.createElement('div');d.textContent=String(v);return d.innerHTML}
 function showLeaderboard(){page('leaderboardPage');refreshLeaderboard()}
-const _v80finish=finish;finish=function(){ensureProgress();const wasFirst=!doneSet(stage.id).has(unit),wasFirstPerfect=score===quiz.length&&!((st.coinAwarded||{})[`${stage.id}|${unit}`]),sid=stage.id,ui=unit;_v80finish();addWeeklyUnitPoints(sid,ui,wasFirst,wasFirstPerfect)};
+const _v80finish=finish;finish=function(){ensureProgress();const wasFirst=!doneSet(stage.id).has(unit),wasFirstPerfect=score===quiz.length&&!((st.coinAwarded||{})[`${stage.id}|${unit}`]),sid=stage.id,ui=unit;_v80finish();recordWeeklyUnitProgress(sid,ui,wasFirst,wasFirstPerfect)};
 const _v80profile=saveProfileName;saveProfileName=function(){_v80profile();syncWeeklyProfile();saveCloudNow()};
 const _v80avatar=chooseAvatar;chooseAvatar=function(id){_v80avatar(id);syncWeeklyProfile();saveCloudNow()};
 async function logout(){
