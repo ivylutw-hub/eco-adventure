@@ -37,11 +37,11 @@ const FRAMES=[
 {id:'kinmen',name:'金門傳奇框',icon:'🏝️',level:50}
 ];
 const MAX_LEVEL=50;
-const KEY='ecoAdventureV80';
-const LEGACY_KEYS=['ecoAdventureV70','ecoAdventureV60','ecoAdventureV57'];
+const KEY='ecoAdventureV81';
+const LEGACY_KEYS=['ecoAdventureV80','ecoAdventureV70','ecoAdventureV60','ecoAdventureV57'];
 function unitCount(stageId){return (UNIT_SETS[stageId]||[]).length}
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
-function defaultState(){return{loggedIn:false,name:'沄芯',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{}}}
+function defaultState(){return{loggedIn:false,name:'沄芯',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{}}}
 function load(){
   try{
     let raw=localStorage.getItem(KEY);
@@ -99,7 +99,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'7.0',
+    version:'8.1',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -513,10 +513,17 @@ function submitSelectedAnswer(){
  answered=true;
  const q=quiz[qi],i=selectedAnswer,ok=i===q.ans;
  st.totalAnswered=(st.totalAnswered||0)+1;
+ let expGained=0;
  if(ok){
    score++;
    st.totalCorrect=(st.totalCorrect||0)+1;
-   addExp(10);
+   if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
+   const expKey=`${stage.id}|${q.id}`;
+   if(!st.mainExpAwarded[expKey]){
+     addExp(10);
+     st.mainExpAwarded[expKey]=true;
+     expGained=10;
+   }
    markWeaknessMastered(q);
  }else{
    recordWrongNote(q);
@@ -529,7 +536,7 @@ function submitSelectedAnswer(){
  });
  feedback.className='feedback '+(ok?'good':'bad');
  feedback.innerHTML=ok
-   ?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">✨ +10 EXP</div>`
+   ?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? '✨ +10 EXP':'本題經驗值已領取，不重複計分'}</div>`
    :`<b>🤔 這題已記進「怪獸弱點筆記」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">不公布答案，也不立即重答；之後可回首頁筆記複習。</div><div class="exp-gain">本題不獲得經驗值</div>`;
  answerActions.classList.add('hide');
  nextBtn.classList.remove('hide');
@@ -561,9 +568,8 @@ function finish(){
  if(first){
    d.add(unit);
    st.completed[stage.id]=[...d];
-   addExp(30);
  }
- if(firstPerfect){st.coins=(st.coins||0)+1;st.coinAwarded[coinKey]=true;}
+ if(firstPerfect){st.coins=(st.coins||0)+2;st.coinAwarded[coinKey]=true;}
  st.unitProgress[stage.id][unit]=10;
  st.unitScores[stage.id][unit]=score;
  replayMode=false;
@@ -573,10 +579,12 @@ function finish(){
  resultTitle.textContent=`${stage.name}・單元 ${unit+1} 完成！`;
  document.getElementById('score').textContent=pct;
  resultMsg.textContent=perfect
-   ?'本次 10 題全部答對，獲得 1 枚金幣！'
+   ?(firstPerfect?'本次 10 題全部答對，獲得 2 枚金幣！':'本單元滿分獎勵已領取，不重複獲得金幣。')
    :(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');
- coinReward.textContent=firstPerfect?'+1':(perfect?'已領取':'未獲得');
- expReward.textContent=`+${score*10+(first?30:0)} EXP`;
+ coinReward.textContent=firstPerfect?'+2':(perfect?'已領取':'未獲得');
+ const unitQuestionIds=new Set(quiz.map(x=>`${stage.id}|${x.id}`));
+ const earnedExp=[...unitQuestionIds].filter(k=>st.mainExpAwarded&&st.mainExpAwarded[k]).length*10;
+ expReward.textContent=`本單元累計 ${earnedExp} EXP`;
  stars.textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';
  header();
  page('resultPage');
@@ -804,6 +812,21 @@ function resetWeaknessAnswer(){
   weaknessResetBtn.disabled=true;
   weaknessSubmitBtn.disabled=true;
 }
+function weaknessUnitKey(note){return `${note.stageId}|${note.unit}`}
+function weaknessNotesForUnit(note){
+  return weaknessEntries().filter(x=>x.stageId===note.stageId&&Number(x.unit)===Number(note.unit));
+}
+function tryAwardWeaknessUnitCoin(note){
+  if(!st.weaknessCoinAwarded||typeof st.weaknessCoinAwarded!=='object')st.weaknessCoinAwarded={};
+  const key=weaknessUnitKey(note);
+  const notes=weaknessNotesForUnit(note);
+  if(notes.length&&notes.every(x=>x.mastered)&&!st.weaknessCoinAwarded[key]){
+    st.weaknessCoinAwarded[key]=true;
+    st.coins=(st.coins||0)+1;
+    return 1;
+  }
+  return 0;
+}
 function submitWeaknessAnswer(){
   if(!weaknessQuizNote||weaknessSelectedAnswer===null){
     toast('請先選擇一個答案');
@@ -820,11 +843,19 @@ function submitWeaknessAnswer(){
   });
   if(ok){
     st.totalCorrect=(st.totalCorrect||0)+1;
-    addExp(5);
+    if(!st.weaknessExpAwarded||typeof st.weaknessExpAwarded!=='object')st.weaknessExpAwarded={};
+    const wasMastered=Boolean(note.mastered);
+    let weaknessExp=0;
+    if(!st.weaknessExpAwarded[key]){
+      addExp(5);
+      st.weaknessExpAwarded[key]=true;
+      weaknessExp=5;
+    }
     note.mastered=true;
-    note.masteredAt=new Date().toISOString();
+    note.masteredAt=note.masteredAt||new Date().toISOString();
+    const weaknessCoin=tryAwardWeaknessUnitCoin(note);
     weaknessQuizFeedback.className='feedback good';
-    weaknessQuizFeedback.innerHTML=`<b>✅ 成功淨化怪獸！</b><br><div class="monster-cleared">🌟 已掌握這個環保弱點</div><div class="exp-gain">✨ +5 EXP</div><div class="feedback-note">圖鑑狀態已更新為「已淨化」。</div>`;
+    weaknessQuizFeedback.innerHTML=`<b>✅ 成功淨化怪獸！</b><br><div class="monster-cleared">🌟 已掌握這個環保弱點</div><div class="exp-gain">${weaknessExp?'✨ +5 EXP':'本題經驗值已領取，不重複計分'}</div>${weaknessCoin?'<div class="coin-gain">🪙 本單元怪獸全部淨化，+1 枚金幣</div>':''}<div class="feedback-note">${wasMastered?'這隻怪獸先前已淨化，本次不重複計分。':'圖鑑狀態已更新為「已淨化」。'}</div>`;
   }else{
     note.attempts=(note.attempts||0)+1;
     note.lastWrongAt=new Date().toISOString();
