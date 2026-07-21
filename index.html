@@ -2,276 +2,79 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#176b45">
-  <title>環保冒險王｜地球守護者學院</title>
+  <title>環保冒險王 v2.0｜自由主題挑戰版</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="環保冒險王首頁">
-      <span class="brand-logo">🌍</span>
-      <span>
-        <small>EARTH GUARDIANS ACADEMY</small>
-        <strong>環保冒險王</strong>
-      </span>
-    </a>
-    <nav class="top-actions">
-      <button id="homeNavBtn" class="nav-btn hidden" type="button">🏠 首頁</button>
-      <button id="leaderboardTopBtn" class="nav-btn hidden" type="button">🏆 排行榜</button>
-      <button id="profileTopBtn" class="nav-btn hidden" type="button">🧑‍🌾 我的角色</button>
-      <div class="status-pills">
-        <span id="cloudStatus">☁️ 連線中</span>
-        <span>🪙 <strong id="coinCount">0</strong></span>
-        <span>⭐ Lv.<strong id="levelCount">1</strong></span>
-      </div>
-      <button id="logoutTopBtn" class="logout-btn hidden" type="button">登出</button>
-    </nav>
-  </header>
+<header class="topbar">
+  <button id="brandBtn" class="brand" type="button"><span>🌍</span><span><small>EARTH GUARDIANS</small><strong>環保冒險王</strong></span></button>
+  <div class="top-actions">
+    <span id="cloudStatus" class="pill">☁️ 準備中</span>
+    <span class="pill">⭐ Lv.<strong id="levelCount">1</strong></span>
+    <button id="profileBtn" class="nav-btn hidden" type="button">🧑‍🌾 角色</button>
+    <button id="logoutBtn" class="nav-btn hidden" type="button">登出</button>
+  </div>
+</header>
 
-  <main>
+<main>
+  <section id="loginScreen" class="panel login-panel">
+    <div class="earth">🌍</div><p class="eyebrow">環保知識競賽題庫</p>
+    <h1>成為地球守護者</h1>
+    <p class="muted">自由選擇主題，每次隨機練習 10 題，不用循序闖關。</p>
+    <button id="googleLoginBtn" class="google-btn" type="button"><b>G</b> 使用 Google 帳號登入</button>
+    <button id="guestBtn" class="secondary" type="button">先以訪客試用</button>
+    <p id="loginError" class="error"></p>
+  </section>
 
-    <section id="loginScreen" class="card profile-card">
-      <div class="hero-icon">🌍</div>
-      <p class="eyebrow">公開環保知識挑戰</p>
-      <h2>使用 Google 帳號登入</h2>
-      <p>登入後，換電腦或手機仍可保留金幣、等級、單元成績與排行榜紀錄。</p>
-      <button id="googleLoginBtn" class="google-btn">
-        <span class="google-mark">G</span> 使用 Google 帳號登入
-      </button>
-      <p class="privacy-note">網站只會取得 Google 提供的基本帳號資料；不會取得密碼。</p>
-      <p id="loginError" class="error" aria-live="polite"></p>
+  <section id="profileScreen" class="panel hidden">
+    <p class="eyebrow">建立守護者</p><h1>設定暱稱與頭像</h1>
+    <label for="playerName">守護者暱稱</label><input id="playerName" maxlength="20" placeholder="例如：沄芯">
+    <div id="avatarChoices" class="avatar-grid"></div>
+    <button id="createProfileBtn" class="primary" type="button">進入環保總部</button>
+    <p id="profileError" class="error"></p>
+  </section>
+
+  <section id="homeScreen" class="hidden">
+    <section class="hero panel">
+      <div id="currentAvatar" class="big-avatar">🌱</div>
+      <div><p class="eyebrow">歡迎回來</p><h1 id="guardianName">地球守護者</h1><p class="muted">今天也用知識守護地球！</p></div>
+      <div class="hero-stats"><span>已答 <b id="totalAnswered">0</b> 題</span><span>正確率 <b id="overallAccuracy">0%</b></span></div>
     </section>
 
-    <section id="profileScreen" class="card profile-card hidden">
-      <div class="hero-icon">🌱</div>
-      <h2>建立守護者角色</h2>
-      <p>Google 登入成功後，請建立自己的守護者暱稱與遊戲頭像。之後仍可隨時修改。</p>
-      <label for="playerName">守護者暱稱</label>
-      <input id="playerName" maxlength="20" placeholder="例如：沄芯">
-      <fieldset>
-        <legend>選擇頭像</legend>
-        <div id="avatarChoices" class="avatar-grid"></div>
-      </fieldset>
-      <button id="createProfileBtn" class="primary">開始冒險</button>
-      <p id="profileError" class="error" aria-live="polite"></p>
+    <section class="daily panel">
+      <div><p class="eyebrow">⭐ 今日挑戰</p><h2>混合主題隨機 10 題</h2><p>優先複習答錯與尚未做過的題目。</p></div>
+      <button id="dailyChallengeBtn" class="primary big-button" type="button">開始今日挑戰</button>
+      <button id="resumeBtn" class="secondary hidden" type="button">▶ 繼續未完成挑戰</button>
     </section>
 
-    <section id="homeScreen" class="hidden">
-      <section class="guardian-hero card">
-        <div class="guardian-hero-top">
-          <div class="guardian-avatar-wrap">
-            <div id="currentAvatar" class="guardian-avatar">🌱</div>
-          </div>
-          <div class="guardian-profile-copy">
-            <p class="eyebrow">地球守護者</p>
-            <h2 id="guardianNameCard"></h2>
-            <p class="guardian-title">守護者新芽</p>
-            <div class="level-meter"><span id="levelMeterFill"></span></div>
-            <small>Lv.<span id="homeLevel">1</span>・累積 <span id="homeExp">0</span> EXP</small>
-          </div>
-          <button id="profileShortcutBtn" class="round-action" aria-label="修改守護者">⚙️</button>
-        </div>
-        <div class="guardian-currency">
-          <span>🪙 <strong id="coinCard">0</strong> 金幣</span>
-          <span>✅ <strong id="completedUnits">0</strong> 達標</span>
-          <span>🎯 <strong id="bestAccuracy">0%</strong></span>
-        </div>
-      </section>
+    <div class="section-heading"><div><p class="eyebrow">🗺️ 自由選擇</p><h2>環保主題世界</h2></div><span>所有主題都可直接開始</span></div>
+    <section id="topicGrid" class="topic-grid"></section>
 
-      <section class="today-mission card">
-        <div class="mission-heading">
-          <div>
-            <p class="eyebrow">🎯 今日任務</p>
-            <h2>答對 10 題，養成今日綠行動</h2>
-            <p>每完成一個單元，就離守護者徽章更近一步。</p>
-          </div>
-          <div class="gift-box">🎁</div>
-        </div>
-        <div class="daily-progress">
-          <div><span id="dailyAnswered">0</span>／10 題</div>
-          <div class="daily-progress-track"><span id="dailyProgressFill"></span></div>
-        </div>
-        <button id="continueBtn" class="primary mission-start-btn">開始今日挑戰</button>
-        <button id="resumeDraftBtn" class="secondary hidden">▶ 繼續未完成的單元</button>
-      </section>
-
-      <section class="adventure-section">
-        <div class="section-title compact-title">
-          <div>
-            <p class="eyebrow">🗺️ 冒險地圖</p>
-            <h2>循序解鎖環保世界</h2>
-          </div>
-          <span id="adventureProgress">0／0 關</span>
-        </div>
-        <div id="worldCards" class="adventure-map"></div>
-      </section>
-
-      <section class="guardian-tools-grid">
-        <button id="weaknessNotesBtn" class="tool-card weakness-card">
-          <span class="tool-icon">👾</span>
-          <div>
-            <p class="eyebrow">怪獸弱點筆記</p>
-            <h3>查看答錯觀念與解析</h3>
-            <small><span id="weaknessCount">0</span> 則待複習</small>
-          </div>
-          <span class="tool-arrow">›</span>
-        </button>
-
-        <section class="badge-panel card">
-          <div class="badge-panel-head">
-            <div>
-              <p class="eyebrow">🏆 守護者徽章區</p>
-              <h3>我的收藏</h3>
-            </div>
-            <span id="badgeCount">0／5</span>
-          </div>
-          <div id="guardianBadges" class="guardian-badges"></div>
-        </section>
-      </section>
-
-      <section class="quick-actions">
-        <button id="leaderboardHomeBtn" class="quick-btn">🏆 查看排行榜</button>
-        <button id="profileHomeBtn" class="quick-btn">🧑‍🌾 守護者角色</button>
-        <button id="rulesBtn" class="quick-btn">📘 挑戰規則</button>
-      </section>
-
-      <section class="green-tips card compact-green-tip">
-        <div>
-          <p class="eyebrow">🌱 今日綠行動</p>
-          <h3 id="greenTipTitle">隨手關燈，節省能源</h3>
-          <p id="greenTipText">離開房間時記得關燈，讓環保不只存在題目裡。</p>
-        </div>
-        <span class="tip-icon">💡</span>
-      </section>
+    <section class="tools-grid">
+      <button id="wrongBookBtn" class="tool panel" type="button"><span>📖</span><div><h3>錯題複習</h3><p><b id="wrongCount">0</b> 題待加強</p></div></button>
+      <button id="recordsBtn" class="tool panel" type="button"><span>📊</span><div><h3>學習紀錄</h3><p>查看各主題表現</p></div></button>
+      <button id="leaderboardBtn" class="tool panel" type="button"><span>🏆</span><div><h3>排行榜</h3><p>守護者經驗排名</p></div></button>
     </section>
+  </section>
 
-    <section id="worldScreen" class="hidden">
-      <div class="world-page-head card">
-        <button id="backDashboardBtn" class="text-btn">← 回到環保首頁</button>
-        <div>
-          <p id="worldEyebrow" class="eyebrow">WORLD</p>
-          <h2 id="worldPageTitle"></h2>
-          <p id="worldPageDescription" class="muted"></p>
-        </div>
-      </div>
-      <div class="unit-toolbar">
-        <span id="worldUnitCount"></span>
-        <div class="page-controls">
-          <button id="prevUnitPage" class="secondary">← 上一頁</button>
-          <span id="unitPageLabel"></span>
-          <button id="nextUnitPage" class="secondary">下一頁 →</button>
-        </div>
-      </div>
-      <div id="unitGrid" class="world-unit-grid"></div>
-    </section>
+  <section id="quizScreen" class="hidden">
+    <section class="quiz-head panel"><button id="quizHomeBtn" class="text-btn">← 暫停並回首頁</button><div><p id="quizTopic" class="eyebrow"></p><h2 id="questionProgress"></h2></div><div class="progress"><span id="progressBar"></span></div></section>
+    <article class="question panel"><span id="questionLevel" class="level-badge"></span><h2 id="questionText"></h2><div id="optionList" class="options"></div><button id="submitAnswerBtn" class="primary" disabled>送出答案</button><div id="feedbackBox" class="feedback hidden"></div><button id="nextQuestionBtn" class="secondary hidden">下一題</button><p id="saveStatus" class="save-status">每答完一題會自動儲存。</p></article>
+  </section>
 
-    <section id="quizScreen" class="hidden">
-      <div class="quiz-head card">
-        <button id="backHomeBtn" class="text-btn">← 返回單元</button>
-        <div>
-          <p id="unitTitle" class="eyebrow"></p>
-          <h2 id="questionProgress"></h2>
-        </div>
-        <div class="progress-track"><div id="progressBar"></div></div>
-      </div>
+  <section id="resultScreen" class="hidden"><section class="panel result"><div class="earth">🎉</div><p class="eyebrow">挑戰完成</p><h1 id="resultTitle"></h1><div class="result-score"><b id="scoreText"></b><span id="accuracyText"></span></div><p id="resultMessage"></p><div id="wrongSummary"></div><div class="button-row"><button id="retryBtn" class="secondary">再挑戰一次</button><button id="resultHomeBtn" class="primary">返回首頁</button></div></section></section>
+</main>
 
-      <article class="question-card card">
-        <span id="questionLevel" class="level-badge"></span>
-        <h2 id="questionText"></h2>
-        <div id="optionList" class="options"></div>
-        <div class="answer-action-row">
-          <button id="saveUnitProgressBtn" class="secondary">💾 儲存本單元進度</button>
-          <button id="submitAnswerBtn" class="primary" disabled>送出答案</button>
-        </div>
-        <p id="unitSaveStatus" class="answer-save-status">單元尚未做完時，可先儲存，之後從首頁接續作答。</p>
-        <div id="feedbackBox" class="feedback hidden"></div>
-        <button id="nextQuestionBtn" class="secondary hidden">下一題</button>
-      </article>
-    </section>
+<dialog id="profileDialog"><div class="dialog-head"><h2>🧑‍🌾 我的角色</h2><button data-close="profileDialog" class="text-btn">關閉</button></div><label for="editName">暱稱</label><input id="editName" maxlength="20"><div id="editAvatarChoices" class="avatar-grid"></div><button id="saveProfileBtn" class="primary">儲存</button></dialog>
+<dialog id="wrongDialog"><div class="dialog-head"><h2>📖 錯題複習</h2><button data-close="wrongDialog" class="text-btn">關閉</button></div><p class="muted">依約定只顯示題目、你的選項與解析，不直接公布正確答案。</p><div id="wrongList" class="list"></div><button id="practiceWrongBtn" class="primary">開始錯題練習</button></dialog>
+<dialog id="recordsDialog"><div class="dialog-head"><h2>📊 學習紀錄</h2><button data-close="recordsDialog" class="text-btn">關閉</button></div><div id="recordsList" class="list"></div></dialog>
+<dialog id="leaderboardDialog"><div class="dialog-head"><h2>🏆 守護者排行榜</h2><button data-close="leaderboardDialog" class="text-btn">關閉</button></div><div id="leaderboardList" class="list"></div></dialog>
 
-    <section id="resultScreen" class="hidden">
-      <div class="card result-card">
-        <div id="resultIcon" class="hero-icon">🎉</div>
-        <p class="eyebrow">單元完成</p>
-        <h2 id="resultTitle"></h2>
-        <div class="score-circle"><strong id="scoreText"></strong><span id="accuracyText"></span></div>
-        <p id="rewardText"></p>
-        <div id="wrongSummary" class="wrong-summary"></div>
-        <div class="button-row">
-          <button id="retryBtn" class="secondary">重新挑戰</button>
-          <button id="resultHomeBtn" class="primary">返回單元</button>
-        </div>
-      </div>
-    </section>
-
-
-
-    <dialog id="rulesDialog">
-      <div class="dialog-head"><h2>📘 挑戰規則</h2><button id="closeRules" class="text-btn">關閉</button></div>
-      <div class="rules-list">
-        <p>🌱 每個單元共 10 題。</p>
-        <p>🎯 答對率達 80% 即過關。</p>
-        <p>🪙 每個達標單元獲得 1 枚金幣，沒有每日上限。</p>
-        <p>🎁 每天第一次登入再獲得 1 枚金幣。</p>
-        <p>📚 題目依初級、中級、中高級、高級循序安排。</p>
-      </div>
-    </dialog>
-
-    <dialog id="accountDialog" class="guardian-dialog">
-      <div class="dialog-head">
-        <div>
-          <p class="eyebrow">GUARDIAN PROFILE</p>
-          <h2>🧑‍🌾 我的守護者角色</h2>
-        </div>
-        <button id="closeAccount" class="text-btn">關閉</button>
-      </div>
-
-      <div id="accountInfo" class="account-info"></div>
-
-      <label for="editPlayerName"><strong>守護者暱稱</strong></label>
-      <input id="editPlayerName" class="profile-edit-input" maxlength="20" placeholder="輸入守護者暱稱">
-
-      <fieldset class="profile-edit-fieldset">
-        <legend><strong>選擇遊戲頭像</strong></legend>
-        <p class="muted">Google 大頭貼只用來辨識帳號；排行榜與遊戲畫面會顯示你選擇的守護者頭像。</p>
-        <div id="editAvatarChoices" class="avatar-grid"></div>
-      </fieldset>
-
-      <div class="dialog-actions">
-        <button id="saveProfileBtn" class="primary">儲存角色設定</button>
-        <button id="logoutBtn" class="danger-btn">登出 Google 帳號</button>
-      </div>
-      <p id="editProfileMessage" class="profile-message" aria-live="polite"></p>
-    </dialog>
-
-    <dialog id="weaknessDialog" class="weakness-dialog">
-      <div class="dialog-head">
-        <div>
-          <p class="eyebrow">MONSTER WEAKNESS NOTES</p>
-          <h2>👾 怪獸弱點筆記</h2>
-        </div>
-        <button id="closeWeakness" class="text-btn">關閉</button>
-      </div>
-      <p class="muted">這裡只記錄題目、你的選項與解析，不直接公布正確答案。</p>
-      <div id="weaknessList" class="weakness-list"></div>
-      <button id="clearWeaknessBtn" class="danger-btn">清除全部筆記</button>
-    </dialog>
-
-    <dialog id="leaderboardDialog">
-      <div class="dialog-head"><h2>🏆 守護者排行榜</h2><button id="closeLeaderboard" class="text-btn">關閉</button></div>
-      <p>依目前累積經驗值排序。</p>
-      <div id="leaderboardList"></div>
-    </dialog>
-  </main>
-
-  <footer>題目來源：使用者提供之《環保知識競賽題庫》共 <span id="questionTotal"></span> 題</footer>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="questions.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+<footer>題目來源：使用者提供之《環保知識競賽題庫》共 <span id="questionTotal">0</span> 題｜v2.0 自由主題版</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script><script src="questions.js"></script><script src="app.js"></script>
+</body></html>
