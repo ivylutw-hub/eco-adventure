@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6b50">
+<meta name="description" content="適合國小中高年級的環境教育闖關遊戲：四大冒險關卡、2,844題固定題庫與每週排行榜、玩家成長、守護基地與金門特色生物。">
+<meta name="author" content="環保冒險王">
+<meta property="og:type" content="website">
+<meta property="og:title" content="環保冒險王｜Earth Guardian Adventure">
+<meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
+<meta property="og:image" content="social-preview.svg">
+<meta name="twitter:card" content="summary_large_image">
+<title>環保冒險王 V9.1.3｜功能更新版</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css?v=913">
+</head>
+<body>
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <div class="brand-mark" aria-hidden="true"><span>🌍</span><i>🌿</i></div>
+    <small class="eyebrow">EARTH GUARDIAN ADVENTURE</small>
+    <h1>環保冒險王</h1>
+    <p class="login-lead">答題、升級、修復基地，成為守護金門與地球的生態英雄。</p>
+    <div class="feature-chips"><span>🗺️ 四大冒險</span><span>📚 2,844 題</span><span>🦦 金門守護者</span></div>
+    <label>玩家名稱</label>
+    <input id="nameInput" value="沄芯" maxlength="12">
+    <label>選擇守護者頭像</label>
+    <div id="loginAvatars" class="avatar-grid login-avatars"></div>
+    <small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
+    <button id="googleLoginBtn" class="primary full google-login" onclick="googleLogin()">🟢 使用 Google 開始冒險</button>
+    <p id="loginCloudStatus" class="note">使用同一個 Google 帳號，可在手機、平板與電腦接續進度。</p>
+  </div>
+</div>
+
+<div id="game" class="app hide">
+<header>
+  <div>
+    <small>EARTH GUARDIAN ADVENTURE</small>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.1.3</span></h1>
+    <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
+  </div>
+  <div class="header-actions">
+    <button class="player player-button" onclick="showProfile()" title="開啟我的資料">
+      <span id="playerAvatar" class="player-avatar frame-none">🦊</span>
+      <div><b id="playerName">沄芯</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
+    </button>
+    <button id="soundToggle" class="icon-action" onclick="toggleSound()" aria-label="切換音效" title="切換音效">🔊</button>
+    <button class="logout" onclick="confirmLogout()">🚪 登出</button>
+  </div>
+</header>
+
+<section class="stats">
+  <div>🪙<span>守護金幣</span><b id="coins">0</b></div>
+  <div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
+  <div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
+  <div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
+  <div>🎁<span>每日登入</span><b id="loginState">今日已領 +1</b></div>
+</section>
+
+<section class="save-panel">
+  <div>
+    <span class="save-dot" id="saveDot"></span>
+    <b id="saveStatus">已自動存檔</b>
+    <small id="saveTime">尚未建立存檔</small>
+  </div>
+  <div class="save-actions">
+    <button onclick="manualSave()">💾 立即存檔</button>
+    <button onclick="exportSave()">⬇️ 匯出存檔</button>
+    <label class="import-btn">⬆️ 匯入存檔<input id="importFile" type="file" accept=".json,application/json" onchange="importSave(event)"></label>
+  </div>
+</section>
+
+<nav class="tabs">
+  <button onclick="showMap()">🗺️ 冒險地圖</button>
+  <button onclick="showBase()">🌍 守護基地</button>
+  <button onclick="showHall()">🏆 榮耀殿堂</button>
+  <button onclick="showLeaderboard()">🥇 每週排行</button>
+  <button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span id="weaknessCount" class="nav-count">0</span></button>
+  <button onclick="showProfile()">👤 我的資料</button>
+  <button id="adminNavBtn" class="hide" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
+</nav>
+
+<main id="mapPage">
+  <div class="title">
+    <div><small>OPEN WORLD MAP</small><h2>🗺️ 地球修復冒險地圖</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
+  </div>
+  <div class="map" id="map"></div>
+</main>
+
+<main id="stagePage" class="hide">
+  <button class="back" onclick="showMap()">← 回冒險地圖</button>
+  <section class="stageHero">
+    <div id="stageIcon"></div>
+    <div><small id="stageCode"></small><h2 id="stageName"></h2><p id="stageDesc"></p></div>
+  </section>
+  <div id="mix" class="mix"></div>
+  <div class="progressText"><b>探索進度</b><span id="stageProgress"></span></div><div class="bar"><i id="stageBar"></i></div>
+  <h3>選擇單元</h3><div class="units" id="units"></div>
+</main>
+
+<main id="quizPage" class="hide">
+  <div class="quizTop"><button class="back" onclick="quitQuiz()">← 暫停冒險</button><b id="quizCount"></b></div>
+  <div class="bar"><i id="quizBar"></i></div>
+  <div class="enemy"><span id="enemyIcon">👾</span><div><small>環境危機</small><b id="enemyName"></b></div></div>
+  <span id="levelTag" class="tag"></span>
+  <h2 id="question"></h2>
+  <div id="options" class="options"></div>
+  <div id="answerActions" class="answer-actions">
+    <button id="submitAnswerBtn" class="primary" onclick="submitSelectedAnswer()" disabled>確定送出</button>
+  </div>
+  <div id="feedback" class="feedback hide"></div>
+  <button id="nextBtn" class="primary hide" type="button">下一題 →</button>
+</main>
+
+<main id="resultPage" class="hide center">
+  <div class="resultIcon">🎉</div><small>UNIT COMPLETE</small><h2 id="resultTitle"></h2>
+  <div class="score"><b id="score">0</b><span>分</span></div>
+  <p id="resultMsg"></p>
+  <div class="reward"><div>🪙<b id="coinReward">+1</b><small>單元獎勵</small></div><div>✨<b id="expReward">+0 EXP</b><small>守護經驗</small></div><div>⭐<b id="stars">★★★</b><small>本次表現</small></div></div>
+  <button id="backToStageBtn" type="button" class="primary" onclick="backToStage(event)">回到關卡</button>
+</main>
+
+<main id="basePage" class="hide">
+  <div class="title">
+    <div><small>GUARDIAN BASE</small><h2>🌍 我的守護基地</h2><p>把闖關獲得的金幣投入基地，讓世界慢慢恢復生機。</p></div>
+  </div>
+  <div class="base-scene" id="baseScene"></div>
+  <div class="shop-head"><h3>基地建設</h3><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
+  <div class="shop" id="shop"></div>
+</main>
+
+
+<main id="adminPage" class="hide">
+  <div class="title">
+    <div><small>ADMIN CONSOLE</small><h2>🛠️ 管理後臺</h2><p>查看玩家與雲端資料概況。只有 Firestore 中 isAdmin 為 true 的帳號可使用。</p></div>
+  </div>
+  <section id="adminSummary" class="admin-summary"></section>
+  <div class="shop-head"><h3>玩家資料</h3><button class="primary" onclick="loadAdminDashboard()">重新整理</button></div>
+  <div id="adminPlayerList" class="admin-player-list"><div class="empty-ranking">正在載入管理資料…</div></div>
+</main>
+
+<main id="hallPage" class="hide center">
+  <div class="hallIcon">🏆</div><h2>榮耀殿堂</h2><p>完成每一關全部單元，就能點亮專屬徽章。</p>
+  <div id="hall" class="hall"></div>
+  <div id="legend" class="legend locked">👑<h3>傳奇地球守護者</h3><p>集齊四枚榮耀徽章後解鎖</p></div>
+</main>
+
+
+<main id="leaderboardPage" class="hide">
+  <div class="title leaderboard-title">
+    <div><small>WEEKLY GUARDIAN RANKING</small><h2>🥇 每週守護者排行榜</h2><p>不分班級，所有玩家共同競賽；依守護經驗值由高到低排名。</p></div>
+    <button class="secondary" onclick="refreshLeaderboard()">🔄 更新排行</button>
+  </div>
+  <section class="weekly-card">
+    <div><small>本週週期</small><b id="weekLabel">—</b></div>
+    <div><small>我的守護經驗</small><b id="myWeeklyPoints">0</b></div>
+    <div><small>我的名次</small><b id="myWeeklyRank">—</b></div>
+  </section>
+  <div id="cloudStatus" class="cloud-status">☁️ 正在連線排行榜…</div>
+  <div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
+  <div id="leaderboardList" class="leaderboard-list"></div>
+  <p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。</p>
+</main>
+
+<main id="weaknessPage" class="hide">
+  <div class="title weakness-title">
+    <div>
+      <small>MONSTER WEAKNESS NOTES</small>
+      <h2>👾 怪獸弱點圖鑑</h2>
+      <p>曾經答錯的題目會化身成環保怪獸加入圖鑑。先再次挑戰，答錯後才會顯示解析。</p>
+    </div>
+    <div class="weakness-mascot">👾✍️</div>
+  </div>
+  <section class="weakness-summary">
+    <button class="weakness-summary-card" type="button" onclick="openWeaknessCategory('pending')" aria-label="查看待破解怪獸">
+      <span>🧩</span><small>待破解怪獸</small><b id="weaknessPending">0</b><em>點擊查看 →</em>
+    </button>
+    <button class="weakness-summary-card" type="button" onclick="openWeaknessCategory('mastered')" aria-label="查看已淨化怪獸">
+      <span>✅</span><small>已淨化怪獸</small><b id="weaknessMastered">0</b><em>點擊查看 →</em>
+    </button>
+    <button class="weakness-summary-card" type="button" onclick="openWeaknessCategory('all')" aria-label="查看全部圖鑑">
+      <span>📚</span><small>圖鑑收錄</small><b id="weaknessTotal">0</b><em>點擊查看 →</em>
+    </button>
+  </section>
+  <div class="weakness-dashboard-tools">
+    <label class="weakness-search">
+      <span>🔍</span>
+      <input id="weaknessSearch" type="search" placeholder="搜尋怪獸、題目或環保主題" oninput="renderWeaknessBook()">
+    </label>
+    <div class="weakness-progress-box">
+      <div><span>圖鑑完成率</span><b id="weaknessProgressText">0 / 0（0%）</b></div>
+      <div class="weakness-progress-track"><i id="weaknessProgressBar"></i></div>
+    </div>
+  </div>
+  <div class="weakness-tools">
+    <div class="filter-group">
+      <button id="weakFilterAll" class="active" onclick="setWeaknessFilter('all')">全部</button>
+      <button id="weakFilterPending" onclick="setWeaknessFilter('pending')">待破解</button>
+      <button id="weakFilterMastered" onclick="setWeaknessFilter('mastered')">已淨化</button>
+    </div>
+  </div>
+  <div id="weaknessList" class="weakness-list"></div>
+</main>
+
+<main id="profilePage" class="hide">
+  <div class="title">
+    <div><small>GUARDIAN PROFILE</small><h2>👤 我的守護者資料</h2><p>修改名稱與已解鎖頭像，查看等級、稱號及冒險紀錄。</p></div>
+  </div>
+
+  <section class="profile-hero">
+    <div id="profileAvatarPreview" class="profile-avatar frame-none">🦊</div>
+    <div class="profile-main">
+      <label>玩家名稱</label>
+      <div class="profile-name-row">
+        <input id="profileNameInput" maxlength="12">
+        <button class="primary" onclick="saveProfileName()">儲存名稱</button>
+      </div>
+      <h3 id="profileDisplayName">沄芯</h3>
+      <p id="profileTitleText">見習地球守護者</p>
+      <div class="level-line"><b id="profileLevel">Lv.1</b><span id="profileExpText">0 / 100 EXP</span></div>
+      <div class="bar profile-exp-bar"><i id="profileExpBar"></i></div>
+    </div>
+  </section>
+
+  <section class="profile-summary" id="profileSummary"></section>
+
+  <h3>選擇守護者頭像</h3>
+  <p class="section-note">鎖定的守護者會在達到指定等級後自動解鎖。</p>
+  <div id="profileAvatars" class="avatar-grid"></div>
+
+  <h3>選擇頭像外框</h3>
+  <div id="frameChoices" class="frame-grid"></div>
+
+  <section class="kinmen-final">
+    <div>🦦</div><div class="horseshoe-icon" role="img" aria-label="金門鱟"></div>
+    <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
+  </section>
+</main>
+
+</div>
+
+<div id="logoutModal" class="modal hide">
+  <div class="modal-card">
+    <h3>確定要登出嗎？</h3>
+    <p>進度已同步至 Google 帳號；登出後可再次登入接續遊玩。</p>
+    <div><button onclick="closeLogout()">取消</button><button class="danger" onclick="logout()">登出</button></div>
+  </div>
+</div>
+
+
+<div id="weaknessQuizModal" class="modal hide">
+  <div class="modal-card weakness-quiz-card">
+    <button class="modal-close" onclick="closeWeaknessQuiz()" aria-label="關閉">×</button>
+    <small>MONSTER WEAKNESS CHALLENGE</small>
+    <h2>👾 弱點再次挑戰</h2>
+    <div id="weaknessQuizMeta" class="weakness-quiz-meta"></div>
+    <h3 id="weaknessQuizQuestion"></h3>
+    <div id="weaknessQuizOptions" class="options weakness-quiz-options"></div>
+    <div id="weaknessQuizActions" class="answer-actions">
+      <button id="weaknessResetBtn" class="secondary" onclick="resetWeaknessAnswer()" disabled>重新選擇</button>
+      <button id="weaknessSubmitBtn" class="primary" onclick="submitWeaknessAnswer()" disabled>確定送出</button>
+    </div>
+    <div id="weaknessQuizFeedback" class="feedback hide"></div>
+    <button id="weaknessDoneBtn" class="primary full hide" onclick="closeWeaknessQuiz()">回到弱點筆記</button>
+  </div>
+</div>
+
+<div id="effectLayer" class="effect-layer" aria-hidden="true"></div>
+<div id="levelModal" class="modal hide">
+  <div class="modal-card level-card">
+    <div id="levelUnlockIcon" class="level-unlock-icon">✨</div>
+    <small>GUARDIAN LEVEL UP</small>
+    <h2 id="levelUnlockTitle">守護者升級！</h2>
+    <p id="levelUnlockText"></p>
+    <button class="primary full" onclick="closeLevelModal()">繼續冒險</button>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js?v=710"></script>
+<script src="questions.js?v=901"></script>
+<script src="config.js?v=913"></script>
+<script src="game.js?v=913"></script>
+<script src="firebase.js?v=913"></script>
+</body></html>
