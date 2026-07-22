@@ -956,3 +956,20 @@ footer{padding:28px;text-align:center;color:var(--muted);font-size:12px}
 /* v8.0 stability/accessibility */
 #backToStageBtn{min-width:148px;touch-action:manipulation;cursor:pointer;position:relative;z-index:3}
 #backToStageBtn:active{transform:translateY(1px)}
+
+/* ===== V9.0.1 可點擊區域與原創溫暖自然風格補強 ===== */
+button,.import-btn,[role="button"]{box-sizing:border-box;position:relative;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button::before,.import-btn::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+#nextBtn,#backToStageBtn,.answer-actions button{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;line-height:1.25}
+#nextBtn:not(.hide),#backToStageBtn{pointer-events:auto!important;z-index:120}
+.guardian-avatar-img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.player-avatar .guardian-avatar-img,.profile-avatar .guardian-avatar-img{width:82%;height:82%;margin:auto}
+.horseshoe-icon{background:url('../assets/guardians/horseshoe-crab.svg') center/contain no-repeat;color:transparent;min-width:64px;min-height:64px}
+body{background:linear-gradient(180deg,#dff4ee 0,#f8f1dc 58%,#eef7df 100%)}
+.login-card,main,.save-panel,.stats,.tabs{border-color:rgba(102,132,78,.22)}
+.primary{background:linear-gradient(180deg,#80b94a,#4d8d35)}
+@media(max-width:700px){
+  body.quiz-mode #nextBtn{display:flex!important;align-items:center;justify-content:center}
+  body.quiz-mode #nextBtn.hide{display:none!important}
+  #backToStageBtn{min-height:60px;font-size:19px;margin-inline:auto}
+}
