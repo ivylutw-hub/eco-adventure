@@ -257,7 +257,6 @@ function enterGame(){
   updateSaveStatus('saved');
   updateSoundButton();
   page('mapPage');
-  fetchBaseWeather();
 }
 function dailyLogin(){
   const t=dateStr();
@@ -807,30 +806,9 @@ async function fetchBaseWeather(force=false){
   const aqi=Math.round(Number(airData.current?.us_aqi)||0);
   baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night'};
   baseEnvironment={location:location.label,temperature:Math.round(Number(current.temperature_2m)||0),aqi,aqiInfo:aqiLevel(aqi)};
-  baseWeatherFetchedAt=Date.now();renderBaseSky();renderHomeNatureInfo();
- }catch(err){console.warn('即時天氣或 AQI 載入失敗，使用本機時間與備援資料。',err);baseLiveWeather=null;baseEnvironment=null;renderBaseSky();renderHomeNatureInfo();}
+  baseWeatherFetchedAt=Date.now();renderBaseSky();
+ }catch(err){console.warn('即時天氣或 AQI 載入失敗，使用本機時間與備援資料。',err);baseLiveWeather=null;baseEnvironment=null;renderBaseSky();}
 }
-
-function renderHomeNatureInfo(){
- const card=document.getElementById('homeNatureInfo');
- if(!card)return;
- const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
- const env=baseEnvironment;
- const body=card.querySelector('.home-nature-body');
- if(!body)return;
- if(env){
-  body.innerHTML=`<span>📍 ${env.location}</span><span>${weather.icon} ${weather.label}　🌡️ ${env.temperature}°C</span><span class="home-aqi-line aqi-${env.aqiInfo.className}"><small>空氣品質指標 AQI</small><b>${env.aqi}　${env.aqiInfo.label}</b></span>`;
- }else{
-  body.innerHTML=`<span>📍 金門</span><span>${weather.icon} ${weather.label}　🌡️ --°C</span><span class="home-aqi-line"><small>空氣品質指標 AQI</small><b>—　載入中</b></span>`;
- }
-}
-function toggleHomeNatureInfo(event){
- if(event){event.preventDefault();event.stopPropagation();}
- const card=document.getElementById('homeNatureInfo');if(!card)return;
- card.classList.toggle('collapsed');
- const btn=document.getElementById('homeNatureToggle');if(btn)btn.textContent=card.classList.contains('collapsed')?'+':'−';
-}
-
 function baseTimeMode(){
   const hour=new Date().getHours();
   return hour>=6&&hour<18?'day':'night';
@@ -1321,7 +1299,6 @@ ensureProgress();ensureProfile();if(typeof st.soundEnabled!=='boolean')st.soundE
 // 每分鐘同步首頁與守護基地的日月位置及日夜狀態。
 setInterval(()=>{
  renderHeaderNature();
- renderHomeNatureInfo();
  const basePage=document.getElementById('basePage');
  if(basePage&&!basePage.classList.contains('hide'))renderBaseSky();
 },60*1000);

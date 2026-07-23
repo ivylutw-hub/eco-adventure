@@ -52,7 +52,7 @@
   </div>
   <div class="header-copy">
     <small>EARTH GUARDIAN ADVENTURE</small>
-    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.4.1 Beta</span></h1>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.4.1</span></h1>
     <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
   </div>
   <div class="header-actions">
@@ -71,22 +71,7 @@
   <div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
   <div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
   <div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
-  <section class="checkin-stat checkin-with-nature" aria-label="本月每日簽到與今日自然資訊">
-    <div class="checkin-calendar-pane" role="button" tabindex="0" onclick="showCheckinCalendar()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showCheckinCalendar()}">
-      <div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div>
-      <div id="homeCheckinMonth" class="home-checkin-month"></div>
-      <div id="homeCheckinGrid" class="home-checkin-grid"></div>
-      <small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small>
-    </div>
-    <aside id="homeNatureInfo" class="home-nature-info" aria-live="polite">
-      <div class="home-nature-head"><b>🌿 今日自然資訊</b><button type="button" id="homeNatureToggle" aria-label="收合今日自然資訊" onclick="toggleHomeNatureInfo(event)">−</button></div>
-      <div class="home-nature-body">
-        <span>📍 金門</span>
-        <span>🌤️ 天氣載入中…</span>
-        <span class="home-aqi-line"><small>空氣品質指標 AQI</small><b>—　載入中</b></span>
-      </div>
-    </aside>
-  </section>
+  <section class="checkin-stat" aria-label="本月每日簽到"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div id="homeCheckinMonth" class="home-checkin-month"></div><div id="homeCheckinGrid" class="home-checkin-grid"></div><small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small></section>
 </section>
 
 <section class="save-panel">
