@@ -52,7 +52,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.8</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.9</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <div class="header-actions">
@@ -257,8 +257,14 @@
 <div class="cloud-status" id="cloudStatus">☁️ 正在連線排行榜…</div>
 <div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
 <div class="leaderboard-list" id="leaderboardList"></div>
-<p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。</p>
+<p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。點選玩家可查看公開的守護數據與分析。</p>
 </main>
+<div class="rank-profile-modal hide" id="rankProfileModal" role="dialog" aria-modal="true" aria-labelledby="rankProfileTitle" onclick="closeRankProfile(event)">
+  <section class="rank-profile-panel" onclick="event.stopPropagation()">
+    <button class="rank-profile-close" type="button" aria-label="關閉玩家資料" onclick="closeRankProfile()">✕</button>
+    <div id="rankProfileContent"></div>
+  </section>
+</div>
 <main class="hide" id="weaknessPage">
 <div class="title weakness-title">
 <div>

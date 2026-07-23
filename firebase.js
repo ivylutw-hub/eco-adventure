@@ -80,13 +80,23 @@ function playerFields(includeCreatedAt=false){
 }
 function weeklyFields(){
  const w=ensureWeeklyLocal(),av=avatarById(st.avatar);
+ const totalAnswered=Math.max(0,Number(st.totalAnswered)||0);
+ const totalCorrect=Math.max(0,Number(st.totalCorrect)||0);
+ const unlockedAchievements=typeof buildAchievementList==='function'?buildAchievementList().filter(a=>a.progress>=a.goal).length:0;
  return {
   uid:cloudUser.uid,
   name:(st.name||cloudUser.displayName||'環保守護者').slice(0,12),
   avatar:av.icon,
   level:currentLevel(),
+  title:String(st.specialTitle||'地球守護者').slice(0,16),
   guardianExp:Number(st.exp)||0,
   coins:Number(st.coins)||0,
+  badges:typeof S!=='undefined'?S.filter(isDone).length:0,
+  streak:Math.max(0,Number(st.streak)||0),
+  totalAnswered,
+  totalCorrect,
+  accuracy:totalAnswered?Math.round(totalCorrect/totalAnswered*100):0,
+  achievements:unlockedAchievements,
   points:Number(w.points)||0,
   completedUnits:w.completedKeys.length,
   perfectUnits:w.perfectKeys.length,
@@ -243,22 +253,46 @@ function timestampMillis(value){
  if(value.seconds)return Number(value.seconds)*1000;
  return Date.parse(value)||0;
 }
+let leaderboardRowsCache=[];
 async function refreshLeaderboard(){
  ensureWeeklyLocal();const label=document.getElementById('weekLabel'),pts=document.getElementById('myWeeklyPoints'),rank=document.getElementById('myWeeklyRank'),list=document.getElementById('leaderboardList');
  if(label)label.textContent=weekDateRange();if(pts)pts.textContent=Number(st.exp)||0;if(!list)return;
  if(!cloudReady){if(rank)rank.textContent='—';list.innerHTML='<div class="empty-ranking">請先使用 Google 登入，才能查看共同排行榜。</div>';setCloudStatus('offline','☁️ 尚未登入 Google');return;}
  try{
-  // 排行榜頁面只讀取；玩家資料已在登入、答題及存檔流程同步。
   const snap=await cloudDb.collection('weeklyRankings').doc(currentWeekId()).collection('players').limit(500).get();
   const rows=snap.docs.map(d=>d.data()).sort((a,b)=>{
    const expDiff=(Number(b.guardianExp)||0)-(Number(a.guardianExp)||0);
    return expDiff||timestampMillis(b.updatedAt)-timestampMillis(a.updatedAt);
   });
+  leaderboardRowsCache=rows;
   if(!rows.length){list.innerHTML='<div class="empty-ranking">本週還沒有排名紀錄。</div>';if(rank)rank.textContent='—';return;}
   const myIndex=rows.findIndex(x=>x.uid===cloudUser.uid);if(myIndex>=0){const currentRank=myIndex+1;if(!st.bestWeeklyRank||currentRank<st.bestWeeklyRank){st.bestWeeklyRank=currentRank;save();}}if(rank)rank.textContent=myIndex>=0?`第 ${myIndex+1} 名`:'500 名以外';list.innerHTML='';
-  rows.forEach((x,i)=>{const row=document.createElement('div');row.className='rank-row'+(x.uid===cloudUser.uid?' me':'');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${Number(x.guardianExp)||0}</b><small>守護經驗</small></div>`;list.appendChild(row);});setCloudStatus('online','☁️ 排行榜已更新');
+  rows.forEach((x,i)=>{const row=document.createElement('button');row.type='button';row.className='rank-row rank-row-button'+(x.uid===cloudUser.uid?' me':'');row.setAttribute('aria-label',`查看 ${x.name||'環保守護者'} 的守護數據`);const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${Number(x.guardianExp)||0}</b><small>守護經驗</small></div><span class="rank-open">查看分析 ›</span>`;row.addEventListener('click',()=>openRankProfile(i));list.appendChild(row);});setCloudStatus('online','☁️ 排行榜已更新');
  }catch(err){console.error('讀取排行榜失敗',err);list.innerHTML='<div class="empty-ranking">目前無法讀取雲端排行，遊戲進度不受影響。</div>';setCloudStatus('offline','☁️ 排行榜暫時離線，遊戲進度不受影響');}
 }
+function rankClamp(value){return Math.max(0,Math.min(100,Number(value)||0))}
+function rankMetric(label,value,icon){return `<div class="rank-data-item"><span>${icon}</span><small>${label}</small><b>${escapeRankText(value)}</b></div>`}
+function rankBar(label,value,detail){const pct=rankClamp(value);return `<div class="rank-analysis-row"><div><b>${label}</b><small>${detail}</small></div><div class="rank-analysis-track"><i style="width:${pct}%"></i></div><strong>${Math.round(pct)}</strong></div>`}
+function openRankProfile(index){
+ const x=leaderboardRowsCache[index];if(!x)return;
+ const modal=document.getElementById('rankProfileModal'),content=document.getElementById('rankProfileContent');if(!modal||!content)return;
+ const rank=index+1,totalAnswered=Math.max(0,Number(x.totalAnswered)||0),totalCorrect=Math.max(0,Number(x.totalCorrect)||0);
+ const accuracy=Number.isFinite(Number(x.accuracy))?Number(x.accuracy):(totalAnswered?Math.round(totalCorrect/totalAnswered*100):0);
+ const completed=Math.max(0,Number(x.completedUnits)||0),perfect=Math.max(0,Number(x.perfectUnits)||0),streak=Math.max(0,Number(x.streak)||0),ach=Math.max(0,Number(x.achievements)||0),badges=Math.max(0,Number(x.badges)||0);
+ const activityScore=rankClamp(totalAnswered/5),accuracyScore=rankClamp(accuracy),completionScore=rankClamp(completed/0.4),perfectScore=rankClamp(perfect*12.5),streakScore=rankClamp(streak*7),achievementScore=rankClamp(ach/0.15);
+ const strongest=[['答題活躍',activityScore],['答題正確',accuracyScore],['關卡完成',completionScore],['滿分挑戰',perfectScore],['持續登入',streakScore],['成就收藏',achievementScore]].sort((a,b)=>b[1]-a[1]);
+ const praise=strongest[0][1]>=70?`${strongest[0][0]}表現最亮眼`:'正在穩定累積守護力量';
+ const improve=strongest[strongest.length-1][1]<55?`下一步可加強「${strongest[strongest.length-1][0]}」`:'各項能力發展相當均衡';
+ const avatar=String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img rank-profile-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱');
+ content.innerHTML=`<header class="rank-profile-head"><div class="rank-profile-avatar">${avatar}</div><div><small>WEEKLY GUARDIAN PROFILE</small><h2 id="rankProfileTitle">${escapeRankText(x.name||'環保守護者')}</h2><p>${escapeRankText(x.title||'地球守護者')}・Lv.${Number(x.level)||1}・本週第 ${rank} 名</p></div><div class="rank-profile-rank">#${rank}</div></header>
+ <section class="rank-data-grid">${rankMetric('守護經驗',Number(x.guardianExp||0).toLocaleString('zh-TW'),'⭐')}${rankMetric('守護金幣',Number(x.coins||0).toLocaleString('zh-TW'),'🪙')}${rankMetric('榮耀徽章',`${badges} 枚`,'🏅')}${rankMetric('連續登入',`${streak} 天`,'🔥')}${rankMetric('累計答題',`${totalAnswered} 題`,'📝')}${rankMetric('答題正確率',`${Math.round(accuracy)}%`,'🎯')}${rankMetric('完成單元',`${completed} 個`,'🗺️')}${rankMetric('解鎖成就',`${ach} 個`,'🏆')}</section>
+ <section class="rank-analysis-card"><div class="rank-section-title"><div><small>PLAYER ANALYSIS</small><h3>📊 守護能力分析表</h3></div><span>公開數據</span></div>
+ ${rankBar('答題活躍',activityScore,`${totalAnswered} 題累計作答`)}${rankBar('答題正確',accuracyScore,`${Math.round(accuracy)}% 正確率`)}${rankBar('關卡完成',completionScore,`${completed} 個本週完成單元`)}${rankBar('滿分挑戰',perfectScore,`${perfect} 個滿分單元`)}${rankBar('持續登入',streakScore,`${streak} 天連續登入`)}${rankBar('成就收藏',achievementScore,`${ach} 個已解鎖成就`)}</section>
+ <section class="rank-report"><b>🌟 守護分析報告</b><p>${praise}，${improve}。排行榜僅顯示遊戲中的公開統計，不會顯示真實姓名、學校、班級或個別答題內容。</p></section>`;
+ modal.classList.remove('hide');document.body.classList.add('modal-open');modal.querySelector('.rank-profile-close')?.focus();
+}
+function closeRankProfile(event){if(event&&event.target!==event.currentTarget)return;const modal=document.getElementById('rankProfileModal');if(modal)modal.classList.add('hide');document.body.classList.remove('modal-open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRankProfile()});
 function escapeRankText(v){const d=document.createElement('div');d.textContent=String(v);return d.innerHTML}
 function showLeaderboard(){page('leaderboardPage');refreshLeaderboard()}
 const _v80finish=finish;finish=function(){ensureProgress();const wasFirst=!doneSet(stage.id).has(unit),wasFirstPerfect=score===quiz.length&&!((st.coinAwarded||{})[`${stage.id}|${unit}`]),sid=stage.id,ui=unit;_v80finish();recordWeeklyUnitProgress(sid,ui,wasFirst,wasFirstPerfect)};
