@@ -15,7 +15,7 @@
 <title>環保冒險王 V9.4.1 Beta｜森林探險介面</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=94103" rel="stylesheet"/>
+<link href="style.css?v=94104" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -52,7 +52,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 3</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 4</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <div class="header-actions">
@@ -64,15 +64,7 @@
 <button class="logout" onclick="confirmLogout()">🚪 登出</button>
 </div>
 </header>
-<section class="stats">
-<div>🪙<span>守護金幣</span><b id="coins">0</b></div>
-<div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
-<div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
-<div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
-<div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
-<section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
 
-</section>
 
 <nav class="tabs">
 <button onclick="showMap()">🗺️ 冒險地圖</button>
@@ -133,14 +125,9 @@
 <div class="base-workspace-card">
 <div class="base-time-overlay">
 <div class="base-clock"><b id="baseLocalTime">--:--</b><small>本地時間</small></div>
-<div class="base-sun-guide"><span>☀️</span><div><b>太陽從右往左移動</b><small>依玩家所在地時間呈現</small></div></div>
+
 </div>
-<aside aria-label="基地工具" class="base-side-tools">
-<button onclick="showBaseInfo()" type="button">📋<span>基地資訊</span></button>
-<button onclick="showGuardianAlbum()" type="button">🐾<span>生物圖鑑</span></button>
-<div class="base-zoom-tools"><small>縮放</small><button onclick="adjustBaseZoom(0.1)" type="button">＋</button><b id="baseZoomLabel">100%</b><button onclick="adjustBaseZoom(-0.1)" type="button">－</button></div>
-</aside>
-<div class="base-edit-switch"><b>編輯模式</b><button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button"><span></span><em>關</em></button></div>
+
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
 <div class="build-toolbar-title"><b>建設工具</b><small>拖曳建築到基地上即可放置</small></div>
@@ -148,7 +135,10 @@
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
 </div>
 <div class="base-path-actions" id="baseTitleTools">
-<button onclick="toggleBaseEdit()">✋ 編輯基地</button>
+<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
+<button onclick="adjustBaseZoom(0.1)" type="button">🔍＋</button>
+<button onclick="adjustBaseZoom(-0.1)" type="button">🔍－</button>
+<span class="base-zoom-readout">縮放 <b id="baseZoomLabel">100%</b></span>
 <button onclick="toggleBasePath()">🟫 自己鋪路</button>
 <button onclick="clearBasePaths()">🧹 清除路徑</button>
 <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
@@ -183,14 +173,6 @@
 </div>
 <p class="base-privacy-note">＊此為公開資訊，不包含 Email 或其他個人隱私資料。</p>
 </aside></div></section>
-<section class="base-lower-grid">
-<div class="nature-rest-card"><h3>全新自然休憩區 <small>取代人工椅子</small></h3><p>使用大自然中現有的元素，與環境更融合！</p><div class="rest-options">
-<article><i>新</i><div class="rest-visual">🪵</div><h4>原木休憩區</h4><p>粗壯的原木，讓人坐下休息，感受森林氣息。</p></article>
-<article><i>新</i><div class="rest-visual">🪨</div><h4>大石休憩區</h4><p>平坦的大石頭，天然座椅，穩固又涼爽。</p></article>
-<article><i>新</i><div class="rest-visual">🏞️</div><h4>溪邊休憩區</h4><p>溪水旁的大石或草地，聽著流水聲放鬆身心。</p></article>
-</div></div>
-<div class="base-motion-card"><h3>基地移動體驗優化</h3><ul><li><b>瀏覽模式：</b>可上下滑動畫面查看基地，不會隨意移動基地。</li><li><b>編輯模式：</b>使用拖曳功能時，基地固定不會跟著畫面移動。</li><li><b>基地大小已優化：</b>更大、更清晰，視野更舒適！</li></ul><div class="motion-demo"><span>瀏覽模式（可上下滑動）</span><span>編輯模式（基地固定）</span></div></div>
-</section>
 <section class="save-panel">
 <div>
 <span class="save-dot" id="saveDot"></span>
@@ -366,6 +348,15 @@
 <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
 </section>
 </main>
+<section class="stats">
+<div>🪙<span>守護金幣</span><b id="coins">0</b></div>
+<div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
+<div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
+<div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
+<div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
+<section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
+
+</section>
 </div>
 <div class="modal hide" id="logoutModal">
 <div class="modal-card">
