@@ -2145,145 +2145,177 @@ body.night-mode .tabs button.active{color:#0c5b2d!important}
  #baseTitleTools .base-zoom-readout{margin-left:0!important;width:100%!important}
 }
 
-
-/* V9.4.1 Beta 5.2 — requested layout correction */
-.global-status-row{
+/* =========================================================
+   V9.4.1 Beta 5.1.1 — 全頁底部資訊列重新排版
+   1) 守護金幣／榮耀徽章／連續登入／守護經驗固定同一排
+   2) 每日簽到／玩家資訊卡固定第二排並等高
+   ========================================================= */
+main > .global-status-row{
+  width:100%!important;
+  margin:24px 0 12px!important;
+  padding:0!important;
   display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   gap:12px!important;
-  width:min(1480px,calc(100% - 32px))!important;
-  margin:18px auto 10px!important;
+  order:98!important;
 }
-.global-status-row>div{
+main > .global-status-row > div{
+  min-width:0!important;
   min-height:92px!important;
-  padding:14px 16px!important;
+  padding:12px 14px!important;
   display:grid!important;
   grid-template-columns:auto 1fr!important;
-  grid-template-areas:"icon label" "icon value"!important;
+  grid-template-rows:auto auto!important;
   align-items:center!important;
-  column-gap:12px!important;
+  align-content:center!important;
+  column-gap:10px!important;
+  border-radius:18px!important;
 }
-.global-status-row>div>span{grid-area:label!important;font-size:15px!important;font-weight:800!important;}
-.global-status-row>div>b{grid-area:value!important;font-size:25px!important;line-height:1!important;}
-.global-status-row>div:first-letter{font-size:30px}
-.global-footer-info{
+main > .global-status-row > div:first-child::first-letter,
+main > .global-status-row > div:nth-child(2)::first-letter,
+main > .global-status-row > div:nth-child(3)::first-letter,
+main > .global-status-row > div:nth-child(4)::first-letter{
+  font-size:30px;
+}
+main > .global-status-row > div > span{
+  grid-column:2!important;
+  grid-row:1!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
+main > .global-status-row > div > b{
+  grid-column:2!important;
+  grid-row:2!important;
+  font-size:24px!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+}
+
+main > .global-footer-info{
+  width:100%!important;
+  margin:0 0 22px!important;
+  padding:0!important;
   display:grid!important;
-  grid-template-columns:minmax(360px,.9fr) minmax(520px,1.6fr)!important;
+  grid-template-columns:minmax(340px,.9fr) minmax(520px,1.35fr)!important;
   gap:14px!important;
   align-items:stretch!important;
-  width:min(1480px,calc(100% - 32px))!important;
-  margin:0 auto 24px!important;
+  order:99!important;
 }
-.global-footer-info>.checkin-stat,
-.global-footer-info>.base-player-card{height:100%!important;min-height:260px!important;margin:0!important;}
-.global-footer-info .checkin-stat{padding:16px!important;}
-.global-footer-info .home-checkin-grid{grid-template-columns:repeat(7,1fr)!important;gap:4px!important;}
-.global-footer-info .home-checkin-grid>*{min-height:25px!important;font-size:12px!important;}
-.global-footer-info .base-player-card{padding:14px 16px!important;}
-.global-footer-info .base-player-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;}
-.global-footer-info .base-share-card,.global-footer-info .base-profile-bottom,.global-footer-info .base-privacy-note{display:none!important;}
-
-/* Today's info belongs to the homepage only */
-.home-today-info{
-  width:min(1480px,calc(100% - 32px));
-  margin:0 auto 16px;
+main > .global-footer-info > .checkin-stat,
+main > .global-footer-info > .base-player-card{
+  width:100%!important;
+  min-width:0!important;
+  min-height:330px!important;
+  height:100%!important;
+  margin:0!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
 }
-.home-today-info .nature-stat{
-  max-width:none!important;
-  display:grid!important;
-  grid-template-columns:auto 1.1fr 2fr!important;
-  grid-template-areas:"head loc metrics" "tip tip tip"!important;
-  gap:10px 14px!important;
-  align-items:center!important;
+main > .global-footer-info > .checkin-stat{
   padding:14px 16px!important;
-}
-.home-today-info .nature-stat-head{grid-area:head!important;min-width:150px!important;margin:0!important;}
-.home-today-info .nature-location{grid-area:loc!important;margin:0!important;min-height:60px!important;}
-.home-today-info .nature-metrics{grid-area:metrics!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;}
-.home-today-info .nature-metrics>div{min-height:60px!important;padding:9px 10px!important;}
-.home-today-info .nature-tip{grid-area:tip!important;margin:0!important;padding:9px 12px!important;min-height:auto!important;}
-
-/* Guardian base: centered compact controls with decorated frame */
-.base-dashboard-grid{display:block!important;}
-.base-workspace-card{width:100%!important;}
-.base-path-actions{
-  width:max-content!important;
-  max-width:calc(100% - 28px)!important;
-  margin:14px auto 8px!important;
-  padding:10px 14px!important;
   display:flex!important;
-  justify-content:center!important;
-  align-items:center!important;
-  gap:10px!important;
-  border:2px solid #9a7137!important;
-  border-radius:22px!important;
-  background:linear-gradient(180deg,#fffdf4 0%,#f4e6c7 100%)!important;
-  box-shadow:0 8px 20px #4d361f30,inset 0 1px 0 #fff!important;
+  flex-direction:column!important;
 }
-.base-path-actions button{
-  min-width:128px!important;
-  min-height:48px!important;
-  border-radius:14px!important;
-  border:1px solid #8db28d!important;
-  background:#fffef8!important;
-  color:#174c2c!important;
-  font-size:16px!important;
-  font-weight:900!important;
-  box-shadow:0 4px 10px #36543a22!important;
+main > .global-footer-info .home-checkin-grid{
+  flex:1!important;
+  align-content:stretch!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:5px!important;
 }
-.base-path-actions button:hover{transform:translateY(-1px);box-shadow:0 7px 14px #36543a2e!important;}
-.base-path-actions button.active{background:linear-gradient(180deg,#2f8a52,#17683a)!important;color:#fff!important;border-color:#155f35!important;}
-.base-time-overlay,.base-right-rail{display:none!important;}
+main > .global-footer-info .home-checkin-grid i{
+  min-width:0!important;
+  height:auto!important;
+  min-height:28px!important;
+  line-height:28px!important;
+  font-size:10px!important;
+}
+main > .global-footer-info > .base-player-card{
+  padding:0 14px 12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+main > .global-footer-info .base-player-card-title{
+  flex:none!important;
+}
+main > .global-footer-info .base-player-identity{
+  padding:6px 4px 10px!important;
+}
+main > .global-footer-info .base-profile-avatar{
+  width:68px!important;
+  height:68px!important;
+  font-size:44px!important;
+}
+main > .global-footer-info .base-player-identity h3{
+  font-size:22px!important;
+}
+main > .global-footer-info .base-player-identity p b{
+  font-size:18px!important;
+}
+main > .global-footer-info .base-player-stats{
+  margin:8px 0!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+main > .global-footer-info .base-player-stats > div{
+  padding:7px 6px!important;
+  grid-template-columns:24px 1fr!important;
+}
+main > .global-footer-info .base-player-stats > div:nth-child(odd){
+  border-right:0!important;
+}
+main > .global-footer-info .base-player-stats span{font-size:18px!important}
+main > .global-footer-info .base-player-stats small{font-size:11px!important}
+main > .global-footer-info .base-player-stats b{font-size:14px!important}
+main > .global-footer-info .base-share-card,
+main > .global-footer-info .base-profile-bottom,
+main > .global-footer-info .base-privacy-note{
+  display:none!important;
+}
 
-/* Stronger night-mode contrast on homepage cards and text */
-body.night-mode #mapPage,
-body.night-mode #mapPage .title,
-body.night-mode #mapPage .map,
-body.night-mode .home-today-info .nature-stat{
-  color:#f7fff9!important;
-}
-body.night-mode #mapPage .title,
-body.night-mode #mapPage .stage-card,
-body.night-mode #mapPage .map-card,
-body.night-mode .home-today-info .nature-stat{
-  background:linear-gradient(180deg,#153752 0%,#102b42 100%)!important;
-  border-color:#78b89d!important;
-  box-shadow:0 9px 24px #0007!important;
-}
-body.night-mode #mapPage h2,
-body.night-mode #mapPage h3,
-body.night-mode #mapPage p,
-body.night-mode #mapPage small,
-body.night-mode #mapPage span,
-body.night-mode #mapPage b,
-body.night-mode .home-today-info .nature-stat *{
-  color:#f7fff9!important;
-  text-shadow:0 1px 2px #000!important;
-}
-body.night-mode .home-today-info .nature-location,
-body.night-mode .home-today-info .nature-metrics>div,
-body.night-mode .home-today-info .nature-tip{
-  background:#0d2940!important;
-  border-color:#689e8d!important;
-}
-body.night-mode .global-status-row>div,
-body.night-mode .global-footer-info>*{
-  background:#fffef8!important;
-  color:#17372a!important;
-}
-body.night-mode .global-status-row *,
-body.night-mode .global-footer-info *{color:#17372a!important;text-shadow:none!important;}
+/* 守護基地本體內不顯示重複玩家卡；底部共用玩家卡仍保留 */
+#basePage .base-right-rail .base-player-card{display:none!important}
 
-@media (max-width:1000px){
- .global-footer-info{grid-template-columns:1fr!important;}
- .home-today-info .nature-stat{grid-template-columns:1fr 1fr!important;grid-template-areas:"head loc" "metrics metrics" "tip tip"!important;}
- .home-today-info .nature-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+@media (max-width:980px){
+  main > .global-footer-info{
+    grid-template-columns:1fr 1fr!important;
+  }
+  main > .global-footer-info > .checkin-stat,
+  main > .global-footer-info > .base-player-card{
+    min-height:310px!important;
+  }
 }
-@media (max-width:700px){
- .global-status-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:calc(100% - 20px)!important;}
- .global-footer-info,.home-today-info{width:calc(100% - 20px)!important;}
- .global-footer-info .base-player-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
- .home-today-info .nature-stat{grid-template-columns:1fr!important;grid-template-areas:"head" "loc" "metrics" "tip"!important;}
- .base-path-actions{width:calc(100% - 20px)!important;flex-wrap:wrap!important;}
- .base-path-actions button{min-width:calc(33.333% - 8px)!important;flex:1 1 110px!important;}
+@media (max-width:720px){
+  main > .global-status-row{
+    grid-template-columns:repeat(4,minmax(72px,1fr))!important;
+    gap:6px!important;
+    margin-top:16px!important;
+  }
+  main > .global-status-row > div{
+    min-height:78px!important;
+    padding:8px 6px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    gap:3px!important;
+    text-align:center!important;
+  }
+  main > .global-status-row > div > span{
+    font-size:10px!important;
+    white-space:normal!important;
+  }
+  main > .global-status-row > div > b{
+    font-size:17px!important;
+  }
+  main > .global-footer-info{
+    grid-template-columns:1fr!important;
+  }
+  main > .global-footer-info > .checkin-stat,
+  main > .global-footer-info > .base-player-card{
+    min-height:0!important;
+  }
+  main > .global-footer-info .base-player-stats{
+    grid-template-columns:1fr 1fr!important;
+  }
 }
