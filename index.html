@@ -11,10 +11,10 @@
 <meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
 <meta property="og:image" content="social-preview.svg">
 <meta name="twitter:card" content="summary_large_image">
-<title>環保冒險王 V9.3｜療癒管理版</title>
+<title>環保冒險王 V9.4.1 Beta｜森林探險介面版</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=9310">
+<link rel="stylesheet" href="style.css?v=9411">
 </head>
 <body>
 <div id="loginPage" class="login-page">
@@ -25,7 +25,7 @@
     <p class="login-lead">答題、升級、修復基地，成為守護金門與地球的生態英雄。</p>
     <div class="feature-chips"><span>🗺️ 四大冒險</span><span>📚 2,844 題</span><span>🦦 金門守護者</span></div>
     <label>玩家名稱</label>
-    <input id="nameInput" value="沄芯" maxlength="12">
+    <input id="nameInput" value="" maxlength="12" placeholder="請輸入玩家名稱">
     <label>選擇守護者頭像</label>
     <div id="loginAvatars" class="avatar-grid login-avatars"></div>
     <small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
@@ -52,13 +52,13 @@
   </div>
   <div class="header-copy">
     <small>EARTH GUARDIAN ADVENTURE</small>
-    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.3.11</span></h1>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.4.1 Beta</span></h1>
     <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
   </div>
   <div class="header-actions">
     <button class="player player-button" onclick="showProfile()" title="開啟我的資料">
       <span id="playerAvatar" class="player-avatar frame-none">🦊</span>
-      <div><b id="playerName">沄芯</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
+      <div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
     </button>
     <button id="soundToggle" class="icon-action" onclick="toggleSound()" aria-label="切換音效" title="切換音效">🔊</button>
     <button class="logout" onclick="confirmLogout()">🚪 登出</button>
@@ -71,7 +71,25 @@
   <div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
   <div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
   <div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
-  <section class="checkin-stat" aria-label="本月每日簽到"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div id="homeCheckinMonth" class="home-checkin-month"></div><div id="homeCheckinGrid" class="home-checkin-grid"></div><small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small></section>
+</section>
+
+<section class="daily-dashboard" aria-label="每日簽到與今日自然資訊">
+  <section class="checkin-stat daily-panel" aria-label="本月每日簽到">
+    <div class="daily-panel-heading"><div><small>DAILY CHECK-IN</small><h2>📅 每日簽到</h2></div><b id="homeCheckinState">今天已簽到</b></div>
+    <div id="homeCheckinMonth" class="home-checkin-month"></div>
+    <div id="homeCheckinGrid" class="home-checkin-grid"></div>
+    <small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small>
+  </section>
+  <section class="nature-today daily-panel" aria-label="今日自然資訊">
+    <div class="daily-panel-heading"><div><small>TODAY'S NATURE</small><h2>🌿 今日自然資訊</h2></div><span class="nature-live-dot">LIVE</span></div>
+    <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
+    <div class="nature-metrics">
+      <div><span id="natureWeatherIcon">🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
+      <div><span>🌡️</span><small>溫度</small><b id="natureTemperature">--°C</b></div>
+      <div class="aqi-metric"><span>🍃</span><small>空氣品質指標 AQI</small><b><i id="natureAqi">--</i> <em id="natureAqiLabel">讀取中</em></b></div>
+    </div>
+    <div class="nature-tip"><span>♻️</span><p><b>今日環保小提醒</b><br><span id="natureEcoTip">完成一個環保任務，讓守護基地更有生命力！</span></p></div>
+  </section>
 </section>
 
 <section class="save-panel">
@@ -156,9 +174,29 @@
       <button onclick="clearBasePaths()">🧹 清除路徑</button>
     </div>
   </div>
-  <div class="base-scene" id="baseScene"></div>
-  <div class="shop-head"><h3>基地建設</h3><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
-  <div class="shop" id="shop"></div>
+  <section class="base-dashboard">
+    <div class="base-main-panel">
+      <div class="base-scene" id="baseScene"></div>
+      <div class="shop-head"><div><small>BUILD & DECORATE</small><h3>🌱 基地建設工具列</h3></div><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
+      <div class="shop shop-carousel" id="shop"></div>
+    </div>
+    <aside class="base-player-card" aria-label="玩家資訊卡">
+      <div class="base-player-head">
+        <div id="basePlayerAvatar" class="base-player-avatar">🦊</div>
+        <div><small>EARTH GUARDIAN</small><h3 id="basePlayerName">環保守護者</h3><p id="basePlayerTitle">見習地球守護者</p></div>
+      </div>
+      <div class="base-level-row"><b id="basePlayerLevel">Lv.1</b><span>守護能量 <i id="baseGuardianEnergy">0</i></span></div>
+      <div class="base-player-stats">
+        <div><span>🏅</span><small>成就</small><b id="baseAchievementCount">0</b></div>
+        <div><span>🎯</span><small>答對率</small><b id="baseAccuracy">0%</b></div>
+        <div><span>🔥</span><small>連續登入</small><b id="baseStreak">1 天</b></div>
+        <div><span>🌳</span><small>基地建設</small><b id="baseBuildCount">0</b></div>
+      </div>
+      <div class="base-card-section"><small>🌿 本週守護分享</small><p id="baseWeeklyShare">一起守護金門與地球，從每天的小行動開始。</p></div>
+      <div class="base-card-section animal-favorite"><small>💚 最喜歡的守護動物</small><p><span>🦦</span><b id="baseFavoriteAnimal">歐亞水獺</b></p></div>
+      <button type="button" class="base-profile-button" onclick="showProfile()">查看完整玩家資料 →</button>
+    </aside>
+  </section>
 </main>
 
 
@@ -316,7 +354,7 @@
         <input id="profileNameInput" maxlength="12">
         <button class="primary" onclick="saveProfileName()">儲存名稱</button>
       </div>
-      <h3 id="profileDisplayName">沄芯</h3>
+      <h3 id="profileDisplayName">環保守護者</h3>
       <p id="profileTitleText">見習地球守護者</p>
       <div class="level-line"><b id="profileLevel">Lv.1</b><span id="profileExpText">0 / 100 EXP</span></div>
       <div class="bar profile-exp-bar"><i id="profileExpBar"></i></div>

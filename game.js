@@ -1,6 +1,6 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-function defaultState(){return{loggedIn:false,name:'沄芯',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
+function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
 function load(){
   try{
     let raw=localStorage.getItem(KEY);
@@ -87,7 +87,7 @@ function importSave(event){
       save();
       ensureProfile();
       selectedLoginAvatar=st.avatar||'fox';
-      playerName.textContent=st.name||'沄芯';
+      playerName.textContent=st.name||'環保守護者';
       header();
       renderMap();
       page('mapPage');
@@ -240,7 +240,7 @@ function animateFeedback(ok){
 
 function dateStr(d=new Date()){return d.toLocaleDateString('en-CA')}
 function login(){
-  st.name=(nameInput.value||'沄芯').trim();
+  st.name=(nameInput.value||'環保守護者').trim();
   st.avatar=selectedLoginAvatar||st.avatar||'fox';
   st.loggedIn=true;
   dailyLogin();
@@ -423,7 +423,7 @@ function header(){
  coins.textContent=st.coins;
  streak.textContent=st.streak||1;
  badges.textContent=S.filter(isDone).length;
- playerName.textContent=st.name||'沄芯';
+ playerName.textContent=st.name||'環保守護者';
  playerTitle.textContent=st.specialTitle||titleForLevel(lv);
  playerLevel.textContent=`Lv.${lv}`;
  playerAvatar.textContent=av.icon;
@@ -747,6 +747,36 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
+
+function renderBasePlayerCard(){
+  const av=avatarById(st.avatar),lv=currentLevel();
+  const totalAchievements=(typeof ACHIEVEMENTS!=='undefined'&&Array.isArray(ACHIEVEMENTS))?ACHIEVEMENTS.filter(a=>typeof a.done==='function'&&a.done()).length:S.filter(isDone).length;
+  const accuracy=st.totalAnswered?((st.totalCorrect/st.totalAnswered)*100).toFixed(1):'0.0';
+  const values={
+    basePlayerName:st.name||'環保守護者',
+    basePlayerTitle:st.specialTitle||titleForLevel(lv),
+    basePlayerLevel:`Lv.${lv}`,
+    baseGuardianEnergy:Number(st.guardianEnergy)||0,
+    baseAchievementCount:totalAchievements,
+    baseAccuracy:`${accuracy}%`,
+    baseStreak:`${st.streak||1} 天`,
+    baseBuildCount:`${st.owned.length} 項`
+  };
+  Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value});
+  const avatar=document.getElementById('basePlayerAvatar');
+  if(avatar){setAvatarElement(avatar,av,av.name);avatar.className=`base-player-avatar frame-${st.frame||'none'}`}
+}
+function renderBetaNatureInfo(){
+  const tips=['自備水壺，減少一次性塑膠。','離開房間隨手關燈，節省能源。','珍惜每一滴水，縮短用水時間。','觀察身邊的一種生物，認識牠的棲地。','做好垃圾分類，讓資源再次被利用。'];
+  const tip=document.getElementById('natureEcoTip');if(tip)tip.textContent=tips[new Date().getDate()%tips.length];
+  const weather=document.getElementById('natureWeather'),temp=document.getElementById('natureTemperature'),icon=document.getElementById('natureWeatherIcon');
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,weather_code&timezone=auto',{cache:'no-store'})
+    .then(r=>r.ok?r.json():Promise.reject(new Error(r.status))).then(data=>{const c=data.current||{},w=weatherFromCode(c.weather_code);if(weather)weather.textContent=w.label;if(icon)icon.textContent=w.icon;if(temp)temp.textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(Number(c.temperature_2m))}°C`:'--°C';})
+    .catch(()=>{if(weather)weather.textContent='多雲';if(icon)icon.textContent='🌤️';if(temp)temp.textContent='--°C'});
+  const aqi=document.getElementById('natureAqi'),label=document.getElementById('natureAqiLabel');
+  if(aqi)aqi.textContent='--';if(label)label.textContent='資料將於 V9.4.2 串接';
+}
+
 function showBase(){renderBase();page('basePage')}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
@@ -843,7 +873,7 @@ function renderBase(){
   st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;const el=document.createElement('button');el.type='button';el.className='base-building'+(st.baseEditMode?' editable':'');el.textContent=it.icon;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
-  renderBaseSky();updateRealBaseWeather();
+  renderBaseSky();updateRealBaseWeather();renderBasePlayerCard();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].sort((a,b)=>a.cost-b.cost||a.name.localeCompare(b.name,'zh-Hant')).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
@@ -1182,8 +1212,8 @@ function renderProfile(){
   const lv=currentLevel();
   const av=avatarById(st.avatar);
   const fr=frameById(st.frame);
-  profileNameInput.value=st.name||'沄芯';
-  profileDisplayName.textContent=st.name||'沄芯';
+  profileNameInput.value=st.name||'環保守護者';
+  profileDisplayName.textContent=st.name||'環保守護者';
   profileTitleText.textContent=st.specialTitle||titleForLevel(lv);
   profileLevel.textContent=`Lv.${lv}`;
   profileExpText.textContent=lv>=MAX_LEVEL?'已達最高等級':`${expInLevel()} / 100 EXP`;
