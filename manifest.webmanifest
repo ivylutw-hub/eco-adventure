@@ -1,0 +1,17 @@
+{
+  "name": "環保冒險王 V9.3",
+  "short_name": "環保冒險王",
+  "description": "環境教育闖關遊戲",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4faf7",
+  "theme_color": "#0b6b50",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
