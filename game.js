@@ -473,10 +473,21 @@ function renderMap(){
    mapEl.appendChild(button);
  });
 }
+function mountGlobalFooter(pageId){
+ const activePage=document.getElementById(pageId);
+ const status=document.querySelector('.global-status-row');
+ const info=document.querySelector('.global-footer-info');
+ if(!activePage||!status||!info)return;
+ // 每個頁面的最底部固定依序顯示：四項守護狀態，再顯示每日簽到與玩家資訊卡。
+ activePage.appendChild(status);
+ activePage.appendChild(info);
+}
 function page(id){
  ['mapPage','stagePage','quizPage','resultPage','basePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
- document.getElementById(id).classList.remove('hide');
+ const target=document.getElementById(id);
+ target.classList.remove('hide');
+ mountGlobalFooter(id);
  if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
@@ -1281,15 +1292,11 @@ setInterval(()=>{
 },60*1000);
 
 
-// V9.4.1 Beta 3：捲動後自動縮小頂部首頁抬頭，讓所有頁面保留更多閱讀與遊戲空間。
+// V9.4.1 Beta 5.1：抬頭縮小只改變內部視覺，不改變版面高度，避免捲輪造成圖卡抖動。
 (function initCompactHeader(){
   let ticking=false;
-  let compact=false;
   const update=()=>{
-    const y=window.scrollY;
-    if(!compact&&y>140)compact=true;
-    else if(compact&&y<40)compact=false;
-    document.body.classList.toggle('header-compact',compact);
+    document.body.classList.toggle('header-compact',window.scrollY>120);
     ticking=false;
   };
   window.addEventListener('scroll',()=>{

@@ -2047,3 +2047,100 @@ body.night-mode header.header-night .player-button small{color:#fff!important;te
  .global-footer-info>.checkin-stat,.global-footer-info>.base-player-card{min-height:0!important}
  .base-path-actions .base-zoom-readout{margin-left:0!important;width:100%!important}
 }
+
+
+/* =========================================================
+   V9.4.1 Beta 5.1：底部資訊、基地工具、穩定捲動與夜間清晰度
+   ========================================================= */
+/* 每個頁面最底部：第一排四項守護狀態 */
+main>.global-status-row{
+  width:min(1480px,calc(100% - 28px))!important;
+  margin:24px auto 12px!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+  position:relative!important;
+  inset:auto!important;
+}
+main>.global-status-row>div{
+  min-height:88px!important;height:88px!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  padding:8px 10px!important;
+}
+main>.global-status-row>div span{font-size:13px!important}
+main>.global-status-row>div b{font-size:22px!important}
+
+/* 第二排：每日簽到與玩家資訊卡 */
+main>.global-footer-info{
+  width:min(1480px,calc(100% - 28px))!important;
+  margin:0 auto 28px!important;
+  display:grid!important;
+  grid-template-columns:minmax(420px,.9fr) minmax(520px,1.1fr)!important;
+  gap:12px!important;
+  align-items:stretch!important;
+  position:relative!important;
+  inset:auto!important;
+}
+main>.global-footer-info>.checkin-stat,
+main>.global-footer-info>.base-player-card{
+  display:block!important;
+  min-height:250px!important;height:auto!important;margin:0!important;
+}
+
+/* 守護基地本體不再顯示玩家資訊卡；全域底部資訊卡仍保留 */
+#basePage .base-dashboard-grid .base-player-card,
+#basePage .base-right-rail .base-player-card{display:none!important}
+
+/* 基地工具列順序與穩定按鈕尺寸 */
+#baseTitleTools{display:flex!important;flex-wrap:wrap!important;gap:8px!important;align-items:center!important}
+#baseTitleTools button{order:initial!important;min-height:42px!important;padding:9px 14px!important;white-space:nowrap!important}
+#baseTitleTools button:nth-of-type(1){order:1!important}
+#baseTitleTools button:nth-of-type(2){order:2!important}
+#baseTitleTools button:nth-of-type(3){order:3!important}
+#baseTitleTools button:nth-of-type(4){order:4!important}
+#baseTitleTools button:nth-of-type(5){order:5!important}
+#baseTitleTools .base-zoom-readout{order:6!important;margin-left:auto!important}
+#baseTitleTools>span:last-child{order:7!important}
+
+/* 抬頭縮小不再改變 sticky 元件高度，避免頁面反覆重排與抖動 */
+#mainHeader{min-height:104px!important;height:104px!important;padding:12px 26px!important;overflow:hidden!important}
+.tabs{top:104px!important}
+body.header-compact #mainHeader{min-height:104px!important;height:104px!important;padding:12px 26px!important;border-radius:0 0 24px 24px!important}
+body.header-compact #mainHeader .header-copy h1{font-size:28px!important;transform:translateY(-2px)!important}
+body.header-compact #mainHeader .header-copy p{opacity:0!important;visibility:hidden!important;height:0!important;margin:0!important}
+body.header-compact #mainHeader .player-avatar{width:50px!important;height:50px!important}
+body.header-compact #mainHeader .player-button small{display:block!important}
+body.header-compact #mainHeader .header-actions .logout,
+body.header-compact #mainHeader .icon-action{width:44px!important;height:44px!important;font-size:inherit!important}
+body.header-compact #mainHeader .icon-action:after,
+body.header-compact #mainHeader .logout:after{content:none!important}
+body.header-compact .tabs{top:104px!important}
+
+/* 夜間模式：所有主要圖卡和文字維持高對比 */
+body.night-mode main,
+body.night-mode main p,
+body.night-mode main small,
+body.night-mode main span,
+body.night-mode main b,
+body.night-mode main h1,
+body.night-mode main h2,
+body.night-mode main h3,
+body.night-mode main h4{color:#17372a!important;text-shadow:none!important}
+body.night-mode main .global-status-row>div,
+body.night-mode main .global-footer-info>*{background:#fffef8!important;border-color:#aabfae!important;box-shadow:0 7px 20px #0005!important}
+body.night-mode .tabs{background:#fffdf4!important;color:#17372a!important}
+body.night-mode .tabs button{color:#17372a!important}
+body.night-mode .tabs button.active{color:#0c5b2d!important}
+
+@media(max-width:980px){
+ main>.global-footer-info{grid-template-columns:1fr!important}
+}
+@media(max-width:700px){
+ #mainHeader,body.header-compact #mainHeader{position:relative!important;height:auto!important;min-height:78px!important;padding:10px 12px!important}
+ .tabs,body.header-compact .tabs{top:0!important}
+ main>.global-status-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:calc(100% - 16px)!important}
+ main>.global-footer-info{width:calc(100% - 16px)!important}
+ #baseTitleTools .base-zoom-readout{margin-left:0!important;width:100%!important}
+}
