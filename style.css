@@ -2319,3 +2319,57 @@ main > .global-footer-info .base-privacy-note{
     grid-template-columns:1fr 1fr!important;
   }
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.2 — 四項守護狀態強制同一排
+   不論電腦、平板或手機，守護金幣／榮耀徽章／連續登入／守護經驗
+   均維持單一橫排，不再折成 2×2。
+   ========================================================= */
+.global-status-row,
+main > .global-status-row{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-auto-flow:column!important;
+  width:min(1480px,calc(100% - 28px))!important;
+  gap:10px!important;
+  overflow:visible!important;
+}
+.global-status-row > div,
+main > .global-status-row > div{
+  min-width:0!important;
+  width:auto!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:620px){
+  .global-status-row,
+  main > .global-status-row{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    width:calc(100% - 12px)!important;
+    gap:5px!important;
+  }
+  .global-status-row > div,
+  main > .global-status-row > div{
+    height:78px!important;
+    min-height:78px!important;
+    padding:6px 3px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-items:center!important;
+    text-align:center!important;
+    gap:2px!important;
+    border-radius:13px!important;
+  }
+  .global-status-row > div > span,
+  main > .global-status-row > div > span{
+    font-size:9px!important;
+    line-height:1.15!important;
+    white-space:normal!important;
+  }
+  .global-status-row > div > b,
+  main > .global-status-row > div > b{
+    font-size:16px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+  }
+}
