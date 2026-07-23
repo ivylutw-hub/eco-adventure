@@ -2536,3 +2536,130 @@ section.stats.global-status-row > div > b{
   section.stats.global-status-row > div > span{font-size:9px!important}
   section.stats.global-status-row > div > b{font-size:13px!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.6 — 每日簽到與玩家資訊卡固定同一排
+   ========================================================= */
+.global-footer-info,
+main > .global-footer-info{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-auto-flow:column!important;
+  gap:12px!important;
+  align-items:stretch!important;
+  width:min(1480px,calc(100% - 28px))!important;
+  max-width:1480px!important;
+  margin:0 auto 26px!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+.global-footer-info > .checkin-stat,
+.global-footer-info > .base-player-card,
+main > .global-footer-info > .checkin-stat,
+main > .global-footer-info > .base-player-card{
+  grid-column:auto!important;
+  grid-row:1!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:300px!important;
+  height:100%!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.global-footer-info > .checkin-stat{
+  display:flex!important;
+  flex-direction:column!important;
+  padding:14px 16px!important;
+}
+.global-footer-info .home-checkin-grid{
+  flex:1!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:4px!important;
+  align-content:stretch!important;
+}
+.global-footer-info .home-checkin-grid i{
+  min-width:0!important;
+  min-height:24px!important;
+  height:auto!important;
+  line-height:24px!important;
+}
+.global-footer-info > .base-player-card{
+  display:flex!important;
+  flex-direction:column!important;
+  padding:0 12px 10px!important;
+}
+.global-footer-info .base-player-identity{
+  padding:6px 2px 8px!important;
+}
+.global-footer-info .base-profile-avatar{
+  width:62px!important;
+  height:62px!important;
+  font-size:40px!important;
+}
+.global-footer-info .base-player-identity h3{font-size:20px!important}
+.global-footer-info .base-player-identity p{margin-top:5px!important}
+.global-footer-info .base-player-identity p b{font-size:17px!important}
+.global-footer-info .base-player-stats{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  margin:5px 0!important;
+  gap:3px!important;
+}
+.global-footer-info .base-player-stats > div{
+  padding:6px 4px!important;
+  grid-template-columns:21px 1fr!important;
+}
+.global-footer-info .base-player-stats span{font-size:17px!important}
+.global-footer-info .base-player-stats small{font-size:10px!important}
+.global-footer-info .base-player-stats b{font-size:13px!important}
+.global-footer-info .base-share-card,
+.global-footer-info .base-profile-bottom,
+.global-footer-info .base-privacy-note{display:none!important}
+
+/* 平板與手機仍維持同一排，僅縮小內容，不改為上下排列。 */
+@media(max-width:980px){
+  .global-footer-info,
+  main > .global-footer-info{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:8px!important;
+    width:calc(100% - 16px)!important;
+  }
+  .global-footer-info > .checkin-stat,
+  .global-footer-info > .base-player-card{
+    min-height:270px!important;
+  }
+}
+@media(max-width:620px){
+  .global-footer-info,
+  main > .global-footer-info{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:6px!important;
+    width:calc(100% - 10px)!important;
+  }
+  .global-footer-info > .checkin-stat,
+  .global-footer-info > .base-player-card{
+    min-height:238px!important;
+    border-radius:14px!important;
+  }
+  .global-footer-info > .checkin-stat{padding:9px 7px!important}
+  .global-footer-info .checkin-stat-head{gap:3px!important}
+  .global-footer-info .checkin-stat-head span{font-size:11px!important}
+  .global-footer-info .checkin-stat-head b{font-size:8px!important;padding:3px 4px!important}
+  .global-footer-info .home-checkin-month{font-size:12px!important}
+  .global-footer-info .home-checkin-grid{gap:2px!important}
+  .global-footer-info .home-checkin-grid i{min-height:18px!important;line-height:18px!important;font-size:7px!important}
+  .global-footer-info > .base-player-card{padding:0 6px 6px!important}
+  .global-footer-info .base-player-card-title{font-size:13px!important;padding:7px 6px!important}
+  .global-footer-info .base-player-card-title small{display:none!important}
+  .global-footer-info .base-profile-avatar{width:43px!important;height:43px!important;font-size:28px!important;border-width:2px!important}
+  .global-footer-info .base-player-identity{gap:6px!important;padding:5px 0!important}
+  .global-footer-info .base-player-identity h3{font-size:13px!important}
+  .global-footer-info .base-player-identity p{gap:3px!important;margin-top:3px!important}
+  .global-footer-info .base-player-identity p b{font-size:11px!important}
+  .global-footer-info .base-player-identity em{font-size:8px!important;padding:2px 3px!important}
+  .global-footer-info .base-player-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px!important}
+  .global-footer-info .base-player-stats > div{padding:4px 2px!important;grid-template-columns:15px 1fr!important}
+  .global-footer-info .base-player-stats span{font-size:12px!important}
+  .global-footer-info .base-player-stats small{font-size:7px!important}
+  .global-footer-info .base-player-stats b{font-size:9px!important}
+}
