@@ -11,10 +11,10 @@
 <meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
 <meta property="og:image" content="social-preview.svg">
 <meta name="twitter:card" content="summary_large_image">
-<title>環保冒險王 V9.4.1 Beta｜森林探險介面版</title>
+<title>環保冒險王 V9.4.1 Beta｜森林探險介面</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=9411">
+<link rel="stylesheet" href="style.css?v=94101">
 </head>
 <body>
 <div id="loginPage" class="login-page">
@@ -52,7 +52,7 @@
   </div>
   <div class="header-copy">
     <small>EARTH GUARDIAN ADVENTURE</small>
-    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.4.1 Beta</span></h1>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta</span></h1>
     <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
   </div>
   <div class="header-actions">
@@ -71,24 +71,17 @@
   <div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
   <div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
   <div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
-</section>
-
-<section class="daily-dashboard" aria-label="每日簽到與今日自然資訊">
-  <section class="checkin-stat daily-panel" aria-label="本月每日簽到">
-    <div class="daily-panel-heading"><div><small>DAILY CHECK-IN</small><h2>📅 每日簽到</h2></div><b id="homeCheckinState">今天已簽到</b></div>
-    <div id="homeCheckinMonth" class="home-checkin-month"></div>
-    <div id="homeCheckinGrid" class="home-checkin-grid"></div>
-    <small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small>
-  </section>
-  <section class="nature-today daily-panel" aria-label="今日自然資訊">
-    <div class="daily-panel-heading"><div><small>TODAY'S NATURE</small><h2>🌿 今日自然資訊</h2></div><span class="nature-live-dot">LIVE</span></div>
+  <section class="checkin-stat" aria-label="本月每日簽到"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div id="homeCheckinMonth" class="home-checkin-month"></div><div id="homeCheckinGrid" class="home-checkin-grid"></div><small id="homeCheckinReward" class="home-checkin-reward">月底全勤可獲得限定守護者</small></section>
+  <section class="nature-stat" aria-label="今日自然資訊">
+    <div class="nature-stat-head"><span><small>TODAY'S NATURE</small><b>🌿 今日自然資訊</b></span><i id="natureLiveBadge">LIVE</i></div>
     <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
     <div class="nature-metrics">
-      <div><span id="natureWeatherIcon">🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
-      <div><span>🌡️</span><small>溫度</small><b id="natureTemperature">--°C</b></div>
-      <div class="aqi-metric"><span>🍃</span><small>空氣品質指標 AQI</small><b><i id="natureAqi">--</i> <em id="natureAqiLabel">讀取中</em></b></div>
+      <div><span>🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
+      <div><span>🌡️</span><small>溫度</small><b id="natureTemp">--°C</b></div>
+      <div><span>💧</span><small>濕度</small><b id="natureHumidity">--%</b></div>
+      <div class="nature-aqi"><span>🍃</span><small>空氣品質指標 AQI</small><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
     </div>
-    <div class="nature-tip"><span>♻️</span><p><b>今日環保小提醒</b><br><span id="natureEcoTip">完成一個環保任務，讓守護基地更有生命力！</span></p></div>
+    <div class="nature-tip"><span>♻️</span><div><small>今日環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
   </section>
 </section>
 
@@ -165,40 +158,62 @@
   </section>
 </main>
 
-<main id="basePage" class="hide">
-  <div class="title base-title-row">
-    <div><small>GUARDIAN BASE</small><h2>🌍 我的守護基地</h2><p>把闖關獲得的金幣投入基地，建設可自由拖曳擺放，也能在草地上自己鋪路。</p></div>
-    <div class="base-title-tools" id="baseTitleTools">
-      <button onclick="toggleBaseEdit()">✋ 編輯基地</button>
-      <button onclick="toggleBasePath()">🟫 自己鋪路</button>
-      <button onclick="clearBasePaths()">🧹 清除路徑</button>
-    </div>
-  </div>
-  <section class="base-dashboard">
-    <div class="base-main-panel">
-      <div class="base-scene" id="baseScene"></div>
-      <div class="shop-head"><div><small>BUILD & DECORATE</small><h3>🌱 基地建設工具列</h3></div><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
-      <div class="shop shop-carousel" id="shop"></div>
-    </div>
-    <aside class="base-player-card" aria-label="玩家資訊卡">
-      <div class="base-player-head">
-        <div id="basePlayerAvatar" class="base-player-avatar">🦊</div>
-        <div><small>EARTH GUARDIAN</small><h3 id="basePlayerName">環保守護者</h3><p id="basePlayerTitle">見習地球守護者</p></div>
+<main id="basePage" class="hide base-dashboard-page">
+  <section class="base-dashboard-grid">
+    <div class="base-workspace-card">
+      <div class="base-time-overlay">
+        <div class="base-clock"><b id="baseLocalTime">--:--</b><small>本地時間</small></div>
+        <div class="base-sun-guide"><span>☀️</span><div><b>太陽從右往左移動</b><small>依玩家所在地時間呈現</small></div></div>
       </div>
-      <div class="base-level-row"><b id="basePlayerLevel">Lv.1</b><span>守護能量 <i id="baseGuardianEnergy">0</i></span></div>
+      <aside class="base-side-tools" aria-label="基地工具">
+        <button type="button" onclick="showBaseInfo()">📋<span>基地資訊</span></button>
+        <button type="button" onclick="showGuardianAlbum()">🐾<span>生物圖鑑</span></button>
+        <div class="base-zoom-tools"><small>縮放</small><button type="button" onclick="adjustBaseZoom(0.1)">＋</button><b id="baseZoomLabel">100%</b><button type="button" onclick="adjustBaseZoom(-0.1)">－</button></div>
+      </aside>
+      <div class="base-edit-switch"><b>編輯模式</b><button id="baseEditSwitch" type="button" onclick="toggleBaseEdit()"><span></span><em>關</em></button></div>
+      <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
+      <div class="base-build-toolbar">
+        <div class="build-toolbar-title"><b>建設工具</b><small>拖曳建築到基地上即可放置</small></div>
+        <div class="shop" id="shop"></div>
+        <div class="base-save-box"><button type="button" onclick="manualSave()">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
+      </div>
+      <div class="base-path-actions" id="baseTitleTools">
+        <button onclick="toggleBaseEdit()">✋ 編輯基地</button>
+        <button onclick="toggleBasePath()">🟫 自己鋪路</button>
+        <button onclick="clearBasePaths()">🧹 清除路徑</button>
+        <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
+      </div>
+    </div>
+
+    <aside class="base-player-card">
+      <div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
+      <div class="base-player-identity"><span id="baseProfileAvatar" class="base-profile-avatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
       <div class="base-player-stats">
-        <div><span>🏅</span><small>成就</small><b id="baseAchievementCount">0</b></div>
-        <div><span>🎯</span><small>答對率</small><b id="baseAccuracy">0%</b></div>
-        <div><span>🔥</span><small>連續登入</small><b id="baseStreak">1 天</b></div>
-        <div><span>🌳</span><small>基地建設</small><b id="baseBuildCount">0</b></div>
+        <div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
+        <div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
+        <div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
+        <div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
+        <div><span>🎯</span><small>答對率</small><b id="baseProfileAccuracy">0%</b></div>
+        <div><span>📅</span><small>加入時間</small><b id="baseProfileJoined">—</b></div>
       </div>
-      <div class="base-card-section"><small>🌿 本週守護分享</small><p id="baseWeeklyShare">一起守護金門與地球，從每天的小行動開始。</p></div>
-      <div class="base-card-section animal-favorite"><small>💚 最喜歡的守護動物</small><p><span>🦦</span><b id="baseFavoriteAnimal">歐亞水獺</b></p></div>
-      <button type="button" class="base-profile-button" onclick="showProfile()">查看完整玩家資料 →</button>
+      <div class="base-share-card"><b>💬 本週挑戰分享 <small>最多100字</small></b><p id="baseProfileShare">一起減少塑膠垃圾，守護海洋生物！💙</p></div>
+      <div class="base-profile-bottom">
+        <div><b>🦦 最喜歡的守護動物</b><span id="baseFavoriteAnimal">歐亞水獺</span></div>
+        <div><b>🏆 最近解鎖成就</b><span id="baseRecentAchievement">地球小英雄</span></div>
+      </div>
+      <p class="base-privacy-note">＊此為公開資訊，不包含 Email 或其他個人隱私資料。</p>
     </aside>
   </section>
-</main>
 
+  <section class="base-lower-grid">
+    <div class="nature-rest-card"><h3>全新自然休憩區 <small>取代人工椅子</small></h3><p>使用大自然中現有的元素，與環境更融合！</p><div class="rest-options">
+      <article><i>新</i><div class="rest-visual">🪵</div><h4>原木休憩區</h4><p>粗壯的原木，讓人坐下休息，感受森林氣息。</p></article>
+      <article><i>新</i><div class="rest-visual">🪨</div><h4>大石休憩區</h4><p>平坦的大石頭，天然座椅，穩固又涼爽。</p></article>
+      <article><i>新</i><div class="rest-visual">🏞️</div><h4>溪邊休憩區</h4><p>溪水旁的大石或草地，聽著流水聲放鬆身心。</p></article>
+    </div></div>
+    <div class="base-motion-card"><h3>基地移動體驗優化</h3><ul><li><b>瀏覽模式：</b>可上下滑動畫面查看基地，不會隨意移動基地。</li><li><b>編輯模式：</b>使用拖曳功能時，基地固定不會跟著畫面移動。</li><li><b>基地大小已優化：</b>更大、更清晰，視野更舒適！</li></ul><div class="motion-demo"><span>瀏覽模式（可上下滑動）</span><span>編輯模式（基地固定）</span></div></div>
+  </section>
+</main>
 
 
 <main id="achievementPage" class="hide">

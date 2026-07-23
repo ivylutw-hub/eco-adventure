@@ -747,37 +747,7 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
-
-function renderBasePlayerCard(){
-  const av=avatarById(st.avatar),lv=currentLevel();
-  const totalAchievements=(typeof ACHIEVEMENTS!=='undefined'&&Array.isArray(ACHIEVEMENTS))?ACHIEVEMENTS.filter(a=>typeof a.done==='function'&&a.done()).length:S.filter(isDone).length;
-  const accuracy=st.totalAnswered?((st.totalCorrect/st.totalAnswered)*100).toFixed(1):'0.0';
-  const values={
-    basePlayerName:st.name||'環保守護者',
-    basePlayerTitle:st.specialTitle||titleForLevel(lv),
-    basePlayerLevel:`Lv.${lv}`,
-    baseGuardianEnergy:Number(st.guardianEnergy)||0,
-    baseAchievementCount:totalAchievements,
-    baseAccuracy:`${accuracy}%`,
-    baseStreak:`${st.streak||1} 天`,
-    baseBuildCount:`${st.owned.length} 項`
-  };
-  Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.textContent=value});
-  const avatar=document.getElementById('basePlayerAvatar');
-  if(avatar){setAvatarElement(avatar,av,av.name);avatar.className=`base-player-avatar frame-${st.frame||'none'}`}
-}
-function renderBetaNatureInfo(){
-  const tips=['自備水壺，減少一次性塑膠。','離開房間隨手關燈，節省能源。','珍惜每一滴水，縮短用水時間。','觀察身邊的一種生物，認識牠的棲地。','做好垃圾分類，讓資源再次被利用。'];
-  const tip=document.getElementById('natureEcoTip');if(tip)tip.textContent=tips[new Date().getDate()%tips.length];
-  const weather=document.getElementById('natureWeather'),temp=document.getElementById('natureTemperature'),icon=document.getElementById('natureWeatherIcon');
-  fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,weather_code&timezone=auto',{cache:'no-store'})
-    .then(r=>r.ok?r.json():Promise.reject(new Error(r.status))).then(data=>{const c=data.current||{},w=weatherFromCode(c.weather_code);if(weather)weather.textContent=w.label;if(icon)icon.textContent=w.icon;if(temp)temp.textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(Number(c.temperature_2m))}°C`:'--°C';})
-    .catch(()=>{if(weather)weather.textContent='多雲';if(icon)icon.textContent='🌤️';if(temp)temp.textContent='--°C'});
-  const aqi=document.getElementById('natureAqi'),label=document.getElementById('natureAqiLabel');
-  if(aqi)aqi.textContent='--';if(label)label.textContent='資料將於 V9.4.2 串接';
-}
-
-function showBase(){renderBase();page('basePage')}
+function showBase(){renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
   {id:'cloudy',label:'多雲',icon:'🌤️'},
@@ -863,6 +833,53 @@ function bindBaseBuildingDrag(el,placement){
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up,{once:true});el.addEventListener('pointercancel',up,{once:true});
   });
 }
+
+let baseZoom=1;
+function adjustBaseZoom(delta){
+  baseZoom=Math.max(.8,Math.min(1.3,Math.round((baseZoom+delta)*10)/10));
+  const frame=document.querySelector('.base-scene-frame');
+  if(frame)frame.style.setProperty('--base-zoom',baseZoom);
+  const label=document.getElementById('baseZoomLabel');if(label)label.textContent=Math.round(baseZoom*100)+'%';
+}
+function updateBaseClock(){
+  const el=document.getElementById('baseLocalTime');if(!el)return;
+  const now=new Date();el.textContent=now.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+function showBaseInfo(){toast('📋 基地資訊：建設越完整，基地完成度越高！')}
+function showGuardianAlbum(){showHall()}
+function updateBaseDashboard(){
+  if(!st)return;
+  updateBaseClock();
+  const lv=currentLevel(), av=avatarById(st.avatar), owned=(st.owned||[]).length;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+  set('baseProfileName',st.name||'環保守護者');set('baseProfileLevel',`Lv.${lv}`);set('baseProfileTitle',st.specialTitle||titleForLevel(lv));
+  const avatar=document.getElementById('baseProfileAvatar');if(avatar)setAvatarElement(avatar,av,st.name||'環保守護者');
+  const ach=typeof getUnlockedAchievements==='function'?getUnlockedAchievements().length:(st.badges||0);
+  set('baseProfileAchievements',`${ach} / 15`);set('baseProfileStreak',`${st.streak||1} 天`);set('baseProfileWeekly',Number(st.weeklyExp||st.exp||0).toLocaleString('zh-TW'));
+  set('baseProfileCompletion',`${Math.min(100,Math.round(owned/12*100))}%`);
+  const correct=Number(st.correctAnswers||0), total=Number(st.totalAnswers||0);set('baseProfileAccuracy',total?`${(correct/total*100).toFixed(1)}%`:'0%');
+  set('baseProfileJoined',st.createdAt?new Date(st.createdAt).toLocaleDateString('zh-TW'):'—');
+  set('baseProfileShare',st.shareMessage||'一起減少塑膠垃圾，守護海洋生物！💙');set('baseFavoriteAnimal',st.favoriteAnimal||'歐亞水獺');set('baseRecentAchievement',st.recentAchievement||'尚未解鎖');
+  const sw=document.getElementById('baseEditSwitch');if(sw){sw.classList.toggle('on',!!st.baseEditMode);const em=sw.querySelector('em');if(em)em.textContent=st.baseEditMode?'開':'關'}
+}
+function aqiLevel(aqi){if(aqi<=50)return'良好';if(aqi<=100)return'普通';if(aqi<=150)return'對敏感族群不健康';if(aqi<=200)return'對所有族群不健康';if(aqi<=300)return'非常不健康';return'危害'}
+async function updateNatureDashboard(){
+  const w=document.getElementById('natureWeather');if(!w)return;
+  try{
+    const [forecast,air]=await Promise.all([
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
+      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
+    ]);
+    const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
+    document.getElementById('natureWeather').textContent=weatherFromCode(c.weather_code).label;
+    document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
+    document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
+    document.getElementById('natureAqi').textContent=Number.isFinite(aq)?aq:'--';document.getElementById('natureAqiLevel').textContent=Number.isFinite(aq)?aqiLevel(aq):'暫無資料';
+  }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
+}
+setInterval(updateBaseClock,60000);
+setTimeout(updateNatureDashboard,800);
+
 function renderBase(){
   ensureBaseLayout();baseCoins.textContent=st.coins;
   baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
@@ -873,12 +890,13 @@ function renderBase(){
   st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;const el=document.createElement('button');el.type='button';el.className='base-building'+(st.baseEditMode?' editable':'');el.textContent=it.icon;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
-  renderBaseSky();updateRealBaseWeather();renderBasePlayerCard();
+  renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].sort((a,b)=>a.cost-b.cost||a.name.localeCompare(b.name,'zh-Hant')).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
     d.innerHTML=`<div class="shop-icon">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">再建設一次</span></button>`;shop.appendChild(d);
   });
+  updateBaseDashboard();
 }
 function buyItem(id){
   const it=ITEMS.find(x=>x.id===id);if(!it)return;if(st.coins<it.cost){toast('金幣不足，完成更多單元再回來建設吧！');return}
