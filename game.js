@@ -1278,3 +1278,16 @@ setInterval(()=>{
  if(basePage&&!basePage.classList.contains('hide'))renderBaseSky();
 },60*1000);
 
+
+// V9.4.1 Beta 3：捲動後自動縮小頂部首頁抬頭，讓所有頁面保留更多閱讀與遊戲空間。
+(function initCompactHeader(){
+  let ticking=false;
+  const update=()=>{
+    document.body.classList.toggle('header-compact',window.scrollY>70);
+    ticking=false;
+  };
+  window.addEventListener('scroll',()=>{
+    if(!ticking){requestAnimationFrame(update);ticking=true;}
+  },{passive:true});
+  update();
+})();
