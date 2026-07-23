@@ -2466,3 +2466,73 @@ main > .global-status-row > div{
 body.night-mode #achievementPage .achievement-icon{
   background:rgba(255,255,255,.12);
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.5 — 四個守護狀態卡固定同一排
+   ========================================================= */
+section.stats.global-status-row{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-template-rows:1fr!important;
+  grid-auto-flow:column!important;
+  gap:10px!important;
+  width:min(1480px,calc(100% - 28px))!important;
+  max-width:1480px!important;
+  margin:18px auto 12px!important;
+  padding:0!important;
+  align-items:stretch!important;
+  overflow:visible!important;
+}
+section.stats.global-status-row > div{
+  grid-column:auto!important;
+  grid-row:1!important;
+  min-width:0!important;
+  width:auto!important;
+  min-height:92px!important;
+  height:auto!important;
+  padding:12px 8px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:3px!important;
+  text-align:center!important;
+  box-sizing:border-box!important;
+}
+section.stats.global-status-row > div > span{
+  font-size:13px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
+section.stats.global-status-row > div > b{
+  font-size:22px!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px){
+  section.stats.global-status-row{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:6px!important;
+    width:calc(100% - 12px)!important;
+    margin:12px auto 8px!important;
+  }
+  section.stats.global-status-row > div{
+    min-height:76px!important;
+    padding:7px 3px!important;
+    border-radius:13px!important;
+    font-size:22px!important;
+  }
+  section.stats.global-status-row > div > span{
+    font-size:10px!important;
+    white-space:normal!important;
+  }
+  section.stats.global-status-row > div > b{
+    font-size:15px!important;
+  }
+}
+@media(max-width:390px){
+  section.stats.global-status-row{gap:4px!important}
+  section.stats.global-status-row > div{padding:6px 2px!important;font-size:19px!important}
+  section.stats.global-status-row > div > span{font-size:9px!important}
+  section.stats.global-status-row > div > b{font-size:13px!important}
+}
