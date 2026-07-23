@@ -873,8 +873,18 @@ function bindBaseBuildingDrag(el,placement){
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up,{once:true});el.addEventListener('pointercancel',up,{once:true});
   });
 }
+
+function renderBaseProfileSnapshot(){
+ const lv=currentLevel(),sum=achievementSummary(),answered=Number(st.totalAnswered)||0,acc=answered?((Number(st.totalCorrect)||0)/answered*100):0;
+ const completion=Math.min(100,Math.round(((st.owned?.length||0)/Math.max(1,ITEMS.length))*100));
+ const av=avatarInfo(st.avatar||'fox');
+ const avatarEl=document.getElementById('baseProfileAvatar');
+ if(avatarEl){avatarEl.innerHTML='';setAvatarElement(avatarEl,av,av.name);}
+ const values={baseProfileName:st.name||'環保守護者',baseProfileLevel:`Lv.${lv}`,baseProfileTitle:ecoLevelTitle(lv),baseProfileAchievements:`${sum.count} / ${sum.total}`,baseProfileStreak:`${Number(st.streak)||0} 天`,baseProfileWeekly:String(Number(st.exp)||0),baseProfileCompletion:`${completion}%`,baseProfileAccuracy:`${acc.toFixed(1)}%`,baseProfileShare:st.shareMessage||'尚未填寫本週挑戰分享。',baseProfileAnimal:`${st.favoriteAnimal==='鱟'?'': '🦦 '}${st.favoriteAnimal||'歐亞水獺'}`,baseProfileRecent:`🏆 ${sum.recent}`};
+ Object.entries(values).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v});
+}
 function renderBase(){
-  ensureBaseLayout();baseCoins.textContent=st.coins;
+  ensureBaseLayout();baseCoins.textContent=st.coins;renderBaseProfileSnapshot();
   baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><aside class="nature-info-card" id="natureInfoCard" aria-live="polite"></aside><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
   baseScene.onclick=addBasePath;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');

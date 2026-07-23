@@ -11,10 +11,10 @@
 <meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
 <meta property="og:image" content="social-preview.svg">
 <meta name="twitter:card" content="summary_large_image">
-<title>環保冒險王 V9.4.1｜最終整合版</title>
+<title>環保冒險王 V9.4.1｜介面架構重製版</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=941-final">
+<link rel="stylesheet" href="style.css?v=941-redesign">
 </head>
 <body>
 <div id="loginPage" class="login-page">
@@ -147,18 +147,50 @@
   </section>
 </main>
 
-<main id="basePage" class="hide">
-  <div class="title base-title-row">
-    <div><small>GUARDIAN BASE</small><h2>🌍 我的守護基地</h2><p>把闖關獲得的金幣投入基地，建設可自由拖曳擺放，也能在草地上自己鋪路。</p></div>
-    <div class="base-title-tools" id="baseTitleTools">
-      <button onclick="toggleBaseEdit()">✋ 編輯基地</button>
-      <button onclick="toggleBasePath()">🟫 自己鋪路</button>
-      <button onclick="clearBasePaths()">🧹 清除路徑</button>
-    </div>
+<main id="basePage" class="hide base-page-redesign">
+  <div class="base-app-shell">
+    <section class="base-main-panel">
+      <div class="base-compact-head">
+        <div><small>GUARDIAN BASE</small><h2>🌍 我的守護基地</h2><p>瀏覽模式可正常上下滑動；進入編輯模式後，基地固定不跟著頁面移動。</p></div>
+        <div class="base-title-tools" id="baseTitleTools">
+          <button onclick="toggleBaseEdit()">✋ 編輯基地</button>
+          <button onclick="toggleBasePath()">🟫 自己鋪路</button>
+          <button onclick="clearBasePaths()">🧹 清除路徑</button>
+        </div>
+      </div>
+      <div class="base-stage-frame">
+        <div class="base-scene" id="baseScene"></div>
+      </div>
+      <div class="base-build-dock">
+        <div class="shop-head"><div><small>建設工具</small><h3>拖曳建築到基地即可放置</h3></div><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
+        <div class="shop" id="shop"></div>
+      </div>
+    </section>
+    <aside class="base-profile-panel" aria-label="我的守護者摘要">
+      <div class="base-profile-title"><b>玩家資訊卡</b><span>公開預覽</span></div>
+      <div class="base-profile-identity"><span id="baseProfileAvatar" class="base-profile-avatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><b id="baseProfileLevel">Lv.1</b><span id="baseProfileTitle">環保新手</span></div></div>
+      <div class="base-profile-grid">
+        <div><span>🏅 成就進度</span><b id="baseProfileAchievements">0 / 15</b></div>
+        <div><span>🔥 連續登入</span><b id="baseProfileStreak">1 天</b></div>
+        <div><span>⭐ 本週積分</span><b id="baseProfileWeekly">0</b></div>
+        <div><span>🌳 基地完成度</span><b id="baseProfileCompletion">0%</b></div>
+        <div><span>🎯 答對率</span><b id="baseProfileAccuracy">0.0%</b></div>
+        <div><span>📅 加入時間</span><b>守護旅程中</b></div>
+      </div>
+      <section class="base-profile-share"><h4>💬 本週挑戰分享</h4><p id="baseProfileShare">尚未填寫本週挑戰分享。</p></section>
+      <div class="base-profile-bottom"><div><h4>最喜歡的守護動物</h4><p id="baseProfileAnimal">🦦 歐亞水獺</p></div><div><h4>最近解鎖成就</h4><p id="baseProfileRecent">🏆 尚未解鎖</p></div></div>
+      <button class="base-profile-edit" onclick="showProfile()">編輯我的公開資料</button>
+      <small class="privacy-note">此卡不顯示 Email、UID 或 Google 帳號資訊。</small>
+    </aside>
   </div>
-  <div class="base-scene" id="baseScene"></div>
-  <div class="shop-head"><h3>基地建設</h3><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
-  <div class="shop" id="shop"></div>
+  <section class="nature-rest-section">
+    <div><small>NATURE REST AREA</small><h3>全新自然休憩區</h3><p>以大自然現有元素取代人工椅子，讓休憩設施更融入基地環境。</p></div>
+    <div class="nature-rest-grid">
+      <article><span>🪵</span><h4>原木休憩區</h4><p>利用自然倒木與樹蔭，打造低干擾休息空間。</p></article>
+      <article><span>🪨</span><h4>大石休憩區</h4><p>以平坦岩石作為天然座椅，適合短暫休息。</p></article>
+      <article><span>🏞️</span><h4>溪邊休憩區</h4><p>在溪水與草地旁放鬆，感受自然環境的聲音。</p></article>
+    </div>
+  </section>
 </main>
 
 
