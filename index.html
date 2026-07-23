@@ -11,10 +11,10 @@
 <meta property="og:description" content="答題、升級、修復基地，成為金門生態傳奇。">
 <meta property="og:image" content="social-preview.svg">
 <meta name="twitter:card" content="summary_large_image">
-<title>環保冒險王 V9.4.1｜介面架構重製版</title>
+<title>環保冒險王 V9.3｜療癒管理版</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="style.css?v=941-redesign">
+<link rel="stylesheet" href="style.css?v=9310">
 </head>
 <body>
 <div id="loginPage" class="login-page">
@@ -25,7 +25,7 @@
     <p class="login-lead">答題、升級、修復基地，成為守護金門與地球的生態英雄。</p>
     <div class="feature-chips"><span>🗺️ 四大冒險</span><span>📚 2,844 題</span><span>🦦 金門守護者</span></div>
     <label>玩家名稱</label>
-    <input id="nameInput" value="" maxlength="12" placeholder="請輸入玩家名稱" autocomplete="nickname">
+    <input id="nameInput" value="沄芯" maxlength="12">
     <label>選擇守護者頭像</label>
     <div id="loginAvatars" class="avatar-grid login-avatars"></div>
     <small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
@@ -52,13 +52,13 @@
   </div>
   <div class="header-copy">
     <small>EARTH GUARDIAN ADVENTURE</small>
-    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.4.1</span></h1>
+    <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>v9.3.11</span></h1>
     <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
   </div>
   <div class="header-actions">
     <button class="player player-button" onclick="showProfile()" title="開啟我的資料">
       <span id="playerAvatar" class="player-avatar frame-none">🦊</span>
-      <div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
+      <div><b id="playerName">沄芯</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
     </button>
     <button id="soundToggle" class="icon-action" onclick="toggleSound()" aria-label="切換音效" title="切換音效">🔊</button>
     <button class="logout" onclick="confirmLogout()">🚪 登出</button>
@@ -147,69 +147,21 @@
   </section>
 </main>
 
-<main id="basePage" class="hide base-page-v941">
-  <div class="guardian-dashboard">
-    <section class="guardian-stage-card">
-      <div class="guardian-stage-topbar">
-        <div class="local-time-box"><b id="baseClock">--:--</b><span>本地時間</span><small>☀️ 太陽從右往左移動</small></div>
-        <div class="stage-heading"><small>GUARDIAN BASE</small><h2>我的守護基地</h2><p>打造屬於自己的自然守護島</p></div>
-        <div class="edit-mode-box"><span>編輯模式</span><button id="baseEditToggle" onclick="toggleBaseEdit()">關</button></div>
-      </div>
-
-      <div class="guardian-stage-wrap">
-        <nav class="stage-side-tabs" aria-label="基地資訊工具">
-          <button class="active" onclick="showBaseInfoPanel('base')">🏝️<span>基地資訊</span></button>
-          <button onclick="showBaseInfoPanel('bio')">🐾<span>生物圖鑑</span></button>
-        </nav>
-        <div class="stage-zoom-tools" aria-label="基地縮放">
-          <span>縮放</span><button onclick="zoomBase(1)">＋</button><b id="baseZoomLabel">100%</b><button onclick="zoomBase(-1)">－</button>
-        </div>
-        <div class="base-stage-frame"><div class="base-scene" id="baseScene"></div></div>
-      </div>
-
-      <div class="base-build-dock">
-        <div class="shop-head">
-          <div><small>建設工具</small><h3>拖曳建築到基地即可放置</h3></div>
-          <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
-        </div>
-        <div class="shop-row"><div class="shop" id="shop"></div><button class="save-base-btn" onclick="saveBaseNow()">✓ 儲存基地<small>已自動儲存</small></button></div>
-      </div>
-    </section>
-
-    <aside class="player-card-v941" aria-label="玩家資訊卡">
-      <div class="player-card-heading"><b>玩家資訊卡</b><span>全新版・清晰版</span><button aria-label="關閉" onclick="this.closest('.player-card-v941').classList.toggle('collapsed')">×</button></div>
-      <div class="player-card-body">
-        <div class="player-identity-v941"><span id="baseProfileAvatar" class="player-avatar-v941">🦦</span><div><h3 id="baseProfileName">環保守護者</h3><div><b id="baseProfileLevel">Lv.1</b><span id="baseProfileTitle">環保新手</span></div></div></div>
-        <div class="player-stat-grid-v941">
-          <div><span>🏅 成就進度</span><b id="baseProfileAchievements">0 / 15</b></div>
-          <div><span>🔥 連續登入</span><b id="baseProfileStreak">1 天</b></div>
-          <div><span>⭐ 本週積分</span><b id="baseProfileWeekly">0</b></div>
-          <div><span>🌳 基地完成度</span><b id="baseProfileCompletion">0%</b></div>
-          <div><span>🎯 答對率</span><b id="baseProfileAccuracy">0.0%</b></div>
-          <div><span>📅 加入時間</span><b>守護旅程中</b></div>
-        </div>
-        <section class="weekly-share-v941"><h4>💬 本週挑戰分享 <small>最多 100 字</small></h4><p id="baseProfileShare">尚未填寫本週挑戰分享。</p></section>
-        <div class="player-bottom-v941"><div><h4>🦦 最喜歡的守護動物</h4><p id="baseProfileAnimal">歐亞水獺</p></div><div><h4>🏆 最近解鎖成就</h4><p id="baseProfileRecent">尚未解鎖</p></div></div>
-        <button class="profile-edit-v941" onclick="showProfile()">編輯我的公開資料</button>
-        <small class="privacy-note">此卡不顯示 Email、UID 或 Google 帳號資訊。</small>
-      </div>
-    </aside>
-  </div>
-
-  <section class="nature-rest-v941">
-    <div class="section-title-v941"><small>NATURE REST AREA</small><h3>全新自然休憩區 <span>取代人工椅子</span></h3><p>使用大自然現有的元素，與環境更融合。</p></div>
-    <div class="nature-rest-grid-v941">
-      <article><div class="rest-art log-art">🪵</div><h4>原木休憩區</h4><p>粗壯的原木，讓人坐下休息，感受森林氣息。</p></article>
-      <article><div class="rest-art rock-art">🪨</div><h4>大石休憩區</h4><p>平坦的大石頭，天然座椅，穩固又涼爽。</p></article>
-      <article><div class="rest-art creek-art">🏞️</div><h4>溪邊休憩區</h4><p>溪水旁的大石或草地，聽著流水聲放鬆身心。</p></article>
+<main id="basePage" class="hide">
+  <div class="title base-title-row">
+    <div><small>GUARDIAN BASE</small><h2>🌍 我的守護基地</h2><p>把闖關獲得的金幣投入基地，建設可自由拖曳擺放，也能在草地上自己鋪路。</p></div>
+    <div class="base-title-tools" id="baseTitleTools">
+      <button onclick="toggleBaseEdit()">✋ 編輯基地</button>
+      <button onclick="toggleBasePath()">🟫 自己鋪路</button>
+      <button onclick="clearBasePaths()">🧹 清除路徑</button>
     </div>
-  </section>
-
-  <section class="mobile-experience-v941">
-    <h3>基地移動體驗優化</h3>
-    <div><p>✓ <b>瀏覽模式：</b>可上下滑動頁面查看基地，不會隨意移動基地。</p><p>✓ <b>編輯模式：</b>使用拖曳功能時，基地固定不會跟著畫面移動。</p><p>✓ <b>基地大小優化：</b>更大、更清晰，視野更舒適。</p></div>
-  </section>
+  </div>
+  <div class="base-scene" id="baseScene"></div>
+  <div class="shop-head"><h3>基地建設</h3><span>目前金幣：🪙 <b id="baseCoins">0</b></span></div>
+  <div class="shop" id="shop"></div>
 </main>
+
+
 
 <main id="achievementPage" class="hide">
   <div class="title"><div><small>GUARDIAN ACHIEVEMENTS</small><h2>🏅 玩家成就</h2><p>每一次答題、闖關與守護行動，都會留下成長足跡。</p></div></div>
@@ -353,7 +305,7 @@
 
 <main id="profilePage" class="hide">
   <div class="title">
-    <div><small>GUARDIAN PROFILE</small><h2>👤 我的守護者資料</h2><p>修改名稱、公開挑戰分享與喜愛的守護動物，查看等級、稱號及冒險紀錄。</p></div>
+    <div><small>GUARDIAN PROFILE</small><h2>👤 我的守護者資料</h2><p>修改名稱與已解鎖頭像，查看等級、稱號及冒險紀錄。</p></div>
   </div>
 
   <section class="profile-hero">
@@ -364,7 +316,7 @@
         <input id="profileNameInput" maxlength="12">
         <button class="primary" onclick="saveProfileName()">儲存名稱</button>
       </div>
-      <h3 id="profileDisplayName">環保守護者</h3>
+      <h3 id="profileDisplayName">沄芯</h3>
       <p id="profileTitleText">見習地球守護者</p>
       <div class="level-line"><b id="profileLevel">Lv.1</b><span id="profileExpText">0 / 100 EXP</span></div>
       <div class="bar profile-exp-bar"><i id="profileExpBar"></i></div>
@@ -372,20 +324,6 @@
   </section>
 
   <section class="profile-summary" id="profileSummary"></section>
-
-
-  <section class="profile-public-settings">
-    <h3>🌿 排行榜公開資料</h3>
-    <p class="section-note">以下內容會顯示在每週排行榜的玩家資訊卡，不會公開 Email、UID 或 Google 帳號資料。</p>
-    <label for="profileShareMessage">本週挑戰分享（最多 100 字）</label>
-    <textarea id="profileShareMessage" maxlength="100" rows="3" placeholder="分享這星期完成的挑戰或環保行動…"></textarea>
-    <label for="profileFavoriteAnimal">最喜歡的守護動物</label>
-    <select id="profileFavoriteAnimal" onchange="updateFavoriteAnimalPreview()">
-      <option value="歐亞水獺">🦦 歐亞水獺</option><option value="鱟">鱟（專屬圖示）</option><option value="石虎">🐆 石虎</option><option value="黑面琵鷺">🕊️ 黑面琵鷺</option><option value="綠蠵龜">🐢 綠蠵龜</option><option value="台灣黑熊">🐻 台灣黑熊</option><option value="穿山甲">🦔 穿山甲</option>
-    </select>
-    <div id="favoriteAnimalPreview" class="favorite-animal-preview"></div>
-    <button class="primary" type="button" onclick="savePublicProfile()">儲存公開資料</button>
-  </section>
 
   <h3>選擇守護者頭像</h3>
   <p class="section-note">鎖定的守護者會在達到指定等級後自動解鎖。</p>
@@ -396,25 +334,10 @@
 
   <section class="kinmen-final">
     <div>🦦</div><div class="horseshoe-icon" role="img" aria-label="金門鱟"></div>
-    <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p><button type="button" class="bio-link-button" onclick="openGuardianBio('鱟')">認識金門鱟</button></div>
+    <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
   </section>
 </main>
 
-</div>
-
-
-<div id="guardianBioModal" class="modal hide" role="dialog" aria-modal="true" aria-labelledby="guardianBioTitle">
-  <div class="modal-card guardian-bio-card">
-    <button class="modal-close" type="button" onclick="closeGuardianBio()" aria-label="關閉">×</button>
-    <div id="guardianBioContent"></div>
-  </div>
-</div>
-
-<div id="leaderProfileModal" class="modal hide" role="dialog" aria-modal="true" aria-labelledby="leaderProfileName">
-  <div class="modal-card leader-profile-card">
-    <button class="modal-close" type="button" onclick="closeLeaderProfile()" aria-label="關閉">×</button>
-    <div id="leaderProfileContent"></div>
-  </div>
 </div>
 
 <div id="logoutModal" class="modal hide">
@@ -457,9 +380,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=941"></script>
+<script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=941"></script>
-<script src="firebase.js?v=941"></script>
+<script src="game.js?v=9310"></script>
+<script src="firebase.js?v=939"></script>
 </body></html>

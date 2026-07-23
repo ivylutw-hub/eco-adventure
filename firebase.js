@@ -90,16 +90,6 @@ function weeklyFields(){
   points:Number(w.points)||0,
   completedUnits:w.completedKeys.length,
   perfectUnits:w.perfectKeys.length,
-  totalCorrect:Number(st.totalCorrect)||0,
-  totalAnswered:Number(st.totalAnswered)||0,
-  accuracyRate:accuracyRate(),
-  streak:Number(st.streak)||0,
-  baseCompletion:baseCompletionRate(),
-  achievementCount:achievementSummary().count,
-  recentAchievement:achievementSummary().recent,
-  shareMessage:(st.shareMessage||'').slice(0,100),
-  favoriteAnimal:st.favoriteAnimal||'歐亞水獺',
-  ecoTitle:ecoLevelTitle(),
   updatedAt:firebase.firestore.FieldValue.serverTimestamp()
  };
 }
@@ -266,19 +256,9 @@ async function refreshLeaderboard(){
   });
   if(!rows.length){list.innerHTML='<div class="empty-ranking">本週還沒有排名紀錄。</div>';if(rank)rank.textContent='—';return;}
   const myIndex=rows.findIndex(x=>x.uid===cloudUser.uid);if(myIndex>=0){const currentRank=myIndex+1;if(!st.bestWeeklyRank||currentRank<st.bestWeeklyRank){st.bestWeeklyRank=currentRank;save();}}if(rank)rank.textContent=myIndex>=0?`第 ${myIndex+1} 名`:'500 名以外';list.innerHTML='';
-  rows.forEach((x,i)=>{const row=document.createElement('div');row.className='rank-row'+(x.uid===cloudUser.uid?' me':'');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);row.innerHTML=`<div class="rank-no">${medal}</div><button class="rank-player rank-player-button" type="button" aria-label="查看 ${escapeRankText(x.name||'環保守護者')} 的挑戰分享"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></button><div class="rank-points"><b>${Number(x.guardianExp)||0}</b><small>守護經驗</small></div>`;row.querySelector('.rank-player-button').onclick=()=>openLeaderProfile(x);list.appendChild(row);});setCloudStatus('online','☁️ 排行榜已更新');
+  rows.forEach((x,i)=>{const row=document.createElement('div');row.className='rank-row'+(x.uid===cloudUser.uid?' me':'');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${Number(x.guardianExp)||0}</b><small>守護經驗</small></div>`;list.appendChild(row);});setCloudStatus('online','☁️ 排行榜已更新');
  }catch(err){console.error('讀取排行榜失敗',err);list.innerHTML='<div class="empty-ranking">目前無法讀取雲端排行，遊戲進度不受影響。</div>';setCloudStatus('offline','☁️ 排行榜暫時離線，遊戲進度不受影響');}
 }
-
-function openLeaderProfile(x){
- const modal=document.getElementById('leaderProfileModal'),box=document.getElementById('leaderProfileContent');if(!modal||!box)return;
- const acc=Number.isFinite(Number(x.accuracyRate))?Number(x.accuracyRate):(Number(x.totalAnswered)?Number(x.totalCorrect||0)/Number(x.totalAnswered)*100:0);
- const avatar=String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱');
- box.innerHTML=`<div class="leader-profile-head"><div class="leader-profile-avatar">${avatar}</div><div><h2 id="leaderProfileName">${escapeRankText(x.name||'環保守護者')}</h2><p>🌱 環保等級：${escapeRankText(x.ecoTitle||ecoLevelTitle(Number(x.level)||1))}</p></div></div><div class="leader-profile-stats"><div>👤 <span>等級</span><b>Lv.${Number(x.level)||1}</b></div><div>🏅 <span>已獲得成就</span><b>${Number(x.achievementCount)||0} / 15</b></div><div>⭐ <span>本週積分</span><b>${Number(x.guardianExp)||0}</b></div><div>🎯 <span>答對率</span><b>${acc.toFixed(1)}%</b></div><div>🔥 <span>連續登入</span><b>${Number(x.streak)||0} 天</b></div><div>🌳 <span>守護基地完成度</span><b>${Number(x.baseCompletion)||0}%</b></div></div><section class="leader-share"><h3>💬 本週挑戰分享</h3><p>${escapeRankText(x.shareMessage||'這位守護者尚未填寫挑戰分享。')}</p></section><div class="leader-extra"><p>🦦 <b>最喜歡的守護動物：</b>${escapeRankText(x.favoriteAnimal||'歐亞水獺')}</p><p>🏆 <b>最近解鎖成就：</b>${escapeRankText(x.recentAchievement||'尚未解鎖成就')}</p></div>`;
- modal.classList.remove('hide');
-}
-function closeLeaderProfile(){document.getElementById('leaderProfileModal')?.classList.add('hide')}
-
 function escapeRankText(v){const d=document.createElement('div');d.textContent=String(v);return d.innerHTML}
 function showLeaderboard(){page('leaderboardPage');refreshLeaderboard()}
 const _v80finish=finish;finish=function(){ensureProgress();const wasFirst=!doneSet(stage.id).has(unit),wasFirstPerfect=score===quiz.length&&!((st.coinAwarded||{})[`${stage.id}|${unit}`]),sid=stage.id,ui=unit;_v80finish();recordWeeklyUnitProgress(sid,ui,wasFirst,wasFirstPerfect)};

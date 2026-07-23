@@ -11,7 +11,7 @@ const ITEMS=[
 {id:'solar',icon:'☀️',name:'太陽能屋頂',cost:10,desc:'用乾淨能源供應守護基地。'},
 {id:'wind',icon:'🌬️',name:'小型風力機',cost:12,desc:'利用風力產生綠色能源。'},
 {id:'animal',icon:'🐢',name:'動物保護區',cost:15,desc:'讓受保護動物有安全棲地。'},
-{id:'bench',icon:'🪵',name:'林蔭原木休憩區',cost:4,desc:'利用既有倒木、樹蔭與自然石形成可休息、觀察生態的低干擾角落。'},
+{id:'bench',icon:'🪑',name:'森林休憩椅',cost:4,desc:'提供守護者休息與觀察自然的角落。'},
 {id:'birdhouse',icon:'🪺',name:'友善鳥巢站',cost:6,desc:'讓小鳥在基地安心築巢。'},
 {id:'compost',icon:'🍂',name:'落葉堆肥區',cost:7,desc:'把落葉與廚餘轉化為植物養分。'},
 {id:'wetland',icon:'🪷',name:'迷你生態濕地',cost:9,desc:'淨化水質並提供小生物棲息地。'},

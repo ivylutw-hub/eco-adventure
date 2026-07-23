@@ -1,6 +1,6 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:'',shareMessage:'',favoriteAnimal:'歐亞水獺'}}
+function defaultState(){return{loggedIn:false,name:'沄芯',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
 function load(){
   try{
     let raw=localStorage.getItem(KEY);
@@ -87,7 +87,7 @@ function importSave(event){
       save();
       ensureProfile();
       selectedLoginAvatar=st.avatar||'fox';
-      playerName.textContent=st.name||'環保守護者';
+      playerName.textContent=st.name||'沄芯';
       header();
       renderMap();
       page('mapPage');
@@ -240,7 +240,7 @@ function animateFeedback(ok){
 
 function dateStr(d=new Date()){return d.toLocaleDateString('en-CA')}
 function login(){
-  st.name=(nameInput.value||'環保守護者').trim();
+  st.name=(nameInput.value||'沄芯').trim();
   st.avatar=selectedLoginAvatar||st.avatar||'fox';
   st.loggedIn=true;
   dailyLogin();
@@ -295,14 +295,15 @@ function updateHomeCheckinCard(){
  if(reward)reward.textContent=st.monthlyGuardianRewards[key]?'✅ 已獲得四季松鼠守護者':'🐿️ 月底全勤送限定守護者';
 }
 function celestialPosition(date=new Date()){
- const minutes=date.getHours()*60+date.getMinutes()+date.getSeconds()/60;
+ const minutes=date.getHours()*60+date.getMinutes();
  const isDay=minutes>=360&&minutes<1080;
+ const start=isDay?360:1080;
+ const span=720;
  const adjusted=isDay?minutes:(minutes<360?minutes+1440:minutes);
- const start=isDay?360:1080,span=720;
  const progress=Math.max(0,Math.min(1,(adjusted-start)/span));
- // 北半球、面向北方：06:00 從右側升起，12:00 抵達正上方，18:00 移至左側。
- const x=92-84*progress;
- const y=62-50*Math.sin(Math.PI*progress);
+ const x=8+84*progress;
+ const arc=Math.sin(Math.PI*progress);
+ const y=62-50*arc;
  return{isDay,x,y};
 }
 function applyCelestialPosition(el,date=new Date()){
@@ -360,21 +361,6 @@ function buildAchievementList(){
   {id:'correct_2000',icon:'📕',name:'永恆環保英雄',desc:'累計答對 2,000 題。',rarity:'傳奇',progress:Math.min(correct,2000),goal:2000,reward:{coins:5,exp:500,title:'永恆環保英雄'}},
   {id:'all_questions',icon:'👑',name:'環保冒險王',desc:`答對全部 ${total.toLocaleString('zh-TW')} 題正式題庫。`,rarity:'終極',progress:Math.min(correct,total),goal:total,reward:{coins:10,exp:1000,title:'環保冒險王'}}
  ];
-}
-function ecoLevelTitle(level=currentLevel()){
- if(level<=5)return '環保新手';if(level<=10)return '綠芽守護者';if(level<=20)return '森林守護者';if(level<=30)return '地球守護者';return '環保傳奇';
-}
-function accuracyRate(correct=st.totalCorrect,answered=st.totalAnswered){answered=Number(answered)||0;return answered?((Number(correct)||0)/answered*100):0}
-function baseCompletionRate(state=st){
- const owned=new Set(Array.isArray(state.owned)?state.owned:[]);return ITEMS.length?Math.min(100,Math.round(owned.size/ITEMS.length*100)):0;
-}
-function achievementSummary(state=st){
- if(state===st){const list=buildAchievementList(),earned=list.filter(a=>a.progress>=a.goal);let recent='尚未解鎖成就';const claims=state.achievementClaims||{};const latest=Object.entries(claims).sort((a,b)=>Date.parse(b[1]||0)-Date.parse(a[1]||0))[0];if(latest){const a=list.find(x=>x.id===latest[0]);if(a)recent=a.name}return{count:earned.length,total:list.length,recent};}
- return{count:Number(state.achievementCount)||0,total:15,recent:state.recentAchievement||'尚未解鎖成就'};
-}
-function savePublicProfile(){
- const msg=(document.getElementById('profileShareMessage')?.value||'').replace(/<[^>]*>/g,'').trim().slice(0,100);
- const animal=document.getElementById('profileFavoriteAnimal')?.value||'歐亞水獺';st.shareMessage=msg;st.favoriteAnimal=animal;save();if(typeof saveCloudNow==='function')saveCloudNow();toast('✅ 公開資料已儲存');
 }
 function achievementRewardText(r={}){
  const parts=[];if(r.exp)parts.push(`${r.exp} EXP`);if(r.coins)parts.push(`${r.coins} 金幣`);if(r.title)parts.push(`稱號「${r.title}」`);return parts.join('＋')||'紀念徽章';
@@ -437,7 +423,7 @@ function header(){
  coins.textContent=st.coins;
  streak.textContent=st.streak||1;
  badges.textContent=S.filter(isDone).length;
- playerName.textContent=st.name||'環保守護者';
+ playerName.textContent=st.name||'沄芯';
  playerTitle.textContent=st.specialTitle||titleForLevel(lv);
  playerLevel.textContent=`Lv.${lv}`;
  playerAvatar.textContent=av.icon;
@@ -768,46 +754,23 @@ const BASE_WEATHERS=[
   {id:'overcast',label:'陰天',icon:'☁️'},
   {id:'rainy',label:'雨天',icon:'🌧️'}
 ];
-let baseLiveWeather=null,baseWeatherFetchedAt=0,baseEnvironment=null;
-const DEFAULT_BASE_LOCATION={latitude:24.43,longitude:118.32,label:'金門'};
+let baseLiveWeather=null,baseWeatherFetchedAt=0;
 function weatherFromCode(code){
- code=Number(code);if(code===0)return{id:'sunny',icon:'☀️',label:'晴朗'};if([1,2].includes(code))return{id:'cloudy',icon:'🌤️',label:'多雲'};if(code===3)return{id:'overcast',icon:'☁️',label:'陰天'};if([45,48].includes(code))return{id:'foggy',icon:'🌫️',label:'有霧'};if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code))return{id:'rainy',icon:'🌧️',label:'下雨'};if([71,73,75,77,85,86].includes(code))return{id:'overcast',icon:'❄️',label:'降雪'};if([95,96,99].includes(code))return{id:'stormy',icon:'⛈️',label:'雷雨'};return{id:'cloudy',icon:'🌤️',label:'多雲'};
+ code=Number(code);
+ if(code===0)return BASE_WEATHERS[0];
+ if([1,2].includes(code))return BASE_WEATHERS[1];
+ if([3,45,48].includes(code))return BASE_WEATHERS[2];
+ if([51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code))return BASE_WEATHERS[3];
+ return BASE_WEATHERS[1];
 }
-function aqiLevel(value){
- const n=Math.max(0,Math.round(Number(value)||0));
- if(n<=50)return{label:'良好',className:'good'};
- if(n<=100)return{label:'普通',className:'moderate'};
- if(n<=150)return{label:'對敏感族群不健康',className:'sensitive'};
- if(n<=200)return{label:'對所有族群不健康',className:'unhealthy'};
- if(n<=300)return{label:'非常不健康',className:'very-unhealthy'};
- return{label:'危害',className:'hazardous'};
-}
-function getBaseLocation(){
- return new Promise(resolve=>{
-  if(!navigator.geolocation){resolve(DEFAULT_BASE_LOCATION);return;}
-  navigator.geolocation.getCurrentPosition(
-   pos=>resolve({latitude:pos.coords.latitude,longitude:pos.coords.longitude,label:'使用者所在地'}),
-   ()=>resolve(DEFAULT_BASE_LOCATION),
-   {enableHighAccuracy:false,timeout:6000,maximumAge:30*60*1000}
-  );
- });
-}
-async function fetchBaseWeather(force=false){
+async function updateRealBaseWeather(force=false){
  if(!force&&Date.now()-baseWeatherFetchedAt<15*60*1000&&baseLiveWeather){renderBaseSky();return;}
  try{
-  const location=await getBaseLocation();
-  const forecast=`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code,is_day&timezone=auto`;
-  const air=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${location.latitude}&longitude=${location.longitude}&current=us_aqi&timezone=auto`;
-  const [weatherResponse,airResponse]=await Promise.all([fetch(forecast,{cache:'no-store'}),fetch(air,{cache:'no-store'})]);
-  if(!weatherResponse.ok)throw new Error('weather '+weatherResponse.status);
-  const weatherData=await weatherResponse.json();
-  const airData=airResponse.ok?await airResponse.json():{};
-  const current=weatherData.current||{};
-  const aqi=Math.round(Number(airData.current?.us_aqi)||0);
-  baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night'};
-  baseEnvironment={location:location.label,temperature:Math.round(Number(current.temperature_2m)||0),aqi,aqiInfo:aqiLevel(aqi)};
-  baseWeatherFetchedAt=Date.now();renderBaseSky();
- }catch(err){console.warn('即時天氣或 AQI 載入失敗，使用本機時間與備援資料。',err);baseLiveWeather=null;baseEnvironment=null;renderBaseSky();}
+  const url='https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=weather_code,is_day&timezone=auto';
+  const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('weather '+response.status);
+  const data=await response.json(),current=data.current||{};
+  baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night'};baseWeatherFetchedAt=Date.now();renderBaseSky();
+ }catch(err){console.warn('即時天氣載入失敗，使用本機時間與備援天氣。',err);baseLiveWeather=null;renderBaseSky();}
 }
 function baseTimeMode(){
   const hour=new Date().getHours();
@@ -822,7 +785,7 @@ function renderBaseSky(){
   if(!scene)return;
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
   const mode=baseTimeMode();
-  scene.className=`base-scene ${mode} weather-${weather.id} ${st.baseEditMode?'editing':''}`;
+  scene.className=`base-scene ${mode} weather-${weather.id}`;
   const pos=celestialPosition(new Date());
   scene.style.setProperty('--celestial-x',`${pos.x.toFixed(2)}%`);
   scene.style.setProperty('--celestial-y',`${pos.y.toFixed(2)}%`);
@@ -838,7 +801,6 @@ function renderBaseSky(){
       <span class="base-rain" aria-hidden="true">${Array.from({length:22},(_,i)=>`<i style="--x:${4+(i*13)%92}%;--delay:${(i%11)*.8}s;--duration:${9+(i%5)*1.2}s"></i>`).join('')}</span>`;
   }
   if(badge)badge.textContent=`${mode==='day'?'白天':'黑夜'}・${weather.icon} ${weather.label}`;
-  const nature=scene.querySelector('#natureInfoCard');if(nature){const env=baseEnvironment;if(env){nature.innerHTML=`<div class="nature-info-head"><b>🌿 今日自然資訊</b><button type="button" onclick="this.closest('.nature-info-card').classList.toggle('collapsed')" aria-label="收合今日自然資訊">−</button></div><div class="nature-info-body"><span>📍 ${env.location}</span><span>${weather.icon} ${weather.label}　🌡️ ${env.temperature}°C</span><span class="aqi-line aqi-${env.aqiInfo.className}"><small>空氣品質指標 AQI</small><b>${env.aqi}　${env.aqiInfo.label}</b></span></div>`}else{nature.innerHTML=`<div class="nature-info-head"><b>🌿 今日自然資訊</b></div><div class="nature-info-body"><span>${weather.icon} ${weather.label}</span><span class="nature-loading">天氣與 AQI 載入中…</span></div>`}}
 }
 function ensureBaseLayout(){
   if(!Array.isArray(st.basePlacements))st.basePlacements=[];
@@ -865,27 +827,15 @@ function addBasePath(event){
 }
 function bindBaseBuildingDrag(el,placement){
   el.addEventListener('pointerdown',event=>{
-    if(!st.baseEditMode||st.basePathMode)return;
-    event.preventDefault();event.stopPropagation();document.body.classList.add('base-drag-lock');
-    el.setPointerCapture(event.pointerId);el.classList.add('dragging');
-    const move=e=>{e.preventDefault();const pos=basePointerPosition(e,baseScene);placement.x=pos.x;placement.y=pos.y;el.style.left=pos.x+'%';el.style.top=pos.y+'%';};
-    const up=()=>{document.body.classList.remove('base-drag-lock');el.classList.remove('dragging');el.removeEventListener('pointermove',move);save();if(typeof saveCloudNow==='function')saveCloudNow();toast('✅ 已自動儲存');};
+    if(!st.baseEditMode||st.basePathMode)return;event.preventDefault();el.setPointerCapture(event.pointerId);el.classList.add('dragging');
+    const move=e=>{const pos=basePointerPosition(e,baseScene);placement.x=pos.x;placement.y=pos.y;el.style.left=pos.x+'%';el.style.top=pos.y+'%';};
+    const up=()=>{el.classList.remove('dragging');el.removeEventListener('pointermove',move);save();};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up,{once:true});el.addEventListener('pointercancel',up,{once:true});
   });
 }
-
-function renderBaseProfileSnapshot(){
- const lv=currentLevel(),sum=achievementSummary(),answered=Number(st.totalAnswered)||0,acc=answered?((Number(st.totalCorrect)||0)/answered*100):0;
- const completion=Math.min(100,Math.round(((st.owned?.length||0)/Math.max(1,ITEMS.length))*100));
- const av=avatarInfo(st.avatar||'fox');
- const avatarEl=document.getElementById('baseProfileAvatar');
- if(avatarEl){avatarEl.innerHTML='';setAvatarElement(avatarEl,av,av.name);}
- const values={baseProfileName:st.name||'環保守護者',baseProfileLevel:`Lv.${lv}`,baseProfileTitle:ecoLevelTitle(lv),baseProfileAchievements:`${sum.count} / ${sum.total}`,baseProfileStreak:`${Number(st.streak)||0} 天`,baseProfileWeekly:String(Number(st.exp)||0),baseProfileCompletion:`${completion}%`,baseProfileAccuracy:`${acc.toFixed(1)}%`,baseProfileShare:st.shareMessage||'尚未填寫本週挑戰分享。',baseProfileAnimal:`${st.favoriteAnimal==='鱟'?'': '🦦 '}${st.favoriteAnimal||'歐亞水獺'}`,baseProfileRecent:`🏆 ${sum.recent}`};
- Object.entries(values).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v});
-}
 function renderBase(){
-  ensureBaseLayout();baseCoins.textContent=st.coins;renderBaseProfileSnapshot();
-  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><aside class="nature-info-card" id="natureInfoCard" aria-live="polite"></aside><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
+  ensureBaseLayout();baseCoins.textContent=st.coins;
+  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
   baseScene.onclick=addBasePath;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
@@ -893,8 +843,8 @@ function renderBase(){
   st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;const el=document.createElement('button');el.type='button';el.className='base-building'+(st.baseEditMode?' editable':'');el.textContent=it.icon;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
-  renderBaseSky();fetchBaseWeather();
-  if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))renderBaseSky()},30000);
+  renderBaseSky();updateRealBaseWeather();
+  if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].sort((a,b)=>a.cost-b.cost||a.name.localeCompare(b.name,'zh-Hant')).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
     d.innerHTML=`<div class="shop-icon">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">再建設一次</span></button>`;shop.appendChild(d);
@@ -1232,8 +1182,8 @@ function renderProfile(){
   const lv=currentLevel();
   const av=avatarById(st.avatar);
   const fr=frameById(st.frame);
-  profileNameInput.value=st.name||'環保守護者';
-  profileDisplayName.textContent=st.name||'環保守護者';
+  profileNameInput.value=st.name||'沄芯';
+  profileDisplayName.textContent=st.name||'沄芯';
   profileTitleText.textContent=st.specialTitle||titleForLevel(lv);
   profileLevel.textContent=`Lv.${lv}`;
   profileExpText.textContent=lv>=MAX_LEVEL?'已達最高等級':`${expInLevel()} / 100 EXP`;
@@ -1268,31 +1218,8 @@ function renderProfile(){
     b.onclick=()=>chooseFrame(f.id);
     frameChoices.appendChild(b);
   });
-
- const share=document.getElementById('profileShareMessage'),fav=document.getElementById('profileFavoriteAnimal');if(share)share.value=st.shareMessage||'';if(fav)fav.value=st.favoriteAnimal||'歐亞水獺';updateFavoriteAnimalPreview();
 }
 
-const GUARDIAN_BIO={
- '鱟':{name:'鱟',scientific:'Tachypleus tridentatus',icon:'horseshoe-crab.svg',image:true,habitat:'潮間帶、沙泥灘與淺海水域',feature:'外形像一頂圓弧頭盔，具有堅硬背甲和細長尾劍；尾劍主要用來翻身，不是攻擊武器。',conservation:'在臺灣屬珍貴稀有保育類野生動物。',kinmen:'金門仍保有適合鱟成長的潮間帶，是臺灣重要的鱟棲地與保育教育場域。'},
- '歐亞水獺':{name:'歐亞水獺',scientific:'Lutra lutra',icon:'🦦',habitat:'溪流、池塘、濕地與海岸附近',feature:'擅長游泳，會利用鬍鬚感受水流與獵物動靜，是健康水域的重要指標。',conservation:'在臺灣屬瀕臨絕種保育類野生動物。',kinmen:'金門是臺灣目前仍有穩定野外族群的重要地區，友善道路與乾淨水域對牠們非常重要。'},
- '綠蠵龜':{name:'綠蠵龜',scientific:'Chelonia mydas',icon:'🐢',habitat:'熱帶與亞熱帶海域、珊瑚礁及海草床',feature:'成龜主要以海草與藻類為食，能幫助維持海草床健康。',conservation:'在臺灣屬瀕臨絕種保育類野生動物。',kinmen:'減少海洋塑膠、廢棄漁具與海岸光害，都能降低海龜受傷的風險。'},
- '石虎':{name:'石虎',scientific:'Prionailurus bengalensis',icon:'🐆',habitat:'低海拔丘陵、森林邊緣與農田交錯環境',feature:'體型比家貓稍大，額頭有白色縱紋，耳後有明顯白斑。',conservation:'在臺灣屬瀕臨絕種保育類野生動物。',kinmen:'遊戲中的守護任務提醒大家保留生態廊道、減速慢行並避免使用毒餌。'},
- '黑面琵鷺':{name:'黑面琵鷺',scientific:'Platalea minor',icon:'🕊️',habitat:'河口、魚塭、潮間帶與淺水濕地',feature:'嘴喙扁平如湯匙，會左右掃動捕捉小魚蝦。',conservation:'全球受脅候鳥，臺灣是重要度冬地。',kinmen:'維護潮間帶與濕地水質，能提供候鳥安全覓食與休息空間。'},
- '台灣黑熊':{name:'台灣黑熊',scientific:'Ursus thibetanus formosanus',icon:'🐻',habitat:'中高海拔森林',feature:'胸前常有白色 V 字斑紋，是臺灣體型最大的陸生哺乳動物。',conservation:'在臺灣屬瀕臨絕種保育類野生動物。',kinmen:'雖不是金門原生動物，但代表森林棲地與生物多樣性守護。'},
- '穿山甲':{name:'穿山甲',scientific:'Manis pentadactyla',icon:'🦔',habitat:'低海拔森林、草地與農地周邊',feature:'全身覆蓋角質鱗片，遇到危險會蜷成球，以螞蟻和白蟻為食。',conservation:'在臺灣屬珍貴稀有保育類野生動物。',kinmen:'保護無農藥、無獸鋏的友善環境，有助於小型野生動物生存。'}
-};
-function guardianBioIcon(b){return b.image?`<img src="${b.icon}" alt="${b.name}圖示">`:`<span aria-hidden="true">${b.icon}</span>`}
-function openGuardianBio(name){
- const b=GUARDIAN_BIO[name]||GUARDIAN_BIO['鱟'];
- const modal=document.getElementById('guardianBioModal'),box=document.getElementById('guardianBioContent');if(!modal||!box)return;
- box.innerHTML=`<div class="bio-card-head"><div class="bio-card-icon">${guardianBioIcon(b)}</div><div><small>GUARDIAN BIO CARD</small><h2>${b.name}</h2><i>${b.scientific}</i></div></div><div class="bio-card-grid"><section><h3>🏝️ 棲息環境</h3><p>${b.habitat}</p></section><section><h3>🔎 生物特色</h3><p>${b.feature}</p></section><section><h3>🛡️ 保育狀況</h3><p>${b.conservation}</p></section><section><h3>🌊 金門與守護行動</h3><p>${b.kinmen}</p></section></div>`;
- modal.classList.remove('hide');document.body.classList.add('modal-open');
-}
-function closeGuardianBio(){const modal=document.getElementById('guardianBioModal');if(modal)modal.classList.add('hide');document.body.classList.remove('modal-open')}
-function updateFavoriteAnimalPreview(){
- const select=document.getElementById('profileFavoriteAnimal'),preview=document.getElementById('favoriteAnimalPreview');if(!select||!preview)return;
- const b=GUARDIAN_BIO[select.value];preview.innerHTML=b?`<button type="button" class="favorite-animal-card" onclick="openGuardianBio('${select.value}')"><span>${guardianBioIcon(b)}</span><b>${b.name}</b><small>點擊查看生物知識卡</small></button>`:'';
-}
 function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 ensureProgress();ensureProfile();if(typeof st.soundEnabled!=='boolean')st.soundEnabled=true;selectedLoginAvatar=st.avatar||'fox';renderLoginAvatars();updateWeaknessBadge();save();nameInput.value=st.name;if(st.loggedIn){dailyLogin();enterGame()}
 
@@ -1303,23 +1230,3 @@ setInterval(()=>{
  if(basePage&&!basePage.classList.contains('hide'))renderBaseSky();
 },60*1000);
 
-
-/* V9.4.1 rebuilt base helpers */
-let v941BaseZoom=1;
-function zoomBase(dir){
-  v941BaseZoom=Math.max(.8,Math.min(1.25,v941BaseZoom+(dir*.1)));
-  const scene=document.getElementById('baseScene');
-  if(scene) scene.style.transform=`scale(${v941BaseZoom})`;
-  const label=document.getElementById('baseZoomLabel');
-  if(label) label.textContent=Math.round(v941BaseZoom*100)+'%';
-}
-function saveBaseNow(){
-  try{ if(typeof saveBase==='function') saveBase(); }catch(e){}
-  const b=document.querySelector('.save-base-btn small'); if(b){b.textContent='已儲存 ✓';setTimeout(()=>b.textContent='已自動儲存',1600)}
-}
-function showBaseInfoPanel(type){
-  if(type==='bio' && typeof showGuardianBio==='function') showGuardianBio('otter');
-}
-(function v941Clock(){
-  const tick=()=>{const d=new Date(),el=document.getElementById('baseClock');if(el)el.textContent=d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});};tick();setInterval(tick,30000);
-})();
