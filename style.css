@@ -1959,3 +1959,91 @@ input,select,textarea{border-radius:12px!important;border:1px solid #ccd7c9!impo
  .checkin-stat{grid-column:1/-1!important}.base-scene{height:520px!important;min-height:520px!important}
  .base-path-actions .base-zoom-readout{margin-left:0;width:100%}
 }
+
+/* V9.4.1 Beta 5：全頁底部資訊列、基地工具順序與夜間清晰度 */
+.app{display:flex;flex-direction:column;min-height:100vh}
+.app>header{order:1}.app>.tabs{order:2}.app>main{order:3}
+.app>.global-status-row{order:4}.app>.global-footer-info{order:5}
+.global-status-row{
+  width:min(1480px,calc(100% - 28px))!important;
+  margin:18px auto 10px!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+.global-status-row>div{
+  height:92px!important;min-height:92px!important;padding:10px!important;
+  border-radius:17px!important;background:rgba(255,255,255,.97)!important;
+}
+.global-status-row>div span{font-size:13px!important}
+.global-status-row>div b{font-size:23px!important}
+.global-footer-info{
+  order:5;width:min(1480px,calc(100% - 28px));margin:0 auto 26px;
+  display:grid;grid-template-columns:minmax(380px,.9fr) minmax(520px,1.1fr);
+  gap:12px;align-items:stretch;
+}
+.global-footer-info>.checkin-stat,.global-footer-info>.base-player-card{
+  margin:0!important;height:auto!important;min-height:250px!important;
+  background:rgba(255,255,255,.97)!important;
+}
+.global-footer-info>.checkin-stat{padding:14px 16px!important}
+.global-footer-info .home-checkin-grid i{height:25px!important;min-height:25px!important;line-height:25px!important}
+.global-footer-info>.base-player-card{padding:0 14px 12px!important}
+.base-dashboard-grid{grid-template-columns:minmax(0,1fr)!important}
+.base-right-rail{display:block!important}
+.base-right-rail>.nature-stat{max-width:none!important;width:100%!important;margin-top:12px!important}
+.base-dashboard-page .base-player-card{display:none!important}
+.base-path-actions{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+.base-path-actions button{white-space:nowrap!important}
+.base-path-actions .base-zoom-readout{margin-left:auto!important}
+
+/* 以較大的進出門檻避免捲輪時抬頭反覆縮放造成圖卡抖動 */
+#mainHeader,.tabs{transition:min-height .2s ease,padding .2s ease,top .2s ease,background .25s ease!important}
+body.header-compact #mainHeader{will-change:auto!important}
+
+/* 夜間模式：文字、卡片與按鈕保持高對比 */
+body.night-mode{background:#10283a!important;color:#eef8f2!important}
+body.night-mode main,
+body.night-mode .stats,
+body.night-mode .global-footer-info{color:#17372a!important}
+body.night-mode .title,
+body.night-mode .stage-card,
+body.night-mode .unit,
+body.night-mode .checkin-card,
+body.night-mode .checkin-stat,
+body.night-mode .base-player-card,
+body.night-mode .nature-stat,
+body.night-mode .save-panel,
+body.night-mode .profile-hero,
+body.night-mode .profile-summary,
+body.night-mode .achievement-card,
+body.night-mode .leaderboard-card,
+body.night-mode .weakness-card,
+body.night-mode .global-status-row>div{
+  background:#fffef8!important;color:#17372a!important;border-color:#b8cbb8!important;
+  box-shadow:0 6px 18px #0004!important;
+}
+body.night-mode .title h2,
+body.night-mode .title p,
+body.night-mode .title small,
+body.night-mode .base-player-card *,
+body.night-mode .checkin-stat *,
+body.night-mode .global-status-row *{text-shadow:none!important}
+body.night-mode header.header-night .player-button,
+body.night-mode header.header-night .icon-action,
+body.night-mode header.header-night .logout{background:#ffffffee!important;color:#17372a!important;border-color:#fff!important}
+body.night-mode header.header-night .player-button b,
+body.night-mode header.header-night .player-button small{color:#fff!important;text-shadow:0 2px 4px #000!important}
+
+@media(max-width:980px){
+ .global-footer-info{grid-template-columns:1fr!important}
+ .global-status-row{grid-template-columns:repeat(4,minmax(90px,1fr))!important}
+}
+@media(max-width:620px){
+ .global-status-row{width:calc(100% - 16px)!important;grid-template-columns:repeat(2,1fr)!important;gap:8px!important}
+ .global-status-row>div{height:82px!important;min-height:82px!important}
+ .global-footer-info{width:calc(100% - 16px)!important}
+ .global-footer-info>.checkin-stat,.global-footer-info>.base-player-card{min-height:0!important}
+ .base-path-actions .base-zoom-readout{margin-left:0!important;width:100%!important}
+}

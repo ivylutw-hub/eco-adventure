@@ -313,6 +313,7 @@ function applyCelestialPosition(el,date=new Date()){
  el.style.setProperty('--celestial-y',`${pos.y.toFixed(2)}%`);
  el.classList.toggle('header-night',!pos.isDay);
  el.classList.toggle('header-day',pos.isDay);
+ document.body.classList.toggle('night-mode',!pos.isDay);
 }
 function renderHeaderNature(){
  const el=document.getElementById('mainHeader');if(!el)return;
@@ -476,6 +477,7 @@ function page(id){
  ['mapPage','stagePage','quizPage','resultPage','basePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  document.getElementById(id).classList.remove('hide');
+ if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
@@ -818,7 +820,7 @@ function ensureBaseLayout(){
 function basePointerPosition(event,scene){const r=scene.getBoundingClientRect();return{x:Math.max(4,Math.min(96,(event.clientX-r.left)/r.width*100)),y:Math.max(10,Math.min(93,(event.clientY-r.top)/r.height*100))}}
 function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;if(!st.baseEditMode)st.basePathMode=false;save();renderBase();toast(st.baseEditMode?'✋ 編輯模式開啟：拖曳建設到喜歡的位置':'✅ 基地位置已保存')}
 function toggleBasePath(){st.baseEditMode=true;st.basePathMode=!st.basePathMode;save();renderBase();toast(st.basePathMode?'🟫 鋪路模式：點擊草地放置路徑':'✋ 已回到建設拖曳模式')}
-function clearBasePaths(){if(!st.basePaths.length)return;if(confirm('確定清除基地內所有路徑？')){st.basePaths=[];save();renderBase()}}
+function clearBasePaths(){if(!st.basePaths.length){toast('目前沒有可清除的路徑');return;}st.basePaths.pop();save();renderBase();toast('🧹 已清除一格路徑');}
 function addBasePath(event){
   if(!st.baseEditMode||!st.basePathMode||event.target.closest('.base-building'))return;
   const pos=basePointerPosition(event,baseScene),snap=4;
@@ -1282,8 +1284,12 @@ setInterval(()=>{
 // V9.4.1 Beta 3：捲動後自動縮小頂部首頁抬頭，讓所有頁面保留更多閱讀與遊戲空間。
 (function initCompactHeader(){
   let ticking=false;
+  let compact=false;
   const update=()=>{
-    document.body.classList.toggle('header-compact',window.scrollY>70);
+    const y=window.scrollY;
+    if(!compact&&y>140)compact=true;
+    else if(compact&&y<40)compact=false;
+    document.body.classList.toggle('header-compact',compact);
     ticking=false;
   };
   window.addEventListener('scroll',()=>{

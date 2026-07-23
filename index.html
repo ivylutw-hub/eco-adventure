@@ -134,13 +134,13 @@
 <div class="shop" id="shop"></div>
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
 </div>
-<div class="base-path-actions" id="baseTitleTools">
+<div class="base-path-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
 <button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
-<button onclick="adjustBaseZoom(0.1)" type="button">🔍＋</button>
-<button onclick="adjustBaseZoom(-0.1)" type="button">🔍－</button>
-<span class="base-zoom-readout">縮放 <b id="baseZoomLabel">100%</b></span>
-<button onclick="toggleBasePath()">🟫 自己鋪路</button>
-<button onclick="clearBasePaths()">🧹 清除路徑</button>
+<button onclick="toggleBasePath()" type="button">🟫 自己鋪路</button>
+<button onclick="clearBasePaths()" type="button">🧹 清除路徑</button>
+<button onclick="adjustBaseZoom(0.1)" type="button">🔍 放大</button>
+<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 縮小</button>
+<span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
 <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
 </div>
 </div>
@@ -155,24 +155,7 @@
 <div class="nature-aqi"><span>🍃</span><small>空氣品質指標 AQI</small><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
 </div>
 <div class="nature-tip"><span>♻️</span><div><small>今日環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
-</section><aside class="base-player-card">
-<div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
-<div class="base-player-identity"><span class="base-profile-avatar" id="baseProfileAvatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
-<div class="base-player-stats">
-<div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
-<div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
-<div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
-<div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
-<div><span>🎯</span><small>答對率</small><b id="baseProfileAccuracy">0%</b></div>
-<div><span>📅</span><small>加入時間</small><b id="baseProfileJoined">—</b></div>
-</div>
-<div class="base-share-card"><b>💬 本週挑戰分享 <small>最多100字</small></b><p id="baseProfileShare">一起減少塑膠垃圾，守護海洋生物！💙</p></div>
-<div class="base-profile-bottom">
-<div><b>🦦 最喜歡的守護動物</b><span id="baseFavoriteAnimal">歐亞水獺</span></div>
-<div><b>🏆 最近解鎖成就</b><span id="baseRecentAchievement">地球小英雄</span></div>
-</div>
-<p class="base-privacy-note">＊此為公開資訊，不包含 Email 或其他個人隱私資料。</p>
-</aside></div></section>
+</section></div></section>
 <section class="save-panel">
 <div>
 <span class="save-dot" id="saveDot"></span>
@@ -348,14 +331,32 @@
 <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
 </section>
 </main>
-<section class="stats">
+<section class="stats global-status-row" aria-label="玩家守護狀態">
 <div>🪙<span>守護金幣</span><b id="coins">0</b></div>
 <div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
 <div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
 <div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
-<div class="announcement-stat">📢<span>活動公告</span><b id="loginState">目前沒有最新活動<small>祝你今天冒險愉快！</small></b></div>
+</section>
+<section class="global-footer-info" aria-label="每日簽到與玩家資訊">
 <section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
-
+<aside class="base-player-card">
+<div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
+<div class="base-player-identity"><span class="base-profile-avatar" id="baseProfileAvatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
+<div class="base-player-stats">
+<div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
+<div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
+<div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
+<div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
+<div><span>🎯</span><small>答對率</small><b id="baseProfileAccuracy">0%</b></div>
+<div><span>📅</span><small>加入時間</small><b id="baseProfileJoined">—</b></div>
+</div>
+<div class="base-share-card"><b>💬 本週挑戰分享 <small>最多100字</small></b><p id="baseProfileShare">一起減少塑膠垃圾，守護海洋生物！💙</p></div>
+<div class="base-profile-bottom">
+<div><b>🦦 最喜歡的守護動物</b><span id="baseFavoriteAnimal">歐亞水獺</span></div>
+<div><b>🏆 最近解鎖成就</b><span id="baseRecentAchievement">地球小英雄</span></div>
+</div>
+<p class="base-privacy-note">＊此為公開資訊，不包含 Email 或其他個人隱私資料。</p>
+</aside>
 </section>
 </div>
 <div class="modal hide" id="logoutModal">
