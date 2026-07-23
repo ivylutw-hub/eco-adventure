@@ -2663,3 +2663,41 @@ main > .global-footer-info > .base-player-card{
   .global-footer-info .base-player-stats small{font-size:7px!important}
   .global-footer-info .base-player-stats b{font-size:9px!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.7 — 簽到與玩家資訊真正固定左右同排
+   以新增專屬 class 提高選擇器權重，並配合 CSS 快取更新。
+   ========================================================= */
+section.global-footer-info.checkin-player-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:auto!important;
+  grid-auto-flow:row!important;
+  gap:12px!important;
+  align-items:stretch!important;
+  justify-items:stretch!important;
+}
+section.global-footer-info.checkin-player-row > .checkin-stat,
+section.global-footer-info.checkin-player-row > .base-player-card{
+  grid-row:1!important;
+  grid-column:auto!important;
+  width:auto!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+  align-self:stretch!important;
+}
+section.global-footer-info.checkin-player-row > .checkin-stat{grid-column:1!important}
+section.global-footer-info.checkin-player-row > .base-player-card{grid-column:2!important}
+@media(max-width:980px){
+  section.global-footer-info.checkin-player-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+}
+@media(max-width:620px){
+  section.global-footer-info.checkin-player-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:6px!important;
+  }
+}
