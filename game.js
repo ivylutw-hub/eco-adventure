@@ -487,7 +487,8 @@ function page(id){
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  const target=document.getElementById(id);
  target.classList.remove('hide');
- mountGlobalFooter(id);
+ document.body.classList.toggle('admin-mode',id==='adminPage');
+ if(id!=='adminPage') mountGlobalFooter(id);
  if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');

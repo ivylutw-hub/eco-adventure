@@ -2708,7 +2708,7 @@ section.global-footer-info.checkin-player-row > .base-player-card{grid-column:2!
   }
 }
 
-/* ===== V9.4.1 Beta 5.1.9：排行榜玩家公開數據與分析 ===== */
+/* ===== V9.4.1 Beta 5.1.10：排行榜玩家公開數據與分析 ===== */
 .rank-row-button{width:100%;font:inherit;color:inherit;text-align:left;cursor:pointer;border:1px solid #dcebe4;appearance:none;position:relative;grid-template-columns:54px minmax(0,1fr) auto auto!important;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .rank-row-button:hover,.rank-row-button:focus-visible{transform:translateY(-2px);box-shadow:0 10px 22px rgba(20,92,62,.16);border-color:#72bd91;outline:none}
 .rank-open{font-size:.82rem;font-weight:800;color:#16704e;white-space:nowrap}
@@ -2727,3 +2727,8 @@ section.global-footer-info.checkin-player-row > .base-player-card{grid-column:2!
 body.night-mode .rank-profile-panel{background:linear-gradient(180deg,#20362b,#17291f);border-color:#648c6d;color:#eef8ef}body.night-mode .rank-profile-head{border-color:#45604c}body.night-mode .rank-profile-head h2,body.night-mode .rank-section-title h3,body.night-mode .rank-data-item b,body.night-mode .rank-analysis-row b,body.night-mode .rank-analysis-row strong{color:#e8f7ea}body.night-mode .rank-profile-head p,body.night-mode .rank-data-item small,body.night-mode .rank-analysis-row small{color:#b8cbbd}body.night-mode .rank-profile-avatar,body.night-mode .rank-data-item,body.night-mode .rank-analysis-card{background:#263d30;border-color:#49634f}body.night-mode .rank-analysis-track{background:#405547}body.night-mode .rank-report{background:#344332;border-color:#687454;color:#edf2dc}
 @media(max-width:760px){.rank-row-button{grid-template-columns:42px minmax(0,1fr) auto!important}.rank-open{display:none}.rank-profile-panel{padding:16px;border-radius:21px}.rank-profile-head{grid-template-columns:auto 1fr;padding-right:46px}.rank-profile-rank{display:none}.rank-data-grid{grid-template-columns:repeat(2,1fr)}.rank-analysis-row{grid-template-columns:1fr 2fr 34px;gap:8px}.rank-profile-avatar{width:64px;height:64px;font-size:2.5rem}.rank-profile-head h2{font-size:1.35rem}}
 @media(max-width:460px){.rank-profile-modal{padding:8px}.rank-profile-panel{width:100%;max-height:96vh;padding:12px}.rank-profile-head{gap:10px}.rank-data-item{min-height:92px;padding:9px}.rank-analysis-row{grid-template-columns:1fr 38px}.rank-analysis-track{grid-column:1/3}.rank-analysis-row strong{grid-column:2;grid-row:1}.rank-profile-head p{font-size:.82rem}}
+
+
+/* V9.4.1 Beta 5.1.10：管理後臺只顯示管理功能，不顯示玩家專屬資訊列 */
+body.admin-mode .global-status-row,
+body.admin-mode .global-footer-info{display:none!important;}
