@@ -1328,7 +1328,7 @@ setInterval(()=>{
 })();
 
 
-/* ===== V9.4.1 Beta 5.1.21 守護基地村 ===== */
+/* ===== V9.4.1 Beta 5.1.24 守護基地村 ===== */
 let baseVillageRows=[],baseVillageFilter='completion',currentVisitorBase=null,visitorZoom=1;
 const BASE_VILLAGE_DEMOS=[
  {uid:'demo-otter',name:'水獺小隊長',avatar:'🦦',level:18,title:'河川守護者',intro:'保留乾淨水域，也替小動物留一個家。',likes:238,badges:8,updatedAtMs:Date.now()-3600000,placements:[['tree',18,70],['pine',32,58],['pond',51,70],['bench',68,68],['solar',80,52],['flower',41,77]]},
@@ -1340,6 +1340,7 @@ function ensureVillageState(){
  if(typeof st.baseIntro!=='string')st.baseIntro='一起打造更美好的環保基地！';
  if(!Array.isArray(st.baseFavorites))st.baseFavorites=[];
  if(!st.baseLikesGiven||typeof st.baseLikesGiven!=='object')st.baseLikesGiven={};
+ if(!st.baseVisitCounts||typeof st.baseVisitCounts!=='object')st.baseVisitCounts={};
 }
 function showBaseVillage(){ensureVillageState();page('baseVillagePage');const s=document.getElementById('baseVisibilitySelect'),i=document.getElementById('baseIntroInput');if(s)s.value=st.baseVisibility;if(i)i.value=st.baseIntro;refreshBaseVillage();}
 function setVillageFilter(filter,btn){baseVillageFilter=filter;document.querySelectorAll('[data-village-filter]').forEach(x=>x.classList.toggle('active',x===btn));renderBaseVillage();}
@@ -1360,13 +1361,22 @@ function renderBaseVillage(){
  ensureVillageState();const grid=document.getElementById('baseVillageGrid');if(!grid)return;const q=(document.getElementById('villageSearch')?.value||'').trim().toLowerCase();let rows=baseVillageRows.filter(x=>!q||String(x.name||'').toLowerCase().includes(q));
  if(baseVillageFilter==='popular')rows.sort((a,b)=>b.likes-a.likes||villageCompletion(b)-villageCompletion(a));else if(baseVillageFilter==='green')rows.sort((a,b)=>villageGreenRate(b)-villageGreenRate(a)||villageCompletion(b)-villageCompletion(a));else if(baseVillageFilter==='new')rows.sort((a,b)=>(b.updatedAtMs||0)-(a.updatedAtMs||0));else rows.sort((a,b)=>villageCompletion(b)-villageCompletion(a)||b.likes-a.likes);
  if(!rows.length){grid.innerHTML='<div class="village-empty">目前沒有已公開且開始建設的玩家基地。</div>';return;}
- grid.innerHTML=rows.map((r,i)=>{const completion=villageCompletion(r);return `<article class="base-preview-card"><div class="base-preview-rank">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div><div class="base-preview-scene" id="basePreview${i}"></div><div class="base-preview-owner"><span>${r.avatar||'🌱'}</span><div><b>${escapeHtml(r.name||'環保守護者')}</b><small>Lv.${r.level} · ${escapeHtml(r.title||'地球守護者')}</small></div></div><p>${escapeHtml(r.intro||'歡迎來參觀我的守護基地！')}</p><div class="completion-row"><b>基地完成度</b><strong>${completion}%</strong></div><div class="completion-bar"><i style="width:${completion}%"></i></div><div class="base-preview-meta"><span>❤️ ${r.likes}</span><span>🌳 ${villageGreenRate(r)}%</span><span>🏆 ${r.badges}</span></div><button class="primary full" onclick="visitBaseByUid('${r.uid}')">參觀基地</button></article>`}).join('');
+ grid.innerHTML=rows.map((r,i)=>{const completion=villageCompletion(r),fav=st.baseFavorites.includes(r.uid),today=Number(r.todayVisits||r.visitsToday||st.baseVisitCounts[r.uid]||0);return `<article class="base-preview-card"><div class="base-preview-rank">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div><div class="base-preview-scene" id="basePreview${i}"></div><div class="base-preview-owner"><span>${r.avatar||'🌱'}</span><div><b>${escapeHtml(r.name||'環保守護者')}</b><small>Lv.${r.level} · ${escapeHtml(r.title||'地球守護者')}</small></div></div><p>${escapeHtml(r.intro||'歡迎來參觀我的守護基地！')}</p><div class="completion-row"><b>完成度</b><strong>${completion}%</strong></div><div class="completion-bar"><i style="width:${completion}%"></i></div><div class="base-preview-meta village-card-stats"><span>❤️ ${r.likes}</span><span>🌳 ${villageGreenRate(r)}%</span><span>🏆 ${r.badges}</span><span>👀 今天 ${today}</span></div><div class="base-card-actions"><button class="primary" onclick="visitBaseByUid('${r.uid}')">參觀基地</button><button class="village-favorite-btn${fav?' active':''}" onclick="toggleVillageFavorite('${r.uid}',event)">${fav?'★ 已收藏':'☆ 收藏'}</button></div></article>`}).join('');
  rows.forEach((r,i)=>renderVillageMiniScene(document.getElementById('basePreview'+i),r));
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 function villageItemIcon(id){const found=(typeof ITEMS!=='undefined'?ITEMS:[]).find(x=>x.id===id);if(found)return found.icon;return {tree:'🌳',pine:'🌲',palm:'🌴',flower:'🌼',pond:'💧',bench:'🪵',solar:'🔆',wind:'🌬️',recycle:'♻️',bird:'🐦'}[id]||'🌱';}
+
+function toggleVillageFavorite(uid,event){
+ if(event){event.preventDefault();event.stopPropagation();}
+ ensureVillageState();
+ const i=st.baseFavorites.indexOf(uid);
+ if(i>=0)st.baseFavorites.splice(i,1);else st.baseFavorites.push(uid);
+ save();renderBaseVillage();toast(i>=0?'已取消收藏':'⭐ 已收藏這座基地');
+}
+
 function renderVillageMiniScene(el,row){if(!el)return;el.innerHTML='<div class="village-sky">☀️　☁️</div><div class="village-ground"></div>'+(row.placements||[]).slice(0,14).map(p=>`<span style="left:${p.x}%;top:${p.y}%">${villageItemIcon(p.itemId)}</span>`).join('');}
-function visitBaseByUid(uid){const row=baseVillageRows.find(x=>x.uid===uid);if(!row)return;currentVisitorBase=row;visitorZoom=1;page('visitorBasePage');document.getElementById('visitorName').textContent=row.name+'的守護基地';document.getElementById('visitorIntro').textContent=row.intro||'';document.getElementById('visitorAvatar').textContent=row.avatar||'🌱';document.getElementById('visitorLikes').textContent=row.likes;document.getElementById('visitorGreen').textContent=villageGreenRate(row)+'%';document.getElementById('visitorBadges').textContent=row.badges;document.getElementById('visitorLevel').textContent=row.level;updateVisitorButtons();renderVisitorBase();}
+function visitBaseByUid(uid){const row=baseVillageRows.find(x=>x.uid===uid);if(!row)return;ensureVillageState();st.baseVisitCounts[uid]=(Number(st.baseVisitCounts[uid])||0)+1;row.visitsToday=st.baseVisitCounts[uid];save();currentVisitorBase=row;visitorZoom=1;page('visitorBasePage');document.getElementById('visitorName').textContent=row.name+'的守護基地';document.getElementById('visitorIntro').textContent=row.intro||'';document.getElementById('visitorAvatar').textContent=row.avatar||'🌱';document.getElementById('visitorLikes').textContent=row.likes;document.getElementById('visitorGreen').textContent=villageGreenRate(row)+'%';document.getElementById('visitorBadges').textContent=row.badges;document.getElementById('visitorLevel').textContent=row.level;updateVisitorButtons();renderVisitorBase();}
 function renderVisitorBase(){const el=document.getElementById('visitorBaseScene');if(!el||!currentVisitorBase)return;el.style.transform=`scale(${visitorZoom})`;el.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-grassland"></div><div class="base-buildings">'+(currentVisitorBase.placements||[]).map(p=>`<span class="base-building visitor-building" style="left:${p.x}%;top:${p.y}%">${villageItemIcon(p.itemId)}</span>`).join('')+'</div>';}
 function adjustVisitorZoom(d){visitorZoom=Math.max(.8,Math.min(1.3,Math.round((visitorZoom+d)*10)/10));renderVisitorBase();}
 function updateVisitorButtons(){if(!currentVisitorBase)return;const fav=st.baseFavorites.includes(currentVisitorBase.uid);const likeKey=new Date().toISOString().slice(0,10)+'_'+currentVisitorBase.uid;const liked=!!st.baseLikesGiven[likeKey];const f=document.getElementById('visitorFavoriteBtn'),l=document.getElementById('visitorLikeBtn');if(f)f.textContent=fav?'★ 已收藏':'☆ 收藏';if(l){l.textContent=liked?'♥ 今天已送':'♡ 送愛心';l.disabled=liked;}}

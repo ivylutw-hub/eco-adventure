@@ -3616,3 +3616,38 @@ body.night-mode #mainHeader .home-nature-strip b{
  .base-preview-rank{top:12px;left:12px;min-width:28px;height:28px;font-size:12px}
  .completion-row{font-size:10px}.completion-row strong{font-size:12px}.completion-bar{height:7px}
 }
+
+
+/* ===== V9.4.1 Beta 5.1.24 我的基地與基地村入口 ===== */
+.my-base-control-panel{margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(247,253,248,.96),rgba(241,248,255,.96));border:1px solid #cfe3d4;border-radius:18px;box-shadow:0 8px 22px rgba(37,91,51,.08)}
+.my-base-panel-title{display:flex;align-items:center;gap:10px;padding-bottom:11px;border-bottom:1px solid #dce9df}
+.my-base-panel-title>span{font-size:28px}.my-base-panel-title b,.my-base-panel-title small{display:block}.my-base-panel-title b{font-size:18px;color:#245c38}.my-base-panel-title small{margin-top:2px;font-size:12px;color:#6b7b70}
+.my-base-control-panel .base-path-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 0 4px}
+.my-base-control-panel .base-path-actions button{min-height:42px;padding:9px 13px;border:1px solid #bcd7c4;border-radius:12px;background:#fff;color:#285f3b;font-weight:900;box-shadow:0 3px 8px rgba(45,91,56,.06)}
+.my-base-control-panel .base-path-actions button:hover{transform:translateY(-1px);border-color:#79b78a;background:#f7fff8}
+.my-base-control-panel .base-path-actions>span{font-size:12px;color:#5f7265;background:rgba(255,255,255,.72);border-radius:999px;padding:7px 10px}
+.base-village-divider{height:1px;background:#d6e5d9;margin:10px 0 12px}
+.my-base-control-panel .base-village-entry{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:1px solid #83bea0!important;border-radius:14px;background:linear-gradient(135deg,#e4f8eb,#e8f3ff)!important;color:#155f38!important;font-size:16px;font-weight:950;letter-spacing:.02em;box-shadow:0 6px 15px rgba(38,108,61,.1)}
+.my-base-control-panel .base-village-entry:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.base-village-entry-icon{font-size:22px}.my-base-control-panel .base-village-entry b{margin-left:4px;font-size:19px}
+.village-card-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:9px 0 10px}
+.village-card-stats span{display:flex;align-items:center;justify-content:center;min-height:30px;padding:5px 6px;background:#f3f8f4;border-radius:9px;white-space:nowrap}
+.base-card-actions{display:grid;grid-template-columns:1fr auto;gap:7px}.base-card-actions button{min-height:39px;border-radius:11px;font-weight:900}.base-card-actions .primary{width:100%}
+.village-favorite-btn{padding:7px 10px;border:1px solid #dccd94;background:#fffaf0;color:#765d12}.village-favorite-btn.active{background:#fff0b8;border-color:#d9b84a;color:#684f05}
+@media(max-width:640px){
+ .my-base-control-panel{padding:11px;border-radius:15px}.my-base-panel-title>span{font-size:24px}.my-base-panel-title b{font-size:16px}.my-base-panel-title small{font-size:11px}
+ .my-base-control-panel .base-path-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.my-base-control-panel .base-path-actions button{font-size:12px;padding:8px 5px}.my-base-control-panel .base-path-actions>span{grid-column:span 1;text-align:center;font-size:10px;padding:6px 4px}
+ .my-base-control-panel .base-village-entry{font-size:14px;min-height:45px}.village-card-stats{gap:4px}.village-card-stats span{font-size:9px;padding:4px 2px}.base-card-actions{grid-template-columns:1fr}.village-favorite-btn{font-size:11px}
+}
+
+/* ===== V9.4.1 Beta 5.1.24 精簡基地工具列 ===== */
+.my-base-control-panel .base-path-actions button{flex:0 1 auto;min-width:132px}
+@media(max-width:640px){
+ .my-base-control-panel .base-path-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .my-base-control-panel .base-path-actions button{min-width:0;font-size:12px;padding:8px 4px}
+ .my-base-control-panel .base-path-actions>span{grid-column:span 1}
+}
+@media(max-width:390px){
+ .my-base-control-panel .base-path-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .my-base-control-panel .base-path-actions button span{display:block;margin-top:2px}
+}

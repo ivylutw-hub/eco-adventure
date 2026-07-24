@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V9.4.1 Beta 5.1.22｜森林探險介面</title>
+<title>環保冒險王 V9.4.1 Beta 5.1.24｜森林探險介面</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=9415221" rel="stylesheet"/>
+<link href="style.css?v=9415241" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -52,7 +52,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.22</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.24</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
@@ -141,14 +141,18 @@
 <div class="shop" id="shop"></div>
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
 </div>
+<section class="my-base-control-panel" aria-label="我的基地控制區">
+<div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
 <div class="base-path-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
-<button class="base-village-entry" onclick="showBaseVillage()" type="button">🏘️ <span>守護基地村</span></button>
-<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
-<button onclick="adjustBaseZoom(0.1)" type="button">🔍 放大</button>
-<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 縮小</button>
+<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">🛠️ <span>編輯基地</span><em class="hide">關</em></button>
+<button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
+<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
 <span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
 <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
 </div>
+<div class="base-village-divider" aria-hidden="true"></div>
+<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
+</section>
 </div>
 
 </section>
@@ -436,6 +440,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=9415221"></script>
-<script src="firebase.js?v=9415221"></script>
+<script src="game.js?v=9415241"></script>
+<script src="firebase.js?v=9415241"></script>
 </body></html>
