@@ -422,7 +422,7 @@ function header(){
  const av=avatarById(st.avatar);
  const fr=frameById(st.frame);
  coins.textContent=st.coins;
- streak.textContent=st.streak||1;
+ streak.textContent=Math.max(0,Number(st.streak)||0);
  badges.textContent=S.filter(isDone).length;
  playerName.textContent=st.name||'環保守護者';
  playerTitle.textContent=st.specialTitle||titleForLevel(lv);
@@ -431,6 +431,7 @@ function header(){
  playerAvatar.className=`player-avatar frame-${fr.id}`;
  expNow.textContent=expInLevel();
  expNext.textContent=100;
+ if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  updateWeaknessBadge();
  if(typeof updateHomeAnnouncement==='function')updateHomeAnnouncement();
  updateHomeCheckinCard();
@@ -869,11 +870,11 @@ function updateBaseDashboard(){
   set('baseProfileName',st.name||'環保守護者');set('baseProfileLevel',`Lv.${lv}`);set('baseProfileTitle',st.specialTitle||titleForLevel(lv));
   const avatar=document.getElementById('baseProfileAvatar');if(avatar)setAvatarElement(avatar,av,st.name||'環保守護者');
   const ach=typeof getUnlockedAchievements==='function'?getUnlockedAchievements().length:(st.badges||0);
-  set('baseProfileAchievements',`${ach} / 15`);set('baseProfileStreak',`${st.streak||1} 天`);set('baseProfileWeekly',Number(st.weeklyExp||st.exp||0).toLocaleString('zh-TW'));
-  set('baseProfileCompletion',`${Math.min(100,Math.round(owned/12*100))}%`);
-  const correct=Number(st.correctAnswers||0), total=Number(st.totalAnswers||0);set('baseProfileAccuracy',total?`${(correct/total*100).toFixed(1)}%`:'0%');
-  set('baseProfileJoined',st.createdAt?new Date(st.createdAt).toLocaleDateString('zh-TW'):'—');
-  set('baseProfileShare',st.shareMessage||'一起減少塑膠垃圾，守護海洋生物！💙');set('baseFavoriteAnimal',st.favoriteAnimal||'歐亞水獺');set('baseRecentAchievement',st.recentAchievement||'尚未解鎖');
+  const weeklyPoints=(st.weekly&&Number(st.weekly.points))||0;
+  set('baseProfileAchievements',`${ach} / 15 個成就`);
+  set('baseProfileStreak',`${Math.max(0,Number(st.streak)||0)} 天`);
+  set('baseProfileWeekly',`${weeklyPoints.toLocaleString('zh-TW')} 分`);
+  set('baseProfileCompletion',`${Math.min(100,Math.round(owned/12*100))}% 完成`);
   const sw=document.getElementById('baseEditSwitch');if(sw){sw.classList.toggle('on',!!st.baseEditMode);const em=sw.querySelector('em');if(em)em.textContent=st.baseEditMode?'開':'關'}
 }
 function aqiLevel(aqi){if(aqi<=50)return'良好';if(aqi<=100)return'普通';if(aqi<=150)return'對敏感族群不健康';if(aqi<=200)return'對所有族群不健康';if(aqi<=300)return'非常不健康';return'危害'}

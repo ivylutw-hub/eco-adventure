@@ -15,7 +15,7 @@
 <title>環保冒險王 V9.4.1 Beta｜森林探險介面</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=941511mobile" rel="stylesheet"/>
+<link href="style.css?v=941513sync" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -52,7 +52,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.12</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.13</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <div class="header-actions">
@@ -246,13 +246,17 @@
 </main>
 <main class="hide" id="leaderboardPage">
 <div class="title leaderboard-title">
-<div><small>WEEKLY GUARDIAN RANKING</small><h2>🥇 每週守護者排行榜</h2><p>不分班級，所有玩家共同競賽；依守護經驗值由高到低排名。</p></div>
-<button class="secondary" onclick="refreshLeaderboard()">🔄 更新排行</button>
+<div><small id="rankingEyebrow">GUARDIAN RANKING</small><h2 id="rankingTitle">🥇 每週守護者排行榜</h2><p id="rankingDescription">不分班級，所有玩家共同競賽；依本週積分由高到低排名。</p></div>
+<button class="secondary" onclick="refreshLeaderboard(activeRankingMode)">🔄 更新排行</button>
+</div>
+<div class="ranking-tabs" role="tablist" aria-label="排行榜類型">
+<button id="weeklyRankingTab" class="active" type="button" onclick="switchRankingMode('weekly',this)">📅 每週排行榜</button>
+<button id="totalRankingTab" type="button" onclick="switchRankingMode('total',this)">🏆 總排行榜</button>
 </div>
 <section class="weekly-card">
 <div><small>本週週期</small><b id="weekLabel">—</b></div>
-<div><small>我的守護經驗</small><b id="myWeeklyPoints">0</b></div>
-<div><small>我的名次</small><b id="myWeeklyRank">—</b></div>
+<div><small id="myRankingPointsLabel">我的本週積分</small><b id="myWeeklyPoints">0</b></div>
+<div><small id="myRankingRankLabel">我的每週名次</small><b id="myWeeklyRank">—</b></div>
 </section>
 <div class="cloud-status" id="cloudStatus">☁️ 正在連線排行榜…</div>
 <div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
@@ -353,15 +357,7 @@
 <div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
 <div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
 <div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
-<div><span>🎯</span><small>答對率</small><b id="baseProfileAccuracy">0%</b></div>
-<div><span>📅</span><small>加入時間</small><b id="baseProfileJoined">—</b></div>
 </div>
-<div class="base-share-card"><b>💬 本週挑戰分享 <small>最多100字</small></b><p id="baseProfileShare">一起減少塑膠垃圾，守護海洋生物！💙</p></div>
-<div class="base-profile-bottom">
-<div><b>🦦 最喜歡的守護動物</b><span id="baseFavoriteAnimal">歐亞水獺</span></div>
-<div><b>🏆 最近解鎖成就</b><span id="baseRecentAchievement">地球小英雄</span></div>
-</div>
-<p class="base-privacy-note">＊此為公開資訊，不包含 Email 或其他個人隱私資料。</p>
 </aside>
 </section>
 </div>
@@ -405,6 +401,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=9310"></script>
-<script src="firebase.js?v=939"></script>
+<script src="game.js?v=941513"></script>
+<script src="firebase.js?v=941513"></script>
 </body></html>
