@@ -3289,3 +3289,37 @@ header .header-copy:before{
     justify-self:center!important;
   }
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.16 — 建設工具、基地按鈕與登出按鈕修正
+   ========================================================= */
+/* 建設工具改為單列橫向滑動，與參考圖相同；不擠壓基地畫面。 */
+#basePage .base-build-toolbar{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;padding:8px 10px!important;overflow:hidden!important}
+#basePage .base-build-toolbar .shop{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity;padding:3px 2px 8px!important;scrollbar-width:thin}
+#basePage .base-build-toolbar .shop-item{position:relative!important;flex:0 0 92px!important;width:92px!important;min-width:92px!important;min-height:118px!important;scroll-snap-align:start;padding:7px 5px!important;border-radius:14px!important;text-align:center!important}
+#basePage .base-build-toolbar .shop-icon{height:42px!important;display:grid!important;place-items:center!important;font-size:34px!important;line-height:1!important}
+#basePage .base-build-toolbar .shop-item h4{font-size:13px!important;line-height:1.25!important;min-height:32px!important;margin:4px 0!important;white-space:normal!important}
+#basePage .base-build-toolbar .shop-item p,#basePage .base-build-toolbar .owned-count{display:none!important}
+#basePage .base-build-toolbar .shop-buy-btn{min-height:30px!important;padding:4px 5px!important;font-size:11px!important}
+#basePage .shop-new-badge{position:absolute;right:5px;top:4px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#2f8c45;color:#fff;font-size:11px;font-weight:900;box-shadow:0 2px 5px #0003}
+
+/* 僅保留編輯、放大、縮小，置中並美化。 */
+#basePage .base-path-actions{display:flex!important;justify-content:center!important;align-items:center!important;flex-wrap:wrap!important;gap:10px!important;padding:10px!important;margin:8px auto 0!important}
+#basePage .base-path-actions button{min-width:132px!important;min-height:44px!important;padding:9px 16px!important;border:1px solid #c9b46a!important;border-radius:999px!important;background:linear-gradient(#fffdf3,#f5eccb)!important;color:#31543d!important;font-weight:900!important;box-shadow:0 4px 10px #5e4f2424!important}
+#basePage .base-path-actions button:hover{transform:translateY(-1px);box-shadow:0 6px 14px #5e4f2433!important}
+#basePage .base-path-actions button.active{background:linear-gradient(#51a968,#33894d)!important;color:#fff!important;border-color:#2f7d46!important}
+#basePage .base-path-actions>span{font-size:12px!important;color:#52665a!important}
+
+/* 首頁登出鈕在手機版恢復顯示。 */
+@media(max-width:760px){
+  #mainHeader .header-actions .logout{display:inline-grid!important;place-items:center!important;flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;font-size:0!important;border-radius:50%!important}
+  #mainHeader .header-actions .logout::after{content:"🚪"!important;font-size:18px!important}
+  #mainHeader .header-actions{gap:6px!important}
+  #basePage .base-build-toolbar{grid-template-columns:1fr!important;padding:7px!important}
+  #basePage .build-toolbar-title{display:flex!important;align-items:baseline!important;justify-content:space-between!important}
+  #basePage .build-toolbar-title small{display:block!important;font-size:10px!important}
+  #basePage .base-save-box{display:flex!important}
+  #basePage .base-path-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:100%!important;gap:7px!important}
+  #basePage .base-path-actions button{min-width:0!important;width:100%!important;padding:8px 4px!important;font-size:12px!important}
+  #basePage .base-path-actions>span{grid-column:1/-1;text-align:center!important}
+}

@@ -921,15 +921,15 @@ function renderBase(){
   baseScene.onclick=addBasePath;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
-  if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].textContent=st.baseEditMode?'✅ 完成擺設':'✋ 編輯基地'}if(btns[1]){btns[1].classList.toggle('active',!!st.basePathMode);btns[1].textContent=st.basePathMode?'🟫 停止鋪路':'🟫 自己鋪路'}}
+  if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;const el=document.createElement('button');el.type='button';el.className='base-building'+(st.baseEditMode?' editable':'');el.textContent=it.icon;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
-  shop.innerHTML='';[...ITEMS].sort((a,b)=>a.cost-b.cost||a.name.localeCompare(b.name,'zh-Hant')).forEach(it=>{
+  shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
-    d.innerHTML=`<div class="shop-icon">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">再建設一次</span></button>`;shop.appendChild(d);
+    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">建設</span></button>`;shop.appendChild(d);
   });
   updateBaseDashboard();
 }
