@@ -3323,3 +3323,52 @@ header .header-copy:before{
   #basePage .base-path-actions button{min-width:0!important;width:100%!important;padding:8px 4px!important;font-size:12px!important}
   #basePage .base-path-actions>span{grid-column:1/-1;text-align:center!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.17 — 擴充建設工具、正方形成就、首頁環境資訊
+   ========================================================= */
+/* 今日環境資訊直接置於首頁，不再另外顯示「今日資訊」標題。 */
+.home-nature-strip{
+  position:relative;display:grid;grid-template-columns:1.15fr repeat(4,minmax(105px,.72fr)) 2fr;
+  gap:8px;align-items:stretch;width:min(1480px,calc(100% - 28px));margin:12px auto;
+  padding:9px 38px 9px 9px;border:1px solid #d6e7d7;border-radius:18px;
+  background:linear-gradient(135deg,#fbfff8,#eff8e9);box-shadow:0 6px 18px rgba(61,92,55,.12)
+}
+.home-nature-strip>*{min-width:0}
+.home-nature-strip .nature-location,.home-nature-metric,.home-nature-strip .nature-tip{
+  display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:13px;background:#ffffffc7
+}
+.home-nature-strip span{font-size:21px}.home-nature-strip small{display:block;font-size:10px;color:#6b7d70}
+.home-nature-strip b{display:block;font-size:13px;line-height:1.25;color:#284d38;white-space:normal}
+.home-nature-strip b i,.home-nature-strip b em{font-style:normal}
+.home-live-badge{position:absolute;right:8px;top:8px;font-style:normal;font-size:9px;font-weight:900;color:#fff;background:#3f9d5c;padding:3px 5px;border-radius:999px}
+#basePage .base-dashboard-grid{grid-template-columns:minmax(0,1fr)!important}
+#basePage .base-right-rail{display:none!important}
+
+/* 建設工具數量增加後仍維持清楚的單列滑動卡片。 */
+#basePage .base-build-toolbar .shop-item{flex-basis:88px!important;width:88px!important;min-width:88px!important}
+#basePage .shop-new-badge{display:none!important}
+
+/* 手機版玩家成就：正方形外框，一排兩個。 */
+@media(max-width:760px){
+  #achievementPage .achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;padding:0 4px 10px!important}
+  #achievementPage .achievement-card{
+    aspect-ratio:1/1!important;width:100%!important;min-height:0!important;height:auto!important;
+    overflow:hidden!important;padding:8px 6px!important;justify-content:center!important;
+    border-radius:15px!important;box-sizing:border-box!important
+  }
+  #achievementPage .achievement-icon{font-size:30px!important;flex:0 0 auto!important}
+  #achievementPage .achievement-head h3{font-size:11px!important;line-height:1.15!important}
+  #achievementPage .achievement-head span{font-size:7px!important;padding:1px 4px!important}
+  #achievementPage .achievement-card p{font-size:8px!important;line-height:1.18!important;margin:3px 0!important;-webkit-line-clamp:2!important}
+  #achievementPage .achievement-progress{height:5px!important;margin:2px 0!important}
+  #achievementPage .achievement-card small{font-size:7px!important;line-height:1.15!important;margin-top:2px!important}
+  .home-nature-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:calc(100% - 12px);margin:7px auto 10px;
+    padding:7px 7px 27px;border-radius:15px
+  }
+  .home-nature-strip .nature-tip{grid-column:1/-1}
+  .home-nature-strip .nature-location,.home-nature-metric,.home-nature-strip .nature-tip{padding:6px 7px}
+  .home-nature-strip span{font-size:18px}.home-nature-strip b{font-size:11px}.home-nature-strip small{font-size:9px}
+  .home-live-badge{top:auto;bottom:6px;right:8px}
+}
