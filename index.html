@@ -52,18 +52,9 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.17</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.18</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
-<div class="header-actions">
-<button class="player player-button" onclick="showProfile()" title="開啟我的資料">
-<span class="player-avatar frame-none" id="playerAvatar">🦊</span>
-<div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
-</button>
-<button aria-label="切換音效" class="icon-action" id="soundToggle" onclick="toggleSound()" title="切換音效">🔊</button>
-<button class="logout" onclick="confirmLogout()">🚪 登出</button>
-</div>
-</header>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
   <div class="home-nature-metric"><span>🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
@@ -73,7 +64,15 @@
   <div class="nature-tip"><span>♻️</span><div><small>環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
   <i class="home-live-badge" id="natureLiveBadge">LIVE</i>
 </section>
-
+<div class="header-actions">
+<button class="player player-button" onclick="showProfile()" title="開啟我的資料">
+<span class="player-avatar frame-none" id="playerAvatar">🦊</span>
+<div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
+</button>
+<button aria-label="切換音效" class="icon-action" id="soundToggle" onclick="toggleSound()" title="切換音效">🔊</button>
+<button class="logout" onclick="confirmLogout()">🚪 登出</button>
+</div>
+</header>
 <nav class="tabs">
 <button onclick="showMap()">🗺️ 冒險地圖</button>
 <button onclick="showBase()">🌍 守護基地</button>

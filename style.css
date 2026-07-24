@@ -3372,3 +3372,96 @@ header .header-copy:before{
   .home-nature-strip span{font-size:18px}.home-nature-strip b{font-size:11px}.home-nature-strip small{font-size:9px}
   .home-live-badge{top:auto;bottom:6px;right:8px}
 }
+
+
+/* =========================================================
+   V9.4.1 Beta 5.1.18 — 首頁圖示資訊、成就與榮耀殿堂正方形優化
+   ========================================================= */
+/* 將所在地、天氣、溫度、濕度與 AQI 顯示在首頁主視覺圖示區。 */
+#mainHeader{position:relative!important;padding-bottom:92px!important}
+#mainHeader .home-nature-strip{
+  position:absolute!important;left:18px!important;right:18px!important;bottom:12px!important;
+  width:auto!important;margin:0!important;padding:7px 9px!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important;
+  border:1px solid rgba(255,255,255,.72)!important;border-radius:16px!important;
+  background:rgba(255,255,255,.76)!important;box-shadow:0 7px 20px rgba(32,82,58,.16)!important;
+  backdrop-filter:blur(8px);z-index:8!important
+}
+#mainHeader .home-nature-strip .nature-location,
+#mainHeader .home-nature-metric{
+  min-height:54px!important;padding:6px 8px!important;background:rgba(255,255,255,.72)!important;
+  border:1px solid rgba(61,120,82,.13)!important;justify-content:center!important
+}
+#mainHeader .home-nature-strip .nature-tip,#mainHeader .home-live-badge{display:none!important}
+#mainHeader .home-nature-strip span{font-size:23px!important}
+#mainHeader .home-nature-strip small{font-size:10px!important;line-height:1.1!important}
+#mainHeader .home-nature-strip b{font-size:13px!important;line-height:1.15!important;overflow-wrap:anywhere!important}
+
+/* 手機版玩家成就：一排兩個正方形，字級與卡片同步縮放。 */
+@media(max-width:760px){
+  #mainHeader{padding-bottom:150px!important}
+  #mainHeader .home-nature-strip{
+    left:8px!important;right:8px!important;bottom:8px!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;padding:6px!important
+  }
+  #mainHeader .home-nature-strip .nature-location,
+  #mainHeader .home-nature-metric{min-height:59px!important;padding:5px 4px!important;gap:4px!important;flex-direction:column!important;text-align:center!important}
+  #mainHeader .home-nature-strip span{font-size:20px!important;line-height:1!important}
+  #mainHeader .home-nature-strip small{font-size:8px!important}
+  #mainHeader .home-nature-strip b{font-size:10px!important;line-height:1.1!important;max-width:100%!important}
+
+  #achievementPage .achievement-grid{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;padding:0 2px 10px!important
+  }
+  #achievementPage .achievement-card{
+    aspect-ratio:1/1!important;width:100%!important;height:auto!important;min-height:0!important;
+    padding:7px 6px!important;gap:3px!important;overflow:hidden!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important
+  }
+  #achievementPage .achievement-icon{
+    width:clamp(38px,11vw,48px)!important;height:clamp(38px,11vw,48px)!important;
+    flex:0 0 clamp(38px,11vw,48px)!important;font-size:clamp(25px,7.5vw,32px)!important;border-radius:12px!important
+  }
+  #achievementPage .achievement-info{width:100%!important;min-height:0!important;display:flex!important;flex-direction:column!important;flex:1!important}
+  #achievementPage .achievement-head{min-height:0!important;gap:2px!important}
+  #achievementPage .achievement-head h3{
+    font-size:clamp(9px,2.8vw,12px)!important;line-height:1.12!important;margin:0!important;
+    display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important
+  }
+  #achievementPage .achievement-head span{font-size:clamp(6px,1.8vw,8px)!important;padding:1px 4px!important;line-height:1.15!important}
+  #achievementPage .achievement-card p{
+    min-height:0!important;font-size:clamp(7px,2.05vw,9px)!important;line-height:1.14!important;margin:2px 0!important;
+    display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important
+  }
+  #achievementPage .achievement-progress{height:4px!important;margin-top:auto!important}
+  #achievementPage .achievement-card small{
+    min-height:0!important;font-size:clamp(6px,1.8vw,8px)!important;line-height:1.12!important;margin-top:2px!important;
+    display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important
+  }
+}
+
+/* 榮耀殿堂：徽章外框統一為正方形，文字依框內空間縮放。 */
+#hallPage .hall{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important;align-items:stretch!important}
+#hallPage .hall .badge{
+  aspect-ratio:1/1!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  padding:10px!important;overflow:hidden!important;text-align:center!important;border-radius:18px!important
+}
+#hallPage .badge .medal{font-size:clamp(38px,5vw,62px)!important;line-height:1!important;margin-bottom:7px!important}
+#hallPage .badge h3{
+  margin:0 0 4px!important;font-size:clamp(12px,1.35vw,17px)!important;line-height:1.16!important;
+  max-width:100%!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important
+}
+#hallPage .badge p{margin:0!important;font-size:clamp(10px,1vw,13px)!important;line-height:1.15!important;max-width:100%!important}
+@media(max-width:1050px){#hallPage .hall{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:760px){
+  #hallPage .hall{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #hallPage .hall .badge{padding:8px!important;border-radius:15px!important}
+  #hallPage .badge .medal{font-size:clamp(35px,13vw,50px)!important;margin-bottom:5px!important}
+  #hallPage .badge h3{font-size:clamp(10px,3.2vw,13px)!important;line-height:1.13!important}
+  #hallPage .badge p{font-size:clamp(8px,2.5vw,10px)!important}
+}
+@media(max-width:360px){
+  #achievementPage .achievement-grid,#hallPage .hall{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}

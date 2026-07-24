@@ -5,7 +5,7 @@ const S=[
 {id:'s3',name:'零碳星際城',icon:'⚡',code:'STAGE 03',desc:'破解能源、氣候與永續治理難題。',main:'中高級',support:'高級',badge:'💠',badgeName:'零碳先鋒徽章',enemy:'🤖',enemyName:'耗能機甲'},
 {id:'s4',name:'地核終焉神殿',icon:'🌋',code:'STAGE 04',desc:'以最高級知識完成最後的守護試煉。',main:'高級',support:null,badge:'👑',badgeName:'地核榮耀徽章',enemy:'👾',enemyName:'終極污染魔王'}];
 const ITEMS=[
-// V9.4.1 Beta 5.1.17：擴充守護基地建設工具。
+// V9.4.1 Beta 5.1.18：擴充守護基地建設工具。
 {id:'tree',icon:'🌳',name:'樹木',cost:3,desc:'增加基地綠意並提供生物棲地。'},
 {id:'pine',icon:'🌲',name:'松樹',cost:4,desc:'打造四季常綠的森林角落。'},
 {id:'palm',icon:'🌴',name:'椰子樹',cost:5,desc:'營造充滿海島氣息的綠色景觀。'},
