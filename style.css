@@ -3821,3 +3821,24 @@ body.night-mode #mainHeader .home-nature-strip b{color:#fff!important;text-shado
   #mainHeader .home-nature-strip span{font-size:17px!important}
   #mainHeader .home-nature-strip b{font-size:12px!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.26 — 部署與捲動穩定修正
+   ========================================================= */
+/* 主標題、環境資訊與主導覽都跟頁面正常捲動；捲動時不縮放、不變形。 */
+#mainHeader,
+body.header-compact #mainHeader,
+.tabs{
+  position:relative!important;
+  top:auto!important;
+  transform:none!important;
+}
+#mainHeader .header-copy,
+#mainHeader .header-copy h1,
+#mainHeader .header-copy p,
+#mainHeader .home-nature-strip{
+  transform:none!important;
+  scale:none!important;
+  transition:none!important;
+  animation:none!important;
+}
