@@ -52,7 +52,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.20</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V9.4.1 Beta 5.1.21</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
@@ -76,6 +76,7 @@
 <nav class="tabs">
 <button onclick="showMap()">🗺️ 冒險地圖</button>
 <button onclick="showBase()">🌍 守護基地</button>
+<button onclick="showBaseVillage()">🏘️ 守護基地村</button>
 <button onclick="showHall()">🏆 榮耀殿堂</button>
 <button onclick="showLeaderboard()">🥇 每週排行</button>
 <button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span class="nav-count" id="weaknessCount">0</span></button>
@@ -163,6 +164,44 @@
 <label class="import-btn">⬆️ 匯入存檔<input accept=".json,application/json" id="importFile" onchange="importSave(event)" type="file"/></label>
 </div>
 </section></main>
+
+<main class="hide" id="baseVillagePage">
+  <div class="title village-title">
+    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>參觀其他守護者的環保基地，按愛心、收藏並互相學習創意。</p></div>
+    <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
+  </div>
+  <section class="village-controls">
+    <div class="village-tabs" role="tablist">
+      <button class="active" data-village-filter="recommended" onclick="setVillageFilter('recommended',this)">🌟 推薦</button>
+      <button data-village-filter="popular" onclick="setVillageFilter('popular',this)">❤️ 人氣</button>
+      <button data-village-filter="new" onclick="setVillageFilter('new',this)">🆕 最新</button>
+      <button data-village-filter="favorite" onclick="setVillageFilter('favorite',this)">⭐ 收藏</button>
+    </div>
+    <label class="village-search">🔎<input id="villageSearch" maxlength="20" oninput="renderBaseVillage()" placeholder="搜尋守護者名稱"/></label>
+  </section>
+  <section class="my-base-share-card">
+    <div><span class="share-icon">🌍</span><div><b>我的基地公開設定</b><small>公開後，其他玩家只能參觀，不能移動或修改你的基地。</small></div></div>
+    <select id="baseVisibilitySelect" onchange="updateBaseVisibility(this.value)">
+      <option value="public">🌍 公開基地</option>
+      <option value="private">🔒 不公開</option>
+    </select>
+    <input id="baseIntroInput" maxlength="40" placeholder="寫一句基地介紹（最多 40 字）" onchange="updateBaseIntro(this.value)"/>
+    <button class="primary" onclick="publishMyBase()">📸 更新基地快照</button>
+  </section>
+  <div class="village-status" id="villageStatus">正在準備基地村…</div>
+  <section class="base-village-grid" id="baseVillageGrid"></section>
+</main>
+<main class="hide" id="visitorBasePage">
+  <button class="back" onclick="showBaseVillage()">← 回守護基地村</button>
+  <section class="visitor-base-head">
+    <div class="visitor-owner"><span id="visitorAvatar">🌱</span><div><small>正在參觀</small><h2 id="visitorName">守護者基地</h2><p id="visitorIntro"></p></div></div>
+    <div class="visitor-actions"><button id="visitorLikeBtn" onclick="likeCurrentVisitorBase()">♡ 送愛心</button><button id="visitorFavoriteBtn" onclick="toggleVisitorFavorite()">☆ 收藏</button></div>
+  </section>
+  <div class="visitor-stats"><span>❤️ <b id="visitorLikes">0</b></span><span>🌳 綠化率 <b id="visitorGreen">0%</b></span><span>🏆 徽章 <b id="visitorBadges">0</b></span><span>⭐ Lv.<b id="visitorLevel">1</b></span></div>
+  <div class="base-scene-frame visitor-frame"><div class="base-scene" id="visitorBaseScene"></div></div>
+  <div class="visitor-zoom"><button onclick="adjustVisitorZoom(.1)">🔍 放大</button><button onclick="adjustVisitorZoom(-.1)">🔎 縮小</button><span>唯讀參觀模式</span></div>
+</main>
+
 <main class="hide" id="achievementPage">
 <div class="title"><div><small>GUARDIAN ACHIEVEMENTS</small><h2>🏅 玩家成就</h2><p>每一次答題、闖關與守護行動，都會留下成長足跡。</p></div></div>
 <section class="achievement-grid" id="achievementGrid"></section>
@@ -396,6 +435,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=941513"></script>
-<script src="firebase.js?v=941515"></script>
+<script src="game.js?v=941521"></script>
+<script src="firebase.js?v=941521"></script>
 </body></html>

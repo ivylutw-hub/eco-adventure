@@ -544,3 +544,22 @@ document.addEventListener('DOMContentLoaded',()=>{
 window.addEventListener('online',()=>{setCloudStatus('online','☁️ 網路已恢復，正在自動同步。');scheduleCloudSave();});
 window.addEventListener('offline',()=>setCloudStatus('offline','⚠️ 目前離線，進度會先保留在本機。'));
 initFirebase();
+
+
+/* ===== V9.4.1 Beta 5.1.21 公開基地資料 ===== */
+function publicBaseDoc(){return cloudDb&&cloudUser?cloudDb.collection('publicBases').doc(cloudUser.uid):null}
+async function savePublicBase(){
+ if(!cloudDb||!cloudUser)throw new Error('not signed in');ensureVillageState();
+ const av=avatarById(st.avatar),placements=(st.basePlacements||[]).slice(0,80).map(p=>({itemId:p.itemId,x:Number(p.x)||50,y:Number(p.y)||60}));
+ const old=await publicBaseDoc().get();const likes=old.exists?Number(old.data().likes)||0:0;
+ await publicBaseDoc().set({uid:cloudUser.uid,name:String(st.name||cloudUser.displayName||'環保守護者').slice(0,12),avatar:av.icon,level:currentLevel(),title:String(st.specialTitle||titleForLevel(currentLevel())).slice(0,20),intro:String(st.baseIntro||'').slice(0,40),placements,paths:(st.basePaths||[]).slice(0,100),badges:typeof S!=='undefined'?S.filter(isDone).length:0,likes,visibility:'public',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+}
+async function removePublicBase(){if(publicBaseDoc())await publicBaseDoc().delete()}
+async function loadPublicBases(){
+ if(!cloudDb)return[];const snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(30).get();
+ return snap.docs.map(d=>{const x=d.data();return{...x,uid:d.id,updatedAtMs:x.updatedAt&&x.updatedAt.toMillis?x.updatedAt.toMillis():0}});
+}
+async function sendBaseLike(uid){
+ if(!cloudDb||!cloudUser||uid===cloudUser.uid)return;const day=new Date().toISOString().slice(0,10),likeRef=cloudDb.collection('baseLikes').doc(`${day}_${cloudUser.uid}_${uid}`),baseRef=cloudDb.collection('publicBases').doc(uid);
+ await cloudDb.runTransaction(async tx=>{const like=await tx.get(likeRef);if(like.exists)return;tx.set(likeRef,{fromUid:cloudUser.uid,toUid:uid,day,createdAt:firebase.firestore.FieldValue.serverTimestamp()});tx.update(baseRef,{likes:firebase.firestore.FieldValue.increment(1)});});
+}
