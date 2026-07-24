@@ -3651,3 +3651,173 @@ body.night-mode #mainHeader .home-nature-strip b{
  .my-base-control-panel .base-path-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
  .my-base-control-panel .base-path-actions button span{display:block;margin-top:2px}
 }
+
+
+/* =========================================================
+   V9.4.1 Beta 5.1.25 — 首頁固定標題、環境資訊與基地工具樣式
+   ========================================================= */
+/* 首頁主標題與副標題不再因頁面捲動縮放、位移、淡出或隱藏。 */
+#mainHeader,
+body.header-compact #mainHeader{
+  position:relative!important;
+  min-height:104px!important;
+  height:auto!important;
+  padding:12px 26px 82px!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  overflow:visible!important;
+}
+#mainHeader .header-copy,
+body.header-compact #mainHeader .header-copy{
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#mainHeader .header-copy:before{display:none!important;content:none!important}
+#mainHeader .header-copy h1,
+body.header-compact #mainHeader .header-copy h1{
+  margin:0 0 5px!important;
+  font-size:clamp(25px,3vw,42px)!important;
+  line-height:1.14!important;
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  height:auto!important;
+  white-space:normal!important;
+}
+#mainHeader .header-copy p,
+body.header-compact #mainHeader .header-copy p{
+  display:block!important;
+  margin:0!important;
+  font-size:clamp(13px,1.35vw,18px)!important;
+  line-height:1.35!important;
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  height:auto!important;
+}
+#mainHeader .header-copy h1,
+#mainHeader .header-copy p{transition:none!important}
+body.header-compact #mainHeader .player-avatar{width:62px!important;height:62px!important}
+body.header-compact #mainHeader .player-button small{display:block!important}
+body.header-compact #mainHeader .header-actions .logout,
+body.header-compact #mainHeader .icon-action{width:48px!important;height:48px!important;font-size:inherit!important}
+body.header-compact #mainHeader .icon-action:after,
+body.header-compact #mainHeader .logout:after{content:none!important}
+
+/* 首頁環境資訊：無框、無底色、無陰影，字體為先前的 125%。 */
+#mainHeader .home-nature-strip{
+  position:absolute!important;
+  left:26px!important;
+  right:26px!important;
+  bottom:16px!important;
+  width:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-wrap:wrap!important;
+  gap:8px 24px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  transform:none!important;
+  transition:none!important;
+}
+#mainHeader .home-nature-strip .nature-location,
+#mainHeader .home-nature-metric{
+  min-width:0!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:5px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#mainHeader .home-nature-strip span{font-size:23px!important;line-height:1!important}
+#mainHeader .home-nature-strip small{display:none!important}
+#mainHeader .home-nature-strip b{
+  display:inline!important;
+  font-size:16px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  color:#244f35!important;
+}
+#mainHeader .home-nature-strip .nature-tip,
+#mainHeader .home-live-badge{display:none!important}
+body.night-mode #mainHeader .home-nature-strip b{color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.65)!important}
+
+/* 守護基地不顯示位置／天氣標籤。 */
+#basePage .base-weather-badge,
+#basePage .base-sun-guide{display:none!important}
+
+/* 「建設工具」與「儲存基地」使用一致的按鈕視覺。 */
+#basePage .build-toolbar-title b,
+#basePage .base-save-box button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:46px!important;
+  padding:11px 17px!important;
+  border:1px solid #397f35!important;
+  border-radius:11px!important;
+  background:#4a9b3c!important;
+  color:#fff!important;
+  font-size:16px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+  box-shadow:0 4px 10px rgba(43,105,46,.18)!important;
+}
+#basePage .build-toolbar-title small{margin-top:5px!important}
+
+/* 我的基地：完成擺設、放大、縮小，按鈕與文字同步放大。 */
+#basePage .my-base-control-panel .base-path-actions{gap:10px!important}
+#basePage .my-base-control-panel .base-path-actions button{
+  min-width:150px!important;
+  min-height:50px!important;
+  padding:11px 17px!important;
+  border:1px solid #8ebd98!important;
+  border-radius:13px!important;
+  background:#fff!important;
+  color:#285f3b!important;
+  font-size:16px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  box-shadow:0 4px 11px rgba(45,91,56,.10)!important;
+}
+#basePage .my-base-control-panel .base-path-actions button.active,
+#basePage .my-base-control-panel .base-path-actions button:first-child.active{
+  background:#4a9b3c!important;
+  border-color:#397f35!important;
+  color:#fff!important;
+}
+#basePage .my-base-control-panel .base-path-actions button span{font-size:inherit!important}
+
+@media(max-width:760px){
+  #mainHeader,body.header-compact #mainHeader{padding:10px 12px 86px!important;min-height:0!important}
+  #mainHeader .header-copy h1,body.header-compact #mainHeader .header-copy h1{font-size:clamp(20px,6.2vw,28px)!important}
+  #mainHeader .header-copy p,body.header-compact #mainHeader .header-copy p{display:block!important;font-size:clamp(11px,3.25vw,14px)!important}
+  #mainHeader .home-nature-strip{left:10px!important;right:10px!important;bottom:13px!important;gap:7px 13px!important}
+  #mainHeader .home-nature-strip span{font-size:19px!important}
+  #mainHeader .home-nature-strip b{font-size:13px!important}
+  #basePage .base-build-toolbar{grid-template-columns:1fr!important}
+  #basePage .build-toolbar-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+  #basePage .build-toolbar-title b,#basePage .base-save-box button{font-size:15px!important;min-height:44px!important;padding:10px 14px!important}
+  #basePage .my-base-control-panel .base-path-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #basePage .my-base-control-panel .base-path-actions button{min-width:0!important;min-height:48px!important;padding:9px 5px!important;font-size:14px!important}
+}
+@media(max-width:390px){
+  #mainHeader .home-nature-strip{gap:6px 9px!important}
+  #mainHeader .home-nature-strip span{font-size:17px!important}
+  #mainHeader .home-nature-strip b{font-size:12px!important}
+}

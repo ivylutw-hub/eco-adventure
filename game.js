@@ -1314,17 +1314,9 @@ setInterval(()=>{
 },60*1000);
 
 
-// V9.4.1 Beta 5.1：抬頭縮小只改變內部視覺，不改變版面高度，避免捲輪造成圖卡抖動。
-(function initCompactHeader(){
-  let ticking=false;
-  const update=()=>{
-    document.body.classList.toggle('header-compact',window.scrollY>120);
-    ticking=false;
-  };
-  window.addEventListener('scroll',()=>{
-    if(!ticking){requestAnimationFrame(update);ticking=true;}
-  },{passive:true});
-  update();
+// V9.4.1 Beta 5.1.25：首頁標題保持固定視覺尺寸，不再依捲動縮放或隱藏。
+(function disableCompactHeader(){
+  document.body.classList.remove('header-compact');
 })();
 
 
