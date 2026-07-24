@@ -13,11 +13,31 @@ function load(){
     return {...defaultState(),...JSON.parse(raw||'{}')};
   }catch{return defaultState()}
 }
+function refreshSharedPlayerPanels(){
+  // 所有頁面共用同一組 DOM 與同一份 st，任何挑戰或登入資料變更後立即刷新。
+  try{
+    if(typeof header==='function'){
+      ensureProfile();
+      const lv=currentLevel(),av=avatarById(st.avatar),fr=frameById(st.frame);
+      const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
+      set('coins',Math.max(0,Number(st.coins)||0));
+      set('streak',Math.max(0,Number(st.streak)||0));
+      set('badges',S.filter(isDone).length);
+      set('expNow',expInLevel());set('expNext',100);
+      set('playerName',st.name||'環保守護者');set('playerTitle',st.specialTitle||titleForLevel(lv));set('playerLevel',`Lv.${lv}`);
+      const pa=document.getElementById('playerAvatar');if(pa){setAvatarElement(pa,av,st.name||'環保守護者');pa.className=`player-avatar frame-${fr.id}`;}
+    }
+    if(typeof updateBaseDashboard==='function')updateBaseDashboard();
+    if(typeof updateHomeCheckinCard==='function')updateHomeCheckinCard();
+    if(typeof updateWeaknessBadge==='function')updateWeaknessBadge();
+  }catch(err){console.warn('更新共用玩家資料面板失敗',err)}
+}
 function save(){
   try{
     st.savedAt=new Date().toISOString();
     localStorage.setItem(KEY,JSON.stringify(st));
     updateSaveStatus('saved');
+    refreshSharedPlayerPanels();
     if(typeof scheduleCloudSave==='function')scheduleCloudSave();
     return true;
   }catch(err){

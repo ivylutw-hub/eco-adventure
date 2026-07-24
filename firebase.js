@@ -1,6 +1,6 @@
 /* ===== V9.1 Google 登入、雲端存檔與每週排行榜 ===== */
 let cloudDb=null, cloudAuth=null, cloudUser=null, cloudReady=false, cloudSaveTimer=null, cloudLoading=false;
-let cloudRetryTimer=null, cloudWriteInProgress=false, cloudWriteQueued=false, cloudIsAdmin=false;
+let cloudRetryTimer=null, cloudWriteInProgress=false, cloudWriteQueued=false, cloudIsAdmin=false, cloudPlayerUnsubscribe=null;
 let adminPlayersCache=[],adminQuestionsCache=[],adminEventsCache=[],adminRankingCache=[],adminEditingEventId=null;
 window.ECO_ACTIVE_EVENTS=[];window.ECO_CUSTOM_QUESTIONS=[];
 
@@ -33,6 +33,35 @@ function notifyCloudError(message){
  if(typeof toast==='function')toast(message);
 }
 
+
+function cloudStateTime(state){
+ const t=Date.parse(state&&state.savedAt||'');return Number.isFinite(t)?t:0;
+}
+function applyRemotePlayerSnapshot(data){
+ if(!data||!data.state||cloudLoading)return;
+ const remote={...defaultState(),...data.state};
+ remote.exp=Math.max(Number(remote.exp)||0,Number(data.guardianExp)||0);
+ remote.coins=Math.max(Number(remote.coins)||0,Number(data.coins)||0);
+ if(data.stageProgress&&typeof data.stageProgress==='object')remote.unitProgress=data.stageProgress;
+ const remoteTime=cloudStateTime(remote),localTime=cloudStateTime(st);
+ // 只接收真正較新的雲端存檔，避免自己的舊寫入覆蓋剛完成的挑戰。
+ if(remoteTime&&remoteTime<=localTime)return;
+ const loginState={loggedIn:true,cloudUid:cloudUser&&cloudUser.uid};
+ st={...remote,...loginState};
+ ensureProgress();ensureProfile();ensureWeeklyLocal();
+ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(_e){}
+ if(typeof refreshSharedPlayerPanels==='function')refreshSharedPlayerPanels();
+ if(typeof renderMap==='function'&&!document.getElementById('mapPage')?.classList.contains('hide'))renderMap();
+ if(typeof renderAchievements==='function'&&!document.getElementById('achievementPage')?.classList.contains('hide'))renderAchievements();
+ setCloudStatus('online','☁️ 已接收其他裝置的最新進度');
+}
+function startCloudPlayerListener(){
+ if(cloudPlayerUnsubscribe){cloudPlayerUnsubscribe();cloudPlayerUnsubscribe=null;}
+ if(!cloudDb||!cloudUser)return;
+ cloudPlayerUnsubscribe=playerDoc().onSnapshot(snap=>{
+   if(snap.exists)applyRemotePlayerSnapshot(snap.data());
+ },err=>console.warn('跨裝置即時同步監聽失敗',err));
+}
 async function initFirebase(){
  if(!firebaseConfigured()||typeof firebase==='undefined'){loginMessage('Firebase 尚未設定，無法使用 Google 登入。');return;}
  try{
@@ -43,7 +72,7 @@ async function initFirebase(){
   cloudAuth.onAuthStateChanged(async user=>{
    cloudUser=user||null;cloudReady=Boolean(user);
    if(user){setGoogleButton(true,'☁️ 正在載入雲端進度…');await loadCloudPlayer();}
-   else{cloudIsAdmin=false;updateAdminAccess();setGoogleButton(false,'🟢 使用 Google 開始冒險');loginMessage('使用同一個 Google 帳號，可在不同設備接續進度。');}
+   else{if(cloudPlayerUnsubscribe){cloudPlayerUnsubscribe();cloudPlayerUnsubscribe=null;}cloudIsAdmin=false;updateAdminAccess();setGoogleButton(false,'🟢 使用 Google 開始冒險');loginMessage('使用同一個 Google 帳號，可在不同設備接續進度。');}
   });
  }catch(err){console.error('Firebase 初始化失敗',err);loginMessage('Firebase 初始化失敗，請檢查設定。');setGoogleButton(false,'重新嘗試 Google 登入');}
 }
@@ -209,6 +238,7 @@ async function loadCloudPlayer(){
   await Promise.all([loadActiveActivities(),loadCustomQuestions()]);
   dailyLogin();applyLoginActivityRewards();save();enterGame();
   await syncAllCloudData(!snap.exists);
+  startCloudPlayerListener();
   await playerDoc().set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(err=>console.error('更新登入時間失敗',err));
   loginMessage(`已登入：${cloudUser.displayName||'Google 使用者'}`);setGoogleButton(false,'✅ 已登入');setCloudStatus('online','☁️ 雲端進度已同步');
  }catch(err){
