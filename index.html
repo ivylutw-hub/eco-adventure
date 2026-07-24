@@ -76,7 +76,6 @@
 <nav class="tabs">
 <button onclick="showMap()">🗺️ 冒險地圖</button>
 <button onclick="showBase()">🌍 守護基地</button>
-<button onclick="showBaseVillage()">🏘️ 守護基地村</button>
 <button onclick="showHall()">🏆 榮耀殿堂</button>
 <button onclick="showLeaderboard()">🥇 每週排行</button>
 <button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span class="nav-count" id="weaknessCount">0</span></button>
@@ -143,6 +142,7 @@
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
 </div>
 <div class="base-path-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
+<button class="base-village-entry" onclick="showBaseVillage()" type="button">🏘️ <span>守護基地村</span></button>
 <button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
 <button onclick="adjustBaseZoom(0.1)" type="button">🔍 放大</button>
 <button onclick="adjustBaseZoom(-0.1)" type="button">🔎 縮小</button>
@@ -166,16 +166,17 @@
 </section></main>
 
 <main class="hide" id="baseVillagePage">
+  <button class="back village-back-to-base" onclick="showBase()">← 回我的守護基地</button>
   <div class="title village-title">
-    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>參觀其他守護者的環保基地，按愛心、收藏並互相學習創意。</p></div>
+    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
     <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
   </div>
   <section class="village-controls">
     <div class="village-tabs" role="tablist">
-      <button class="active" data-village-filter="recommended" onclick="setVillageFilter('recommended',this)">🌟 推薦</button>
+      <button class="active" data-village-filter="completion" onclick="setVillageFilter('completion',this)">🏗️ 完成度</button>
       <button data-village-filter="popular" onclick="setVillageFilter('popular',this)">❤️ 人氣</button>
+      <button data-village-filter="green" onclick="setVillageFilter('green',this)">🌳 綠化率</button>
       <button data-village-filter="new" onclick="setVillageFilter('new',this)">🆕 最新</button>
-      <button data-village-filter="favorite" onclick="setVillageFilter('favorite',this)">⭐ 收藏</button>
     </div>
     <label class="village-search">🔎<input id="villageSearch" maxlength="20" oninput="renderBaseVillage()" placeholder="搜尋守護者名稱"/></label>
   </section>
@@ -435,6 +436,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=941521"></script>
-<script src="firebase.js?v=941521"></script>
+<script src="game.js?v=941522"></script>
+<script src="firebase.js?v=941522"></script>
 </body></html>
