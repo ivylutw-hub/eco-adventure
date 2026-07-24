@@ -3465,3 +3465,66 @@ header .header-copy:before{
 @media(max-width:360px){
   #achievementPage .achievement-grid,#hallPage .hall{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.19 — 玩家成就字體放大、首頁環境資訊去框
+   ========================================================= */
+/* 首頁環境資訊直接疊放於首頁主視覺，不使用獨立外框、底色或陰影。 */
+#mainHeader .home-nature-strip{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  padding:4px 6px!important;
+  gap:10px!important;
+}
+#mainHeader .home-nature-strip .nature-location,
+#mainHeader .home-nature-metric{
+  min-height:44px!important;
+  padding:3px 5px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#mainHeader .home-nature-strip small,
+#mainHeader .home-nature-strip b{
+  text-shadow:0 1px 2px rgba(255,255,255,.88),0 0 6px rgba(255,255,255,.65)!important;
+}
+body.night-mode #mainHeader .home-nature-strip small,
+body.night-mode #mainHeader .home-nature-strip b{
+  color:#fff!important;
+  text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.65)!important;
+}
+
+/* 手機版玩家成就文字放大，仍維持一排兩個正方形卡片。 */
+@media(max-width:760px){
+  #mainHeader .home-nature-strip{gap:5px!important;padding:2px!important}
+  #mainHeader .home-nature-strip .nature-location,
+  #mainHeader .home-nature-metric{min-height:55px!important;padding:3px 2px!important}
+
+  #achievementPage .achievement-card{padding:8px 7px!important;gap:4px!important}
+  #achievementPage .achievement-icon{
+    width:clamp(40px,11.5vw,50px)!important;height:clamp(40px,11.5vw,50px)!important;
+    flex-basis:clamp(40px,11.5vw,50px)!important;font-size:clamp(27px,8vw,34px)!important
+  }
+  #achievementPage .achievement-head h3{
+    font-size:clamp(12px,3.45vw,15px)!important;
+    line-height:1.12!important;
+  }
+  #achievementPage .achievement-head span{
+    font-size:clamp(8px,2.2vw,10px)!important;
+    padding:2px 5px!important;
+  }
+  #achievementPage .achievement-card p{
+    font-size:clamp(9px,2.55vw,11px)!important;
+    line-height:1.18!important;
+    margin:3px 0!important;
+  }
+  #achievementPage .achievement-progress{height:5px!important}
+  #achievementPage .achievement-card small{
+    font-size:clamp(8px,2.2vw,10px)!important;
+    line-height:1.16!important;
+  }
+}
