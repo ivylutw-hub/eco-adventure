@@ -3528,3 +3528,66 @@ body.night-mode #mainHeader .home-nature-strip b{
     line-height:1.16!important;
   }
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.20 — 首頁環境資訊桌機／手機緊湊版面
+   ========================================================= */
+/* 電腦版：資訊列縮窄置中、間距更密，保留獨立高度避免與其他內容重疊。 */
+#mainHeader{padding-bottom:72px!important}
+#mainHeader .home-nature-strip{
+  left:50%!important;right:auto!important;bottom:9px!important;
+  transform:translateX(-50%)!important;
+  width:min(820px,calc(100% - 280px))!important;
+  grid-template-columns:minmax(150px,1.35fr) repeat(4,minmax(88px,1fr))!important;
+  gap:3px!important;padding:1px 0!important;
+  align-items:center!important
+}
+#mainHeader .home-nature-strip .nature-location,
+#mainHeader .home-nature-metric{
+  min-height:34px!important;padding:1px 4px!important;gap:4px!important;
+  justify-content:center!important;white-space:nowrap!important
+}
+#mainHeader .home-nature-strip span{font-size:18px!important;line-height:1!important}
+#mainHeader .home-nature-strip small{font-size:8px!important;line-height:1!important}
+#mainHeader .home-nature-strip b{font-size:11px!important;line-height:1.05!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+/* 中型電腦／平板橫向：不壓到左右操作區。 */
+@media(min-width:761px) and (max-width:1100px){
+  #mainHeader{padding-bottom:76px!important}
+  #mainHeader .home-nature-strip{width:calc(100% - 150px)!important;grid-template-columns:minmax(130px,1.25fr) repeat(4,minmax(72px,1fr))!important}
+  #mainHeader .home-nature-strip span{font-size:17px!important}
+  #mainHeader .home-nature-strip b{font-size:10px!important}
+}
+
+/* 手機版：所在地單獨一列，其餘四項同列，總高度固定且不放大首頁。 */
+@media(max-width:760px){
+  #mainHeader{padding-bottom:76px!important}
+  #mainHeader .home-nature-strip{
+    left:8px!important;right:8px!important;bottom:5px!important;transform:none!important;
+    width:auto!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:1px 3px!important;padding:0!important;align-items:center!important
+  }
+  #mainHeader .home-nature-strip .nature-location{
+    grid-column:1/-1!important;min-height:24px!important;
+    flex-direction:row!important;justify-content:center!important;text-align:center!important;
+    padding:0 3px!important;gap:3px!important
+  }
+  #mainHeader .home-nature-metric{
+    min-height:31px!important;flex-direction:row!important;
+    justify-content:center!important;text-align:left!important;
+    padding:0 2px!important;gap:2px!important
+  }
+  #mainHeader .home-nature-strip span{font-size:14px!important;line-height:1!important;flex:0 0 auto!important}
+  #mainHeader .home-nature-strip small{display:none!important}
+  #mainHeader .home-nature-strip b{font-size:9px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  #mainHeader .home-nature-strip .nature-location b{font-size:10px!important;max-width:88%!important}
+}
+
+@media(max-width:380px){
+  #mainHeader{padding-bottom:72px!important}
+  #mainHeader .home-nature-strip{left:5px!important;right:5px!important;gap:1px!important}
+  #mainHeader .home-nature-strip span{font-size:13px!important}
+  #mainHeader .home-nature-strip b{font-size:8px!important}
+  #mainHeader .home-nature-strip .nature-location b{font-size:9px!important}
+}
