@@ -3120,3 +3120,172 @@ header .header-copy:before{
   .checkin-player-row .base-player-stats>div>b{font-size:10px!important;line-height:1.15!important}
   header .header-copy:before{inset:-6px -8px!important}
 }
+
+/* =========================================================
+   V9.4.1 Beta 5.1.15 — 玩家卡、手機成就與守護基地工具列
+   ========================================================= */
+/* 玩家身分資料向右留出呼吸空間，四項摘要完整顯示 */
+.checkin-player-row .base-player-identity{
+  grid-template-columns:clamp(46px,5.5vw,62px) minmax(0,1fr)!important;
+  column-gap:12px!important;
+  padding-left:8px!important;
+  padding-right:8px!important;
+}
+.checkin-player-row .base-player-identity>div{
+  min-width:0!important;
+  padding-left:6px!important;
+}
+.checkin-player-row .base-player-identity h3,
+.checkin-player-row .base-player-identity p,
+.checkin-player-row .base-player-identity p b,
+.checkin-player-row .base-player-identity em{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:normal!important;
+  max-width:none!important;
+}
+.checkin-player-row .base-player-stats{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-auto-rows:minmax(76px,auto)!important;
+  gap:8px!important;
+  padding:4px 7px 8px!important;
+}
+.checkin-player-row .base-player-stats>div{
+  min-width:0!important;
+  overflow:visible!important;
+  padding:8px 5px!important;
+}
+.checkin-player-row .base-player-stats>div>small,
+.checkin-player-row .base-player-stats>div>b{
+  width:100%!important;
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
+.checkin-player-row .base-player-stats>div>b{
+  font-size:clamp(12px,1.25vw,16px)!important;
+  line-height:1.25!important;
+}
+
+/* 手機版玩家成就：一列兩格、卡片縮小 */
+@media(max-width:760px){
+  #achievementPage .achievement-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    padding:0 8px 12px!important;
+  }
+  #achievementPage .achievement-card{
+    min-width:0!important;
+    min-height:178px!important;
+    padding:8px 6px!important;
+    gap:5px!important;
+    border-radius:13px!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    text-align:center!important;
+  }
+  #achievementPage .achievement-icon{
+    width:auto!important;height:auto!important;
+    font-size:32px!important;line-height:1!important;
+  }
+  #achievementPage .achievement-info{width:100%!important;min-width:0!important}
+  #achievementPage .achievement-head{
+    display:block!important;
+    text-align:center!important;
+  }
+  #achievementPage .achievement-head h3{
+    font-size:12px!important;line-height:1.2!important;
+    margin:3px 0!important;
+  }
+  #achievementPage .achievement-head span{
+    display:inline-block!important;
+    font-size:8px!important;padding:2px 5px!important;
+  }
+  #achievementPage .achievement-card p{
+    font-size:9px!important;line-height:1.25!important;
+    margin:4px 0 6px!important;
+    display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;
+    overflow:hidden!important;
+  }
+  #achievementPage .achievement-progress{height:6px!important}
+  #achievementPage .achievement-card small{
+    font-size:8px!important;line-height:1.25!important;
+    margin-top:4px!important;
+    white-space:normal!important;
+  }
+
+  .checkin-player-row .base-player-identity{
+    grid-template-columns:38px minmax(0,1fr)!important;
+    gap:7px!important;padding-left:5px!important;padding-right:4px!important;
+  }
+  .checkin-player-row .base-player-identity>div{padding-left:4px!important}
+  .checkin-player-row .base-player-identity h3{font-size:12px!important;line-height:1.15!important}
+  .checkin-player-row .base-player-identity p b{font-size:9px!important}
+  .checkin-player-row .base-player-identity em{font-size:7px!important;line-height:1.15!important;padding:2px 3px!important}
+  .checkin-player-row .base-player-stats{grid-auto-rows:minmax(64px,auto)!important;padding:2px 3px 6px!important}
+  .checkin-player-row .base-player-stats>div>b{font-size:10px!important;overflow-wrap:anywhere!important}
+}
+
+/* 守護基地：隱藏時間，工具按鈕置中並統一美化 */
+#basePage .base-time-overlay{display:none!important}
+#basePage .base-path-actions{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:10px!important;
+  padding:13px 14px!important;
+  background:linear-gradient(180deg,#f7f3df,#ece5c5)!important;
+  border-top:1px solid #d7cca0!important;
+  overflow:visible!important;
+}
+#basePage .base-path-actions button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-width:122px!important;
+  min-height:42px!important;
+  padding:9px 14px!important;
+  border:1px solid rgba(36,105,63,.22)!important;
+  border-radius:14px!important;
+  background:linear-gradient(135deg,#ffffff,#edf8e8)!important;
+  color:#235b36!important;
+  font-weight:900!important;
+  font-size:14px!important;
+  box-shadow:0 5px 12px rgba(44,91,49,.13)!important;
+  cursor:pointer!important;
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease!important;
+}
+#basePage .base-path-actions button:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 8px 16px rgba(44,91,49,.18)!important;
+  background:linear-gradient(135deg,#fff,#dcf2d4)!important;
+}
+#basePage .base-path-actions button:active{transform:translateY(0)!important}
+#basePage .base-path-actions .base-zoom-readout,
+#basePage .base-path-actions>span:last-child{display:none!important}
+#basePage #baseEditSwitch em{display:none!important}
+
+@media(max-width:760px){
+  #basePage .base-path-actions{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    padding:10px!important;
+  }
+  #basePage .base-path-actions button{
+    min-width:0!important;width:100%!important;
+    min-height:40px!important;padding:8px 5px!important;
+    font-size:12px!important;border-radius:12px!important;
+  }
+  #basePage .base-path-actions button:first-child{
+    grid-column:1/-1!important;
+    width:min(220px,100%)!important;
+    justify-self:center!important;
+  }
+}
