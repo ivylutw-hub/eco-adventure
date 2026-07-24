@@ -287,7 +287,7 @@ function updateHomeCheckinCard(){
  el.textContent=st.checkinHistory&&st.checkinHistory[today]?'今天已簽到':'今天尚未簽到';
  const month=document.getElementById('homeCheckinMonth'),grid=document.getElementById('homeCheckinGrid'),reward=document.getElementById('homeCheckinReward');
  const checked=Array.from({length:days},(_,i)=>!!st.checkinHistory[`${key}-${String(i+1).padStart(2,'0')}`]).filter(Boolean).length;
- if(month)month.textContent=`${now.getMonth()+1}月・${checked}/${days} 天`;
+ if(month)month.textContent=`${now.getMonth()+1}月，已簽到${checked}/${days}天`;
  if(grid){
    grid.innerHTML='<i></i>'.repeat(first);
    for(let d=1;d<=days;d++){const dateKey=`${key}-${String(d).padStart(2,'0')}`,done=!!st.checkinHistory[dateKey],future=d>now.getDate();grid.insertAdjacentHTML('beforeend',`<i class="${done?'done':future?'future':'missed'}" title="${d}日">${done?'✓':d}</i>`);}

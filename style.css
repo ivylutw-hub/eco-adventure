@@ -2935,3 +2935,124 @@ body.admin-mode .global-footer-info{display:none!important;}
   .stats.global-status-row{gap:3px!important}
   .stats.global-status-row>div{padding:6px 2px!important}
 }
+
+
+/* =========================================================
+   V9.4.1 Beta 5.1.12 — 簽到與玩家資訊卡跨裝置同步版
+   桌機與手機使用相同四項摘要，並確保內容完全留在卡片內。
+   ========================================================= */
+section.global-footer-info.checkin-player-row{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch!important;
+}
+section.global-footer-info.checkin-player-row>.checkin-stat,
+section.global-footer-info.checkin-player-row>.base-player-card{
+  min-width:0!important;
+  width:auto!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.checkin-player-row .home-checkin-month{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.checkin-player-row .base-share-card,
+.checkin-player-row .base-profile-bottom,
+.checkin-player-row .base-privacy-note,
+.checkin-player-row .base-player-stats>div:nth-child(n+5){
+  display:none!important;
+}
+.checkin-player-row .base-player-card{
+  display:flex!important;
+  flex-direction:column!important;
+}
+.checkin-player-row .base-player-identity{
+  display:grid!important;
+  grid-template-columns:clamp(42px,5vw,58px) minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+.checkin-player-row .base-profile-avatar{
+  width:clamp(40px,5vw,56px)!important;
+  height:clamp(40px,5vw,56px)!important;
+  font-size:clamp(25px,4vw,36px)!important;
+}
+.checkin-player-row .base-player-identity>div{min-width:0!important}
+.checkin-player-row .base-player-identity h3{
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.checkin-player-row .base-player-identity p{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:4px!important;
+  min-width:0!important;
+}
+.checkin-player-row .base-player-identity em{
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.checkin-player-row .base-player-stats{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  min-width:0!important;
+  flex:1!important;
+}
+.checkin-player-row .base-player-stats>div{
+  min-width:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.checkin-player-row .base-player-stats small,
+.checkin-player-row .base-player-stats b{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+@media(min-width:761px){
+  section.global-footer-info.checkin-player-row>.checkin-stat,
+  section.global-footer-info.checkin-player-row>.base-player-card{
+    min-height:300px!important;
+    height:300px!important;
+    max-height:300px!important;
+  }
+  .checkin-player-row .base-player-card-title{font-size:18px!important;padding:10px 12px!important}
+  .checkin-player-row .base-player-identity{padding:8px 2px!important}
+  .checkin-player-row .base-player-identity h3{font-size:18px!important;margin:0!important}
+  .checkin-player-row .base-player-identity p b{font-size:14px!important}
+  .checkin-player-row .base-player-identity em{font-size:11px!important;padding:3px 6px!important}
+  .checkin-player-row .base-player-stats>div{padding:8px 7px!important;border-radius:12px!important}
+  .checkin-player-row .base-player-stats span{font-size:18px!important}
+  .checkin-player-row .base-player-stats small{font-size:10px!important;white-space:nowrap!important}
+  .checkin-player-row .base-player-stats b{font-size:13px!important;white-space:nowrap!important}
+}
+@media(max-width:760px){
+  section.global-footer-info.checkin-player-row>.checkin-stat,
+  section.global-footer-info.checkin-player-row>.base-player-card{
+    height:258px!important;
+    max-height:258px!important;
+  }
+  .checkin-player-row .base-player-card-title{font-size:12px!important;padding:6px 7px!important}
+  .checkin-player-row .base-player-identity{grid-template-columns:38px minmax(0,1fr)!important;gap:5px!important;padding:3px 0 5px!important}
+  .checkin-player-row .base-profile-avatar{width:36px!important;height:36px!important;font-size:22px!important}
+  .checkin-player-row .base-player-identity h3{font-size:12px!important}
+  .checkin-player-row .base-player-identity p{gap:2px!important;margin:1px 0 0!important}
+  .checkin-player-row .base-player-identity p b{font-size:9px!important}
+  .checkin-player-row .base-player-identity em{font-size:6.5px!important;padding:1px 3px!important}
+  .checkin-player-row .base-player-stats{gap:4px!important;margin-top:2px!important}
+  .checkin-player-row .base-player-stats>div{padding:4px 3px!important;grid-template-columns:15px minmax(0,1fr)!important;border-radius:8px!important}
+  .checkin-player-row .base-player-stats span{font-size:12px!important}
+  .checkin-player-row .base-player-stats small{font-size:6.5px!important;white-space:nowrap!important}
+  .checkin-player-row .base-player-stats b{font-size:9px!important;white-space:nowrap!important}
+  .checkin-player-row .home-checkin-month{font-size:11px!important;letter-spacing:-.2px!important}
+}
