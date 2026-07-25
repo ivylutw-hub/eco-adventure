@@ -321,7 +321,7 @@ function celestialPosition(date=new Date()){
  const span=720;
  const adjusted=isDay?minutes:(minutes<360?minutes+1440:minutes);
  const progress=Math.max(0,Math.min(1,(adjusted-start)/span));
- const x=8+84*progress;
+ const x=92-84*progress;
  const arc=Math.sin(Math.PI*progress);
  const y=62-50*arc;
  return{isDay,x,y};
@@ -819,7 +819,7 @@ function renderBaseSky(){
   const scene=document.getElementById('baseScene');
   if(!scene)return;
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
-  const mode=baseTimeMode();
+  const mode=baseLiveWeather?.mode||baseTimeMode();
   scene.className=`base-scene ${mode} weather-${weather.id}`;
   const pos=celestialPosition(new Date());
   scene.style.setProperty('--celestial-x',`${pos.x.toFixed(2)}%`);
@@ -833,6 +833,9 @@ function renderBaseSky(){
       <span class="base-cloud cloud-one" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-two" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-three" aria-hidden="true">☁️</span>
+      <span class="base-cloud cloud-four" aria-hidden="true">☁️</span>
+      <span class="base-cloud cloud-five" aria-hidden="true">☁️</span>
+      <span class="base-cloud cloud-six" aria-hidden="true">☁️</span>
       <span class="base-rain" aria-hidden="true">${Array.from({length:22},(_,i)=>`<i style="--x:${4+(i*13)%92}%;--delay:${(i%11)*.8}s;--duration:${9+(i%5)*1.2}s"></i>`).join('')}</span>`;
   }
   if(badge)badge.textContent=`${mode==='day'?'白天':'黑夜'}・${weather.icon} ${weather.label}`;
@@ -862,11 +865,31 @@ function addBasePath(event){
 }
 function bindBaseBuildingDrag(el,placement){
   el.addEventListener('pointerdown',event=>{
+    if(event.target.closest('.base-building-controls'))return;
     if(!st.baseEditMode||st.basePathMode)return;event.preventDefault();el.setPointerCapture(event.pointerId);el.classList.add('dragging');
     const move=e=>{const pos=basePointerPosition(e,baseScene);placement.x=pos.x;placement.y=pos.y;el.style.left=pos.x+'%';el.style.top=pos.y+'%';};
     const up=()=>{el.classList.remove('dragging');el.removeEventListener('pointermove',move);save();};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up,{once:true});el.addEventListener('pointercancel',up,{once:true});
   });
+}
+
+function baseBuildingArt(it){
+  if(it.id==='solar')return `<span class="eco-asset solar-asset" aria-hidden="true"><i class="solar-panel"><b></b><b></b><b></b><b></b><b></b><b></b></i><i class="solar-stand"></i></span>`;
+  if(it.id==='wind')return `<span class="eco-asset wind-asset" aria-hidden="true"><i class="wind-tower"></i><i class="wind-hub"><b></b><b></b><b></b></i></span>`;
+  if(it.id==='ecoLamp')return `<span class="eco-asset lamp-asset" aria-hidden="true"><i class="lamp-post"></i><i class="lamp-arm"></i><i class="lamp-head"></i><i class="lamp-glow"></i></span>`;
+  return `<span class="base-emoji" aria-hidden="true">${it.icon}</span>`;
+}
+function changeBaseBuildingSize(key,delta){
+  const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
+  p.scale=Math.max(.55,Math.min(1.8,Math.round(((Number(p.scale)||1)+delta)*10)/10));save();renderBase();
+}
+function removeBaseBuilding(key){
+  const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
+  const it=ITEMS.find(x=>x.id===p.itemId);
+  if(!confirm(`確定要移除「${it?.name||'這項建設'}」嗎？移除後會退回建設清單。`))return;
+  const idx=st.basePlacements.findIndex(x=>x.key===key);if(idx>=0)st.basePlacements.splice(idx,1);
+  const ownedIdx=st.owned.indexOf(p.itemId);if(ownedIdx>=0)st.owned.splice(ownedIdx,1);
+  save();renderBase();toast('🗑️ 已移除建設');
 }
 
 let baseZoom=1;
@@ -906,7 +929,7 @@ async function updateNatureDashboard(){
       fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
     ]);
     const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
-    document.getElementById('natureWeather').textContent=weatherFromCode(c.weather_code).label;
+    const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode()};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
     document.getElementById('natureAqi').textContent=Number.isFinite(aq)?aq:'--';document.getElementById('natureAqiLevel').textContent=Number.isFinite(aq)?aqiLevel(aq):'暫無資料';
@@ -924,7 +947,7 @@ function renderBase(){
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
-  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;const el=document.createElement('button');el.type='button';el.className='base-building'+(st.baseEditMode?' editable':'');el.textContent=it.icon;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
+  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置，並可放大、縮小或移除`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="縮小" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',-.1)">−</button><button type="button" title="放大" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',.1)">＋</button><button type="button" class="remove" title="移除" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span>`:''}`;bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{
