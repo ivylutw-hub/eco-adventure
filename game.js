@@ -108,7 +108,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'9.6.0',
+    version:'9.6.1',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -1018,15 +1018,45 @@ async function updateNatureDashboard(){
 setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
 
+
+const BASE_GREENERY_IDS=new Set(['flowers','grass','tree','pine','palm','cherry','shrub','butterflyGarden','ecoPond']);
+function baseGreeneryCount(){
+  return (Array.isArray(st.owned)?st.owned:[]).reduce((count,id)=>count+(BASE_GREENERY_IDS.has(id)?1:0),0);
+}
+function baseResidentArt(kind){
+  const arts={
+    butterfly:`<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M31 24C22 7 6 8 8 24c2 12 16 11 23 2" fill="#ff90c2" stroke="#8f4168" stroke-width="2"/><path d="M33 24C42 7 58 8 56 24c-2 12-16 11-23 2" fill="#ffd45d" stroke="#8f6b23" stroke-width="2"/><path d="M29 23h6v17h-6z" rx="3" fill="#4c4b58"/><path d="M31 18c-4-6-8-7-11-7M33 18c4-6 8-7 11-7" fill="none" stroke="#4c4b58" stroke-width="2" stroke-linecap="round"/></svg>`,
+    bird:`<svg viewBox="0 0 72 56" aria-hidden="true"><path d="M15 37c8-17 30-23 42-8-8 17-30 19-42 8z" fill="#4da8c7" stroke="#235c71" stroke-width="2"/><path d="M50 27l14 4-12 7" fill="#f2b84b" stroke="#8d6422" stroke-width="2"/><circle cx="49" cy="28" r="2.4" fill="#16292f"/><path d="M20 38L8 48l17-3" fill="#3b7f98"/><path d="M30 34c7-9 15-7 18 1-8 7-14 7-18-1z" fill="#8bd4df"/></svg>`,
+    rabbit:`<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="35" cy="42" rx="20" ry="14" fill="#eee6d8" stroke="#8b8070" stroke-width="2"/><circle cx="23" cy="31" r="11" fill="#f5ede0" stroke="#8b8070" stroke-width="2"/><path d="M18 23C12 8 18 2 23 21M27 22c1-16 8-19 8 2" fill="#f5ede0" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="29" r="2" fill="#333"/><circle cx="54" cy="40" r="6" fill="#fff"/><path d="M24 37l-5 5M35 53l-3 7M45 52l4 7" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/></svg>`,
+    otter:`<svg viewBox="0 0 80 56" aria-hidden="true"><path d="M13 36c5-17 25-26 43-15 9 6 11 15 5 22-8 9-34 8-48-7z" fill="#8b6548" stroke="#523a2a" stroke-width="2"/><circle cx="54" cy="24" r="12" fill="#9c7556" stroke="#523a2a" stroke-width="2"/><circle cx="59" cy="22" r="2" fill="#1f1b18"/><path d="M65 27l10 2-9 5" fill="#69482f"/><path d="M15 37C5 38 2 47 10 50" fill="none" stroke="#523a2a" stroke-width="5" stroke-linecap="round"/><path d="M48 31c4 4 8 4 12 0" fill="none" stroke="#f0dcc8" stroke-width="2" stroke-linecap="round"/></svg>`
+  };
+  return arts[kind]||'';
+}
+function renderBaseResidents(){
+  const layer=document.querySelector('#baseScene .base-residents');
+  if(!layer)return;
+  const greenery=baseGreeneryCount();
+  const residents=[];
+  if(greenery>=1)residents.push({kind:'butterfly',name:'蝴蝶',x:24,y:48,delay:'0s'});
+  if(greenery>=3)residents.push({kind:'bird',name:'小鳥',x:70,y:31,delay:'-2.5s'});
+  if(greenery>=6)residents.push({kind:'rabbit',name:'野兔',x:78,y:72,delay:'-4s'});
+  if(greenery>=10)residents.push({kind:'otter',name:'歐亞水獺',x:39,y:78,delay:'-6s'});
+  layer.innerHTML=residents.map((r,i)=>`<span class="base-resident resident-${r.kind}" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" title="${r.name}已被綠意吸引入住">${baseResidentArt(r.kind)}<b>${r.name}</b></span>`).join('');
+  if(residents.length){
+    layer.insertAdjacentHTML('beforeend',`<span class="resident-status">🌿 綠意 ${greenery}・生態住民 ${residents.length}</span>`);
+  }
+}
+
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
-  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
+  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it,p)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
+  renderBaseResidents();
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{

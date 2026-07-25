@@ -4415,3 +4415,42 @@ body.header-compact #mainHeader,
 .asset-flower-bundle{position:relative;display:block;width:96px;height:82px}
 .asset-flower-bundle i{position:absolute;width:17px;height:28px;left:calc(5px + (var(--i) % 5)*18px);top:calc(7px + (var(--i) / 5)*34px);background:radial-gradient(circle at 50% 18%,hsl(calc(var(--i)*35 + 320) 78% 69%) 0 6px,transparent 7px),linear-gradient(90deg,transparent 44%,#4d9847 45% 56%,transparent 57%);border-radius:50%}
 .shop-item:has(.asset-flower-bundle) .shop-icon{overflow:visible}
+
+/* ===== V9.6.1：真實天氣天空與綠意生態住民 ===== */
+/* 白天保持清楚藍天；多雲稍暗且雲量增加；陰天只降低一點亮度。 */
+.base-scene.day.weather-sunny{
+  background:linear-gradient(#55bff2 0%,#8edcff 42%,#c7efff 62%,#7fc76c 62%,#5aae55 100%)!important;
+}
+.base-scene.day.weather-cloudy{
+  background:linear-gradient(#72b9d8 0%,#9ed0e5 43%,#c5dfdf 62%,#78b86a 62%,#559d50 100%)!important;
+  box-shadow:inset 0 0 34px rgba(43,72,83,.13)!important;
+}
+.base-scene.day.weather-overcast{
+  background:linear-gradient(#7f9faa 0%,#9fb8bd 42%,#becdcc 62%,#72a968 62%,#528e4d 100%)!important;
+  box-shadow:inset 0 0 46px rgba(42,55,61,.2)!important;
+}
+.base-scene.day.weather-rainy{
+  background:linear-gradient(#647f8d 0%,#829aa4 43%,#aab9b8 62%,#688f61 62%,#486f45 100%)!important;
+}
+.weather-sunny .base-cloud{display:none!important}
+.weather-sunny .cloud-one{display:block!important;opacity:.25!important;filter:brightness(1.2)}
+.weather-cloudy .base-cloud{display:block!important;opacity:.78!important;filter:drop-shadow(0 5px 5px rgba(34,64,75,.18))}
+.weather-cloudy .cloud-one{font-size:84px!important}.weather-cloudy .cloud-two{font-size:72px!important}.weather-cloudy .cloud-three{font-size:94px!important}.weather-cloudy .cloud-four{font-size:78px!important}.weather-cloudy .cloud-five{font-size:105px!important}.weather-cloudy .cloud-six{font-size:70px!important}
+.weather-overcast .base-cloud,.weather-rainy .base-cloud{display:block!important;opacity:.94!important;filter:grayscale(.5) brightness(.82) drop-shadow(0 6px 5px rgba(0,0,0,.2))}
+
+.base-residents{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.base-resident{position:absolute;left:var(--resident-x);top:var(--resident-y);width:58px;height:48px;transform:translate(-50%,-50%);filter:drop-shadow(0 5px 3px rgba(26,68,42,.28));animation:residentBob 4.8s ease-in-out infinite;animation-delay:var(--resident-delay,0s)}
+.base-resident svg{width:100%;height:100%;display:block}
+.base-resident b{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font-size:11px;line-height:1;background:rgba(255,255,255,.88);color:#29553a;padding:3px 6px;border-radius:999px;border:1px solid rgba(56,121,74,.22);opacity:0;transition:opacity .2s}
+.base-scene:hover .base-resident b{opacity:1}
+.resident-butterfly{width:42px;height:34px;animation-name:residentFlutter;animation-duration:6.5s}
+.resident-bird{width:48px;height:38px;animation-name:residentBird;animation-duration:8s}
+.resident-rabbit{width:52px;height:52px;animation-duration:5.5s}
+.resident-otter{width:68px;height:48px;animation-duration:7s}
+.resident-status{position:absolute;left:14px;bottom:14px;background:rgba(245,255,244,.9);border:1px solid rgba(63,132,78,.35);color:#245f37;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;box-shadow:0 5px 14px rgba(20,67,37,.13)}
+@keyframes residentBob{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-5px)}}
+@keyframes residentFlutter{0%,100%{transform:translate(-50%,-50%) translate(0,0) rotate(-4deg)}25%{transform:translate(-50%,-50%) translate(18px,-12px) rotate(6deg)}50%{transform:translate(-50%,-50%) translate(32px,1px) rotate(-3deg)}75%{transform:translate(-50%,-50%) translate(12px,9px) rotate(5deg)}}
+@keyframes residentBird{0%,100%{transform:translate(-50%,-50%) translateX(0)}50%{transform:translate(-50%,-50%) translateX(-24px) translateY(-4px)}}
+.base-scene.night .base-resident{filter:brightness(.72) drop-shadow(0 4px 3px rgba(0,0,0,.4))}
+@media(max-width:700px){.base-resident{transform:translate(-50%,-50%) scale(.82)}.resident-status{font-size:10px;padding:6px 9px}}
+@media(prefers-reduced-motion:reduce){.base-resident{animation:none!important}}
