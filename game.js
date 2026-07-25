@@ -858,13 +858,35 @@ function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;st.basePathMode=false
 function toggleBasePath(){toast('此版本已移除鋪路功能');}
 function clearBasePaths(){toast('此版本已移除清除路徑功能');}
 function addBasePath(){/* V9.5 已移除鋪路功能 */}
+function selectBaseBuilding(el){
+  document.querySelectorAll('.base-building.selected').forEach(x=>x.classList.remove('selected'));
+  if(el)el.classList.add('selected');
+}
 function bindBaseBuildingDrag(el,placement){
   el.addEventListener('pointerdown',event=>{
-    if(event.target.closest('.base-building-controls'))return;
-    if(!st.baseEditMode||st.basePathMode)return;event.preventDefault();el.setPointerCapture(event.pointerId);el.classList.add('dragging');
+    if(!st.baseEditMode||st.basePathMode)return;
+    selectBaseBuilding(el);
+    if(event.target.closest('.base-building-controls,.base-building-resize-handle'))return;
+    event.preventDefault();el.setPointerCapture(event.pointerId);el.classList.add('dragging');
     const move=e=>{const pos=basePointerPosition(e,baseScene);placement.x=pos.x;placement.y=pos.y;el.style.left=pos.x+'%';el.style.top=pos.y+'%';};
     const up=()=>{el.classList.remove('dragging');el.removeEventListener('pointermove',move);save();};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up,{once:true});el.addEventListener('pointercancel',up,{once:true});
+  });
+}
+function bindBaseBuildingResize(handle,el,placement){
+  handle.addEventListener('pointerdown',event=>{
+    if(!st.baseEditMode)return;
+    event.preventDefault();event.stopPropagation();selectBaseBuilding(el);
+    handle.setPointerCapture(event.pointerId);el.classList.add('resizing');
+    const startX=event.clientX,startY=event.clientY,startScale=Number(placement.scale)||1;
+    const move=e=>{
+      const dx=e.clientX-startX,dy=e.clientY-startY;
+      const distance=(dx+dy)/150;
+      const next=Math.max(.55,Math.min(1.8,Math.round((startScale+distance)*100)/100));
+      placement.scale=next;el.style.setProperty('--building-scale',next);
+    };
+    const up=()=>{el.classList.remove('resizing');handle.removeEventListener('pointermove',move);save();};
+    handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',up,{once:true});handle.addEventListener('pointercancel',up,{once:true});
   });
 }
 
@@ -961,7 +983,7 @@ function renderBase(){
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
-  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置，並可放大、縮小或移除`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="縮小" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',-.1)">−</button><button type="button" title="放大" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',.1)">＋</button><button type="button" title="旋轉 90 度" onclick="event.stopPropagation();rotateBaseBuilding('${p.key}')">↻</button><button type="button" class="remove" title="移除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span>`:''}`;bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
+  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="旋轉 90 度" onclick="event.stopPropagation();rotateBaseBuilding('${p.key}')">↻</button><button type="button" class="remove" title="移除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{

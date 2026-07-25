@@ -3997,3 +3997,65 @@ body.header-compact #mainHeader,
   #basePage .my-base-control-panel .base-village-entry{min-height:36px!important;padding:7px 11px!important;font-size:13px!important}
 }
 @media(prefers-reduced-motion:reduce){#basePage .wind-svg-rotor{animation:none!important}}
+
+/* ===== V9.5.2：物件拖曳縮放、工具說明對齊、儲存按鈕置中 ===== */
+#basePage .base-build-toolbar{
+  grid-template-columns:1fr!important;
+  grid-template-areas:"title" "help" "shop" "save"!important;
+  align-items:stretch!important;
+}
+#basePage .build-toolbar-title,
+#basePage .build-toolbar-help{
+  width:100%!important;
+  box-sizing:border-box!important;
+  text-align:left!important;
+}
+#basePage .build-toolbar-help{
+  margin:0!important;
+  padding:4px 2px 10px!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:break-word!important;
+  line-height:1.55!important;
+}
+#basePage .base-save-box{
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  margin-top:8px!important;
+}
+#basePage .base-save-box button{width:auto!important;min-width:0!important}
+.base-building.editable.selected{
+  outline:3px solid #fff!important;
+  box-shadow:0 0 0 3px #4a9b3c,0 8px 18px rgba(27,76,43,.32)!important;
+  border-radius:14px!important;
+  z-index:20!important;
+}
+.base-building-resize-handle{
+  position:absolute;
+  right:-13px;
+  bottom:-13px;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border:3px solid #fff;
+  border-radius:50%;
+  background:#4a9b3c;
+  color:#fff;
+  box-shadow:0 3px 9px rgba(20,69,39,.35);
+  cursor:nwse-resize;
+  touch-action:none;
+  z-index:35;
+  font:900 15px/1 system-ui,sans-serif;
+}
+.base-building-resize-handle::before{content:"↘"}
+.base-building.resizing{cursor:nwse-resize!important;z-index:25!important}
+.base-building.editable{touch-action:none}
+@media(max-width:600px){
+  .base-building-resize-handle{right:-11px;bottom:-11px;width:26px;height:26px;font-size:14px}
+  #basePage .build-toolbar-help{font-size:13px!important;padding-left:0!important;padding-right:0!important}
+}
