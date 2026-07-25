@@ -801,10 +801,10 @@ function weatherFromCode(code){
 async function updateRealBaseWeather(force=false){
  if(!force&&Date.now()-baseWeatherFetchedAt<15*60*1000&&baseLiveWeather){renderBaseSky();return;}
  try{
-  const url='https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=weather_code,is_day&timezone=auto';
+  const url='https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=weather_code,is_day,wind_speed_10m&timezone=auto';
   const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('weather '+response.status);
   const data=await response.json(),current=data.current||{};
-  baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night'};baseWeatherFetchedAt=Date.now();renderBaseSky();
+  baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night',windSpeed:Math.max(0,Number(current.wind_speed_10m)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
  }catch(err){console.warn('即時天氣載入失敗，使用本機時間與備援天氣。',err);baseLiveWeather=null;renderBaseSky();}
 }
 function baseTimeMode(){
@@ -821,6 +821,10 @@ function renderBaseSky(){
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
   const mode=baseLiveWeather?.mode||baseTimeMode();
   scene.className=`base-scene ${mode} weather-${weather.id}`;
+  const windSpeed=Math.max(0,Number(baseLiveWeather?.windSpeed)||0);
+  const windDuration=windSpeed<1?0:Math.max(1.8,Math.min(24,36/(windSpeed+0.8)));
+  scene.style.setProperty('--wind-spin-duration',windDuration?`${windDuration.toFixed(2)}s`:'0s');
+  scene.classList.toggle('wind-calm',windSpeed<1);
   const pos=celestialPosition(new Date());
   scene.style.setProperty('--celestial-x',`${pos.x.toFixed(2)}%`);
   scene.style.setProperty('--celestial-y',`${pos.y.toFixed(2)}%`);
@@ -854,7 +858,7 @@ function ensureBaseLayout(){
   st.basePlacements=st.basePlacements.filter(p=>valid.has(p.key));
 }
 function basePointerPosition(event,scene){const r=scene.getBoundingClientRect();return{x:Math.max(4,Math.min(96,(event.clientX-r.left)/r.width*100)),y:Math.max(10,Math.min(93,(event.clientY-r.top)/r.height*100))}}
-function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;st.basePathMode=false;save();renderBase();toast(st.baseEditMode?'🛠️ 編輯模式開啟：可拖曳、縮放、旋轉或移除物件':'✅ 完成擺設，基地位置已保存')}
+function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;st.basePathMode=false;save();renderBase();toast(st.baseEditMode?'🛠️ 編輯模式開啟：可拖曳、縮放、鏡像或刪除物件':'✅ 完成擺設，基地位置已保存')}
 function toggleBasePath(){toast('此版本已移除鋪路功能');}
 function clearBasePaths(){toast('此版本已移除清除路徑功能');}
 function addBasePath(){/* V9.5 已移除鋪路功能 */}
@@ -866,7 +870,7 @@ function bindBaseBuildingDrag(el,placement){
   el.addEventListener('pointerdown',event=>{
     if(!st.baseEditMode||st.basePathMode)return;
     selectBaseBuilding(el);
-    if(event.target.closest('.base-building-controls,.base-building-resize-handle'))return;
+    if(event.target.closest('.base-building-delete,.base-building-mirror,.base-building-resize-handle'))return;
     event.preventDefault();el.setPointerCapture(event.pointerId);el.classList.add('dragging');
     const move=e=>{const pos=basePointerPosition(e,baseScene);placement.x=pos.x;placement.y=pos.y;el.style.left=pos.x+'%';el.style.top=pos.y+'%';};
     const up=()=>{el.classList.remove('dragging');el.removeEventListener('pointermove',move);save();};
@@ -916,6 +920,10 @@ function rotateBaseBuilding(key){
   const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
   p.rotation=((Number(p.rotation)||0)+90)%360;save();renderBase();
 }
+function mirrorBaseBuilding(key){
+  const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
+  p.mirrored=!p.mirrored;save();renderBase();
+}
 function changeBaseBuildingSize(key,delta){
   const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
   p.scale=Math.max(.55,Math.min(1.8,Math.round(((Number(p.scale)||1)+delta)*10)/10));save();renderBase();
@@ -926,7 +934,7 @@ function removeBaseBuilding(key){
   if(!confirm(`確定要移除「${it?.name||'這項建設'}」嗎？移除後會退回建設清單。`))return;
   const idx=st.basePlacements.findIndex(x=>x.key===key);if(idx>=0)st.basePlacements.splice(idx,1);
   const ownedIdx=st.owned.indexOf(p.itemId);if(ownedIdx>=0)st.owned.splice(ownedIdx,1);
-  save();renderBase();toast('🗑️ 已移除建設');
+  save();renderBase();toast('已刪除建設');
 }
 
 let baseZoom=1;
@@ -962,11 +970,11 @@ async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
     const [forecast,air]=await Promise.all([
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
       fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
     ]);
     const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
-    const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode()};baseWeatherFetchedAt=Date.now();renderBaseSky();
+    const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
     document.getElementById('natureAqi').textContent=Number.isFinite(aq)?aq:'--';document.getElementById('natureAqiLevel').textContent=Number.isFinite(aq)?aqiLevel(aq):'暫無資料';
@@ -983,7 +991,7 @@ function renderBase(){
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
-  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="旋轉 90 度" onclick="event.stopPropagation();rotateBaseBuilding('${p.key}')">↻</button><button type="button" class="remove" title="移除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
+  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{

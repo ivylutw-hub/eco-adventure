@@ -4318,3 +4318,86 @@ body.header-compact #mainHeader,
   #basePage .toolbar-main-actions button{min-width:0!important;width:100%!important;padding:8px 5px!important;font-size:13px!important}
   #basePage .base-save-box{justify-self:center!important}
 }
+
+/* ===== V9.5.5：工具列置中、日夜路燈、即時風速、鏡像與 X 刪除 ===== */
+#basePage .base-build-toolbar{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  grid-template-areas:"title tools save" "shop shop shop"!important;
+}
+#basePage .toolbar-main-actions{
+  justify-self:center!important;
+  justify-content:center!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
+#basePage .toolbar-main-actions button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+#basePage .toolbar-main-actions button span{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+/* 建設物件本體可水平鏡像；控制點不跟著翻轉。 */
+.base-building{--building-mirror:1;}
+.base-building>.eco-asset{
+  transform:scaleX(var(--building-mirror,1));
+  transform-origin:center center;
+}
+.base-building-delete,.base-building-mirror{
+  position:absolute!important;
+  z-index:42!important;
+  width:25px!important;
+  height:25px!important;
+  min-width:25px!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:2px solid #fff!important;
+  border-radius:50%!important;
+  box-shadow:0 2px 7px rgba(20,55,40,.28)!important;
+  font:900 20px/1 system-ui,sans-serif!important;
+  cursor:pointer!important;
+}
+.base-building-delete{
+  left:-13px!important;
+  top:-13px!important;
+  background:#e94b3c!important;
+  color:#fff!important;
+}
+.base-building-mirror{
+  right:-13px!important;
+  top:-13px!important;
+  background:#e9f7ef!important;
+  color:#166c42!important;
+  font-size:15px!important;
+  border-color:#fff!important;
+}
+.base-building-delete:hover{background:#c93629!important;transform:scale(1.08)}
+.base-building-mirror:hover{background:#cef0dc!important;transform:scale(1.08)}
+.base-building-controls{display:none!important}
+
+/* 太陽能燈：白天關閉，夜晚才發光。 */
+.base-scene.day .lamp-svg-glow,
+.base-scene.day .lamp-glow{opacity:0!important;animation:none!important}
+.base-scene.day .asset-lamp svg path[fill="#fff39a"]{fill:#b8c5bf!important;filter:none!important}
+.base-scene.night .lamp-svg-glow{opacity:.95!important;filter:drop-shadow(0 0 9px #ffe96f);animation:lampPulse 3.5s ease-in-out infinite}
+.base-scene.night .asset-lamp svg path[fill="#fff39a"]{fill:#fff39a!important;filter:drop-shadow(0 0 7px #ffe45f)}
+
+/* 風機轉速取自 Open-Meteo 即時 10 公尺風速。風愈強，週期愈短。 */
+.base-scene .wind-svg-rotor{animation:baseWindSvgSpin var(--wind-spin-duration,13s) linear infinite!important}
+.base-scene.wind-calm .wind-svg-rotor{animation-play-state:paused!important}
+
+@media(max-width:820px){
+  #basePage .toolbar-main-actions{justify-self:center!important}
+}
+@media(max-width:600px){
+  #basePage .toolbar-main-actions{width:100%!important}
+  .base-building-delete,.base-building-mirror{width:23px!important;height:23px!important;min-width:23px!important}
+}
