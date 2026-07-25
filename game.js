@@ -1019,9 +1019,68 @@ setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
 
 
-const BASE_GREENERY_IDS=new Set(['flowers','grass','tree','pine','palm','cherry','shrub','butterflyGarden','ecoPond']);
-function baseGreeneryCount(){
-  return (Array.isArray(st.owned)?st.owned:[]).reduce((count,id)=>count+(BASE_GREENERY_IDS.has(id)?1:0),0);
+const BASE_FLOWER_IDS=new Set(['flowers','butterflyGarden']);
+const BASE_GRASS_IDS=new Set(['grass','shrub']);
+const BASE_TREE_IDS=new Set(['tree','pine','palm','cherry']);
+const BASE_POND_IDS=new Set(['ecoPond','streamRest']);
+function baseHabitatStats(){
+  const owned=Array.isArray(st.owned)?st.owned:[];
+  const rawFlowers=owned.reduce((n,id)=>n+(id==='flowers'?1:0),0);
+  const flowerGardenCount=owned.reduce((n,id)=>n+(id==='butterflyGarden'?1:0),0);
+  const flowerGroups=Math.floor(rawFlowers/10)+flowerGardenCount;
+  const grass=owned.reduce((n,id)=>n+(BASE_GRASS_IDS.has(id)?1:0),0);
+  const trees=owned.reduce((n,id)=>n+(BASE_TREE_IDS.has(id)?1:0),0);
+  const ponds=owned.reduce((n,id)=>n+(BASE_POND_IDS.has(id)?1:0),0);
+  const greenery=flowerGroups+grass+trees+ponds;
+  return{rawFlowers,flowerGroups,grass,trees,ponds,greenery};
+}
+function baseGreeneryCount(){return baseHabitatStats().greenery}
+function baseHabitatStatus(){
+  const h=baseHabitatStats();
+  return{
+    stats:h,
+    butterfly:{ready:h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2,needs:['至少 1 組花朵（10 朵）','或花朵組＋草地合計至少 2 組']},
+    bird:{ready:h.trees>=2&&h.greenery>=3,needs:['至少 2 棵樹木','綠意總值至少 3']},
+    rabbit:{ready:h.grass>=3&&h.trees>=2&&h.greenery>=6,needs:['至少 3 塊草地','至少 2 棵樹木','綠意總值至少 6']},
+    otter:{ready:h.ponds>=1&&h.trees>=3&&h.grass>=3&&h.greenery>=8,needs:['至少 1 座生態池','至少 3 棵樹木','至少 3 塊草地','綠意總值至少 8']}
+  };
+}
+function habitatMissing(kind,status=baseHabitatStatus()){
+  const h=status.stats,missing=[];
+  if(kind==='butterfly'){
+    if(!(h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2))missing.push(`花朵還差 ${Math.max(0,1-h.flowerGroups)} 組，或增加花草組合`);
+  }else if(kind==='bird'){
+    if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<3)missing.push(`綠意還差 ${3-h.greenery}`);
+  }else if(kind==='rabbit'){
+    if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<6)missing.push(`綠意還差 ${6-h.greenery}`);
+  }else if(kind==='otter'){
+    if(h.ponds<1)missing.push('還需要 1 座生態池');if(h.trees<3)missing.push(`樹木還差 ${3-h.trees} 棵`);if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.greenery<8)missing.push(`綠意還差 ${8-h.greenery}`);
+  }
+  return missing;
+}
+function openHabitatGuide(){
+  renderHabitatGuide();
+  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.remove('hide');
+}
+function closeHabitatGuide(event){
+  if(event&&event.target!==event.currentTarget)return;
+  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.add('hide');
+}
+function renderHabitatGuide(){
+  const status=baseHabitatStatus(),h=status.stats;
+  const summary=document.getElementById('habitatSummary');
+  if(summary)summary.innerHTML=`<span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.rawFlowers} 朵，10 朵算 1 組</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 生態池 <b>${h.ponds}</b></span><span>🍃 綠意 <b>${h.greenery}</b></span>`;
+  const defs=[
+    ['butterfly','🦋','蝴蝶','在花叢間不規則飛行，停花採蜜，再飛往下一朵。'],
+    ['bird','🐦','小鳥','在天空滑翔，停在樹梢休息，再飛往另一棵樹。'],
+    ['rabbit','🐇','野兔','只在草地跳躍與吃草，受驚時快速跳開。'],
+    ['otter','🦦','歐亞水獺','沿生態池岸邊巡遊、下水游泳並上岸休息。']
+  ];
+  const box=document.getElementById('habitatRequirements');
+  if(box)box.innerHTML=defs.map(([key,icon,name,behavior])=>{
+    const r=status[key],miss=habitatMissing(key,status);
+    return `<article class="habitat-animal-card ${r.ready?'ready':'not-ready'}"><div class="habitat-animal-title"><span>${icon}</span><div><b>${name}</b><small>${r.ready?'✅ 棲地符合，會入住':'尚未符合入住條件'}</small></div></div><ul>${r.needs.map(x=>`<li>${x}</li>`).join('')}</ul><p>${behavior}</p>${miss.length?`<div class="habitat-missing">${miss.map(x=>`<span>⚠️ ${x}</span>`).join('')}</div>`:''}</article>`;
+  }).join('');
 }
 function baseResidentArt(kind){
   const arts={
@@ -1035,22 +1094,16 @@ function baseResidentArt(kind){
 function interactBaseResident(el){
   if(!el||el.classList.contains('interacting'))return;
   el.classList.add('interacting');
-  const burst=document.createElement('span');
-  burst.className='resident-sparkles';
-  burst.setAttribute('aria-hidden','true');
-  burst.innerHTML='<i>✨</i><i>💚</i><i>✨</i>';
-  el.appendChild(burst);
+  const burst=document.createElement('span');burst.className='resident-sparkles';burst.setAttribute('aria-hidden','true');burst.innerHTML='<i>✨</i><i>💚</i><i>✨</i>';el.appendChild(burst);
   window.setTimeout(()=>{el.classList.remove('interacting');burst.remove()},1100);
 }
 function renderBaseResidents(){
-  const layer=document.querySelector('#baseScene .base-residents');
-  if(!layer)return;
-  const greenery=baseGreeneryCount();
-  const residents=[];
-  if(greenery>=1)residents.push({kind:'butterfly',name:'蝴蝶',x:18,y:42,delay:'0s'});
-  if(greenery>=3)residents.push({kind:'bird',name:'小鳥',x:66,y:27,delay:'-2.5s'});
-  if(greenery>=6)residents.push({kind:'rabbit',name:'野兔',x:18,y:72,delay:'-4s'});
-  if(greenery>=10)residents.push({kind:'otter',name:'歐亞水獺',x:38,y:79,delay:'-6s'});
+  const layer=document.querySelector('#baseScene .base-residents');if(!layer)return;
+  const status=baseHabitatStatus(),residents=[];
+  if(status.butterfly.ready)residents.push({kind:'butterfly',name:'蝴蝶',x:18,y:42,delay:'0s'});
+  if(status.bird.ready)residents.push({kind:'bird',name:'小鳥',x:66,y:27,delay:'-2.5s'});
+  if(status.rabbit.ready)residents.push({kind:'rabbit',name:'野兔',x:18,y:72,delay:'-4s'});
+  if(status.otter.ready)residents.push({kind:'otter',name:'歐亞水獺',x:38,y:79,delay:'-6s'});
   layer.innerHTML=residents.map(r=>`<span class="base-resident resident-${r.kind}" role="button" tabindex="0" aria-label="和${r.name}互動" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" onclick="interactBaseResident(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();interactBaseResident(this)}">${baseResidentArt(r.kind)}</span>`).join('');
 }
 

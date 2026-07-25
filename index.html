@@ -147,7 +147,7 @@
 </section>
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
-<div class="build-toolbar-title"><b>建設工具</b></div>
+<div class="build-toolbar-title"><b>建設工具</b><button class="habitat-hint-button" type="button" aria-label="查看動物棲地需求" title="動物棲地提示" onclick="openHabitatGuide()">💡</button></div>
 <div class="base-path-actions toolbar-main-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
 <button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
 <button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
@@ -403,8 +403,17 @@
 </aside>
 </section>
 </div>
+<div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
+<div class="modal-card habitat-guide-card" onclick="event.stopPropagation()">
+<button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button" onclick="closeHabitatGuide()">×</button>
+<div class="habitat-guide-head"><span>💡</span><div><small>ECO HABITAT GUIDE</small><h3 id="habitatGuideTitle">動物棲地提示</h3><p>布置適合的花、草、樹木與生態池，動物才會自然入住。</p></div></div>
+<div class="habitat-summary" id="habitatSummary"></div>
+<div class="habitat-requirements" id="habitatRequirements"></div>
+</div>
+</div>
 <div class="modal hide" id="logoutModal">
 <div class="modal-card">
+<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLogout()">×</button>
 <h3>確定要登出嗎？</h3>
 <p>進度已同步至 Google 帳號；登出後可再次登入接續遊玩。</p>
 <div><button onclick="closeLogout()">取消</button><button class="danger" onclick="logout()">登出</button></div>
@@ -429,6 +438,7 @@
 <div aria-hidden="true" class="effect-layer" id="effectLayer"></div>
 <div class="modal hide" id="levelModal">
 <div class="modal-card level-card">
+<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLevelModal()">×</button>
 <div class="level-unlock-icon" id="levelUnlockIcon">✨</div>
 <small>GUARDIAN LEVEL UP</small>
 <h2 id="levelUnlockTitle">守護者升級！</h2>
