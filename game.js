@@ -1,6 +1,36 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
+function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
+function migrateFlowerBundlesV96(state){
+  if(!state||state.flowerBundleV96Migrated)return state;
+  const oldOwned=Array.isArray(state.owned)?state.owned:[];
+  const oldPlacements=Array.isArray(state.basePlacements)?state.basePlacements:[];
+  const placementByKey=new Map(oldPlacements.map(p=>[p.key,p]));
+  const newOwned=[],newPlacements=[];
+  oldOwned.forEach((itemId,oldIndex)=>{
+    const oldKey=`base-${oldIndex}-${itemId}`;
+    const old=placementByKey.get(oldKey)||oldPlacements.find(p=>p.itemId===itemId&&!p.__v96used);
+    if(old)old.__v96used=true;
+    if(itemId!=='flowers'){
+      const newIndex=newOwned.length,key=`base-${newIndex}-${itemId}`;
+      newOwned.push(itemId);
+      if(old)newPlacements.push({...old,key,itemId});
+      return;
+    }
+    const centerX=Number(old?.x)||50,centerY=Number(old?.y)||68;
+    const offsets=[[-5,-4],[-2,-6],[2,-6],[5,-4],[-6,0],[-2,0],[2,0],[6,0],[-3,4],[3,4]];
+    offsets.forEach(([dx,dy],flowerVariant)=>{
+      const newIndex=newOwned.length,key=`base-${newIndex}-flowers`;
+      newOwned.push('flowers');
+      newPlacements.push({key,itemId:'flowers',x:Math.max(4,Math.min(96,centerX+dx)),y:Math.max(10,Math.min(93,centerY+dy)),scale:.72,mirrored:false,flowerVariant});
+    });
+  });
+  oldPlacements.forEach(p=>{delete p.__v96used});
+  state.owned=newOwned;
+  state.basePlacements=newPlacements;
+  state.flowerBundleV96Migrated=true;
+  return state;
+}
 function load(){
   try{
     let raw=localStorage.getItem(KEY);
@@ -10,7 +40,7 @@ function load(){
         if(raw)break;
       }
     }
-    return {...defaultState(),...JSON.parse(raw||'{}')};
+    return migrateFlowerBundlesV96({...defaultState(),...JSON.parse(raw||'{}')});
   }catch{return defaultState()}
 }
 function refreshSharedPlayerPanels(){
@@ -78,7 +108,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'9.5.0',
+    version:'9.6.0',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -103,7 +133,7 @@ function importSave(event){
       const parsed=JSON.parse(reader.result);
       const data=parsed.data||parsed;
       if(!data||typeof data!=='object')throw new Error('格式不正確');
-      st={...defaultState(),...data,loggedIn:true};
+      st=migrateFlowerBundlesV96({...defaultState(),...data,loggedIn:true});
       save();
       ensureProfile();
       selectedLoginAvatar=st.avatar||'fox';
@@ -852,7 +882,7 @@ function ensureBaseLayout(){
     const key=`base-${index}-${itemId}`;valid.add(key);
     if(!st.basePlacements.some(p=>p.key===key)){
       const col=index%6,row=Math.floor(index/6)%4;
-      st.basePlacements.push({key,itemId,x:12+col*15,y:73-row*15});
+      st.basePlacements.push({key,itemId,x:12+col*15,y:73-row*15,flowerVariant:itemId==='flowers'?index%10:undefined,scale:itemId==='flowers'?.72:1});
     }
   });
   st.basePlacements=st.basePlacements.filter(p=>valid.has(p.key));
@@ -894,8 +924,13 @@ function bindBaseBuildingResize(handle,el,placement){
   });
 }
 
-function baseBuildingArt(it){
+function baseBuildingArt(it,placement=null){
   const id=it.id;
+  if(id==='flowers'){
+    if(!placement)return `<span class="eco-asset asset-flower-bundle" aria-hidden="true">${Array.from({length:10},(_,i)=>`<i style="--i:${i}"></i>`).join('')}</span>`;
+    const variant=Math.abs(Number(placement.flowerVariant)||0)%10;
+    return `<span class="eco-asset asset-single-flower flower-variant-${variant}" aria-hidden="true"><i class="flower-head"></i><i class="flower-center"></i><i class="flower-stem"></i><i class="flower-leaf leaf-a"></i><i class="flower-leaf leaf-b"></i></span>`;
+  }
   if(id==='solar')return `<span class="eco-asset asset-solar" aria-hidden="true"><svg viewBox="0 0 96 96" role="img"><path d="M34 66h28l7 10H27z" fill="#78958f"/><path d="M43 57h10v15H43z" fill="#c9d8d5" stroke="#78958f" stroke-width="3"/><path d="M13 22h70l-8 39H5z" fill="#173f69" stroke="#d7e9e8" stroke-width="5" stroke-linejoin="round"/><g stroke="#8ed3e4" stroke-width="2"><path d="M28 23l-6 37M49 23l-4 37M70 23l-2 37"/><path d="M9 41h70"/></g><path d="M16 27h18l-2 10H14zM38 27h18l-1 10H36zM60 27h18l-2 10H58z" fill="#55b6d0" opacity=".8"/></svg></span>`;
   if(id==='wind')return `<span class="eco-asset asset-wind" aria-hidden="true"><svg viewBox="0 0 96 96" role="img"><defs><linearGradient id="wt" x1="0" x2="1"><stop stop-color="#a9bfbc"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#8ca8a4"/></linearGradient></defs><path d="M43 35h10l7 51H36z" fill="url(#wt)" stroke="#6e918c" stroke-width="2"/><g class="wind-svg-rotor" transform-origin="48px 31px"><path d="M48 31C39 20 35 8 43 5c7 6 9 15 7 26z" fill="#eefafa" stroke="#759c96" stroke-width="2"/><path d="M48 31c14-2 26 1 25 10-8 5-18 2-25-7z" fill="#eefafa" stroke="#759c96" stroke-width="2"/><path d="M48 31c-5 13-14 22-21 17-1-9 6-17 18-20z" fill="#eefafa" stroke="#759c96" stroke-width="2"/><circle cx="48" cy="31" r="7" fill="#dcebe8" stroke="#668e87" stroke-width="3"/></g><ellipse cx="48" cy="86" rx="19" ry="4" fill="#315c4a" opacity=".25"/></svg></span>`;
   if(id==='ecoLamp')return `<span class="eco-asset asset-lamp" aria-hidden="true"><svg viewBox="0 0 96 96" role="img"><ellipse cx="45" cy="88" rx="20" ry="4" fill="#315c4a" opacity=".25"/><path d="M37 84h17M43 84V27" stroke="#55746c" stroke-width="7" stroke-linecap="round"/><path d="M43 28c0-12 7-17 20-17h11" fill="none" stroke="#6a8a82" stroke-width="7" stroke-linecap="round"/><path d="M64 8h22v13H61z" fill="#355d59" stroke="#9bb8ae" stroke-width="3" stroke-linejoin="round"/><path d="M66 21h17l-4 7H69z" fill="#fff39a"/><ellipse class="lamp-svg-glow" cx="74" cy="34" rx="24" ry="20" fill="#fff4a0" opacity=".25"/></svg></span>`;
@@ -991,18 +1026,29 @@ function renderBase(){
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
-  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
+  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it,p)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
-    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">建設</span></button>`;shop.appendChild(d);
+    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} ${it.id==='flowers'?'朵':'個'}</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">${it.id==='flowers'?'購買 10 朵':'建設'}</span></button>`;shop.appendChild(d);
   });
   updateBaseDashboard();
 }
 function buyItem(id){
   const it=ITEMS.find(x=>x.id===id);if(!it)return;if(st.coins<it.cost){toast('金幣不足，完成更多單元再回來建設吧！');return}
-  st.coins-=it.cost;st.owned.push(id);ensureBaseLayout();save();header();renderBase();toast('✨ 已新增一個「'+it.name+'」，可以進入編輯模式自由擺放！')
+  st.coins-=it.cost;
+  if(id==='flowers'){
+    const start=st.owned.length;
+    for(let i=0;i<10;i++)st.owned.push(id);
+    ensureBaseLayout();
+    for(let i=0;i<10;i++){
+      const p=st.basePlacements.find(x=>x.key===`base-${start+i}-flowers`);
+      if(p){p.flowerVariant=i;p.scale=.72;p.x=28+(i%5)*10;p.y=62+Math.floor(i/5)*10;}
+    }
+    save();header();renderBase();toast('🌸 已獲得 10 朵花，每朵都可以獨立移動與調整！');return;
+  }
+  st.owned.push(id);ensureBaseLayout();save();header();renderBase();toast('✨ 已新增一個「'+it.name+'」，可以進入編輯模式自由擺放！')
 }
 
 

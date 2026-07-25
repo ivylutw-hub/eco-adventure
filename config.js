@@ -11,7 +11,7 @@ const ITEMS=[
 {id:'palm',icon:'🌴',name:'椰子樹',cost:5,desc:'營造充滿海島氣息的綠色景觀。'},
 {id:'cherry',icon:'🌸',name:'花樹',cost:6,desc:'讓基地增添繽紛花季景色。'},
 {id:'shrub',icon:'🌿',name:'灌木',cost:4,desc:'營造低矮、多層次的自然植栽。'},
-{id:'flowers',icon:'🌼',name:'花圃',cost:5,desc:'吸引蝴蝶與蜜蜂回到基地。'},
+{id:'flowers',icon:'🌼',name:'花朵組（10朵）',cost:5,desc:'購買一次獲得 10 朵可獨立移動與調整的花。'},
 {id:'grass',icon:'🌱',name:'原生草地',cost:3,desc:'提供昆蟲與小動物安全棲地。'},
 {id:'solar',icon:'🔷',name:'太陽能板',cost:10,desc:'利用陽光供應守護基地乾淨能源。'},
 {id:'wind',icon:'🌬️',name:'風力發電機',cost:12,desc:'運用風力產生綠色電力。'},

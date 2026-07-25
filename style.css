@@ -4401,3 +4401,17 @@ body.header-compact #mainHeader,
   #basePage .toolbar-main-actions{width:100%!important}
   .base-building-delete,.base-building-mirror{width:23px!important;height:23px!important;min-width:23px!important}
 }
+
+/* ===== V9.6.0：花朵組一次 10 朵、每朵可獨立移動 ===== */
+.base-building-flowers{width:54px!important;height:70px!important;transform:translate(-50%,-50%) scale(var(--building-scale,1)) scaleX(var(--building-mirror,1))!important;transform-origin:center bottom!important}
+.asset-single-flower{position:relative;display:block;width:54px;height:70px;filter:drop-shadow(0 5px 3px #254c3038)}
+.asset-single-flower .flower-stem{position:absolute;left:25px;top:27px;width:5px;height:36px;border-radius:5px;background:linear-gradient(90deg,#397a3e,#71bd5e,#397a3e)}
+.asset-single-flower .flower-leaf{position:absolute;width:17px;height:10px;background:#62ad50;border:2px solid #34743b;top:43px}
+.asset-single-flower .leaf-a{left:10px;border-radius:90% 10% 90% 10%;transform:rotate(20deg)}
+.asset-single-flower .leaf-b{right:9px;border-radius:10% 90% 10% 90%;transform:rotate(-20deg)}
+.asset-single-flower .flower-head{position:absolute;left:9px;top:3px;width:36px;height:36px;background:radial-gradient(circle at 50% 10%,var(--flower-color,#ff8eb2) 0 8px,transparent 9px),radial-gradient(circle at 86% 36%,var(--flower-color,#ff8eb2) 0 8px,transparent 9px),radial-gradient(circle at 72% 82%,var(--flower-color,#ff8eb2) 0 8px,transparent 9px),radial-gradient(circle at 28% 82%,var(--flower-color,#ff8eb2) 0 8px,transparent 9px),radial-gradient(circle at 14% 36%,var(--flower-color,#ff8eb2) 0 8px,transparent 9px)}
+.asset-single-flower .flower-center{position:absolute;left:20px;top:14px;width:14px;height:14px;border-radius:50%;background:#ffd84d;border:2px solid #c58c2f;box-shadow:inset 0 2px 0 #fff5a6}
+.flower-variant-0{--flower-color:#ff7fa8}.flower-variant-1{--flower-color:#fff}.flower-variant-2{--flower-color:#ffd34e}.flower-variant-3{--flower-color:#9c7be8}.flower-variant-4{--flower-color:#ff765d}.flower-variant-5{--flower-color:#ef8ed5}.flower-variant-6{--flower-color:#72b8ff}.flower-variant-7{--flower-color:#ffad58}.flower-variant-8{--flower-color:#f4f08a}.flower-variant-9{--flower-color:#d47bf1}
+.asset-flower-bundle{position:relative;display:block;width:96px;height:82px}
+.asset-flower-bundle i{position:absolute;width:17px;height:28px;left:calc(5px + (var(--i) % 5)*18px);top:calc(7px + (var(--i) / 5)*34px);background:radial-gradient(circle at 50% 18%,hsl(calc(var(--i)*35 + 320) 78% 69%) 0 6px,transparent 7px),linear-gradient(90deg,transparent 44%,#4d9847 45% 56%,transparent 57%);border-radius:50%}
+.shop-item:has(.asset-flower-bundle) .shop-icon{overflow:visible}
