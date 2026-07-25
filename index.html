@@ -12,7 +12,7 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V9.5.2｜森林探險介面</title>
+<title>環保冒險王 V9.5.3｜森林探險介面</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=9415260" rel="stylesheet"/>
@@ -137,17 +137,21 @@
 
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
+<div class="build-toolbar-intro">
 <div class="build-toolbar-title"><b>建設工具</b></div>
 <div class="build-toolbar-help">選擇建設後，可在編輯模式拖曳調整位置，並拖曳物件右下角控制點調整大小，也可旋轉或移除物件。</div>
-<div class="shop" id="shop"></div>
+</div>
+<div class="base-path-actions toolbar-main-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
+<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
+<button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
+<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
+</div>
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
+<div class="shop" id="shop"></div>
 </div>
 <section class="my-base-control-panel" aria-label="我的基地控制區">
 <div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
-<div class="base-path-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
-<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">🛠️ <span>編輯基地</span><em class="hide">關</em></button>
-<button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
-<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
+<div class="base-status-row">
 <span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
 <span>目前金幣：🪙 <b id="baseCoins">0</b></span>
 </div>
