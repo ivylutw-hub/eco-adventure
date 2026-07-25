@@ -4454,3 +4454,72 @@ body.header-compact #mainHeader,
 .base-scene.night .base-resident{filter:brightness(.72) drop-shadow(0 4px 3px rgba(0,0,0,.4))}
 @media(max-width:700px){.base-resident{transform:translate(-50%,-50%) scale(.82)}.resident-status{font-size:10px;padding:6px 9px}}
 @media(prefers-reduced-motion:reduce){.base-resident{animation:none!important}}
+
+/* ===== V9.6.2：生態住民移動互動、陰天亮度微調 ===== */
+/* 多雲與陰天維持明亮自然，不讓基地像夜晚。 */
+.base-scene.day.weather-cloudy{
+  background:linear-gradient(#83cae7 0%,#afddee 43%,#d3e9e7 62%,#80bd70 62%,#5da657 100%)!important;
+  box-shadow:inset 0 0 24px rgba(43,72,83,.08)!important;
+}
+.base-scene.day.weather-overcast{
+  background:linear-gradient(#91b8c5 0%,#b4cdd3 42%,#d2dddd 62%,#79af6e 62%,#579850 100%)!important;
+  box-shadow:inset 0 0 30px rgba(42,55,61,.12)!important;
+}
+.weather-overcast .base-cloud{opacity:.86!important;filter:grayscale(.28) brightness(.96) drop-shadow(0 5px 4px rgba(0,0,0,.13))!important}
+.weather-cloudy .base-cloud{opacity:.7!important;filter:brightness(1.06) drop-shadow(0 5px 5px rgba(34,64,75,.14))!important}
+
+/* 不顯示生態住民文字；動物本身可點擊／觸控互動。 */
+.base-residents{pointer-events:none!important}
+.base-resident{pointer-events:auto!important;cursor:pointer;outline:none;user-select:none;-webkit-tap-highlight-color:transparent;will-change:transform}
+.base-resident b,.resident-status{display:none!important}
+.base-resident:focus-visible{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 7px #55d98a) drop-shadow(0 5px 3px rgba(26,68,42,.28))}
+
+/* 草地動物會向前走，抵達範圍邊緣後轉身繼續。 */
+.resident-rabbit{animation:residentGroundRabbit 13s ease-in-out infinite alternate!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-otter{animation:residentGroundOtter 16s ease-in-out infinite alternate!important;animation-delay:var(--resident-delay,0s)!important}
+@keyframes residentGroundRabbit{
+  0%{transform:translate(-50%,-50%) translateX(0) scaleX(1) translateY(0)}
+  15%{transform:translate(-50%,-50%) translateX(18px) scaleX(1) translateY(-5px)}
+  50%{transform:translate(-50%,-50%) translateX(105px) scaleX(1) translateY(0)}
+  51%{transform:translate(-50%,-50%) translateX(105px) scaleX(-1) translateY(0)}
+  85%{transform:translate(-50%,-50%) translateX(25px) scaleX(-1) translateY(-4px)}
+  100%{transform:translate(-50%,-50%) translateX(0) scaleX(-1) translateY(0)}
+}
+@keyframes residentGroundOtter{
+  0%{transform:translate(-50%,-50%) translateX(0) scaleX(1) rotate(0deg)}
+  48%{transform:translate(-50%,-50%) translateX(135px) scaleX(1) rotate(1deg)}
+  50%{transform:translate(-50%,-50%) translateX(135px) scaleX(-1) rotate(0deg)}
+  98%,100%{transform:translate(-50%,-50%) translateX(0) scaleX(-1) rotate(-1deg)}
+}
+
+/* 天空住民持續飛行，而不是只在原地晃動。 */
+.resident-butterfly{animation:residentSkyButterfly 12s ease-in-out infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-bird{animation:residentSkyBird 15s ease-in-out infinite!important;animation-delay:var(--resident-delay,0s)!important}
+@keyframes residentSkyButterfly{
+  0%{transform:translate(-50%,-50%) translate(0,4px) rotate(-5deg) scaleX(1)}
+  25%{transform:translate(-50%,-50%) translate(72px,-28px) rotate(7deg) scaleX(1)}
+  50%{transform:translate(-50%,-50%) translate(145px,-5px) rotate(-4deg) scaleX(1)}
+  51%{transform:translate(-50%,-50%) translate(145px,-5px) rotate(4deg) scaleX(-1)}
+  75%{transform:translate(-50%,-50%) translate(65px,18px) rotate(-7deg) scaleX(-1)}
+  100%{transform:translate(-50%,-50%) translate(0,4px) rotate(5deg) scaleX(-1)}
+}
+@keyframes residentSkyBird{
+  0%{transform:translate(-50%,-50%) translateX(0) translateY(0) scaleX(1)}
+  48%{transform:translate(-50%,-50%) translateX(-160px) translateY(-18px) scaleX(1)}
+  50%{transform:translate(-50%,-50%) translateX(-160px) translateY(-18px) scaleX(-1)}
+  98%,100%{transform:translate(-50%,-50%) translateX(0) translateY(5px) scaleX(-1)}
+}
+
+/* 點擊／觸控後的無文字互動反應。 */
+.base-resident.interacting{animation-play-state:paused!important;z-index:12;filter:drop-shadow(0 0 9px rgba(255,244,107,.95)) drop-shadow(0 5px 3px rgba(26,68,42,.28))}
+.resident-rabbit.interacting,.resident-otter.interacting{transform:translate(-50%,-50%) translateY(-12px) scale(1.12)!important}
+.resident-butterfly.interacting,.resident-bird.interacting{transform:translate(-50%,-50%) translateY(-18px) rotate(10deg) scale(1.18)!important}
+.resident-sparkles{position:absolute;inset:-20px;pointer-events:none;animation:residentSparkleBurst 1.05s ease-out both}
+.resident-sparkles i{position:absolute;font-style:normal;font-size:17px}.resident-sparkles i:nth-child(1){left:0;top:8px}.resident-sparkles i:nth-child(2){left:50%;top:-8px}.resident-sparkles i:nth-child(3){right:0;top:12px}
+@keyframes residentSparkleBurst{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:translateY(-18px) scale(1.25)}}
+@media(max-width:700px){
+  .resident-rabbit{animation-name:residentGroundRabbitMobile!important}.resident-otter{animation-name:residentGroundOtterMobile!important}
+  @keyframes residentGroundRabbitMobile{0%{transform:translate(-50%,-50%) scale(.82) translateX(0)}50%{transform:translate(-50%,-50%) scale(.82) translateX(62px)}51%{transform:translate(-50%,-50%) scale(-.82,.82) translateX(-62px)}100%{transform:translate(-50%,-50%) scale(-.82,.82) translateX(0)}}
+  @keyframes residentGroundOtterMobile{0%{transform:translate(-50%,-50%) scale(.82) translateX(0)}50%{transform:translate(-50%,-50%) scale(.82) translateX(78px)}51%{transform:translate(-50%,-50%) scale(-.82,.82) translateX(-78px)}100%{transform:translate(-50%,-50%) scale(-.82,.82) translateX(0)}}
+}
+@media(prefers-reduced-motion:reduce){.base-resident{animation:none!important}.resident-sparkles{animation:none!important}}

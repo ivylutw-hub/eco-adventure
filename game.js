@@ -1032,19 +1032,26 @@ function baseResidentArt(kind){
   };
   return arts[kind]||'';
 }
+function interactBaseResident(el){
+  if(!el||el.classList.contains('interacting'))return;
+  el.classList.add('interacting');
+  const burst=document.createElement('span');
+  burst.className='resident-sparkles';
+  burst.setAttribute('aria-hidden','true');
+  burst.innerHTML='<i>✨</i><i>💚</i><i>✨</i>';
+  el.appendChild(burst);
+  window.setTimeout(()=>{el.classList.remove('interacting');burst.remove()},1100);
+}
 function renderBaseResidents(){
   const layer=document.querySelector('#baseScene .base-residents');
   if(!layer)return;
   const greenery=baseGreeneryCount();
   const residents=[];
-  if(greenery>=1)residents.push({kind:'butterfly',name:'蝴蝶',x:24,y:48,delay:'0s'});
-  if(greenery>=3)residents.push({kind:'bird',name:'小鳥',x:70,y:31,delay:'-2.5s'});
-  if(greenery>=6)residents.push({kind:'rabbit',name:'野兔',x:78,y:72,delay:'-4s'});
-  if(greenery>=10)residents.push({kind:'otter',name:'歐亞水獺',x:39,y:78,delay:'-6s'});
-  layer.innerHTML=residents.map((r,i)=>`<span class="base-resident resident-${r.kind}" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" title="${r.name}已被綠意吸引入住">${baseResidentArt(r.kind)}<b>${r.name}</b></span>`).join('');
-  if(residents.length){
-    layer.insertAdjacentHTML('beforeend',`<span class="resident-status">🌿 綠意 ${greenery}・生態住民 ${residents.length}</span>`);
-  }
+  if(greenery>=1)residents.push({kind:'butterfly',name:'蝴蝶',x:18,y:42,delay:'0s'});
+  if(greenery>=3)residents.push({kind:'bird',name:'小鳥',x:66,y:27,delay:'-2.5s'});
+  if(greenery>=6)residents.push({kind:'rabbit',name:'野兔',x:18,y:72,delay:'-4s'});
+  if(greenery>=10)residents.push({kind:'otter',name:'歐亞水獺',x:38,y:79,delay:'-6s'});
+  layer.innerHTML=residents.map(r=>`<span class="base-resident resident-${r.kind}" role="button" tabindex="0" aria-label="和${r.name}互動" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" onclick="interactBaseResident(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();interactBaseResident(this)}">${baseResidentArt(r.kind)}</span>`).join('');
 }
 
 function renderBase(){
