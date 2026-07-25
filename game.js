@@ -78,7 +78,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'8.1',
+    version:'9.5.0',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -854,15 +854,10 @@ function ensureBaseLayout(){
   st.basePlacements=st.basePlacements.filter(p=>valid.has(p.key));
 }
 function basePointerPosition(event,scene){const r=scene.getBoundingClientRect();return{x:Math.max(4,Math.min(96,(event.clientX-r.left)/r.width*100)),y:Math.max(10,Math.min(93,(event.clientY-r.top)/r.height*100))}}
-function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;if(!st.baseEditMode)st.basePathMode=false;save();renderBase();toast(st.baseEditMode?'✋ 編輯模式開啟：拖曳建設到喜歡的位置':'✅ 基地位置已保存')}
-function toggleBasePath(){st.baseEditMode=true;st.basePathMode=!st.basePathMode;save();renderBase();toast(st.basePathMode?'🟫 鋪路模式：點擊草地放置路徑':'✋ 已回到建設拖曳模式')}
-function clearBasePaths(){if(!st.basePaths.length){toast('目前沒有可清除的路徑');return;}st.basePaths.pop();save();renderBase();toast('🧹 已清除一格路徑');}
-function addBasePath(event){
-  if(!st.baseEditMode||!st.basePathMode||event.target.closest('.base-building'))return;
-  const pos=basePointerPosition(event,baseScene),snap=4;
-  pos.x=Math.round(pos.x/snap)*snap;pos.y=Math.round(pos.y/snap)*snap;
-  if(!st.basePaths.some(p=>Math.abs(p.x-pos.x)<2&&Math.abs(p.y-pos.y)<2)){st.basePaths.push(pos);save();renderBase();}
-}
+function toggleBaseEdit(){st.baseEditMode=!st.baseEditMode;st.basePathMode=false;save();renderBase();toast(st.baseEditMode?'🛠️ 編輯模式開啟：可拖曳、縮放、旋轉或移除物件':'✅ 完成擺設，基地位置已保存')}
+function toggleBasePath(){toast('此版本已移除鋪路功能');}
+function clearBasePaths(){toast('此版本已移除清除路徑功能');}
+function addBasePath(){/* V9.5 已移除鋪路功能 */}
 function bindBaseBuildingDrag(el,placement){
   el.addEventListener('pointerdown',event=>{
     if(event.target.closest('.base-building-controls'))return;
@@ -874,10 +869,30 @@ function bindBaseBuildingDrag(el,placement){
 }
 
 function baseBuildingArt(it){
-  if(it.id==='solar')return `<span class="eco-asset solar-asset" aria-hidden="true"><i class="solar-panel"><b></b><b></b><b></b><b></b><b></b><b></b></i><i class="solar-stand"></i></span>`;
-  if(it.id==='wind')return `<span class="eco-asset wind-asset" aria-hidden="true"><i class="wind-tower"></i><i class="wind-hub"><b></b><b></b><b></b></i></span>`;
-  if(it.id==='ecoLamp')return `<span class="eco-asset lamp-asset" aria-hidden="true"><i class="lamp-post"></i><i class="lamp-arm"></i><i class="lamp-head"></i><i class="lamp-glow"></i></span>`;
-  return `<span class="base-emoji" aria-hidden="true">${it.icon}</span>`;
+  const id=it.id;
+  if(id==='solar')return `<span class="eco-asset asset-solar" aria-hidden="true"><i class="solar-panel">${'<b></b>'.repeat(6)}</i><i class="solar-stand"></i></span>`;
+  if(id==='wind')return `<span class="eco-asset asset-wind" aria-hidden="true"><i class="wind-tower"></i><i class="wind-nacelle"></i><i class="wind-hub"><b></b><b></b><b></b></i></span>`;
+  if(id==='ecoLamp')return `<span class="eco-asset asset-lamp" aria-hidden="true"><i class="lamp-post"></i><i class="lamp-arm"></i><i class="lamp-head"></i><i class="lamp-glow"></i></span>`;
+  if(id==='recycle')return `<span class="eco-asset asset-recycle" aria-hidden="true"><i class="recycle-roof"></i><i class="bin bin-a">紙</i><i class="bin bin-b">塑</i><i class="bin bin-c">金</i></span>`;
+  if(id==='rainBarrel'||id==='water')return `<span class="eco-asset asset-rain" aria-hidden="true"><i class="gutter"></i><i class="rain-tank"><b></b></i><i class="tap"></i></span>`;
+  if(id==='battery')return `<span class="eco-asset asset-battery" aria-hidden="true"><i class="battery-cabinet"><b>⚡</b><em></em></i></span>`;
+  if(['tree','pine','palm','cherry','shrub','flowers','grass'].includes(id))return `<span class="eco-asset asset-plant asset-${id}" aria-hidden="true"><i class="plant-crown"></i><i class="plant-trunk"></i><i class="plant-base"></i></span>`;
+  if(id==='bike')return `<span class="eco-asset asset-bike" aria-hidden="true"><i class="bike-rack"></i><i class="bike-frame"></i><i class="wheel w1"></i><i class="wheel w2"></i></span>`;
+  if(['bench','logRest','rockRest'].includes(id))return `<span class="eco-asset asset-rest asset-${id}" aria-hidden="true"><i class="rest-seat"></i><i class="rest-leg l1"></i><i class="rest-leg l2"></i></span>`;
+  if(id==='ecoPond'||id==='streamRest')return `<span class="eco-asset asset-pond" aria-hidden="true"><i class="pond-water"></i><i class="pond-reed r1"></i><i class="pond-reed r2"></i><i class="pond-lily"></i></span>`;
+  if(id==='birdhouse'||id==='birdDeck')return `<span class="eco-asset asset-bird" aria-hidden="true"><i class="bird-post"></i><i class="bird-house"><b></b></i></span>`;
+  if(id==='compost')return `<span class="eco-asset asset-compost" aria-hidden="true"><i class="compost-box"><b>↻</b></i><i class="compost-leaf"></i></span>`;
+  if(id==='sign')return `<span class="eco-asset asset-sign" aria-hidden="true"><i class="sign-board">ECO</i><i class="sign-post"></i></span>`;
+  if(['library','ecoSchool','greenhouse'].includes(id))return `<span class="eco-asset asset-house asset-${id}" aria-hidden="true"><i class="house-roof"></i><i class="house-body"><b></b><em></em></i></span>`;
+  if(id==='pavilion')return `<span class="eco-asset asset-pavilion" aria-hidden="true"><i class="pavilion-roof"></i><i class="pavilion-post p1"></i><i class="pavilion-post p2"></i><i class="pavilion-floor"></i></span>`;
+  if(id==='boardwalk')return `<span class="eco-asset asset-boardwalk" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`;
+  if(['observation','observatory'].includes(id))return `<span class="eco-asset asset-observation" aria-hidden="true"><i class="scope"></i><i class="tripod"></i></span>`;
+  if(id==='butterflyGarden')return `<span class="eco-asset asset-butterfly" aria-hidden="true"><i class="flower-bed"></i><i class="butterfly-shape"></i></span>`;
+  return `<span class="eco-asset asset-generic" aria-hidden="true"><i>${it.icon}</i></span>`;
+}
+function rotateBaseBuilding(key){
+  const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
+  p.rotation=((Number(p.rotation)||0)+90)%360;save();renderBase();
 }
 function changeBaseBuildingSize(key,delta){
   const p=st.basePlacements.find(x=>x.key===key);if(!p)return;
@@ -939,20 +954,19 @@ setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
 
 function renderBase(){
-  ensureBaseLayout();baseCoins.textContent=st.coins;
+  ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
   baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-buildings"></div>';
-  baseScene.onclick=addBasePath;
+  baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
-  st.basePaths.forEach((p,i)=>{const tile=document.createElement('button');tile.className='base-path-tile';tile.style.left=p.x+'%';tile.style.top=p.y+'%';tile.title=st.baseEditMode?'點兩下移除路徑':'';tile.ondblclick=e=>{e.stopPropagation();if(st.baseEditMode){st.basePaths.splice(i,1);save();renderBase();}};paths.appendChild(tile)});
   if(!st.owned.length){buildings.innerHTML='<div class="base-empty">基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
-  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置，並可放大、縮小或移除`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="縮小" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',-.1)">−</button><button type="button" title="放大" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',.1)">＋</button><button type="button" class="remove" title="移除" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span>`:''}`;bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
+  else st.basePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置，並可放大、縮小或移除`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.innerHTML=`${baseBuildingArt(it)}${st.baseEditMode?`<span class="base-building-controls" aria-label="${it.name}編輯工具"><button type="button" title="縮小" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',-.1)">−</button><button type="button" title="放大" onclick="event.stopPropagation();changeBaseBuildingSize('${p.key}',.1)">＋</button><button type="button" title="旋轉 90 度" onclick="event.stopPropagation();rotateBaseBuilding('${p.key}')">↻</button><button type="button" class="remove" title="移除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">🗑</button></span>`:''}`;bindBaseBuildingDrag(el,p);buildings.appendChild(el)});
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
   shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
-    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">建設</span></button>`;shop.appendChild(d);
+    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} 個</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">建設</span></button>`;shop.appendChild(d);
   });
   updateBaseDashboard();
 }
