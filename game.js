@@ -1640,3 +1640,49 @@ function toggleVisitorFavorite(){if(!currentVisitorBase)return;ensureVillageStat
 function updateBaseVisibility(v){ensureVillageState();st.baseVisibility=v;save();}
 function updateBaseIntro(v){ensureVillageState();st.baseIntro=String(v||'').trim().slice(0,40);save();}
 async function publishMyBase(){ensureVillageState();updateBaseIntro(document.getElementById('baseIntroInput')?.value||st.baseIntro);updateBaseVisibility(document.getElementById('baseVisibilitySelect')?.value||st.baseVisibility);if(st.baseVisibility==='private'){if(typeof removePublicBase==='function')await removePublicBase().catch(()=>{});toast('🔒 基地已設為不公開');return;}if(typeof savePublicBase!=='function'){toast('請先使用 Google 登入，才能發布基地');return;}try{await savePublicBase();toast('📸 基地快照已更新！');refreshBaseVillage();}catch(e){console.error(e);toast('發布失敗，請檢查網路或 Firestore Rules');}}
+
+/* ===== V9.8.2：棲地提示燈泡可靠點擊修正 ===== */
+(function setupHabitatBulbV982(){
+  function getBulb(){return document.querySelector('#basePage .habitat-hint-button')}
+  function flashBulb(btn){
+    if(!btn)return;
+    btn.classList.add('is-tapped');
+    setTimeout(()=>btn.classList.remove('is-tapped'),220);
+  }
+  function openFromBulb(event){
+    const btn=event.target&&event.target.closest?event.target.closest('#basePage .habitat-hint-button'):null;
+    if(!btn)return;
+    event.preventDefault();
+    event.stopPropagation();
+    if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+    flashBulb(btn);
+    try{localStorage.setItem('ecoHabitatBulbSeen','1')}catch(_e){}
+    const coach=document.getElementById('habitatBulbCoach');if(coach)coach.remove();
+    if(typeof openHabitatGuide==='function')openHabitatGuide();
+  }
+  // 捕捉階段委派，避免工具列覆蓋或舊事件阻擋 click。
+  document.addEventListener('pointerup',openFromBulb,true);
+  document.addEventListener('click',openFromBulb,true);
+  document.addEventListener('keydown',event=>{
+    if((event.key==='Enter'||event.key===' ')&&event.target&&event.target.matches('#basePage .habitat-hint-button'))openFromBulb(event);
+  },true);
+  function prepare(){
+    const btn=getBulb();if(!btn)return;
+    btn.removeAttribute('onclick');
+    btn.setAttribute('type','button');
+    btn.setAttribute('aria-haspopup','dialog');
+    btn.setAttribute('aria-controls','habitatGuideModal');
+    btn.innerHTML='';
+    if(btn.dataset.v982Ready)return;
+    btn.dataset.v982Ready='1';
+    let seen='0';try{seen=localStorage.getItem('ecoHabitatBulbSeen')||'0'}catch(_e){}
+    if(seen!=='1'&&!document.getElementById('habitatBulbCoach')){
+      const coach=document.createElement('span');coach.id='habitatBulbCoach';coach.textContent='點我看看動物需要什麼棲地！';
+      btn.parentElement&&btn.parentElement.appendChild(coach);
+      setTimeout(()=>coach.remove(),7000);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',prepare,{once:true});else prepare();
+  const observer=new MutationObserver(prepare);observer.observe(document.documentElement,{childList:true,subtree:true});
+  setTimeout(prepare,500);setTimeout(prepare,1500);
+})();

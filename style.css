@@ -4823,3 +4823,71 @@ body.header-compact #mainHeader,
   .home-aqi-metric::after{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(6px);max-width:88vw}
   .home-aqi-metric.show-aqi-tip::after{transform:translateX(-50%) translateY(0)}
 }
+
+/* ===== V9.8.2：小型燈泡提示按鈕（可見小、觸控區大） ===== */
+#basePage .build-toolbar-title{
+  position:relative!important;
+  z-index:120!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+}
+#basePage .habitat-hint-button{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  position:relative!important;
+  z-index:121!important;
+  flex:0 0 44px!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#basePage .habitat-hint-button::before{
+  content:"💡"!important;
+  width:24px!important;
+  height:24px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #d2ad31!important;
+  border-radius:50%!important;
+  background:linear-gradient(180deg,#fff9bd,#ffd85b)!important;
+  box-shadow:0 2px 0 #b48a22,0 0 9px rgba(255,211,54,.48)!important;
+  font-size:14px!important;
+  line-height:1!important;
+  pointer-events:none!important;
+  animation:habitatBulbBreath 3.6s ease-in-out infinite!important;
+}
+#basePage .habitat-hint-button:focus-visible{outline:3px solid rgba(34,139,94,.42)!important;outline-offset:1px!important}
+#basePage .habitat-hint-button.is-tapped::before{animation:none!important;transform:scale(1.16) rotate(-7deg)!important;box-shadow:0 2px 0 #b48a22,0 0 15px rgba(255,205,26,.9)!important}
+@keyframes habitatBulbBreath{0%,72%,100%{transform:scale(1);filter:none}82%{transform:scale(1.09);filter:brightness(1.08)}}
+#basePage .toolbar-main-actions,#basePage .base-save-box,#basePage .shop{position:relative!important;z-index:2!important}
+
+#habitatBulbCoach{
+  position:absolute;z-index:130;left:calc(100% + 2px);top:50%;transform:translateY(-50%);
+  width:max-content;max-width:min(230px,65vw);padding:8px 10px;border-radius:12px;
+  background:#fffdf1;border:2px solid #e4c856;box-shadow:0 7px 18px rgba(50,55,30,.2);
+  color:#536032;font-size:12px;font-weight:850;line-height:1.35;pointer-events:none;
+}
+#habitatBulbCoach::before{content:"";position:absolute;right:100%;top:50%;margin-top:-6px;border:6px solid transparent;border-right-color:#e4c856}
+@media(max-width:520px){
+  #basePage .habitat-hint-button{flex-basis:40px!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}
+  #basePage .habitat-hint-button::before{width:22px!important;height:22px!important;font-size:13px!important}
+  #habitatBulbCoach{position:fixed;left:50%;top:auto;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);text-align:center}
+  #habitatBulbCoach::before{display:none}
+}
