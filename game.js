@@ -852,6 +852,21 @@ function realMoonPhase(date=new Date()){
   const index=Math.floor((age+synodic/16)/(synodic/8))%8;
   return{emoji:phases[index],age,index,label:['新月','娥眉月','上弦月','盈凸月','滿月','虧凸月','下弦月','殘月'][index]};
 }
+function moonPhaseSvg(phase){
+  const index=Number(phase?.index)||0;
+  const label=phase?.label||'月相';
+  if(index===0)return '<span class="moon-phase moon-new" role="img" aria-label="新月"></span>';
+  const shapes={
+    1:'<defs><mask id="moonMask"><circle cx="50" cy="50" r="45" fill="white"/><ellipse cx="34" cy="50" rx="42" ry="46" fill="black"/></mask></defs><circle cx="50" cy="50" r="45" mask="url(#moonMask)"/>',
+    2:'<path d="M50 5A45 45 0 0 1 50 95Z"/>',
+    3:'<defs><mask id="moonMask"><circle cx="50" cy="50" r="45" fill="white"/><ellipse cx="7" cy="50" rx="42" ry="46" fill="black"/></mask></defs><circle cx="50" cy="50" r="45" mask="url(#moonMask)"/>',
+    4:'<circle cx="50" cy="50" r="45"/>',
+    5:'<defs><mask id="moonMask"><circle cx="50" cy="50" r="45" fill="white"/><ellipse cx="93" cy="50" rx="42" ry="46" fill="black"/></mask></defs><circle cx="50" cy="50" r="45" mask="url(#moonMask)"/>',
+    6:'<path d="M50 5A45 45 0 0 0 50 95Z"/>',
+    7:'<defs><mask id="moonMask"><circle cx="50" cy="50" r="45" fill="white"/><ellipse cx="66" cy="50" rx="42" ry="46" fill="black"/></mask></defs><circle cx="50" cy="50" r="45" mask="url(#moonMask)"/>'
+  };
+  return `<span class="moon-phase" role="img" aria-label="${label}"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${shapes[index]||shapes[4]}</svg></span>`;
+}
 function renderBaseSky(){
   const scene=document.getElementById('baseScene');
   if(!scene)return;
@@ -870,7 +885,7 @@ function renderBaseSky(){
   if(sky){
     sky.innerHTML=`
       <span class="base-stars" aria-hidden="true"><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i></span>
-      <span class="base-celestial" aria-hidden="true">${mode==='day'?'☀️':realMoonPhase(new Date()).emoji}</span>
+      <span class="base-celestial" aria-hidden="true">${mode==='day'?'☀️':moonPhaseSvg(realMoonPhase(new Date()))}</span>
       <span class="base-cloud cloud-one" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-two" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-three" aria-hidden="true">☁️</span>
@@ -1745,3 +1760,69 @@ async function publishMyBase(){ensureVillageState();updateBaseIntro(document.get
     if(event.key==='Escape'&&!document.getElementById('habitatGuideModal')?.classList.contains('hide'))closeHabitatGuide();
   },true);
 })();
+
+
+/* ===== V10.2.0 小小環保訓練營（匿名試玩） ===== */
+const TRIAL_STORAGE_KEY='ecoAdventureTrialV102';
+const TRIAL_QUESTIONS=[
+['垃圾分類','🍌','香蕉皮吃完後，最適合放哪裡？',['廚餘','資源回收','水溝'],0,'香蕉皮是廚餘，可以妥善回收處理。'],
+['垃圾分類','🧴','喝完的乾淨塑膠瓶應該怎麼做？',['丟在地上','簡單沖洗後回收','埋進土裡'],1,'乾淨塑膠瓶可以交給資源回收。'],
+['垃圾分類','📄','乾淨的舊報紙可以放進哪一類？',['資源回收','廚餘','馬桶'],0,'乾淨紙類可以回收再利用。'],
+['垃圾分類','🔋','用完的電池應該怎麼處理？',['交給回收點','丟進火裡','放進水池'],0,'廢電池要交給合適的回收點。'],
+['垃圾分類','🥤','飲料喝完，杯子裡還有飲料時應先？',['倒乾淨再分類','直接亂丟','放在路邊'],0,'先倒乾淨，再依材質分類回收。'],
+['垃圾分類','🍱','吃完便當後，正確做法是？',['剩菜和餐盒分開處理','全部丟進河裡','留在桌上'],0,'剩菜與餐盒分開處理，分類更正確。'],
+['節約用水','🚰','刷牙時，水龍頭應該？',['一直開著','不用水時先關上','開到最大'],1,'不用水時關水，能省下很多乾淨水。'],
+['節約用水','🧼','洗手抹肥皂時，可以先？',['關水龍頭','讓水一直流','離開不管'],0,'抹肥皂時先關水，是節水好習慣。'],
+['節約用水','💧','看到水龍頭一直滴水，應該？',['告訴大人處理','假裝沒看到','把它弄得更大'],0,'及早告訴大人，可以避免浪費水。'],
+['節約用水','🌱','澆花時，哪一種做法比較省水？',['適量澆在土壤上','一直沖葉子','開水後離開'],0,'把適量的水澆在土壤上，植物更容易吸收。'],
+['節約用水','🪥','用杯子裝水刷牙的好處是？',['比較省水','讓地板變濕','讓水一直流'],0,'用杯子裝需要的水，能減少浪費。'],
+['節約用電','💡','離開沒有人的房間時，要記得？',['關燈','多開幾盞燈','打開所有電器'],0,'隨手關燈可以節約用電。'],
+['節約用電','☀️','白天光線很亮時，可以？',['利用自然光','把所有燈打開','拉上窗簾再開燈'],0,'白天善用自然光，舒適又省電。'],
+['節約用電','📺','沒有人看電視時，應該？',['關掉電視','讓它一直播放','把聲音開最大'],0,'不用的電器要關掉，避免浪費電。'],
+['節約用電','❄️','開冷氣時，哪個做法比較好？',['門窗關好','窗戶全部打開','穿外套又開很冷'],0,'門窗關好能減少冷氣流失。'],
+['節約用電','🔌','電器不用很久時，可以請大人？',['關閉電源或拔除插頭','一直待機','再多接插座'],0,'長時間不用時關閉電源，能減少耗電。'],
+['愛護植物','🌳','看到公園的小樹，應該？',['愛護它，不折樹枝','用力搖它','刻上名字'],0,'樹木是生物，需要大家一起愛護。'],
+['愛護植物','🌼','花朵很漂亮，我們可以？',['用眼睛欣賞','全部摘走','踩在花圃裡'],0,'欣賞花朵但不隨意採摘，大家都能看見。'],
+['愛護植物','🌱','小植物通常需要什麼？',['水和陽光','塑膠袋','垃圾'],0,'植物需要適量的水和陽光才能成長。'],
+['愛護植物','🪴','幫植物澆水時，應該？',['依需要適量澆水','澆到整間都是水','完全不管'],0,'不同植物需要的水量不同，適量最好。'],
+['愛護動物','🐦','看到受傷的小鳥，應該？',['找大人或專業人員幫忙','拿石頭丟牠','追著牠跑'],0,'不要隨意抓弄，請大人尋求正確協助。'],
+['愛護動物','🐶','遇到不熟悉的狗，應該？',['保持距離並詢問主人','突然抱牠','拉牠尾巴'],0,'先保持距離，得到主人同意再接近。'],
+['愛護動物','🦋','看到蝴蝶停在花上，可以？',['安靜觀察','抓住翅膀','大力拍打'],0,'安靜觀察，不傷害蝴蝶。'],
+['愛護動物','🐝','蜜蜂正在花上採蜜時，我們應該？',['保持距離觀察','用手拍牠','破壞花朵'],0,'保持距離，讓蜜蜂安心採蜜。'],
+['海洋保育','🐢','塑膠袋掉進海裡，海龜可能會？',['誤吃而生病','變得更健康','把它當玩具沒關係'],0,'海洋動物可能把塑膠誤認成食物。'],
+['海洋保育','🏖️','離開海邊前，應該？',['帶走自己的垃圾','把垃圾埋在沙裡','把瓶子丟入海中'],0,'帶走垃圾，才能維持海岸乾淨。'],
+['海洋保育','🐟','保護海洋生物，可以從什麼開始？',['減少一次性塑膠','把垃圾沖進水溝','隨便捕捉小魚'],0,'少用一次性塑膠能減少海洋垃圾。'],
+['海洋保育','🥤','外出喝水時，哪個選擇較環保？',['自備水壺','每次都拿很多塑膠杯','喝完隨地丟'],0,'重複使用水壺能減少垃圾。'],
+['生活環保','🛍️','和家人買東西時，可以自備？',['購物袋','很多塑膠袋','一次性餐具'],0,'自備購物袋能減少塑膠袋使用。'],
+['生活環保','🍴','外出用餐時，可以帶？',['可重複使用的餐具','很多免洗筷','用完就丟的杯子'],0,'重複使用的餐具能減少一次性垃圾。'],
+['生活環保','🚶','距離很近時，哪個方式較環保？',['走路','一定要坐車','請車子空轉等待'],0,'短距離走路能減少能源使用，也能活動身體。'],
+['生活環保','🧸','玩具不玩了但還很完整，可以？',['整理後分享或捐贈','直接破壞','丟到路上'],0,'延長物品使用時間，也是一種環保。'],
+['生活環保','✏️','鉛筆還沒用完時，應該？',['繼續使用','馬上丟掉','折斷它'],0,'把物品用完，可以減少浪費。'],
+['生活環保','🍚','吃飯時，較好的做法是？',['吃多少盛多少','盛很多再倒掉','把飯丟地上'],0,'吃多少盛多少，能珍惜食物。'],
+['金門自然','🦦','金門很有代表性的保育動物是？',['歐亞水獺','企鵝','北極熊'],0,'歐亞水獺是金門重要的保育動物。'],
+['金門自然','🦀','鱟生活的海岸環境需要我們？',['好好保護','倒入垃圾','隨意破壞'],0,'保護潮間帶，能守護鱟與許多生物。'],
+['金門自然','🐦','看到野生鳥類時，最好怎麼做？',['保持距離觀察','追趕牠們','破壞鳥巢'],0,'安靜並保持距離，不打擾野生鳥類。'],
+['金門自然','🌊','到潮間帶觀察生物時，應該？',['輕輕觀察並恢復原狀','全部帶回家','翻動後不理'],0,'觀察後恢復原狀，減少對棲地的影響。'],
+['空氣與交通','🚌','多人一起出門時，哪個方式較省能源？',['搭乘大眾運輸','每人開一台車','讓車一直空轉'],0,'大眾運輸可以減少每個人的能源使用。'],
+['空氣與交通','🚲','適合且安全的短程移動，可以選擇？',['走路或騎腳踏車','一直坐著不動','請車子繞遠路'],0,'走路或騎車較節能，也要注意安全。'],
+['校園環保','📚','課本還很完整時，可以？',['好好保存與使用','亂撕頁面','泡進水裡'],0,'愛惜書本能延長它的使用時間。'],
+['校園環保','🗑️','在校園看到地上的垃圾，可以？',['安全時撿起並分類','踢到別處','假裝是別人的'],0,'在安全的情況下清理並分類，校園會更乾淨。']
+];
+let trialQuestions=[],trialIndex=0,trialScore=0,trialAnswered=false,trialDaily=false;
+function loadTrialStats(){try{return Object.assign({date:'',plays:0,best:0,streak:0,dailyDate:''},JSON.parse(localStorage.getItem(TRIAL_STORAGE_KEY)||'{}'))}catch{return{date:'',plays:0,best:0,streak:0,dailyDate:''}}}
+function saveTrialStats(x){localStorage.setItem(TRIAL_STORAGE_KEY,JSON.stringify(x))}
+function updateTrialStatsView(){const s=loadTrialStats(),today=dateStr();if(s.date!==today){s.date=today;s.plays=0;s.best=0;saveTrialStats(s)};const a=document.getElementById('trialPlayCount'),b=document.getElementById('trialBestScore');if(a)a.textContent=s.plays||0;if(b)b.textContent=`${s.best||0} / 5`}
+function openTrialMode(){loginPage.classList.add('hide');game.classList.add('hide');trialPage.classList.remove('hide');showTrialWelcome();updateTrialStatsView();window.scrollTo({top:0,behavior:'smooth'})}
+function exitTrialMode(){trialPage.classList.add('hide');loginPage.classList.remove('hide');closeTrialHow();window.scrollTo({top:0,behavior:'smooth'})}
+function showTrialWelcome(){trialWelcome.classList.remove('hide');trialQuiz.classList.add('hide');trialResult.classList.add('hide');updateTrialStatsView()}
+function showTrialHow(){trialHowModal.classList.remove('hide')}
+function closeTrialHow(){trialHowModal.classList.add('hide')}
+function trialSample(arr,n,seed=null){const copy=[...arr];if(seed!==null){let x=seed;copy.sort(()=>{x=(x*9301+49297)%233280;return x/233280-.5})}else copy.sort(()=>Math.random()-.5);return copy.slice(0,n)}
+function startTrialQuiz(count=5,questions=null){trialDaily=count===3;trialQuestions=questions||trialSample(TRIAL_QUESTIONS,count);trialIndex=0;trialScore=0;trialAnswered=false;trialWelcome.classList.add('hide');trialResult.classList.add('hide');trialQuiz.classList.remove('hide');renderTrialQuestion();window.scrollTo({top:0,behavior:'smooth'})}
+function startDailyTrial(){const d=new Date(),seed=Number(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`);startTrialQuiz(3,trialSample(TRIAL_QUESTIONS,3,seed))}
+function renderTrialQuestion(){const q=trialQuestions[trialIndex],total=trialQuestions.length;trialAnswered=false;trialProgressText.textContent=`第 ${trialIndex+1} 題 / ${total} 題`;trialTopic.textContent=q[0];trialProgressBar.style.width=`${trialIndex/total*100}%`;trialQuestionIcon.textContent=q[1];trialQuestionText.textContent=q[2];trialFeedback.className='trial-feedback hide';trialNextBtn.classList.add('hide');trialOptions.innerHTML='';q[3].forEach((text,i)=>{const btn=document.createElement('button');btn.type='button';btn.innerHTML=`<span>${String.fromCharCode(65+i)}</span><b>${text}</b>`;btn.onclick=()=>answerTrial(i,btn);trialOptions.appendChild(btn)})}
+function answerTrial(choice,btn){if(trialAnswered)return;trialAnswered=true;const q=trialQuestions[trialIndex],ok=choice===q[4];if(ok)trialScore++;[...trialOptions.children].forEach((b,i)=>{b.disabled=true;if(i===q[4])b.classList.add('correct');else if(i===choice)b.classList.add('gentle-wrong')});trialFeedback.className=`trial-feedback ${ok?'good':'learn'}`;trialFeedback.innerHTML=ok?`<b>🎉 ${['太棒了！','做得真棒！','地球謝謝你！','又學會一個新知識！'][Math.floor(Math.random()*4)]}</b><p>${q[5]}</p>`:`<b>😊 沒關係，我們一起學會！</b><p>正確答案是「${q[3][q[4]]}」。${q[5]}</p>`;trialNextBtn.textContent=trialIndex===trialQuestions.length-1?'查看成績 →':'下一題 →';trialNextBtn.classList.remove('hide');trialProgressBar.style.width=`${(trialIndex+1)/trialQuestions.length*100}%`;if(ok&&typeof burst==='function')burst('⭐',8)}
+function nextTrialQuestion(){if(!trialAnswered)return;if(++trialIndex<trialQuestions.length)renderTrialQuestion();else finishTrialQuiz()}
+function finishTrialQuiz(){trialQuiz.classList.add('hide');trialResult.classList.remove('hide');const total=trialQuestions.length,stars=Math.round(trialScore/total*5);trialStars.textContent='★'.repeat(stars)+'☆'.repeat(5-stars);trialScoreText.textContent=`${trialScore} / ${total}`;trialResultMessage.textContent=trialScore===total?'太棒了！你是小小環保達人！':trialScore>=Math.ceil(total*.6)?'做得很好，再挑戰一次會更厲害！':'每學會一題，都是守護地球的一步！';const promises=['💧 今天我要記得關水龍頭。','♻️ 今天我要做好垃圾分類。','🌳 今天我要愛護花草樹木。','🐢 今天我要一起保護海洋生物。','💡 今天離開房間要記得關燈。'];trialPromiseText.textContent=promises[Math.floor(Math.random()*promises.length)];trialPromiseBtn.textContent='我願意做到 ✓';trialPromiseBtn.classList.remove('accepted');const s=loadTrialStats(),today=dateStr();if(s.date!==today){s.date=today;s.plays=0;s.best=0}s.plays=(s.plays||0)+1;if(total===5)s.best=Math.max(s.best||0,trialScore);if(trialDaily)s.dailyDate=today;saveTrialStats(s);updateTrialStatsView();if(typeof burst==='function')burst('🎉',14)}
+function acceptTrialPromise(){trialPromiseBtn.textContent='太棒了！一起做到 🌱';trialPromiseBtn.classList.add('accepted')}
+function trialToGoogleLogin(){exitTrialMode();setTimeout(()=>{document.getElementById('googleLoginBtn')?.scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('googleLoginBtn')?.focus()},100)}
