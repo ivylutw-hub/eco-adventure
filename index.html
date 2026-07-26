@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V10.2.0｜小小環保訓練營</title>
+<title>環保冒險王 V10.2.1｜難度冒險地圖</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10200" rel="stylesheet"/>
+<link href="style.css?v=10201" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -43,17 +43,26 @@
     <button class="trial-how" type="button" onclick="showTrialHow()">❔ 怎麼玩</button>
   </header>
   <main class="trial-shell">
-    <section class="trial-card trial-welcome" id="trialWelcome">
-      <div class="trial-scenery" aria-hidden="true"><span>☁️</span><span>🌳</span><span>🌼</span><span>🐝</span><span>🦋</span></div>
-      <div class="trial-teacher" aria-label="水獺老師">🦦</div>
-      <small>水獺老師的新手任務</small>
-      <h2>歡迎，小小守護者！</h2>
-      <p>一起完成 5 題生活環保練習，學會保護地球的方法。</p>
+    <section class="trial-card trial-welcome world-meadow" id="trialWelcome">
+      <div class="trial-world-scene" id="trialWorldScene" aria-hidden="true">
+        <span class="world-sky-icon world-sun">☀️</span><span class="world-sky-icon world-cloud">☁️</span>
+        <span class="world-animal" id="trialWorldAnimal">🦋</span><span class="world-landmark" id="trialWorldLandmark">🌱</span>
+      </div>
+      <div class="trial-teacher-row"><div class="trial-teacher" id="trialTeacher" aria-label="水獺老師">🦦</div><div class="trial-speech" id="trialTeacherSpeech">每位守護者都是從第一步開始，我陪你一起學！</div></div>
+      <small>左右滑動選擇挑戰世界</small>
+      <h2 id="trialWorldTitle">🌱 青青草原</h2>
+      <p id="trialWorldDesc">適合國小一～二年級，從生活環保常識開始。</p>
+      <div class="trial-difficulty-stars" id="trialDifficultyStars" aria-label="難度一顆星">★☆☆☆</div>
+      <div class="trial-slider-wrap">
+        <input id="trialDifficultySlider" class="trial-difficulty-slider" type="range" min="0" max="3" step="1" value="0" aria-label="選擇挑戰難度" oninput="setTrialDifficulty(this.value,true)">
+        <div class="trial-slider-labels" aria-hidden="true"><span>🌱<b>入門</b></span><span>🌳<b>初級</b></span><span>🌊<b>進階</b></span><span>🌍<b>挑戰</b></span></div>
+      </div>
+      <div class="trial-level-dots" id="trialLevelDots"><i class="active"></i><i></i><i></i><i></i></div>
       <div class="trial-local-stats">
         <span>今日挑戰 <b id="trialPlayCount">0</b> 次</span>
-        <span>最佳成績 <b id="trialBestScore">0 / 5</b></span>
+        <span>本難度最佳 <b id="trialBestScore">0 / 5</b></span>
       </div>
-      <button class="primary trial-main-btn" type="button" onclick="startTrialQuiz(5)">▶ 開始 5 題挑戰</button>
+      <button class="primary trial-main-btn" id="trialStartBtn" type="button" onclick="startTrialQuiz(5)">🚀 開始入門挑戰</button>
       <button class="secondary trial-daily-btn" type="button" onclick="startDailyTrial()">⭐ 今日環保小挑戰（3 題）</button>
       <p class="trial-privacy">🔒 不需登入，紀錄只保存在這台裝置。</p>
     </section>
@@ -76,7 +85,7 @@
     </section>
   </main>
 </div>
-<div class="modal hide" id="trialHowModal"><div class="modal-card trial-how-card"><button class="modal-close" onclick="closeTrialHow()">×</button><small>HOW TO PLAY</small><h2>🌱 怎麼玩</h2><p>每回合會出現 5 題適合國小低年級的生活環保題。</p><ol><li>點選你認為正確的答案。</li><li>每題都會立即看到簡短解析。</li><li>完成後可以再挑戰，不會扣分。</li></ol><p>匿名試玩不會使用排行榜、金幣、基地或雲端存檔。</p><button class="primary full" onclick="closeTrialHow()">我知道了</button></div></div>
+<div class="modal hide" id="trialHowModal"><div class="modal-card trial-how-card"><button class="modal-close" onclick="closeTrialHow()">×</button><small>HOW TO PLAY</small><h2>🌱 怎麼玩</h2><p>先左右滑動選擇入門、初級、進階或挑戰難度，每回合會出現 5 題對應程度的環保題。</p><ol><li>點選你認為正確的答案。</li><li>每題都會立即看到簡短解析。</li><li>完成後可以再挑戰，不會扣分。</li></ol><p>匿名試玩不會使用排行榜、金幣、基地或雲端存檔。</p><button class="primary full" onclick="closeTrialHow()">我知道了</button></div></div>
 
 <div class="app hide" id="game">
 <header class="header-day" id="mainHeader">
@@ -497,6 +506,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10200"></script>
-<script src="firebase.js?v=10200"></script>
+<script src="game.js?v=10201"></script>
+<script src="firebase.js?v=10201"></script>
 </body></html>
