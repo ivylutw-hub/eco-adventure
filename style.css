@@ -4954,3 +4954,75 @@ body.modal-open{overflow:hidden!important}
   #basePage .toolbar-main-actions{width:100%!important}
   #basePage .base-save-box button{width:100%!important}
 }
+
+/* ===== V10.0.3：建設物件與守護基地跨裝置縮放（最終覆寫） ===== */
+#basePage{
+  --base-object-scale:1;
+  --base-frame-radius:26px;
+}
+#basePage .base-scene-frame{
+  position:relative!important;
+  width:min(100%,1500px)!important;
+  margin-inline:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:16/9!important;
+  overflow:hidden!important;
+  border-radius:var(--base-frame-radius)!important;
+}
+#basePage .base-scene-frame>.base-scene{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:clamp(10px,1.8vw,28px)!important;
+  border-radius:inherit!important;
+  box-sizing:border-box!important;
+}
+/* 使用者自行調整的大小由外層保留；裝置縮放只作用於插畫本體。 */
+#basePage .base-building>.eco-asset{
+  transform:scale(var(--base-object-scale))!important;
+  transform-origin:center bottom!important;
+  transition:transform .2s ease!important;
+}
+#basePage .base-building>.eco-asset.asset-generic{
+  transform:scale(var(--base-object-scale))!important;
+}
+#basePage .base-building{
+  width:88px!important;
+  height:88px!important;
+}
+#basePage .base-resident{
+  transform:translate(-50%,-50%) scale(var(--base-object-scale))!important;
+  transform-origin:center bottom!important;
+}
+#basePage .base-empty{font-size:clamp(13px,1.5vw,18px)!important}
+
+/* 平板：維持較寬的操作空間，物件縮至 86%。 */
+@media (max-width:1100px){
+  #basePage{--base-object-scale:.86;--base-frame-radius:22px}
+  #basePage .base-dashboard-grid{grid-template-columns:1fr!important}
+  #basePage .base-scene-frame{aspect-ratio:4/3!important;width:100%!important}
+}
+/* 手機：畫面改為直式，物件縮至 72%，按鈕仍保留可觸控尺寸。 */
+@media (max-width:760px){
+  #basePage{--base-object-scale:.72;--base-frame-radius:18px;padding-inline:8px!important}
+  #basePage .base-scene-frame{aspect-ratio:4/5!important;width:100%!important;max-height:72dvh!important}
+  #basePage .base-building{width:72px!important;height:72px!important}
+  #basePage .base-building-delete,#basePage .base-building-mirror,#basePage .base-building-resize-handle{transform:scale(1.1);transform-origin:center}
+  #basePage .base-build-toolbar{width:100%!important;box-sizing:border-box!important}
+}
+/* 小型手機：避免基地或物件超出畫面。 */
+@media (max-width:420px){
+  #basePage{--base-object-scale:.62;--base-frame-radius:16px}
+  #basePage .base-scene-frame{aspect-ratio:3/4!important;max-height:68dvh!important}
+  #basePage .base-building{width:64px!important;height:64px!important}
+}
+/* 橫向手機與較矮視窗：優先讓整個遊戲畫面可見。 */
+@media (max-height:600px) and (orientation:landscape){
+  #basePage{--base-object-scale:.68}
+  #basePage .base-scene-frame{aspect-ratio:16/8!important;max-height:68dvh!important}
+}
