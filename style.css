@@ -4764,3 +4764,35 @@ body.header-compact #mainHeader,
   #basePage .my-base-control-panel .base-village-entry span:not(.base-village-entry-icon){display:none!important}
   #basePage .my-base-control-panel .base-village-entry{min-width:48px!important;padding:8px!important}
 }
+
+
+/* ===== V9.8.0：AQI、棲地住民數量、價格排序與手機基地同步 ===== */
+.home-aqi-metric .nature-aqi-link{font-size:.72rem;font-weight:950;color:#146b57;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer}
+.home-aqi-metric .nature-aqi-link:hover{color:#0a4b3d}.home-aqi-metric>span{display:inline-grid;place-items:center}
+.resident-bee{width:36px;height:28px;animation:residentBee 8.5s ease-in-out infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-squirrel{width:50px;height:46px;animation:residentSquirrel 13s steps(1,end) infinite!important;animation-delay:var(--resident-delay,0s)!important}
+@keyframes residentBee{0%{transform:translate(-50%,-50%) translate(0,0) rotate(-5deg)}20%{transform:translate(-50%,-50%) translate(45px,-18px) rotate(8deg)}45%{transform:translate(-50%,-50%) translate(72px,8px) rotate(-4deg)}70%{transform:translate(-50%,-50%) translate(30px,20px) rotate(7deg)}100%{transform:translate(-50%,-50%) translate(0,0) rotate(-5deg)}}
+@keyframes residentSquirrel{0%,15%{transform:translate(-50%,-50%) translateX(0) scaleX(1)}16%,35%{transform:translate(-50%,-50%) translateX(42px) translateY(-4px) scaleX(1)}36%,55%{transform:translate(-50%,-50%) translateX(78px) scaleX(1)}56%,70%{transform:translate(-50%,-50%) translateX(78px) scaleX(-1)}71%,88%{transform:translate(-50%,-50%) translateX(30px) translateY(-5px) scaleX(-1)}89%,100%{transform:translate(-50%,-50%) translateX(0) scaleX(-1)}}
+.resident-bee.interacting{transform:translate(-50%,-50%) translateY(-20px) scale(1.2)!important}.resident-squirrel.interacting{transform:translate(-50%,-50%) translateY(-14px) scale(1.12)!important}
+
+@media(max-width:760px){
+  /* 場景採固定比例同步縮放，避免手機只看到被裁切的桌面基地。 */
+  #basePage .base-scene-frame{height:auto!important;min-height:0!important;aspect-ratio:4/5!important;max-height:68svh!important;overflow:hidden!important}
+  #basePage .base-scene-frame .base-scene{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important}
+  #basePage .base-build-toolbar{grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-areas:"title tools save" "shop shop shop"!important;gap:8px!important;padding:9px 7px calc(9px + env(safe-area-inset-bottom))!important}
+  #basePage .build-toolbar-title{grid-area:title!important;gap:5px!important}
+  #basePage .build-toolbar-title b{min-height:42px!important;padding:8px 10px!important;font-size:14px!important;white-space:nowrap!important}
+  #basePage .habitat-hint-button{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;font-size:13px!important;border-width:1px!important;box-shadow:0 2px 0 #b48a22,0 3px 6px rgba(80,60,10,.16)!important;justify-self:auto!important}
+  #basePage .toolbar-main-actions{grid-area:tools!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;min-width:0!important}
+  #basePage .toolbar-main-actions button{min-height:42px!important;height:42px!important;padding:5px 3px!important;border-radius:11px!important;font-size:clamp(10px,2.8vw,13px)!important;line-height:1!important;gap:2px!important;white-space:nowrap!important}
+  #basePage .toolbar-main-actions button span{font-size:inherit!important}
+  #basePage .base-save-box{grid-area:save!important;display:block!important;width:auto!important;min-width:0!important}
+  #basePage .base-save-box button{width:auto!important;min-height:42px!important;height:42px!important;padding:6px 9px!important;font-size:clamp(11px,3vw,14px)!important;border-radius:11px!important;white-space:nowrap!important}
+  #basePage .base-save-box small{display:none!important}
+  #basePage .base-build-toolbar .shop{grid-area:shop!important}
+}
+@media(max-width:390px){
+  #basePage .base-scene-frame{aspect-ratio:3/4!important;max-height:65svh!important}
+  #basePage .base-build-toolbar{grid-template-columns:auto minmax(0,1fr)!important;grid-template-areas:"title tools" "save save" "shop shop"!important}
+  #basePage .base-save-box button{width:100%!important}
+}

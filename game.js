@@ -1036,21 +1036,41 @@ function baseHabitatStats(){
 }
 function baseGreeneryCount(){return baseHabitatStats().greenery}
 function baseHabitatStatus(){
-  const h=baseHabitatStats();
-  return{
-    stats:h,
-    butterfly:{ready:h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2,needs:['至少 1 組花朵（10 朵）','或花朵組＋草地合計至少 2 組']},
-    bird:{ready:h.trees>=2&&h.greenery>=3,needs:['至少 2 棵樹木','綠意總值至少 3']},
-    rabbit:{ready:h.grass>=3&&h.trees>=2&&h.greenery>=6,needs:['至少 3 塊草地','至少 2 棵樹木','綠意總值至少 6']},
-    otter:{ready:h.ponds>=1&&h.trees>=3&&h.grass>=3&&h.greenery>=8,needs:['至少 1 座生態池','至少 3 棵樹木','至少 3 塊草地','綠意總值至少 8']}
+  const owned=Array.isArray(st?.owned)?st.owned:[];
+  const flowerCount=owned.reduce((n,id)=>n+(id==='flowers'?1:0),0);
+  const flowerGroups=Math.floor(flowerCount/10);
+  const flowerGardenCount=owned.reduce((n,id)=>n+(id==='butterflyGarden'?1:0),0);
+  const grass=owned.reduce((n,id)=>n+(id==='grass'?1:0),0);
+  const trees=owned.reduce((n,id)=>n+(BASE_TREE_IDS.has(id)?1:0),0);
+  const ponds=owned.reduce((n,id)=>n+(BASE_POND_IDS.has(id)?1:0),0);
+  const effectiveFlowers=flowerGroups+flowerGardenCount;
+  const greenery=effectiveFlowers+grass+trees+ponds;
+  const butterflyReady=effectiveFlowers>=1||(effectiveFlowers+grass)>=2;
+  const birdReady=trees>=2&&greenery>=3;
+  const rabbitReady=grass>=3&&trees>=2&&greenery>=6;
+  const otterReady=ponds>=1&&trees>=3&&grass>=3&&greenery>=8;
+  const beeReady=effectiveFlowers>=1;
+  const squirrelReady=trees>=3&&greenery>=5;
+  return {
+    flowerCount,flowerGroups,effectiveFlowers,grass,trees,ponds,greenery,
+    butterfly:{ready:butterflyReady,count:butterflyReady?Math.min(6,Math.max(1,effectiveFlowers+Math.floor(grass/2))):0,needs:['至少 1 組花朵（10 朵）','或花朵組＋草地合計至少 2 組']},
+    bee:{ready:beeReady,count:beeReady?Math.min(6,Math.max(1,effectiveFlowers*2)):0,needs:['至少 1 組花朵（10 朵）','花朵越多，入住蜜蜂越多']},
+    bird:{ready:birdReady,count:birdReady?Math.min(4,Math.max(1,Math.floor(trees/2))):0,needs:['至少 2 棵樹木','綠意總值至少 3']},
+    squirrel:{ready:squirrelReady,count:squirrelReady?Math.min(3,Math.max(1,Math.floor(trees/3))):0,needs:['至少 3 棵樹木','綠意總值至少 5']},
+    rabbit:{ready:rabbitReady,count:rabbitReady?Math.min(3,Math.max(1,Math.floor(Math.min(grass/3,trees/2,greenery/6)))):0,needs:['至少 3 塊草地','至少 2 棵樹木','綠意總值至少 6']},
+    otter:{ready:otterReady,count:otterReady?Math.min(2,Math.max(1,Math.floor(ponds))):0,needs:['至少 1 座生態池','至少 3 棵樹木','至少 3 塊草地','綠意總值至少 8']}
   };
 }
 function habitatMissing(kind,status=baseHabitatStatus()){
   const h=status.stats,missing=[];
   if(kind==='butterfly'){
     if(!(h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2))missing.push(`花朵還差 ${Math.max(0,1-h.flowerGroups)} 組，或增加花草組合`);
+  }else if(kind==='bee'){
+    if(h.effectiveFlowers<1)miss.push('花朵 10 朵（1 組）');
   }else if(kind==='bird'){
     if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<3)missing.push(`綠意還差 ${3-h.greenery}`);
+  }else if(kind==='squirrel'){
+    if(h.trees<3)miss.push(`樹木 ${3-h.trees} 棵`);if(h.greenery<5)miss.push(`綠意 ${5-h.greenery}`);
   }else if(kind==='rabbit'){
     if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<6)missing.push(`綠意還差 ${6-h.greenery}`);
   }else if(kind==='otter'){
@@ -1072,7 +1092,9 @@ function renderHabitatGuide(){
   if(summary)summary.innerHTML=`<span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.rawFlowers} 朵，10 朵算 1 組</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 生態池 <b>${h.ponds}</b></span><span>🍃 綠意 <b>${h.greenery}</b></span>`;
   const defs=[
     ['butterfly','🦋','蝴蝶','在花叢間不規則飛行，停花採蜜，再飛往下一朵。'],
+    ['bee','🐝','蜜蜂','在花朵間短距離飛行與採蜜，花越多數量越多。'],
     ['bird','🐦','小鳥','在天空滑翔，停在樹梢休息，再飛往另一棵樹。'],
+    ['squirrel','🐿️','松鼠','沿樹木間跑跳、停下抱食物，再爬往另一棵樹。'],
     ['rabbit','🐇','野兔','只在草地跳躍與吃草，受驚時快速跳開。'],
     ['otter','🦦','歐亞水獺','沿生態池岸邊巡遊、下水游泳並上岸休息。']
   ];
@@ -1086,6 +1108,8 @@ function baseResidentArt(kind){
   const arts={
     butterfly:`<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M31 24C22 7 6 8 8 24c2 12 16 11 23 2" fill="#ff90c2" stroke="#8f4168" stroke-width="2"/><path d="M33 24C42 7 58 8 56 24c-2 12-16 11-23 2" fill="#ffd45d" stroke="#8f6b23" stroke-width="2"/><path d="M29 23h6v17h-6z" rx="3" fill="#4c4b58"/><path d="M31 18c-4-6-8-7-11-7M33 18c4-6 8-7 11-7" fill="none" stroke="#4c4b58" stroke-width="2" stroke-linecap="round"/></svg>`,
     bird:`<svg viewBox="0 0 72 56" aria-hidden="true"><path d="M15 37c8-17 30-23 42-8-8 17-30 19-42 8z" fill="#4da8c7" stroke="#235c71" stroke-width="2"/><path d="M50 27l14 4-12 7" fill="#f2b84b" stroke="#8d6422" stroke-width="2"/><circle cx="49" cy="28" r="2.4" fill="#16292f"/><path d="M20 38L8 48l17-3" fill="#3b7f98"/><path d="M30 34c7-9 15-7 18 1-8 7-14 7-18-1z" fill="#8bd4df"/></svg>`,
+    bee:`<svg viewBox="0 0 64 48" aria-hidden="true"><ellipse cx="32" cy="28" rx="16" ry="11" fill="#f4c430" stroke="#5b4a24" stroke-width="2"/><path d="M24 19v18M32 17v22M40 19v18" stroke="#5b4a24" stroke-width="4"/><ellipse cx="22" cy="15" rx="10" ry="7" fill="#d9f4ff" stroke="#79a8b8"/><ellipse cx="42" cy="15" rx="10" ry="7" fill="#d9f4ff" stroke="#79a8b8"/><circle cx="47" cy="26" r="3" fill="#222"/></svg>`,
+    squirrel:`<svg viewBox="0 0 72 64" aria-hidden="true"><path d="M48 38c16-3 21-20 8-27-10-5-21 5-17 17 3 8 11 9 17 5" fill="#c87935" stroke="#744421" stroke-width="3"/><ellipse cx="31" cy="43" rx="19" ry="14" fill="#b86a2f" stroke="#744421" stroke-width="2"/><circle cx="20" cy="31" r="11" fill="#c87935" stroke="#744421" stroke-width="2"/><path d="M16 22l-2-10 8 8M26 22l5-9 1 12" fill="#c87935" stroke="#744421" stroke-width="2"/><circle cx="17" cy="30" r="2"/><path d="M23 38c4 5 8 5 12 1" fill="none" stroke="#f3d2ac" stroke-width="3"/></svg>`,
     rabbit:`<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="35" cy="42" rx="20" ry="14" fill="#eee6d8" stroke="#8b8070" stroke-width="2"/><circle cx="23" cy="31" r="11" fill="#f5ede0" stroke="#8b8070" stroke-width="2"/><path d="M18 23C12 8 18 2 23 21M27 22c1-16 8-19 8 2" fill="#f5ede0" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="29" r="2" fill="#333"/><circle cx="54" cy="40" r="6" fill="#fff"/><path d="M24 37l-5 5M35 53l-3 7M45 52l4 7" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/></svg>`,
     otter:`<svg viewBox="0 0 80 56" aria-hidden="true"><path d="M13 36c5-17 25-26 43-15 9 6 11 15 5 22-8 9-34 8-48-7z" fill="#8b6548" stroke="#523a2a" stroke-width="2"/><circle cx="54" cy="24" r="12" fill="#9c7556" stroke="#523a2a" stroke-width="2"/><circle cx="59" cy="22" r="2" fill="#1f1b18"/><path d="M65 27l10 2-9 5" fill="#69482f"/><path d="M15 37C5 38 2 47 10 50" fill="none" stroke="#523a2a" stroke-width="5" stroke-linecap="round"/><path d="M48 31c4 4 8 4 12 0" fill="none" stroke="#f0dcc8" stroke-width="2" stroke-linecap="round"/></svg>`
   };
@@ -1100,12 +1124,16 @@ function interactBaseResident(el){
 function renderBaseResidents(){
   const layer=document.querySelector('#baseScene .base-residents');if(!layer)return;
   const status=baseHabitatStatus(),residents=[];
-  if(status.butterfly.ready)residents.push({kind:'butterfly',name:'蝴蝶',x:18,y:42,delay:'0s'});
-  if(status.bird.ready)residents.push({kind:'bird',name:'小鳥',x:66,y:27,delay:'-2.5s'});
-  if(status.rabbit.ready)residents.push({kind:'rabbit',name:'野兔',x:18,y:72,delay:'-4s'});
-  if(status.otter.ready)residents.push({kind:'otter',name:'歐亞水獺',x:38,y:79,delay:'-6s'});
+  const addMany=(kind,name,count,spots)=>{for(let i=0;i<count;i++){const p=spots[i%spots.length];residents.push({kind,name,x:p[0]+(i%2)*3,y:p[1]+(i%3)*2,delay:`-${i*1.7}s`})}};
+  addMany('butterfly','蝴蝶',status.butterfly.count,[[15,42],[34,48],[58,38],[75,45],[46,55],[84,34]]);
+  addMany('bee','蜜蜂',status.bee.count,[[22,51],[39,43],[64,49],[79,55],[50,37],[30,58]]);
+  addMany('bird','小鳥',status.bird.count,[[66,27],[30,25],[82,20],[48,31]]);
+  addMany('squirrel','松鼠',status.squirrel.count,[[27,66],[58,61],[76,68]]);
+  addMany('rabbit','野兔',status.rabbit.count,[[18,72],[52,76],[78,72]]);
+  addMany('otter','歐亞水獺',status.otter.count,[[38,79],[62,81]]);
   layer.innerHTML=residents.map(r=>`<span class="base-resident resident-${r.kind}" role="button" tabindex="0" aria-label="和${r.name}互動" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" onclick="interactBaseResident(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();interactBaseResident(this)}">${baseResidentArt(r.kind)}</span>`).join('');
 }
+
 
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
@@ -1119,7 +1147,7 @@ function renderBase(){
   renderBaseResidents();
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
-  shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).forEach(it=>{
+  shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).sort((a,b)=>Number(a.cost)-Number(b.cost)||String(a.name).localeCompare(String(b.name),'zh-Hant')).forEach(it=>{
     const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
     d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} ${it.id==='flowers'?'朵':'個'}</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">${it.id==='flowers'?'購買 10 朵':'建設'}</span></button>`;shop.appendChild(d);
   });

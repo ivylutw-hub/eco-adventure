@@ -16,7 +16,7 @@ function weekDateRange(date=new Date()){
   const end=new Date(d);end.setDate(end.getDate()+6);const f=x=>`${x.getMonth()+1}/${x.getDate()}`;return `${f(d)}－${f(end)}`;
 }
 function ensureWeeklyLocal(){
- const id=currentWeekId(),ruleVersion='v9.0-question-exp';
+ const id=currentWeekId(),ruleVersion='v9.8-monday-sunday';
  if(!st.weekly||st.weekly.weekId!==id||st.weekly.ruleVersion!==ruleVersion){
    st.weekly={weekId:id,ruleVersion,points:0,completedKeys:[],perfectKeys:[]};
  }
@@ -322,7 +322,7 @@ async function refreshLeaderboard(mode=activeRankingMode){
  const title=document.getElementById('rankingTitle'),desc=document.getElementById('rankingDescription'),eyebrow=document.getElementById('rankingEyebrow');
  const pointsLabel=document.getElementById('myRankingPointsLabel'),rankLabel=document.getElementById('myRankingRankLabel');
  if(title)title.textContent=isWeekly?'🥇 每週守護者排行榜':'🏆 守護者總排行榜';
- if(desc)desc.textContent=isWeekly?'依本週積分由高到低排名，每週重新開始。':'依累計守護經驗由高到低排名，長期累積不歸零。';
+ if(desc)desc.textContent=isWeekly?'每週一 00:00 起算、星期日 23:59 結算，依本週積分由高到低排名。':'依累計守護經驗由高到低排名，長期累積不歸零。';
  if(eyebrow)eyebrow.textContent=isWeekly?'WEEKLY GUARDIAN RANKING':'ALL-TIME GUARDIAN RANKING';
  if(pointsLabel)pointsLabel.textContent=isWeekly?'我的本週積分':'我的累計守護經驗';
  if(rankLabel)rankLabel.textContent=isWeekly?'我的每週名次':'我的總排行名次';
