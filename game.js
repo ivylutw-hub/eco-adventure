@@ -1098,11 +1098,11 @@ function habitatMissing(kind,status=baseHabitatStatus()){
   if(kind==='butterfly'){
     if(!(h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2))missing.push(`花朵還差 ${Math.max(0,1-h.flowerGroups)} 組，或增加花草組合`);
   }else if(kind==='bee'){
-    if(h.effectiveFlowers<1)miss.push('花朵 10 朵（1 組）');
+    if(h.effectiveFlowers<1)missing.push('花朵 10 朵（1 組）');
   }else if(kind==='bird'){
     if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<3)missing.push(`綠意還差 ${3-h.greenery}`);
   }else if(kind==='squirrel'){
-    if(h.trees<3)miss.push(`樹木 ${3-h.trees} 棵`);if(h.greenery<5)miss.push(`綠意 ${5-h.greenery}`);
+    if(h.trees<3)missing.push(`樹木還差 ${3-h.trees} 棵`);if(h.greenery<5)missing.push(`綠意還差 ${5-h.greenery}`);
   }else if(kind==='rabbit'){
     if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<6)missing.push(`綠意還差 ${6-h.greenery}`);
   }else if(kind==='otter'){
@@ -1111,17 +1111,35 @@ function habitatMissing(kind,status=baseHabitatStatus()){
   return missing;
 }
 function openHabitatGuide(){
-  renderHabitatGuide();
-  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.remove('hide');
+  const modal=document.getElementById('habitatGuideModal');
+  if(!modal){
+    console.error('habitatGuideModal not found');
+    if(typeof toast==='function')toast('棲地說明載入失敗，請重新整理頁面');
+    return;
+  }
+  // 先顯示視窗，再更新內容；即使資料分析發生錯誤，玩家仍看得到說明頁。
+  modal.classList.remove('hide');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  try{renderHabitatGuide();}
+  catch(error){
+    console.error('renderHabitatGuide failed',error);
+    const box=document.getElementById('habitatRequirements');
+    if(box)box.innerHTML='<article class="habitat-animal-card not-ready"><div class="habitat-animal-title"><span>💡</span><div><b>棲地提示</b><small>說明資料暫時無法分析</small></div></div><p>請重新整理頁面後再試一次。</p></article>';
+  }
+  const closeBtn=modal.querySelector('.modal-close');
+  if(closeBtn)setTimeout(()=>closeBtn.focus(),0);
 }
 function closeHabitatGuide(event){
   if(event&&event.target!==event.currentTarget)return;
-  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.add('hide');
+  const modal=document.getElementById('habitatGuideModal');
+  if(modal){modal.classList.add('hide');modal.setAttribute('aria-hidden','true');}
+  document.body.classList.remove('modal-open');
 }
 function renderHabitatGuide(){
   const status=baseHabitatStatus(),h=status.stats;
   const summary=document.getElementById('habitatSummary');
-  if(summary)summary.innerHTML=`<span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.rawFlowers} 朵，10 朵算 1 組</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 生態池 <b>${h.ponds}</b></span><span>🍃 綠意 <b>${h.greenery}</b></span>`;
+  if(summary)summary.innerHTML=`<span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.flowerCount} 朵，10 朵算 1 組</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 生態池 <b>${h.ponds}</b></span><span>🍃 綠意 <b>${h.greenery}</b></span>`;
   const defs=[
     ['butterfly','🦋','蝴蝶','在花叢間不規則飛行，停花採蜜，再飛往下一朵。'],
     ['bee','🐝','蜜蜂','在花朵間短距離飛行與採蜜，花越多數量越多。'],
@@ -1685,4 +1703,28 @@ async function publishMyBase(){ensureVillageState();updateBaseIntro(document.get
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',prepare,{once:true});else prepare();
   const observer=new MutationObserver(prepare);observer.observe(document.documentElement,{childList:true,subtree:true});
   setTimeout(prepare,500);setTimeout(prepare,1500);
+})();
+
+
+/* ===== V10.0.1：棲地燈泡最終可靠點擊修正 ===== */
+(function bindHabitatGuideTrigger(){
+  if(window.__habitatGuideTriggerBound)return;
+  window.__habitatGuideTriggerBound=true;
+  const activate=function(event){
+    const btn=event.target&&event.target.closest?event.target.closest('.habitat-hint-button'):null;
+    if(!btn)return;
+    event.preventDefault();
+    event.stopPropagation();
+    if(event.type==='pointerup' && event.pointerType==='touch')btn.dataset.touchActivated=String(Date.now());
+    if(event.type==='click' && Date.now()-Number(btn.dataset.touchActivated||0)<700)return;
+    btn.classList.add('is-tapped');
+    setTimeout(()=>btn.classList.remove('is-tapped'),220);
+    openHabitatGuide();
+  };
+  document.addEventListener('pointerup',activate,true);
+  document.addEventListener('click',activate,true);
+  document.addEventListener('keydown',function(event){
+    if((event.key==='Enter'||event.key===' ')&&document.activeElement?.classList.contains('habitat-hint-button'))activate(event);
+    if(event.key==='Escape'&&!document.getElementById('habitatGuideModal')?.classList.contains('hide'))closeHabitatGuide();
+  },true);
 })();

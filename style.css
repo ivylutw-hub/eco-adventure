@@ -4891,3 +4891,27 @@ body.header-compact #mainHeader,
   #habitatBulbCoach{position:fixed;left:50%;top:auto;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);text-align:center}
   #habitatBulbCoach::before{display:none}
 }
+
+
+/* ===== V10.0.1：棲地提示顯示層與手機觸控修正 ===== */
+#basePage .habitat-hint-button{
+  contain:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+}
+#habitatGuideModal{
+  z-index:10000!important;
+  position:fixed!important;
+  inset:0!important;
+  pointer-events:auto!important;
+}
+#habitatGuideModal.hide{display:none!important}
+#habitatGuideModal:not(.hide){display:flex!important;visibility:visible!important;opacity:1!important}
+#habitatGuideModal .habitat-guide-card{position:relative!important;z-index:10001!important;pointer-events:auto!important;max-height:min(86vh,760px)!important;overflow:auto!important}
+body.modal-open{overflow:hidden!important}
+@media(max-width:760px){
+  #basePage .habitat-hint-button{flex-basis:40px!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}
+  #basePage .habitat-hint-button::before{width:23px!important;height:23px!important;font-size:14px!important}
+  #habitatGuideModal{padding:12px!important;align-items:center!important;justify-content:center!important}
+  #habitatGuideModal .habitat-guide-card{width:min(100%,560px)!important;max-height:88vh!important}
+}
