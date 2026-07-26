@@ -4796,3 +4796,30 @@ body.header-compact #mainHeader,
   #basePage .base-build-toolbar{grid-template-columns:auto minmax(0,1fr)!important;grid-template-areas:"title tools" "save save" "shop shop"!important}
   #basePage .base-save-box button{width:100%!important}
 }
+
+
+/* ===== V9.8.1：可點擊棲地燈泡與 AQI 六色旗 ===== */
+.home-aqi-metric{position:relative;overflow:visible!important}
+.home-aqi-metric .aqi-flag{position:relative;display:inline-block;width:25px;height:27px;flex:0 0 25px}
+.home-aqi-metric .aqi-flag::before{content:"";position:absolute;left:4px;top:2px;width:3px;height:23px;border-radius:3px;background:#5f5148;box-shadow:0 1px 1px rgba(0,0,0,.2)}
+.home-aqi-metric .aqi-flag::after{content:"";position:absolute;left:3px;bottom:1px;width:10px;height:3px;border-radius:50%;background:#75665d}
+.home-aqi-metric .aqi-flag i{position:absolute;left:7px;top:3px;width:17px;height:12px;border-radius:2px 3px 3px 2px;background:#9aa5a8;box-shadow:inset 0 -2px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.18);transition:background-color .25s ease}
+.home-aqi-metric .aqi-flag[data-level="green"] i{background:#35a853}
+.home-aqi-metric .aqi-flag[data-level="yellow"] i{background:#f4cf37}
+.home-aqi-metric .aqi-flag[data-level="orange"] i{background:#f28c28}
+.home-aqi-metric .aqi-flag[data-level="red"] i{background:#df3f3f}
+.home-aqi-metric .aqi-flag[data-level="purple"] i{background:#8c52b5}
+.home-aqi-metric .aqi-flag[data-level="brown"] i{background:#7b4b32}
+.home-aqi-metric::after{content:attr(data-tooltip);position:absolute;z-index:90;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%) translateY(4px);width:max-content;max-width:min(310px,82vw);padding:9px 11px;border-radius:11px;background:rgba(36,52,43,.96);color:#fff;font-size:.76rem;font-weight:750;line-height:1.35;white-space:normal;opacity:0;visibility:hidden;pointer-events:none;transition:.16s ease;box-shadow:0 6px 18px rgba(0,0,0,.23)}
+.home-aqi-metric:hover::after,.home-aqi-metric:focus-visible::after,.home-aqi-metric.show-aqi-tip::after{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+
+/* 燈泡外觀維持縮小，但可點擊區保留 44px，避免手機誤觸或完全點不到。 */
+#basePage .build-toolbar-title{position:relative;z-index:12!important}
+#basePage .habitat-hint-button{position:relative!important;z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;padding:0!important;font-size:0!important;display:grid!important;place-items:center!important;overflow:visible!important}
+#basePage .habitat-hint-button::before{content:"💡";font-size:14px;line-height:1;pointer-events:none}
+@media(max-width:760px){
+  #basePage .habitat-hint-button{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border-width:1px!important;box-shadow:0 2px 0 #b48a22,0 3px 6px rgba(80,60,10,.16)!important}
+  #basePage .habitat-hint-button::before{font-size:13px}
+  .home-aqi-metric::after{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(6px);max-width:88vw}
+  .home-aqi-metric.show-aqi-tip::after{transform:translateX(-50%) translateY(0)}
+}

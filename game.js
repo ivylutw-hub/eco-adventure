@@ -1001,6 +1001,37 @@ function updateBaseDashboard(){
   const sw=document.getElementById('baseEditSwitch');if(sw){sw.classList.toggle('on',!!st.baseEditMode);const em=sw.querySelector('em');if(em)em.textContent=st.baseEditMode?'開':'關'}
 }
 function aqiLevel(aqi){if(aqi<=50)return'良好';if(aqi<=100)return'普通';if(aqi<=150)return'對敏感族群不健康';if(aqi<=200)return'對所有族群不健康';if(aqi<=300)return'非常不健康';return'危害'}
+function aqiMeta(aqi){
+  if(aqi<=50)return{key:'green',label:'良好',advice:'空氣品質佳，適合戶外活動。'};
+  if(aqi<=100)return{key:'yellow',label:'普通',advice:'一般族群可正常活動，敏感族群可留意身體狀況。'};
+  if(aqi<=150)return{key:'orange',label:'對敏感族群不健康',advice:'敏感族群建議減少長時間或劇烈戶外活動。'};
+  if(aqi<=200)return{key:'red',label:'對所有族群不健康',advice:'建議減少長時間戶外活動，敏感族群請做好防護。'};
+  if(aqi<=300)return{key:'purple',label:'非常不健康',advice:'請減少戶外活動並留意健康狀況。'};
+  return{key:'brown',label:'危害',advice:'建議留在室內並避免戶外活動。'};
+}
+function updateAqiDisplay(aq){
+  const value=document.getElementById('natureAqi'), level=document.getElementById('natureAqiLevel');
+  const flag=document.getElementById('natureAqiFlag'), metric=document.getElementById('homeAqiMetric');
+  if(!Number.isFinite(aq)){
+    if(value)value.textContent='--';if(level)level.textContent='暫無資料';
+    if(flag)flag.dataset.level='unknown';
+    if(metric){metric.dataset.tooltip='AQI 暫無資料';metric.setAttribute('aria-label','AQI 暫無資料');metric.title='AQI 暫無資料';}
+    return;
+  }
+  const meta=aqiMeta(aq), tip=`AQI：${aq}（${meta.label}）｜${meta.advice}`;
+  if(value)value.textContent=aq;if(level)level.textContent=meta.label;
+  if(flag)flag.dataset.level=meta.key;
+  if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
+}
+function setupAqiTouchTip(){
+  const metric=document.getElementById('homeAqiMetric');if(!metric||metric.dataset.touchReady)return;
+  metric.dataset.touchReady='1';let timer=0;
+  const clear=()=>{if(timer){clearTimeout(timer);timer=0}metric.classList.remove('show-aqi-tip')};
+  metric.addEventListener('touchstart',()=>{clearTimeout(timer);timer=setTimeout(()=>metric.classList.add('show-aqi-tip'),650)},{passive:true});
+  metric.addEventListener('touchend',()=>setTimeout(clear,1800),{passive:true});
+  metric.addEventListener('touchcancel',clear,{passive:true});
+  document.addEventListener('touchstart',e=>{if(!metric.contains(e.target))clear()},{passive:true});
+}
 async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
@@ -1012,11 +1043,12 @@ async function updateNatureDashboard(){
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
-    document.getElementById('natureAqi').textContent=Number.isFinite(aq)?aq:'--';document.getElementById('natureAqiLevel').textContent=Number.isFinite(aq)?aqiLevel(aq):'暫無資料';
+    updateAqiDisplay(aq);setupAqiTouchTip();
   }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
 }
 setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
+setTimeout(()=>{const btn=document.querySelector('#basePage .habitat-hint-button');if(btn&&!btn.dataset.clickReady){btn.dataset.clickReady='1';btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openHabitatGuide();});}},0);
 
 
 const BASE_FLOWER_IDS=new Set(['flowers','butterflyGarden']);
