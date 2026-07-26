@@ -1068,104 +1068,108 @@ function baseHabitatStats(){
 }
 function baseGreeneryCount(){return baseHabitatStats().greenery}
 function baseHabitatStatus(){
-  const owned=Array.isArray(st?.owned)?st.owned:[];
+  const owned=Array.isArray(st&&st.owned)?st.owned:[];
   const flowerCount=owned.reduce((n,id)=>n+(id==='flowers'?1:0),0);
   const flowerGroups=Math.floor(flowerCount/10);
   const flowerGardenCount=owned.reduce((n,id)=>n+(id==='butterflyGarden'?1:0),0);
-  const grass=owned.reduce((n,id)=>n+(id==='grass'?1:0),0);
+  const effectiveFlowers=flowerGroups+flowerGardenCount;
+  const grass=owned.reduce((n,id)=>n+(BASE_GRASS_IDS.has(id)?1:0),0);
+  const shrubs=owned.reduce((n,id)=>n+(id==='shrub'?1:0),0);
   const trees=owned.reduce((n,id)=>n+(BASE_TREE_IDS.has(id)?1:0),0);
   const ponds=owned.reduce((n,id)=>n+(BASE_POND_IDS.has(id)?1:0),0);
-  const effectiveFlowers=flowerGroups+flowerGardenCount;
   const greenery=effectiveFlowers+grass+trees+ponds;
-  const butterflyReady=effectiveFlowers>=1||(effectiveFlowers+grass)>=2;
-  const birdReady=trees>=2&&greenery>=3;
-  const rabbitReady=grass>=3&&trees>=2&&greenery>=6;
-  const otterReady=ponds>=1&&trees>=3&&grass>=3&&greenery>=8;
-  const beeReady=effectiveFlowers>=1;
-  const squirrelReady=trees>=3&&greenery>=5;
+  const isNight=(baseLiveWeather&&baseLiveWeather.mode==='night')||baseTimeMode()==='night';
+  const mk=(ready,count,needs)=>({ready,count:ready?count:0,needs});
+  const stats={rawFlowers:flowerCount,flowerGroups,effectiveFlowers,grass,shrubs,trees,ponds,greenery,isNight};
   return {
-    flowerCount,flowerGroups,effectiveFlowers,grass,trees,ponds,greenery,
-    butterfly:{ready:butterflyReady,count:butterflyReady?Math.min(6,Math.max(1,effectiveFlowers+Math.floor(grass/2))):0,needs:['至少 1 組花朵（10 朵）','或花朵組＋草地合計至少 2 組']},
-    bee:{ready:beeReady,count:beeReady?Math.min(6,Math.max(1,effectiveFlowers*2)):0,needs:['至少 1 組花朵（10 朵）','花朵越多，入住蜜蜂越多']},
-    bird:{ready:birdReady,count:birdReady?Math.min(4,Math.max(1,Math.floor(trees/2))):0,needs:['至少 2 棵樹木','綠意總值至少 3']},
-    squirrel:{ready:squirrelReady,count:squirrelReady?Math.min(3,Math.max(1,Math.floor(trees/3))):0,needs:['至少 3 棵樹木','綠意總值至少 5']},
-    rabbit:{ready:rabbitReady,count:rabbitReady?Math.min(3,Math.max(1,Math.floor(Math.min(grass/3,trees/2,greenery/6)))):0,needs:['至少 3 塊草地','至少 2 棵樹木','綠意總值至少 6']},
-    otter:{ready:otterReady,count:otterReady?Math.min(2,Math.max(1,Math.floor(ponds))):0,needs:['至少 1 座生態池','至少 3 棵樹木','至少 3 塊草地','綠意總值至少 8']}
+    stats,
+    flowerCount,flowerGroups,effectiveFlowers,grass,shrubs,trees,ponds,greenery,
+    butterfly:mk(effectiveFlowers>=1&&grass>=1,Math.min(5,Math.max(1,effectiveFlowers+Math.floor(grass/2))),['至少 1 組花朵（10 朵）','至少 1 塊草地']),
+    bee:mk(effectiveFlowers>=1,Math.min(6,Math.max(1,effectiveFlowers*2)),['至少 1 組花朵（10 朵）','花朵越多，蜜蜂越多']),
+    ladybug:mk(effectiveFlowers>=1&&shrubs>=1,Math.min(3,Math.max(1,effectiveFlowers+shrubs-1)),['至少 1 組花朵','至少 1 叢灌木']),
+    bird:mk(trees>=2,Math.min(4,Math.max(1,Math.floor(trees/2))),['至少 2 棵樹木']),
+    squirrel:mk(trees>=3,Math.min(3,Math.max(1,Math.floor(trees/3))),['至少 3 棵樹木']),
+    rabbit:mk(grass>=3&&shrubs>=1&&trees>=2,Math.min(3,Math.max(1,Math.floor(grass/3))),['至少 3 塊草地','至少 1 叢灌木','至少 2 棵樹木']),
+    otter:mk(ponds>=1&&trees>=3&&grass>=3,Math.min(2,Math.max(1,ponds)),['一定要有至少 1 座水域','至少 3 棵樹木','至少 3 塊草地']),
+    frog:mk(ponds>=1&&grass>=1,Math.min(4,Math.max(1,ponds+Math.floor(grass/2))),['至少 1 座水域','至少 1 塊岸邊草地']),
+    waterbird:mk(ponds>=1&&grass>=2,Math.min(3,Math.max(1,ponds)),['至少 1 座水域','至少 2 塊岸邊草地']),
+    fish:mk(ponds>=1,Math.min(5,Math.max(2,ponds*2)),['至少 1 座生態池']),
+    cricket:mk(grass>=2&&isNight,Math.min(4,Math.max(1,Math.floor(grass/2))),['至少 2 塊草地','只在夜間出現'])
   };
 }
 function habitatMissing(kind,status=baseHabitatStatus()){
-  const h=status.stats,missing=[];
-  if(kind==='butterfly'){
-    if(!(h.flowerGroups>=1||(h.flowerGroups+h.grass)>=2))missing.push(`花朵還差 ${Math.max(0,1-h.flowerGroups)} 組，或增加花草組合`);
-  }else if(kind==='bee'){
-    if(h.effectiveFlowers<1)miss.push('花朵 10 朵（1 組）');
-  }else if(kind==='bird'){
-    if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<3)missing.push(`綠意還差 ${3-h.greenery}`);
-  }else if(kind==='squirrel'){
-    if(h.trees<3)miss.push(`樹木 ${3-h.trees} 棵`);if(h.greenery<5)miss.push(`綠意 ${5-h.greenery}`);
-  }else if(kind==='rabbit'){
-    if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.trees<2)missing.push(`樹木還差 ${2-h.trees} 棵`);if(h.greenery<6)missing.push(`綠意還差 ${6-h.greenery}`);
-  }else if(kind==='otter'){
-    if(h.ponds<1)missing.push('還需要 1 座生態池');if(h.trees<3)missing.push(`樹木還差 ${3-h.trees} 棵`);if(h.grass<3)missing.push(`草地還差 ${3-h.grass} 塊`);if(h.greenery<8)missing.push(`綠意還差 ${8-h.greenery}`);
-  }
+  const h=status.stats||status,missing=[];
+  const add=(ok,text)=>{if(!ok)missing.push(text)};
+  if(kind==='butterfly'){add(h.effectiveFlowers>=1,'還需要 10 朵花（1 組）');add(h.grass>=1,'還需要 1 塊草地');}
+  else if(kind==='bee')add(h.effectiveFlowers>=1,'還需要 10 朵花（1 組）');
+  else if(kind==='ladybug'){add(h.effectiveFlowers>=1,'還需要 10 朵花（1 組）');add(h.shrubs>=1,'還需要 1 叢灌木');}
+  else if(kind==='bird')add(h.trees>=2,`樹木還差 ${Math.max(0,2-h.trees)} 棵`);
+  else if(kind==='squirrel')add(h.trees>=3,`樹木還差 ${Math.max(0,3-h.trees)} 棵`);
+  else if(kind==='rabbit'){add(h.grass>=3,`草地還差 ${Math.max(0,3-h.grass)} 塊`);add(h.shrubs>=1,'還需要 1 叢灌木');add(h.trees>=2,`樹木還差 ${Math.max(0,2-h.trees)} 棵`);}
+  else if(kind==='otter'){add(h.ponds>=1,'一定要先建造水域');add(h.trees>=3,`樹木還差 ${Math.max(0,3-h.trees)} 棵`);add(h.grass>=3,`草地還差 ${Math.max(0,3-h.grass)} 塊`);}
+  else if(kind==='frog'){add(h.ponds>=1,'還需要 1 座水域');add(h.grass>=1,'還需要 1 塊岸邊草地');}
+  else if(kind==='waterbird'){add(h.ponds>=1,'還需要 1 座水域');add(h.grass>=2,`岸邊草地還差 ${Math.max(0,2-h.grass)} 塊`);}
+  else if(kind==='fish')add(h.ponds>=1,'還需要 1 座生態池');
+  else if(kind==='cricket'){add(h.grass>=2,`草地還差 ${Math.max(0,2-h.grass)} 塊`);add(h.isNight,'夜間才會出現');}
   return missing;
 }
+function ensureHabitatGuideModal(){
+  let modal=document.getElementById('habitatGuideModal');
+  if(modal)return modal;
+  modal=document.createElement('div');modal.id='habitatGuideModal';modal.className='modal hide';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','habitatGuideTitle');
+  modal.innerHTML='<div class="modal-card habitat-guide-card"><button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button">×</button><div class="habitat-guide-head"><span>💡</span><div><small>ECO HABITAT GUIDE</small><h3 id="habitatGuideTitle">動物棲地提示</h3><p>動物只會在符合真實生活需求的棲地中入住。</p></div></div><div class="habitat-summary" id="habitatSummary"></div><div class="habitat-requirements" id="habitatRequirements"></div></div>';
+  modal.addEventListener('click',e=>{if(e.target===modal)closeHabitatGuide()});
+  modal.querySelector('.modal-close').addEventListener('click',closeHabitatGuide);
+  document.body.appendChild(modal);return modal;
+}
 function openHabitatGuide(){
+  const modal=ensureHabitatGuideModal();
   renderHabitatGuide();
-  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.remove('hide');
+  modal.classList.remove('hide');modal.style.display='flex';
+  requestAnimationFrame(()=>modal.querySelector('.modal-close')&&modal.querySelector('.modal-close').focus());
 }
 function closeHabitatGuide(event){
-  if(event&&event.target!==event.currentTarget)return;
-  const modal=document.getElementById('habitatGuideModal');if(modal)modal.classList.add('hide');
+  if(event&&event.currentTarget===event.target&&event.currentTarget.id!=='habitatGuideModal')return;
+  const modal=document.getElementById('habitatGuideModal');if(modal){modal.classList.add('hide');modal.style.display='';}
+}
+function habitatMaturity(h){
+  let score=0;if(h.effectiveFlowers)score++;if(h.grass>=2)score++;if(h.trees>=2)score++;if(h.ponds)score++;if(h.shrubs)score++;
+  return {score,label:['尚待營造','萌芽生態','發展中生態','穩定生態','豐富生態','完整生態'][score]};
 }
 function renderHabitatGuide(){
-  const status=baseHabitatStatus(),h=status.stats;
+  const status=baseHabitatStatus(),h=status.stats,m=habitatMaturity(h);
   const summary=document.getElementById('habitatSummary');
-  if(summary)summary.innerHTML=`<span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.rawFlowers} 朵，10 朵算 1 組</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 生態池 <b>${h.ponds}</b></span><span>🍃 綠意 <b>${h.greenery}</b></span>`;
+  if(summary)summary.innerHTML=`<span class="habitat-maturity">🌿 生態成熟度 <b>${'★'.repeat(m.score)}${'☆'.repeat(5-m.score)}</b><small>${m.label}</small></span><span>🌸 花朵組 <b>${h.flowerGroups}</b><small>${h.rawFlowers} 朵</small></span><span>🌿 草地 <b>${h.grass}</b></span><span>🌳 樹木 <b>${h.trees}</b></span><span>💧 水域 <b>${h.ponds}</b></span>`;
   const defs=[
-    ['butterfly','🦋','蝴蝶','在花叢間不規則飛行，停花採蜜，再飛往下一朵。'],
-    ['bee','🐝','蜜蜂','在花朵間短距離飛行與採蜜，花越多數量越多。'],
-    ['bird','🐦','小鳥','在天空滑翔，停在樹梢休息，再飛往另一棵樹。'],
-    ['squirrel','🐿️','松鼠','沿樹木間跑跳、停下抱食物，再爬往另一棵樹。'],
-    ['rabbit','🐇','野兔','只在草地跳躍與吃草，受驚時快速跳開。'],
-    ['otter','🦦','歐亞水獺','沿生態池岸邊巡遊、下水游泳並上岸休息。']
+    ['butterfly','蝴蝶','在花草附近低空飛行，雨天與夜間活動會減少。'],['bee','蜜蜂','只在花朵間採蜜，沒有花就不會入住。'],['ladybug','瓢蟲','停留在花與灌木上，協助捕食蚜蟲。'],['bird','小鳥','在樹木間飛行與停棲，沒有樹就不會長住。'],['squirrel','松鼠','只在樹木附近跑跳與覓食。'],['rabbit','野兔','在草地與灌木邊活動，不進入水域。'],['otter','歐亞水獺','一定要有水源；沿岸活動、下水游泳並上岸休息。'],['frog','青蛙','棲息在水域與岸邊草叢，雨天更活躍。'],['waterbird','水鳥','在池面游動並於岸邊休息。'],['fish','淡水魚','只會出現在生態池內。'],['cricket','蟋蟀','藏在草叢，僅於夜間出現。']
   ];
   const box=document.getElementById('habitatRequirements');
-  if(box)box.innerHTML=defs.map(([key,icon,name,behavior])=>{
-    const r=status[key],miss=habitatMissing(key,status);
-    return `<article class="habitat-animal-card ${r.ready?'ready':'not-ready'}"><div class="habitat-animal-title"><span>${icon}</span><div><b>${name}</b><small>${r.ready?'✅ 棲地符合，會入住':'尚未符合入住條件'}</small></div></div><ul>${r.needs.map(x=>`<li>${x}</li>`).join('')}</ul><p>${behavior}</p>${miss.length?`<div class="habitat-missing">${miss.map(x=>`<span>⚠️ ${x}</span>`).join('')}</div>`:''}</article>`;
-  }).join('');
+  if(box)box.innerHTML=defs.map(([key,name,behavior])=>{const r=status[key],miss=habitatMissing(key,status);return `<article class="habitat-animal-card ${r.ready?'ready':'not-ready'}"><div class="habitat-animal-title"><span class="habitat-real-art">${baseResidentArt(key)}</span><div><b>${name}</b><small>${r.ready?`✅ 棲地符合，目前可出現 ${r.count} 隻`:'尚未符合入住條件'}</small></div></div><ul>${r.needs.map(x=>`<li>${x}</li>`).join('')}</ul><p>${behavior}</p>${miss.length?`<div class="habitat-missing">${miss.map(x=>`<span>⚠️ ${x}</span>`).join('')}</div>`:''}</article>`;}).join('');
 }
 function baseResidentArt(kind){
   const arts={
-    butterfly:`<svg viewBox="0 0 64 48" aria-hidden="true"><path d="M31 24C22 7 6 8 8 24c2 12 16 11 23 2" fill="#ff90c2" stroke="#8f4168" stroke-width="2"/><path d="M33 24C42 7 58 8 56 24c-2 12-16 11-23 2" fill="#ffd45d" stroke="#8f6b23" stroke-width="2"/><path d="M29 23h6v17h-6z" rx="3" fill="#4c4b58"/><path d="M31 18c-4-6-8-7-11-7M33 18c4-6 8-7 11-7" fill="none" stroke="#4c4b58" stroke-width="2" stroke-linecap="round"/></svg>`,
-    bird:`<svg viewBox="0 0 72 56" aria-hidden="true"><path d="M15 37c8-17 30-23 42-8-8 17-30 19-42 8z" fill="#4da8c7" stroke="#235c71" stroke-width="2"/><path d="M50 27l14 4-12 7" fill="#f2b84b" stroke="#8d6422" stroke-width="2"/><circle cx="49" cy="28" r="2.4" fill="#16292f"/><path d="M20 38L8 48l17-3" fill="#3b7f98"/><path d="M30 34c7-9 15-7 18 1-8 7-14 7-18-1z" fill="#8bd4df"/></svg>`,
-    bee:`<svg viewBox="0 0 64 48" aria-hidden="true"><ellipse cx="32" cy="28" rx="16" ry="11" fill="#f4c430" stroke="#5b4a24" stroke-width="2"/><path d="M24 19v18M32 17v22M40 19v18" stroke="#5b4a24" stroke-width="4"/><ellipse cx="22" cy="15" rx="10" ry="7" fill="#d9f4ff" stroke="#79a8b8"/><ellipse cx="42" cy="15" rx="10" ry="7" fill="#d9f4ff" stroke="#79a8b8"/><circle cx="47" cy="26" r="3" fill="#222"/></svg>`,
-    squirrel:`<svg viewBox="0 0 72 64" aria-hidden="true"><path d="M48 38c16-3 21-20 8-27-10-5-21 5-17 17 3 8 11 9 17 5" fill="#c87935" stroke="#744421" stroke-width="3"/><ellipse cx="31" cy="43" rx="19" ry="14" fill="#b86a2f" stroke="#744421" stroke-width="2"/><circle cx="20" cy="31" r="11" fill="#c87935" stroke="#744421" stroke-width="2"/><path d="M16 22l-2-10 8 8M26 22l5-9 1 12" fill="#c87935" stroke="#744421" stroke-width="2"/><circle cx="17" cy="30" r="2"/><path d="M23 38c4 5 8 5 12 1" fill="none" stroke="#f3d2ac" stroke-width="3"/></svg>`,
-    rabbit:`<svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="35" cy="42" rx="20" ry="14" fill="#eee6d8" stroke="#8b8070" stroke-width="2"/><circle cx="23" cy="31" r="11" fill="#f5ede0" stroke="#8b8070" stroke-width="2"/><path d="M18 23C12 8 18 2 23 21M27 22c1-16 8-19 8 2" fill="#f5ede0" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="29" r="2" fill="#333"/><circle cx="54" cy="40" r="6" fill="#fff"/><path d="M24 37l-5 5M35 53l-3 7M45 52l4 7" stroke="#8b8070" stroke-width="3" stroke-linecap="round"/></svg>`,
-    otter:`<svg viewBox="0 0 80 56" aria-hidden="true"><path d="M13 36c5-17 25-26 43-15 9 6 11 15 5 22-8 9-34 8-48-7z" fill="#8b6548" stroke="#523a2a" stroke-width="2"/><circle cx="54" cy="24" r="12" fill="#9c7556" stroke="#523a2a" stroke-width="2"/><circle cx="59" cy="22" r="2" fill="#1f1b18"/><path d="M65 27l10 2-9 5" fill="#69482f"/><path d="M15 37C5 38 2 47 10 50" fill="none" stroke="#523a2a" stroke-width="5" stroke-linecap="round"/><path d="M48 31c4 4 8 4 12 0" fill="none" stroke="#f0dcc8" stroke-width="2" stroke-linecap="round"/></svg>`
-  };
-  return arts[kind]||'';
+    butterfly:`<svg viewBox="0 0 80 56" aria-hidden="true"><g stroke="#5f4639" stroke-width="2"><path d="M39 29C29 4 7 7 10 27c2 14 18 15 29 5" fill="#e99a39"/><path d="M41 29C51 4 73 7 70 27c-2 14-18 15-29 5" fill="#e99a39"/><path d="M38 30C26 27 19 39 27 48c6 7 13-3 13-13" fill="#754e8a"/><path d="M42 30c12-3 19 9 11 18-6 7-13-3-13-13" fill="#754e8a"/></g><ellipse cx="40" cy="32" rx="3" ry="14" fill="#3b302c"/><path d="M39 19c-4-7-8-9-12-9M41 19c4-7 8-9 12-9" fill="none" stroke="#3b302c" stroke-width="2"/></svg>`,
+    bee:`<svg viewBox="0 0 80 56" aria-hidden="true"><ellipse cx="43" cy="31" rx="19" ry="12" fill="#d79b18" stroke="#4c3b25" stroke-width="2"/><path d="M34 20v22M43 19v24M52 22v19" stroke="#3e3022" stroke-width="5"/><ellipse cx="31" cy="16" rx="13" ry="8" fill="#dff4f6" fill-opacity=".82" stroke="#789aa0"/><ellipse cx="50" cy="14" rx="13" ry="8" fill="#dff4f6" fill-opacity=".82" stroke="#789aa0"/><circle cx="61" cy="29" r="5" fill="#3d342d"/><path d="M65 25l6-5M65 31l7 1" stroke="#3d342d" stroke-width="2"/></svg>`,
+    ladybug:`<svg viewBox="0 0 64 56" aria-hidden="true"><ellipse cx="32" cy="31" rx="18" ry="17" fill="#d94b3d" stroke="#332b28" stroke-width="2"/><path d="M32 14v34" stroke="#332b28" stroke-width="2"/><circle cx="32" cy="13" r="8" fill="#332b28"/><g fill="#332b28"><circle cx="24" cy="25" r="3"/><circle cx="40" cy="25" r="3"/><circle cx="23" cy="37" r="3"/><circle cx="41" cy="37" r="3"/></g><path d="M20 22l-8-6M44 22l8-6M17 31H8M47 31h9M20 41l-8 7M44 41l8 7" stroke="#332b28" stroke-width="2"/></svg>`,
+    bird:`<svg viewBox="0 0 88 62" aria-hidden="true"><path d="M17 39c10-18 38-25 55-8-8 19-37 24-55 8z" fill="#a98b57" stroke="#41392d" stroke-width="2"/><path d="M45 35c8-12 19-10 24 1-10 9-18 9-24-1z" fill="#d8c39c"/><path d="M68 29l15 5-14 7" fill="#d49b35" stroke="#6d5125" stroke-width="2"/><circle cx="66" cy="28" r="2.5"/><path d="M22 40L8 52l20-5" fill="#756242"/><path d="M36 49l-2 9M48 48l2 9" stroke="#5a4934" stroke-width="2"/></svg>`,
+    squirrel:`<svg viewBox="0 0 88 72" aria-hidden="true"><path d="M57 46c22-2 27-25 13-36-12-9-31 3-25 19 4 11 16 14 25 7" fill="#a95f2d" stroke="#57351f" stroke-width="3"/><ellipse cx="37" cy="50" rx="23" ry="15" fill="#9f5729" stroke="#57351f" stroke-width="2"/><circle cx="24" cy="35" r="12" fill="#b66a36" stroke="#57351f" stroke-width="2"/><path d="M17 26l1-13 9 11M29 25l7-11 0 14" fill="#b66a36" stroke="#57351f" stroke-width="2"/><circle cx="20" cy="34" r="2"/><path d="M26 40c4 4 9 4 13 0" fill="none" stroke="#f0d0a8" stroke-width="3"/><path d="M35 52l7-10 8 10" fill="#8b4b23"/></svg>`,
+    rabbit:`<svg viewBox="0 0 82 72" aria-hidden="true"><ellipse cx="47" cy="50" rx="25" ry="15" fill="#a98f72" stroke="#51483f" stroke-width="2"/><circle cx="27" cy="37" r="13" fill="#b9a187" stroke="#51483f" stroke-width="2"/><path d="M20 27C13 7 20 1 27 25M31 26c1-21 10-24 10 2" fill="#b9a187" stroke="#51483f" stroke-width="4" stroke-linecap="round"/><circle cx="23" cy="35" r="2"/><circle cx="70" cy="47" r="7" fill="#ddd2c3"/><path d="M30 46l-8 5M43 62l-5 8M58 61l7 8" stroke="#51483f" stroke-width="3"/></svg>`,
+    otter:`<svg viewBox="0 0 104 64" aria-hidden="true"><path d="M14 43c10-22 43-30 67-15 12 8 11 22-2 28-20 9-53 3-65-13z" fill="#654a37" stroke="#35291f" stroke-width="2"/><ellipse cx="77" cy="29" rx="17" ry="15" fill="#70523d" stroke="#35291f" stroke-width="2"/><circle cx="68" cy="17" r="5" fill="#70523d" stroke="#35291f"/><circle cx="84" cy="17" r="5" fill="#70523d" stroke="#35291f"/><path d="M70 34c5 6 12 6 17 0" fill="#d7c1aa"/><circle cx="83" cy="27" r="2.4"/><circle cx="91" cy="32" r="2.5" fill="#1f1915"/><path d="M14 43C2 45 0 56 10 59" fill="none" stroke="#35291f" stroke-width="7" stroke-linecap="round"/><path d="M88 35l13-2M88 38l13 4" stroke="#35291f" stroke-width="1.5"/></svg>`,
+    frog:`<svg viewBox="0 0 76 58" aria-hidden="true"><ellipse cx="38" cy="37" rx="24" ry="14" fill="#668b42" stroke="#34472a" stroke-width="2"/><circle cx="25" cy="24" r="9" fill="#789d50"/><circle cx="51" cy="24" r="9" fill="#789d50"/><circle cx="24" cy="22" r="3"/><circle cx="52" cy="22" r="3"/><path d="M27 39c7 5 15 5 22 0M18 42L6 52M58 42l12 10" fill="none" stroke="#34472a" stroke-width="3"/></svg>`,
+    waterbird:`<svg viewBox="0 0 92 62" aria-hidden="true"><ellipse cx="47" cy="42" rx="28" ry="13" fill="#b9aa82" stroke="#494337" stroke-width="2"/><path d="M61 38c-2-18 8-27 18-20 7 5 3 18-7 21" fill="#7d765f" stroke="#494337" stroke-width="2"/><circle cx="77" cy="22" r="2"/><path d="M82 25l9 4-10 3" fill="#d89a34"/><path d="M22 43l-13 6 15 2" fill="#80765c"/><path d="M35 46c8-9 18-9 25 0" fill="none" stroke="#e3dac3" stroke-width="4"/></svg>`,
+    fish:`<svg viewBox="0 0 78 48" aria-hidden="true"><path d="M13 24c13-17 38-17 51 0-13 17-38 17-51 0z" fill="#5f9fa3" stroke="#31595c" stroke-width="2"/><path d="M14 24L2 12v24z" fill="#4a8589" stroke="#31595c" stroke-width="2"/><circle cx="57" cy="20" r="2.5"/><path d="M35 17l8-10 4 13M35 31l8 10 4-13" fill="#79b9b8" stroke="#31595c"/></svg>`,
+    cricket:`<svg viewBox="0 0 82 56" aria-hidden="true"><ellipse cx="43" cy="31" rx="18" ry="9" fill="#5f6f35" stroke="#30391e" stroke-width="2"/><circle cx="61" cy="28" r="8" fill="#6f8041" stroke="#30391e"/><path d="M29 33L9 48M39 37L25 53M51 37l13 15M57 23l15-14M64 22l14-8" fill="none" stroke="#30391e" stroke-width="3"/><path d="M31 25L14 9M43 24L34 6" stroke="#30391e" stroke-width="2"/></svg>`
+  };return arts[kind]||'';
 }
 function interactBaseResident(el){
-  if(!el||el.classList.contains('interacting'))return;
-  el.classList.add('interacting');
-  const burst=document.createElement('span');burst.className='resident-sparkles';burst.setAttribute('aria-hidden','true');burst.innerHTML='<i>✨</i><i>💚</i><i>✨</i>';el.appendChild(burst);
-  window.setTimeout(()=>{el.classList.remove('interacting');burst.remove()},1100);
+  if(!el||el.classList.contains('interacting'))return;el.classList.add('interacting');const burst=document.createElement('span');burst.className='resident-sparkles';burst.setAttribute('aria-hidden','true');burst.innerHTML='<i>✨</i><i>💚</i><i>✨</i>';el.appendChild(burst);window.setTimeout(()=>{el.classList.remove('interacting');burst.remove()},1100);
 }
 function renderBaseResidents(){
-  const layer=document.querySelector('#baseScene .base-residents');if(!layer)return;
-  const status=baseHabitatStatus(),residents=[];
+  const layer=document.querySelector('#baseScene .base-residents');if(!layer)return;const status=baseHabitatStatus(),residents=[];
   const addMany=(kind,name,count,spots)=>{for(let i=0;i<count;i++){const p=spots[i%spots.length];residents.push({kind,name,x:p[0]+(i%2)*3,y:p[1]+(i%3)*2,delay:`-${i*1.7}s`})}};
-  addMany('butterfly','蝴蝶',status.butterfly.count,[[15,42],[34,48],[58,38],[75,45],[46,55],[84,34]]);
-  addMany('bee','蜜蜂',status.bee.count,[[22,51],[39,43],[64,49],[79,55],[50,37],[30,58]]);
-  addMany('bird','小鳥',status.bird.count,[[66,27],[30,25],[82,20],[48,31]]);
-  addMany('squirrel','松鼠',status.squirrel.count,[[27,66],[58,61],[76,68]]);
-  addMany('rabbit','野兔',status.rabbit.count,[[18,72],[52,76],[78,72]]);
-  addMany('otter','歐亞水獺',status.otter.count,[[38,79],[62,81]]);
+  addMany('butterfly','蝴蝶',status.butterfly.count,[[15,42],[34,48],[58,38],[75,45],[46,55]]);addMany('bee','蜜蜂',status.bee.count,[[22,51],[39,43],[64,49],[79,55]]);addMany('ladybug','瓢蟲',status.ladybug.count,[[25,64],[50,62],[72,65]]);addMany('bird','小鳥',status.bird.count,[[66,27],[30,25],[82,20],[48,31]]);addMany('squirrel','松鼠',status.squirrel.count,[[27,66],[58,61],[76,68]]);addMany('rabbit','野兔',status.rabbit.count,[[18,72],[52,76],[78,72]]);addMany('otter','歐亞水獺',status.otter.count,[[38,79],[62,81]]);addMany('frog','青蛙',status.frog.count,[[34,82],[57,83],[70,80]]);addMany('waterbird','水鳥',status.waterbird.count,[[45,76],[61,77]]);addMany('fish','淡水魚',status.fish.count,[[44,84],[53,86],[62,84]]);addMany('cricket','蟋蟀',status.cricket.count,[[20,80],[48,79],[75,81]]);
   layer.innerHTML=residents.map(r=>`<span class="base-resident resident-${r.kind}" role="button" tabindex="0" aria-label="和${r.name}互動" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" onclick="interactBaseResident(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();interactBaseResident(this)}">${baseResidentArt(r.kind)}</span>`).join('');
 }
-
 
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
@@ -1587,7 +1591,7 @@ setInterval(()=>{
 let baseVillageRows=[],baseVillageFilter='completion',currentVisitorBase=null,visitorZoom=1;
 const BASE_VILLAGE_DEMOS=[
  {uid:'demo-otter',name:'水獺小隊長',avatar:'🦦',level:18,title:'河川守護者',intro:'保留乾淨水域，也替小動物留一個家。',likes:238,badges:8,updatedAtMs:Date.now()-3600000,placements:[['tree',18,70],['pine',32,58],['pond',51,70],['bench',68,68],['solar',80,52],['flower',41,77]]},
- {uid:'demo-crab',name:'鱟寶守護者',avatar:'🦀',level:24,title:'海岸守護者',intro:'一起保護潮間帶與古老的鱟！',likes:196,badges:10,updatedAtMs:Date.now()-7200000,placements:[['palm',20,67],['recycle',35,70],['bird',55,55],['wind',72,52],['flower',62,75],['tree',84,68]]},
+ {uid:'demo-crab',name:'鱟寶守護者',avatar:'🌊',level:24,title:'海岸守護者',intro:'一起保護潮間帶與古老的鱟！',likes:196,badges:10,updatedAtMs:Date.now()-7200000,placements:[['palm',20,67],['recycle',35,70],['bird',55,55],['wind',72,52],['flower',62,75],['tree',84,68]]},
  {uid:'demo-butterfly',name:'蝴蝶花園家',avatar:'🦋',level:15,title:'生態設計師',intro:'種下原生植物，等待蝴蝶來作客。',likes:154,badges:6,updatedAtMs:Date.now()-10800000,placements:[['flower',18,72],['flower',30,65],['tree',48,58],['bench',62,72],['flower',76,63],['pond',87,73]]}
 ];
 function ensureVillageState(){
@@ -1641,7 +1645,7 @@ function updateBaseVisibility(v){ensureVillageState();st.baseVisibility=v;save()
 function updateBaseIntro(v){ensureVillageState();st.baseIntro=String(v||'').trim().slice(0,40);save();}
 async function publishMyBase(){ensureVillageState();updateBaseIntro(document.getElementById('baseIntroInput')?.value||st.baseIntro);updateBaseVisibility(document.getElementById('baseVisibilitySelect')?.value||st.baseVisibility);if(st.baseVisibility==='private'){if(typeof removePublicBase==='function')await removePublicBase().catch(()=>{});toast('🔒 基地已設為不公開');return;}if(typeof savePublicBase!=='function'){toast('請先使用 Google 登入，才能發布基地');return;}try{await savePublicBase();toast('📸 基地快照已更新！');refreshBaseVillage();}catch(e){console.error(e);toast('發布失敗，請檢查網路或 Firestore Rules');}}
 
-/* ===== V9.8.2：棲地提示燈泡可靠點擊修正 ===== */
+/* ===== V10.0：棲地提示燈泡可靠點擊修正 ===== */
 (function setupHabitatBulbV982(){
   function getBulb(){return document.querySelector('#basePage .habitat-hint-button')}
   function flashBulb(btn){

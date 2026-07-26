@@ -4824,7 +4824,7 @@ body.header-compact #mainHeader,
   .home-aqi-metric.show-aqi-tip::after{transform:translateX(-50%) translateY(0)}
 }
 
-/* ===== V9.8.2：小型燈泡提示按鈕（可見小、觸控區大） ===== */
+/* ===== V10.0：小型燈泡提示按鈕（可見小、觸控區大） ===== */
 #basePage .build-toolbar-title{
   position:relative!important;
   z-index:120!important;
@@ -4891,3 +4891,17 @@ body.header-compact #mainHeader,
   #habitatBulbCoach{position:fixed;left:50%;top:auto;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);text-align:center}
   #habitatBulbCoach::before{display:none}
 }
+
+/* ===== V10.0 真實棲地與動物樣式 ===== */
+.habitat-real-art{display:inline-flex!important;width:58px;height:46px;flex:0 0 58px;align-items:center;justify-content:center}
+.habitat-real-art svg{width:100%;height:100%;display:block}
+.habitat-maturity{grid-column:1/-1;background:linear-gradient(135deg,#effbea,#dff5e5)!important;border-color:#8bcf9b!important}
+.habitat-maturity b{letter-spacing:2px;color:#e3a515!important}
+.resident-ladybug{width:34px;height:30px;animation:residentHabitatButterfly 18s ease-in-out infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-frog{width:44px;height:36px;animation:residentGroundRabbit 20s steps(1,end) infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-waterbird{width:62px;height:44px;animation:residentHabitatOtter 24s ease-in-out infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-fish{width:38px;height:28px;opacity:.88;animation:residentHabitatOtter 14s ease-in-out infinite alternate!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-cricket{width:34px;height:28px;animation:residentGroundRabbit 13s steps(1,end) infinite!important;animation-delay:var(--resident-delay,0s)!important}
+.resident-bee{width:38px;height:30px}.resident-bird{width:58px;height:42px}.resident-squirrel{width:52px;height:48px}.resident-rabbit{width:54px;height:48px}.resident-otter{width:76px;height:48px}
+.resident-frog.interacting,.resident-waterbird.interacting,.resident-fish.interacting,.resident-ladybug.interacting,.resident-cricket.interacting{transform:translate(-50%,-50%) translateY(-10px) scale(1.12)!important}
+@media(max-width:700px){.habitat-real-art{width:50px;height:40px;flex-basis:50px}.resident-otter{width:66px}.resident-waterbird{width:54px}}
