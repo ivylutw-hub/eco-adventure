@@ -314,6 +314,32 @@ function normalizeTotalRankingRow(doc){
   updatedAt:x.updatedAt||x.lastActiveAt
  };
 }
+async function ensureRankingCloudReady(timeoutMs=5000){
+  if(cloudReady&&cloudDb&&cloudUser)return true;
+  if(typeof firebase==='undefined'||!firebaseConfigured())return false;
+  const started=Date.now();
+  while(Date.now()-started<timeoutMs){
+    const user=cloudAuth?.currentUser||firebase.auth?.().currentUser;
+    if(user&&cloudDb){cloudUser=user;cloudReady=true;return true;}
+    await new Promise(resolve=>setTimeout(resolve,180));
+  }
+  return Boolean(cloudReady&&cloudDb&&cloudUser);
+}
+async function rankingGetWithRetry(makeQuery,maxAttempts=3){
+  let lastError;
+  for(let i=1;i<=maxAttempts;i++){
+    try{return await makeQuery().get({source:'server'});}
+    catch(err){
+      lastError=err;
+      // iPad/Safari 從背景恢復時，Firestore 可能短暫回報 unavailable；重新啟用網路後重試。
+      if(cloudDb&&['unavailable','failed-precondition','deadline-exceeded','unknown'].includes(err?.code||'')){
+        try{await cloudDb.enableNetwork();}catch(_e){}
+      }
+      if(i<maxAttempts)await new Promise(resolve=>setTimeout(resolve,450*i));
+    }
+  }
+  throw lastError;
+}
 async function refreshLeaderboard(mode=activeRankingMode){
  activeRankingMode=mode==='total'?'total':'weekly';
  ensureWeeklyLocal();
@@ -329,11 +355,11 @@ async function refreshLeaderboard(mode=activeRankingMode){
  if(label)label.textContent=isWeekly?weekDateRange():'累計至今';
  if(pts)pts.textContent=(isWeekly?Number(st.weekly?.points||0):Number(st.exp||0)).toLocaleString('zh-TW');
  if(!list)return;
- if(!cloudReady){if(rank)rank.textContent='—';list.innerHTML='<div class="empty-ranking">請先使用 Google 登入，才能查看共同排行榜。</div>';setCloudStatus('offline','☁️ 尚未登入 Google');return;}
+ if(!(await ensureRankingCloudReady())){if(rank)rank.textContent='—';list.innerHTML='<div class="empty-ranking">請先使用 Google 登入，才能查看共同排行榜。</div>';setCloudStatus('waiting','☁️ 等待 Google 登入狀態…');return;}
  try{
   let rows=[];
   if(isWeekly){
-   const snap=await cloudDb.collection('weeklyRankings').doc(currentWeekId()).collection('players').limit(500).get();
+   const snap=await rankingGetWithRetry(()=>cloudDb.collection('weeklyRankings').doc(currentWeekId()).collection('players').limit(500));
    const rawRows=snap.docs.map(d=>({id:d.id,...d.data()}));
    // 舊版週榜可能只有 guardianExp、沒有 points；統一換算後再去除重複玩家。
    const merged=new Map();
@@ -349,7 +375,7 @@ async function refreshLeaderboard(mode=activeRankingMode){
     return diff||timestampMillis(a.updatedAt)-timestampMillis(b.updatedAt)||String(a.name||'').localeCompare(String(b.name||''),'zh-Hant');
    });
   }else{
-   const snap=await cloudDb.collection('players').limit(500).get();
+   const snap=await rankingGetWithRetry(()=>cloudDb.collection('players').limit(500));
    rows=snap.docs.map(normalizeTotalRankingRow).sort((a,b)=>{
     const diff=(Number(b.guardianExp)||0)-(Number(a.guardianExp)||0);
     return diff||timestampMillis(b.updatedAt)-timestampMillis(a.updatedAt);
@@ -362,7 +388,7 @@ async function refreshLeaderboard(mode=activeRankingMode){
   if(rank)rank.textContent=myIndex>=0?`第 ${myIndex+1} 名`:'500 名以外';list.innerHTML='';
   rows.forEach((x,i)=>{const row=document.createElement('button');row.type='button';row.className='rank-row rank-row-button'+(x.uid===cloudUser.uid?' me':'');row.setAttribute('aria-label',`查看 ${x.name||'環保守護者'} 的守護數據`);const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);const score=isWeekly?Number(x.points||0):Number(x.guardianExp||0);const scoreLabel=isWeekly?'本週積分':'守護經驗';row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${score.toLocaleString('zh-TW')}</b><small>${scoreLabel}</small></div><span class="rank-open">查看分析 ›</span>`;row.addEventListener('click',()=>openRankProfile(i));list.appendChild(row);});
   setCloudStatus('online',`☁️ ${isWeekly?'每週':'總'}排行榜已更新`);
- }catch(err){console.error('讀取排行榜失敗',err);list.innerHTML='<div class="empty-ranking">目前無法讀取雲端排行，遊戲進度不受影響。</div>';setCloudStatus('offline','☁️ 排行榜暫時離線，遊戲進度不受影響');}
+ }catch(err){console.error('讀取排行榜失敗',err);const trulyOffline=navigator.onLine===false;list.innerHTML=`<div class="empty-ranking">${trulyOffline?'目前沒有網路連線。':'雲端排行榜暫時忙碌，請按「更新排行」再試一次。'}</div>`;setCloudStatus(trulyOffline?'offline':'waiting',trulyOffline?'⚠️ 目前離線':'☁️ 雲端連線中，請稍後重試');}
 }
 function rankClamp(value){return Math.max(0,Math.min(100,Number(value)||0))}
 function rankMetric(label,value,icon){return `<div class="rank-data-item"><span>${icon}</span><small>${label}</small><b>${escapeRankText(value)}</b></div>`}

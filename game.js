@@ -358,24 +358,22 @@ function celestialPosition(date=new Date()){
 }
 function applyCelestialPosition(el,date=new Date()){
  if(!el)return;
- const pos=celestialPosition(date);
- el.style.setProperty('--celestial-x',`${pos.x.toFixed(2)}%`);
- el.style.setProperty('--celestial-y',`${pos.y.toFixed(2)}%`);
- el.classList.toggle('header-night',!pos.isDay);
- el.classList.toggle('header-day',pos.isDay);
- document.body.classList.toggle('night-mode',!pos.isDay);
+ // V10.1.0：只有「我的基地」有日夜變化；首頁與所有功能頁固定明亮白天。
+ el.style.setProperty('--celestial-x','54%');
+ el.style.setProperty('--celestial-y','14%');
+ el.classList.remove('header-night');
+ el.classList.add('header-day');
+ document.body.classList.remove('night-mode');
 }
 function renderHeaderNature(){
  const el=document.getElementById('mainHeader');if(!el)return;
- const now=new Date(),pos=celestialPosition(now);
- applyCelestialPosition(el,now);
+ applyCelestialPosition(el,new Date());
  const sun=el.querySelector('.header-sun'),moon=el.querySelector('.header-moon');
  const stars=el.querySelector('.header-stars'),meteor=el.querySelector('.header-meteor');
- // 日月採互斥顯示，避免舊樣式或轉場造成同時出現。
- if(sun)sun.hidden=!pos.isDay;
- if(moon)moon.hidden=pos.isDay;
- if(stars)stars.hidden=pos.isDay;
- if(meteor)meteor.hidden=pos.isDay;
+ if(sun)sun.hidden=false;
+ if(moon)moon.hidden=true;
+ if(stars)stars.hidden=true;
+ if(meteor)meteor.hidden=true;
 }
 function showAchievements(){renderAchievements();page('achievementPage')}
 function questionBankTotal(){return Number(window.QUESTION_STATS&&window.QUESTION_STATS.totalUnique)||2844}
@@ -845,6 +843,15 @@ function advanceBaseWeather(){
   baseWeatherIndex=(baseWeatherIndex+1)%BASE_WEATHERS.length;
   renderBaseSky();
 }
+function realMoonPhase(date=new Date()){
+  // 以已知新月 2000-01-06 18:14 UTC 為基準，平均朔望月 29.530588853 日。
+  const synodic=29.530588853;
+  const knownNewMoon=Date.UTC(2000,0,6,18,14,0);
+  const age=((date.getTime()-knownNewMoon)/86400000%synodic+synodic)%synodic;
+  const phases=['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  const index=Math.floor((age+synodic/16)/(synodic/8))%8;
+  return{emoji:phases[index],age,index,label:['新月','娥眉月','上弦月','盈凸月','滿月','虧凸月','下弦月','殘月'][index]};
+}
 function renderBaseSky(){
   const scene=document.getElementById('baseScene');
   if(!scene)return;
@@ -863,7 +870,7 @@ function renderBaseSky(){
   if(sky){
     sky.innerHTML=`
       <span class="base-stars" aria-hidden="true"><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i></span>
-      <span class="base-celestial" aria-hidden="true">${mode==='day'?'☀️':'🌙'}</span>
+      <span class="base-celestial" aria-hidden="true">${mode==='day'?'☀️':realMoonPhase(new Date()).emoji}</span>
       <span class="base-cloud cloud-one" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-two" aria-hidden="true">☁️</span>
       <span class="base-cloud cloud-three" aria-hidden="true">☁️</span>
@@ -872,7 +879,8 @@ function renderBaseSky(){
       <span class="base-cloud cloud-six" aria-hidden="true">☁️</span>
       <span class="base-rain" aria-hidden="true">${Array.from({length:22},(_,i)=>`<i style="--x:${4+(i*13)%92}%;--delay:${(i%11)*.8}s;--duration:${9+(i%5)*1.2}s"></i>`).join('')}</span>`;
   }
-  if(badge)badge.textContent=`${mode==='day'?'白天':'黑夜'}・${weather.icon} ${weather.label}`;
+  if(badge){const moon=realMoonPhase(new Date());badge.textContent=mode==='day'?`白天・${weather.icon} ${weather.label}`:`夜晚・${moon.emoji} ${moon.label}・${weather.icon} ${weather.label}`;badge.title=mode==='day'?'基地依金門即時天氣顯示':`目前月相：${moon.label}（月齡約 ${moon.age.toFixed(1)} 天）`; }
+  if(scene.querySelector('.base-residents'))renderBaseResidents();
 }
 function ensureBaseLayout(){
   if(!Array.isArray(st.basePlacements))st.basePlacements=[];
@@ -1174,15 +1182,24 @@ function interactBaseResident(el){
 function renderBaseResidents(){
   const layer=document.querySelector('#baseScene .base-residents');if(!layer)return;
   const status=baseHabitatStatus(),residents=[];
+  const mode=baseLiveWeather?.mode||baseTimeMode();
+  const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
+  const rainy=weather.id==='rainy';
   const addMany=(kind,name,count,spots)=>{for(let i=0;i<count;i++){const p=spots[i%spots.length];residents.push({kind,name,x:p[0]+(i%2)*3,y:p[1]+(i%3)*2,delay:`-${i*1.7}s`})}};
-  addMany('butterfly','蝴蝶',status.butterfly.count,[[15,42],[34,48],[58,38],[75,45],[46,55],[84,34]]);
-  addMany('bee','蜜蜂',status.bee.count,[[22,51],[39,43],[64,49],[79,55],[50,37],[30,58]]);
-  addMany('bird','小鳥',status.bird.count,[[66,27],[30,25],[82,20],[48,31]]);
-  addMany('squirrel','松鼠',status.squirrel.count,[[27,66],[58,61],[76,68]]);
-  addMany('rabbit','野兔',status.rabbit.count,[[18,72],[52,76],[78,72]]);
-  addMany('otter','歐亞水獺',status.otter.count,[[38,79],[62,81]]);
+  if(mode==='day'){
+    // 日行性：蜜蜂、蝴蝶、多數小鳥與松鼠白天活動；雨天飛行昆蟲明顯減少。
+    addMany('butterfly','蝴蝶',rainy?0:status.butterfly.count,[[15,42],[34,48],[58,38],[75,45],[46,55],[84,34]]);
+    addMany('bee','蜜蜂',rainy?Math.min(1,status.bee.count):status.bee.count,[[22,51],[39,43],[64,49],[79,55],[50,37],[30,58]]);
+    addMany('bird','小鳥',rainy?Math.ceil(status.bird.count/2):status.bird.count,[[66,27],[30,25],[82,20],[48,31]]);
+    addMany('squirrel','松鼠',status.squirrel.count,[[27,66],[58,61],[76,68]]);
+  }else{
+    // 歐亞水獺與野兔多在黃昏、夜間及清晨較活躍；日行性動物夜晚回巢休息。
+    addMany('rabbit','野兔',status.rabbit.count,[[18,72],[52,76],[78,72]]);
+    addMany('otter','歐亞水獺',status.otter.count,[[38,79],[62,81]]);
+  }
   layer.innerHTML=residents.map(r=>`<span class="base-resident resident-${r.kind}" role="button" tabindex="0" aria-label="和${r.name}互動" style="--resident-x:${r.x}%;--resident-y:${r.y}%;--resident-delay:${r.delay}" onclick="interactBaseResident(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();interactBaseResident(this)}">${baseResidentArt(r.kind)}</span>`).join('');
 }
+
 
 
 function renderBase(){

@@ -5026,3 +5026,42 @@ body.modal-open{overflow:hidden!important}
   #basePage{--base-object-scale:.68}
   #basePage .base-scene-frame{aspect-ratio:16/8!important;max-height:68dvh!important}
 }
+
+
+/* ===== V10.1.0 生態日夜、基地比例、工具縮小與全裝置修正 ===== */
+/* 除「我的基地」外，首頁與所有功能頁固定明亮白天。 */
+body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink,#173b36)!important}
+#mainHeader,#mainHeader.header-day,#mainHeader.header-night{background:linear-gradient(180deg,#72cef4 0%,#bcecff 58%,#eaf9d7 100%)!important;color:#173b36!important}
+#mainHeader .header-moon,#mainHeader .header-stars,#mainHeader .header-meteor{display:none!important}
+#mainHeader .header-sun{display:block!important}
+
+/* 天空約 30%，地面／可建設區約 70%。 */
+#basePage .base-sky{inset:0 0 70% 0!important;height:30%!important}
+#basePage .base-grassland{top:30%!important;bottom:0!important;height:auto!important}
+#basePage .base-buildings,#basePage .base-residents,#basePage .base-path-layer{inset:0!important}
+#basePage .base-weather-badge{top:12px!important}
+
+/* 建設工具視覺縮小，但觸控區仍至少 44px。 */
+#basePage .base-build-toolbar{padding:10px!important;gap:8px!important}
+#basePage .build-toolbar-title{font-size:14px!important;min-height:44px!important}
+#basePage .toolbar-main-actions{gap:6px!important}
+#basePage .toolbar-main-actions button,#basePage .base-save-box button{min-height:44px!important;padding:7px 10px!important;font-size:13px!important;border-radius:11px!important}
+#basePage .habitat-hint-button{width:44px!important;height:44px!important;min-width:44px!important;font-size:18px!important}
+#basePage .base-build-toolbar .shop{gap:7px!important}
+#basePage .base-build-toolbar .shop-item{width:92px!important;min-width:92px!important;padding:7px!important;border-radius:13px!important}
+#basePage .base-build-toolbar .shop-icon{height:58px!important;min-height:58px!important}
+#basePage .base-build-toolbar .shop-item h4{font-size:12px!important;margin:3px 0!important}
+#basePage .base-build-toolbar .shop-item p{font-size:10px!important;line-height:1.25!important;min-height:25px!important}
+#basePage .base-build-toolbar .owned-count{font-size:9px!important}
+#basePage .base-build-toolbar .shop-buy-btn{width:78px!important;min-height:38px!important;font-size:11px!important}
+
+/* 遊戲畫面依裝置與方向自適應，保留可建設空間。 */
+#basePage .base-scene-frame{width:100%!important;overflow:hidden!important}
+#basePage .base-scene{width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:16/9!important}
+@media (max-width:1100px){#basePage .base-scene{aspect-ratio:4/3!important}}
+@media (max-width:700px){#basePage .base-scene{aspect-ratio:4/5!important}.base-building{--device-building-scale:.82}}
+@media (max-width:430px){#basePage .base-scene{aspect-ratio:3/4!important}.base-building{--device-building-scale:.72}}
+@media (orientation:landscape) and (max-height:650px){#basePage .base-scene{aspect-ratio:16/9!important;max-height:78vh!important}}
+
+/* 排行榜連線中的狀態不誤標為離線。 */
+.cloud-status.waiting{background:#fff7d6!important;color:#745b00!important;border-color:#ead17c!important}
