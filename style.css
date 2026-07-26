@@ -4915,3 +4915,42 @@ body.modal-open{overflow:hidden!important}
   #habitatGuideModal{padding:12px!important;align-items:center!important;justify-content:center!important}
   #habitatGuideModal .habitat-guide-card{width:min(100%,560px)!important;max-height:88vh!important}
 }
+
+
+/* ===== V10.0.2：守護基地跨裝置自適應（最終覆寫） ===== */
+#basePage .base-dashboard-grid{width:100%!important;min-width:0!important}
+#basePage .base-workspace-card{min-width:0!important;width:100%!important}
+#basePage .base-scene-frame{
+  width:100%!important;
+  height:clamp(520px,calc(100dvh - 250px),760px)!important;
+  min-height:0!important;
+  max-height:760px!important;
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+}
+#basePage .base-scene-frame>.base-scene{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  box-sizing:border-box!important;
+}
+@media (max-width:1100px){
+  #basePage .base-dashboard-grid{grid-template-columns:1fr!important}
+  #basePage .base-scene-frame{height:auto!important;aspect-ratio:4/3!important;max-height:70dvh!important}
+}
+@media (max-width:760px){
+  #basePage{padding-inline:8px!important}
+  #basePage .base-scene-frame{height:auto!important;aspect-ratio:4/5!important;max-height:66dvh!important;border-radius:18px!important}
+  #basePage .base-build-toolbar{width:100%!important;box-sizing:border-box!important;overflow:visible!important}
+  #basePage .toolbar-main-actions button,#basePage .base-save-box button{min-width:0!important}
+}
+@media (max-width:420px){
+  #basePage .base-scene-frame{aspect-ratio:3/4!important;max-height:62dvh!important}
+  #basePage .base-build-toolbar{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"title" "tools" "save" "shop"!important}
+  #basePage .build-toolbar-title{justify-content:center!important}
+  #basePage .toolbar-main-actions{width:100%!important}
+  #basePage .base-save-box button{width:100%!important}
+}
