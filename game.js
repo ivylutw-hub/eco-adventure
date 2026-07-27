@@ -1217,9 +1217,47 @@ function renderBaseResidents(){
 
 
 
+
+let baseShopCategory='all';
+function baseItemCategory(id){
+  if(['tree','pine','palm','cherry','shrub','flowers','grass','butterflyGarden','ecoPond','birdhouse'].includes(id))return 'nature';
+  if(['solar','wind','recycle','rainBarrel','ecoLamp','battery','bike','compost'].includes(id))return 'eco';
+  if(['logRest','rockRest','streamRest','bench','pavilion','boardwalk','birdDeck'].includes(id))return 'rest';
+  return 'learn';
+}
+function setBaseShopCategory(category,btn){
+  baseShopCategory=category||'all';
+  document.querySelectorAll('#baseShopFilters [data-base-category]').forEach(x=>x.classList.toggle('active',x===btn||x.dataset.baseCategory===baseShopCategory));
+  renderBaseShop();
+}
+function baseQualityScores(){
+  const ids=(st.owned||[]);
+  const countBy=cat=>ids.reduce((n,id)=>n+(baseItemCategory(id)===cat?1:0),0);
+  const unique=new Set(ids).size,total=ids.length;
+  const nature=Math.min(100,countBy('nature')*9);
+  const eco=Math.min(100,countBy('eco')*12);
+  const beauty=Math.min(100,unique*5+Math.min(25,total*2));
+  const guardian=Math.min(100,Math.round((nature+eco+beauty)/3));
+  return {nature,eco,beauty,guardian};
+}
+function updateBaseQuality(){
+  const q=baseQualityScores();
+  [['baseNatureScore',q.nature],['baseEcoScore',q.eco],['baseBeautyScore',q.beauty],['baseGuardianScore',q.guardian]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+  const hint=document.getElementById('baseEditHint');if(hint)hint.textContent=st.baseEditMode?'拖曳物件調整位置；完成後點「完成擺設」':'點擊「編輯基地」即可移動物件';
+}
+function renderBaseShop(){
+  const shopEl=document.getElementById('shop');if(!shopEl)return;
+  shopEl.innerHTML='';
+  [...ITEMS].filter(it=>!it.hidden).filter(it=>baseShopCategory==='all'||baseItemCategory(it.id)===baseShopCategory).sort((a,b)=>Number(a.cost)-Number(b.cost)||String(a.name).localeCompare(String(b.name),'zh-Hant')).forEach(it=>{
+    const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
+    d.dataset.category=baseItemCategory(it.id);
+    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><div class="shop-item-copy"><h4>${it.name}</h4><p>${it.desc}</p></div><small class="owned-count">已擁有 ${count} ${it.id==='flowers'?'朵':'個'}</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')" ${st.coins<it.cost?'data-insufficient="true"':''}><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">${it.id==='flowers'?'購買 10 朵':'建設'}</span></button>`;shopEl.appendChild(d);
+  });
+  if(!shopEl.children.length)shopEl.innerHTML='<div class="base-shop-empty">這個分類目前沒有可購買的建設。</div>';
+}
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
-  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
+  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-horizon" aria-hidden="true"><span class="hill hill-far"></span><span class="hill hill-near"></span></div><div class="base-grassland" aria-hidden="true"><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
@@ -1229,10 +1267,8 @@ function renderBase(){
   renderBaseResidents();
   renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
-  shop.innerHTML='';[...ITEMS].filter(it=>!it.hidden).sort((a,b)=>Number(a.cost)-Number(b.cost)||String(a.name).localeCompare(String(b.name),'zh-Hant')).forEach(it=>{
-    const count=st.owned.reduce((n,id)=>n+(id===it.id?1:0),0),d=document.createElement('div');d.className='shop-item';
-    d.innerHTML=`${it.isNew?'<span class="shop-new-badge">新</span>':''}<div class="shop-icon">${baseBuildingArt(it)}</div><h4>${it.name}</h4><p>${it.desc}</p><small class="owned-count">目前擁有：${count} ${it.id==='flowers'?'朵':'個'}</small><button class="shop-buy-btn" onclick="buyItem('${it.id}')"><span class="shop-price">🪙 ${it.cost}</span><span class="shop-buy-label">${it.id==='flowers'?'購買 10 朵':'建設'}</span></button>`;shop.appendChild(d);
-  });
+  renderBaseShop();
+  updateBaseQuality();
   updateBaseDashboard();
 }
 function buyItem(id){

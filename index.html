@@ -194,8 +194,15 @@
 <button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
 </div>
 <div class="base-status-row">
-<span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
-<span>目前金幣：🪙 <b id="baseCoins">0</b></span>
+<span class="base-zoom-readout">畫面 <b id="baseZoomLabel">100%</b></span>
+<span>金幣 🪙 <b id="baseCoins">0</b></span>
+<span class="base-edit-hint" id="baseEditHint">點擊「編輯基地」即可移動物件</span>
+</div>
+<div class="base-quality-strip" aria-label="基地成長指標">
+<div><span>🌿</span><small>自然度</small><b id="baseNatureScore">0</b></div>
+<div><span>♻️</span><small>環保度</small><b id="baseEcoScore">0</b></div>
+<div><span>✨</span><small>美觀度</small><b id="baseBeautyScore">0</b></div>
+<div><span>🛡️</span><small>守護值</small><b id="baseGuardianScore">0</b></div>
 </div>
 </section>
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
@@ -207,6 +214,16 @@
 <button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
 </div>
 <div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small id="baseVillageSyncText">☁️ 登入後自動同步基地村</small></div>
+<div class="base-shop-head">
+<div><b>基地建設商店</b><small>選擇分類，更快找到需要的建設</small></div>
+<div class="base-shop-filters" id="baseShopFilters" aria-label="基地商店分類">
+<button class="active" data-base-category="all" onclick="setBaseShopCategory('all',this)" type="button">全部</button>
+<button data-base-category="nature" onclick="setBaseShopCategory('nature',this)" type="button">🌿 自然</button>
+<button data-base-category="eco" onclick="setBaseShopCategory('eco',this)" type="button">♻️ 環保</button>
+<button data-base-category="rest" onclick="setBaseShopCategory('rest',this)" type="button">🪑 休憩</button>
+<button data-base-category="learn" onclick="setBaseShopCategory('learn',this)" type="button">📚 學習</button>
+</div>
+</div>
 <div class="shop" id="shop"></div>
 </div>
 </div>
@@ -506,6 +523,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10204"></script>
-<script src="firebase.js?v=10204"></script>
+<script src="game.js?v=10300"></script>
+<script src="firebase.js?v=10300"></script>
 </body></html>
