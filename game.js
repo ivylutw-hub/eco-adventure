@@ -909,11 +909,11 @@ const HABITAT_BASE_META={
 function habitatGeographyMarkup(id,meta){
   const common=`<div class="habitat-geography habitat-geography-${id}" aria-hidden="true"><div class="geo-back"></div><div class="geo-mid"></div><div class="geo-front"></div>`;
   const details={
-    forest:'<div class="geo-creek"></div><div class="geo-tree-line"></div><div class="geo-forest-clearing"></div>',
-    garden:'<div class="geo-flower-field field-a"></div><div class="geo-flower-field field-b"></div><div class="geo-garden-path"></div><div class="geo-orchard"></div>',
-    wetland:'<div class="geo-wetland-water"></div><div class="geo-mudflat"></div><div class="geo-reeds reeds-a"></div><div class="geo-reeds reeds-b"></div><div class="geo-boardwalk"></div>',
-    coast:'<div class="geo-sea"></div><div class="geo-wave wave-a"></div><div class="geo-wave wave-b"></div><div class="geo-beach"></div><div class="geo-tidepool pool-a"></div><div class="geo-tidepool pool-b"></div><div class="geo-rocks"></div>',
-    green:'<div class="geo-green-hills"></div><div class="geo-eco-plaza"></div><div class="geo-energy-pad pad-a"></div><div class="geo-energy-pad pad-b"></div><div class="geo-cycle-path"></div>'
+    forest:'<div class="geo-creek"></div><div class="geo-tree-line"></div><div class="geo-forest-clearing"></div><div class="cozy-decor forest-decor"><i>🍄</i><i>🌿</i><i>🪵</i><i>🦋</i></div>',
+    garden:'<div class="geo-flower-field field-a"></div><div class="geo-flower-field field-b"></div><div class="geo-garden-path"></div><div class="geo-orchard"></div><div class="cozy-decor garden-decor"><i>🌷</i><i>🌼</i><i>🐝</i><i>🦋</i></div>',
+    wetland:'<div class="geo-wetland-water"></div><div class="geo-mudflat"></div><div class="geo-reeds reeds-a"></div><div class="geo-reeds reeds-b"></div><div class="geo-boardwalk"></div><div class="cozy-decor wetland-decor"><i>🪷</i><i>🦆</i><i>🐸</i><i>🪶</i></div>',
+    coast:'<div class="geo-sea"></div><div class="geo-wave wave-a"></div><div class="geo-wave wave-b"></div><div class="geo-beach"></div><div class="geo-tidepool pool-a"></div><div class="geo-tidepool pool-b"></div><div class="geo-rocks"></div><div class="cozy-decor coast-decor"><i>🐚</i><i>🦀</i><i>🌿</i><i>🐟</i></div>',
+    green:'<div class="geo-green-hills"></div><div class="geo-eco-plaza"></div><div class="geo-energy-pad pad-a"></div><div class="geo-energy-pad pad-b"></div><div class="geo-cycle-path"></div><div class="cozy-decor green-decor"><i>🌱</i><i>🚲</i><i>☀️</i><i>🕊️</i></div>'
   };
   return common+(details[id]||'')+`<div class="geo-label"><b>${meta.geography||meta.short}</b><small>可自由擺放建設物件</small></div></div>`;
 }

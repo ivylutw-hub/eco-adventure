@@ -5477,3 +5477,60 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
  .geo-label{left:2%;bottom:1.5%;padding:5px 7px}.geo-label b{font-size:11px}.geo-label small{font-size:9px}
  .geo-creek{width:29%}.geo-boardwalk{left:23%;width:66%}.geo-tidepool.pool-a{width:28%}.geo-eco-plaza{left:25%;width:50%}
 }
+
+
+/* V10.8.0 原創療癒自然繪本風：柔和、圓潤、溫暖，不直接複製特定遊戲素材 */
+.habitat-build-scene{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;filter:saturate(.94) contrast(.98)}
+.habitat-build-scene::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 30%,rgba(255,244,216,.08));mix-blend-mode:soft-light}
+.habitat-geography{filter:drop-shadow(0 12px 18px rgba(49,83,60,.10))}
+.habitat-geography .geo-back,.habitat-geography .geo-mid,.habitat-geography .geo-front{transition:filter .35s ease}
+.habitat-scene-title{border-radius:26px!important;background:rgba(255,252,244,.92)!important;border:3px solid rgba(255,255,255,.94)!important;box-shadow:0 10px 28px rgba(70,94,67,.18),inset 0 0 0 1px rgba(182,205,166,.55)!important;backdrop-filter:blur(7px)}
+.habitat-scene-title>b{color:#355640!important;letter-spacing:.02em}.habitat-scene-title>small{color:#657765!important}.habitat-scene-title>em{color:#5f8d68!important}
+.geo-label{border-radius:19px;background:rgba(255,252,244,.90);border:2px solid rgba(255,255,255,.95);box-shadow:0 7px 20px rgba(50,79,55,.14);padding:10px 15px}.geo-label b{color:#405a43;font-size:15px}.geo-label small{color:#718071;font-size:12px}
+.cozy-decor{position:absolute;inset:0;z-index:15!important;pointer-events:none}.cozy-decor i{position:absolute;font-style:normal;filter:drop-shadow(0 4px 3px rgba(54,73,49,.18));animation:cozyBob 4.8s ease-in-out infinite;transform-origin:center bottom}.cozy-decor i:nth-child(2){animation-delay:-1.1s}.cozy-decor i:nth-child(3){animation-delay:-2.2s}.cozy-decor i:nth-child(4){animation-delay:-3.3s}
+@keyframes cozyBob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+
+/* 森林：圓潤山丘、奶油晨霧、林間秘境 */
+.habitat-theme-forest{background:linear-gradient(#cceaf3 0 36%,#a8cf9a 37% 100%)!important}
+.habitat-theme-forest .geo-back{background:linear-gradient(to bottom,transparent 0 36%,#adc5a0 37% 58%,#7fa47d 59% 100%);clip-path:polygon(0 55%,9% 44%,19% 52%,31% 35%,45% 53%,58% 38%,72% 54%,85% 40%,100% 51%,100% 100%,0 100%)}
+.habitat-theme-forest .geo-mid{background:linear-gradient(165deg,#709d70,#4f7f5c);clip-path:polygon(0 55%,9% 35%,18% 50%,29% 28%,41% 52%,53% 31%,65% 49%,76% 25%,88% 50%,100% 34%,100% 100%,0 100%);border-radius:45% 45% 0 0}
+.habitat-theme-forest .geo-front{background:linear-gradient(165deg,#83b56f,#568d58);border-radius:50% 50% 0 0/18% 18% 0 0}
+.habitat-theme-forest .geo-tree-line{opacity:.88;filter:blur(.2px)}
+.habitat-theme-forest .geo-creek{background:linear-gradient(90deg,#91d5dc,#e7fbf5 48%,#79c1cb);border-color:rgba(222,236,205,.92);box-shadow:inset 0 0 18px rgba(255,255,255,.8),0 5px 12px rgba(65,105,93,.15)}
+.forest-decor i:nth-child(1){left:10%;bottom:15%;font-size:29px}.forest-decor i:nth-child(2){right:18%;bottom:18%;font-size:34px}.forest-decor i:nth-child(3){left:47%;bottom:13%;font-size:43px}.forest-decor i:nth-child(4){right:28%;top:34%;font-size:27px;animation-name:cozyFly}
+
+/* 花園：粉彩花丘、奶油小徑、柔軟果樹 */
+.habitat-theme-garden{background:linear-gradient(#d8eff7 0 40%,#bfdc91 41% 100%)!important}
+.habitat-theme-garden .geo-back{background:linear-gradient(to bottom,transparent 0 45%,#b4cc91 46% 100%);clip-path:polygon(0 62%,15% 49%,30% 59%,46% 44%,62% 60%,79% 45%,100% 58%,100% 100%,0 100%)}
+.habitat-theme-garden .geo-mid{background:linear-gradient(165deg,#cde59b,#91c778);border-radius:45% 45% 0 0/22% 22% 0 0}.habitat-theme-garden .geo-front{background:#7fba69;border-radius:50% 50% 0 0/30% 30% 0 0}
+.geo-flower-field{background:repeating-radial-gradient(circle,#fff8d1 0 3px,#eba8bd 4px 7px,#b9a5d9 8px 10px,transparent 11px 20px),#9fcd82;box-shadow:inset 0 8px 18px rgba(255,255,255,.18)}
+.geo-garden-path{background:linear-gradient(#f4e4bc,#dfca9f);border-radius:45% 45% 0 0;filter:drop-shadow(0 3px 3px rgba(96,72,40,.14))}
+.garden-decor i:nth-child(1){left:8%;bottom:13%;font-size:30px}.garden-decor i:nth-child(2){right:9%;bottom:16%;font-size:32px}.garden-decor i:nth-child(3){left:58%;top:42%;font-size:25px;animation-name:cozyFly}.garden-decor i:nth-child(4){left:32%;top:35%;font-size:27px;animation-name:cozyFly}
+
+/* 濕地：薄荷色水面、柔和蘆葦與木棧道 */
+.habitat-theme-wetland{background:linear-gradient(#c9e8ec 0 42%,#a9c9a4 43% 100%)!important}
+.habitat-theme-wetland .geo-back{background:linear-gradient(to bottom,transparent 0 50%,#9eb89c 51% 100%);clip-path:polygon(0 62%,18% 50%,35% 61%,53% 46%,72% 60%,88% 50%,100% 57%,100% 100%,0 100%)}
+.habitat-theme-wetland .geo-mid{background:#8eb49a}.habitat-theme-wetland .geo-front{background:#718f70}
+.geo-wetland-water{background:linear-gradient(175deg,#c2edf0,#71bec6);box-shadow:inset 0 10px 20px rgba(255,255,255,.48),0 8px 18px rgba(61,106,108,.14);border:4px solid rgba(226,239,211,.7)}
+.geo-boardwalk{background:repeating-linear-gradient(90deg,#a98055 0 20px,#cfa675 21px 39px);border-color:#806044;border-radius:10px}
+.wetland-decor i:nth-child(1){left:20%;bottom:21%;font-size:35px}.wetland-decor i:nth-child(2){right:20%;bottom:25%;font-size:31px}.wetland-decor i:nth-child(3){left:53%;bottom:16%;font-size:27px}.wetland-decor i:nth-child(4){right:31%;top:30%;font-size:26px;animation-name:cozyFly}
+
+/* 潮間帶：粉金沙灘、透明藍綠潮池、小巧浪花 */
+.habitat-theme-coast{background:linear-gradient(#ccebf3 0 43%,#70bfd0 44% 100%)!important}
+.habitat-theme-coast .geo-back{background:linear-gradient(#83cada,#4fa7bc)}.habitat-theme-coast .geo-mid{background:linear-gradient(170deg,#f4e6ba 0 67%,#d6c18f 68%);border-radius:42% 42% 0 0/16% 16% 0 0}.habitat-theme-coast .geo-front{background:#dcc99a}
+.geo-sea{background:linear-gradient(#83d1df,#4da9bd)}.geo-beach{background:linear-gradient(170deg,#f7e9bd,#d9c58f)}
+.geo-wave{opacity:.82;animation:waveDrift 5.5s ease-in-out infinite}.wave-b{animation-delay:-2.5s}.geo-tidepool{background:radial-gradient(ellipse,#8fd8df,#4ca3b4);border-color:#a59c88}
+.coast-decor i:nth-child(1){left:9%;bottom:9%;font-size:28px}.coast-decor i:nth-child(2){right:12%;bottom:13%;font-size:29px}.coast-decor i:nth-child(3){left:43%;bottom:10%;font-size:31px}.coast-decor i:nth-child(4){right:34%;top:46%;font-size:25px;animation-name:cozyFly}
+@keyframes waveDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(13px)}}
+
+/* 綠能：自然公園而非工業區，柔和草坡與米白廣場 */
+.habitat-theme-green{background:linear-gradient(#d3edf5 0 43%,#b9d993 44% 100%)!important}
+.habitat-theme-green .geo-back{background:linear-gradient(to bottom,transparent 0 49%,#9fc58d 50% 100%);clip-path:polygon(0 67%,18% 48%,36% 63%,55% 43%,74% 62%,91% 47%,100% 57%,100% 100%,0 100%)}
+.habitat-theme-green .geo-mid{background:linear-gradient(160deg,#c8e49e,#8fc778);border-radius:48% 48% 0 0/20% 20% 0 0}.habitat-theme-green .geo-front{background:#76b267}
+.geo-green-hills{background:radial-gradient(ellipse at 20% 100%,#9fce8c 0 33%,transparent 34%),radial-gradient(ellipse at 76% 100%,#9ac987 0 38%,transparent 39%)}
+.geo-eco-plaza{background:radial-gradient(ellipse,#eee9da 0 56%,#c7c7b8 57% 66%,transparent 67%);box-shadow:0 7px 16px rgba(79,93,72,.12)}
+.geo-energy-pad{border-color:rgba(255,255,255,.96);background:rgba(236,248,224,.48)}
+.green-decor i:nth-child(1){left:11%;bottom:15%;font-size:31px}.green-decor i:nth-child(2){right:17%;bottom:10%;font-size:32px}.green-decor i:nth-child(3){right:8%;top:30%;font-size:31px}.green-decor i:nth-child(4){left:28%;top:30%;font-size:27px;animation-name:cozyFly}
+@keyframes cozyFly{0%,100%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(18px,-8px) rotate(5deg)}}
+.base-scene.night .habitat-scene-title{background:rgba(31,54,45,.91)!important}.base-scene.night .habitat-scene-title>b,.base-scene.night .habitat-scene-title>small,.base-scene.night .habitat-scene-title>em{color:#f4fff7!important}.base-scene.night .geo-label{background:rgba(31,50,43,.88);color:#fff}.base-scene.night .geo-label b,.base-scene.night .geo-label small{color:#fff}
+@media(max-width:700px){.cozy-decor i{font-size:22px!important}.habitat-scene-title{border-radius:18px!important}.geo-label{border-radius:14px;padding:6px 9px}}
