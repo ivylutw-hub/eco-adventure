@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V10.6.0｜自然探索基地</title>
+<title>環保冒險王 V10.6.1｜基地互動與文字清晰優化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10600" rel="stylesheet"/>
+<link href="style.css?v=10.6.1" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -107,7 +107,7 @@
 <small>EARTH GUARDIAN ADVENTURE</small>
 <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V10.6.0 自然探索基地</b><span>沿著探索步道發展森林、花園、濕地、潮間帶與綠能棲地</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V10.6.1 基地互動優化</b><span>棲地節點與進度卡可點選，新增清楚的棲地說明、建設需求與商店引導</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -477,6 +477,17 @@
 </aside>
 </section>
 </div>
+
+<div class="modal hide" id="explorationHabitatModal" role="dialog" aria-modal="true" aria-labelledby="explorationHabitatTitle" onclick="closeExplorationHabitat(event)">
+  <div class="modal-card exploration-habitat-card" onclick="event.stopPropagation()">
+    <button aria-label="關閉棲地資訊" class="modal-close" type="button" onclick="closeExplorationHabitat()">×</button>
+    <div class="exploration-habitat-head"><span id="explorationHabitatIcon">🌳</span><div><small>NATURE EXPLORATION</small><h3 id="explorationHabitatTitle">森林棲地</h3><p id="explorationHabitatDescription"></p></div></div>
+    <div class="exploration-progress-wrap"><div><b>建設進度</b><strong id="explorationHabitatPercent">0%</strong></div><i><span id="explorationHabitatBar"></span></i></div>
+    <section class="exploration-habitat-section"><h4>目前需要</h4><div id="explorationHabitatNeeds" class="exploration-needs"></div></section>
+    <section class="exploration-habitat-section"><h4>完成後可發現</h4><div id="explorationHabitatResidents" class="exploration-residents"></div></section>
+    <div class="exploration-habitat-actions"><button class="secondary" type="button" onclick="closeExplorationHabitat()">返回基地</button><button class="primary" id="explorationHabitatShopButton" type="button" onclick="goToHabitatShop()">前往建設商店</button></div>
+  </div>
+</div>
 <div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
 <div class="modal-card habitat-guide-card" onclick="event.stopPropagation()">
 <button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button" onclick="closeHabitatGuide()">×</button>
@@ -527,6 +538,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10600"></script>
+<script src="game.js?v=10.6.1"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>

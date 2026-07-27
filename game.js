@@ -1250,7 +1250,6 @@ function baseQualityScores(){
 }
 function baseExplorationHabitats(){
   const ids=st.owned||[];
-  const count=id=>ids.filter(x=>x===id).length;
   const countAny=list=>ids.filter(x=>list.includes(x)).length;
   const nature=countAny(['tree','pine','palm','cherry','shrub','birdhouse']);
   const flowers=countAny(['flowers','grass','butterflyGarden']);
@@ -1258,11 +1257,11 @@ function baseExplorationHabitats(){
   const coast=countAny(['boardwalk','birdDeck','rockRest','streamRest','ecoPond']);
   const green=countAny(['solar','wind','recycle','rainBarrel','ecoLamp','battery','bike','compost']);
   return [
-    {id:'forest',icon:'🌳',name:'森林棲地',ready:nature>=4,progress:Math.min(100,Math.round(nature/4*100)),hint:`樹木與自然設施 ${Math.min(nature,4)}/4`},
-    {id:'garden',icon:'🦋',name:'授粉花園',ready:flowers>=3,progress:Math.min(100,Math.round(flowers/3*100)),hint:`花草與授粉設施 ${Math.min(flowers,3)}/3`},
-    {id:'wetland',icon:'💧',name:'濕地棲地',ready:wet>=2,progress:Math.min(100,Math.round(wet/2*100)),hint:`水域與濕地設施 ${Math.min(wet,2)}/2`},
-    {id:'coast',icon:'🌊',name:'潮間帶',ready:coast>=3,progress:Math.min(100,Math.round(coast/3*100)),hint:`棧道與海岸設施 ${Math.min(coast,3)}/3`},
-    {id:'green',icon:'♻️',name:'綠能園區',ready:green>=3,progress:Math.min(100,Math.round(green/3*100)),hint:`綠能與循環設施 ${Math.min(green,3)}/3`}
+    {id:'forest',icon:'🌳',name:'森林棲地',ready:nature>=4,progress:Math.min(100,Math.round(nature/4*100)),current:Math.min(nature,4),target:4,hint:`樹木與自然設施 ${Math.min(nature,4)}/4`,description:'種下不同樹木並加入鳥屋，為鳥類與小型動物建立安全的生活空間。',needs:['樹木、灌木或鳥屋共 4 項'],residents:['🐦 鳥類','🐿️ 松鼠'],shop:'trees'},
+    {id:'garden',icon:'🦋',name:'授粉花園',ready:flowers>=3,progress:Math.min(100,Math.round(flowers/3*100)),current:Math.min(flowers,3),target:3,hint:`花草與授粉設施 ${Math.min(flowers,3)}/3`,description:'利用花朵、草地與蝴蝶花園，提供昆蟲食物與休息場所。',needs:['花朵、草地或蝴蝶花園共 3 項'],residents:['🦋 蝴蝶','🐝 蜜蜂'],shop:'flowers'},
+    {id:'wetland',icon:'💧',name:'濕地棲地',ready:wet>=2,progress:Math.min(100,Math.round(wet/2*100)),current:Math.min(wet,2),target:2,hint:`水域與濕地設施 ${Math.min(wet,2)}/2`,description:'設置生態池、雨水桶或親水設施，讓基地保存水分並形成濕地環境。',needs:['水域或濕地設施共 2 項'],residents:['🦦 歐亞水獺','🐸 濕地生物'],shop:'eco'},
+    {id:'coast',icon:'🌊',name:'潮間帶',ready:coast>=3,progress:Math.min(100,Math.round(coast/3*100)),current:Math.min(coast,3),target:3,hint:`棧道與海岸設施 ${Math.min(coast,3)}/3`,description:'運用木棧道、岩石與水域設施，模擬金門潮間帶並學習輕踏觀察。',needs:['棧道、岩石或水域設施共 3 項'],residents:['🦀 鱟與潮間帶生物','🐦 水鳥'],shop:'rest'},
+    {id:'green',icon:'♻️',name:'綠能園區',ready:green>=3,progress:Math.min(100,Math.round(green/3*100)),current:Math.min(green,3),target:3,hint:`綠能與循環設施 ${Math.min(green,3)}/3`,description:'加入太陽能、風力、回收與節水設施，降低基地的資源消耗。',needs:['綠能或循環設施共 3 項'],residents:['🌱 低碳基地認證','✨ 夜間生態照明'],shop:'eco'}
   ];
 }
 function updateBaseExploration(){
@@ -1270,11 +1269,54 @@ function updateBaseExploration(){
   const progress=document.getElementById('baseExplorationProgress');
   if(progress)progress.textContent=`${ready} / ${habitats.length}`;
   const stops=document.getElementById('baseExplorationStops');
-  if(stops)stops.innerHTML=habitats.map((h,i)=>`<div class="exploration-stop ${h.ready?'ready':'locked'}"><span>${h.ready?'✅':h.icon}</span><div><b>${h.name}</b><small>${h.ready?'棲地已形成，動物居民可能入住。':h.hint}</small><i style="--progress:${h.progress}%"></i></div></div>`).join('');
+  if(stops)stops.innerHTML=habitats.map(h=>`<button type="button" class="exploration-stop ${h.ready?'ready':'locked'}" data-habitat="${h.id}" onclick="openExplorationHabitat('${h.id}')" aria-label="查看${h.name}，目前進度${h.progress}%"><span>${h.ready?'✅':h.icon}</span><div><b>${h.name}</b><small>${h.ready?'棲地已形成，點擊查看生態居民。':h.hint+'，點擊查看需要的建設。'}</small><i style="--progress:${h.progress}%"></i></div></button>`).join('');
   habitats.forEach(h=>{
     const node=baseScene?.querySelector(`.trail-node[data-habitat="${h.id}"]`);
-    if(node){node.classList.toggle('ready',h.ready);node.classList.toggle('locked',!h.ready);}
+    if(node){node.classList.toggle('ready',h.ready);node.classList.toggle('locked',!h.ready);node.setAttribute('role','button');node.setAttribute('tabindex','0');node.setAttribute('aria-label',`查看${h.name}，目前進度${h.progress}%`);}
   });
+  bindExplorationHabitatNodes();
+}
+let activeExplorationHabitat=null;
+function bindExplorationHabitatNodes(){
+  baseScene?.querySelectorAll('.trail-node[data-habitat]').forEach(node=>{
+    if(node.dataset.bound==='1')return;
+    node.dataset.bound='1';
+    const open=e=>{e.preventDefault();e.stopPropagation();openExplorationHabitat(node.dataset.habitat)};
+    node.addEventListener('click',open);
+    node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')open(e)});
+  });
+}
+function openExplorationHabitat(id){
+  const habitat=baseExplorationHabitats().find(x=>x.id===id);if(!habitat)return;
+  activeExplorationHabitat=habitat;
+  const modal=document.getElementById('explorationHabitatModal');if(!modal)return;
+  document.getElementById('explorationHabitatIcon').textContent=habitat.icon;
+  document.getElementById('explorationHabitatTitle').textContent=habitat.name;
+  document.getElementById('explorationHabitatDescription').textContent=habitat.description;
+  document.getElementById('explorationHabitatPercent').textContent=`${habitat.progress}%`;
+  document.getElementById('explorationHabitatBar').style.width=`${habitat.progress}%`;
+  document.getElementById('explorationHabitatNeeds').innerHTML=habitat.needs.map(x=>`<div><span>${habitat.ready?'✅':'🧩'}</span><b>${x}</b><small>目前 ${habitat.current} / ${habitat.target}</small></div>`).join('');
+  document.getElementById('explorationHabitatResidents').innerHTML=habitat.residents.map(x=>`<span>${x}</span>`).join('');
+  const shop=document.getElementById('explorationHabitatShopButton');if(shop)shop.textContent=habitat.ready?'繼續豐富基地':'前往建設商店';
+  modal.classList.remove('hide');
+  setTimeout(()=>modal.querySelector('.modal-close')?.focus(),0);
+}
+function closeExplorationHabitat(event){
+  if(event&&event.target!==document.getElementById('explorationHabitatModal'))return;
+  document.getElementById('explorationHabitatModal')?.classList.add('hide');
+}
+function goToHabitatShop(){
+  const habitat=activeExplorationHabitat;
+  closeExplorationHabitat();
+  if(habitat){
+    baseShopCategory=habitat.shop||'all';
+    document.querySelectorAll('#baseShopFilters [data-base-category]').forEach(x=>x.classList.toggle('active',x.dataset.baseCategory===baseShopCategory));
+    renderBaseShop();
+  }
+  const filters=document.getElementById('baseShopFilters');
+  filters?.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>filters?.querySelector('.active')?.focus(),350);
+  if(typeof toast==='function')toast(`已為你開啟「${habitat?.name||'棲地'}」適合的建設分類`);
 }
 function updateBaseQuality(){
   const q=baseQualityScores();
@@ -1303,7 +1345,7 @@ function renderBaseShop(){
 }
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
-  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="ground-bank bank-left"></div><div class="ground-bank bank-right"></div><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="eco-trail-map" aria-hidden="true"><svg viewBox="0 0 1000 560" preserveAspectRatio="none"><path class="trail-shadow" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/><path class="trail-main" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/></svg><span class="trail-entry">🏡<b>基地入口</b></span><span class="trail-node node-forest" data-habitat="forest">🌳<b>森林棲地</b></span><span class="trail-node node-garden" data-habitat="garden">🦋<b>授粉花園</b></span><span class="trail-node node-wetland" data-habitat="wetland">💧<b>濕地棲地</b></span><span class="trail-node node-coast" data-habitat="coast">🌊<b>潮間帶</b></span><span class="trail-node node-green" data-habitat="green">♻️<b>綠能園區</b></span></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
+  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="ground-bank bank-left"></div><div class="ground-bank bank-right"></div><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="eco-trail-map" aria-label="自然探索步道，點擊棲地查看建設需求"><svg viewBox="0 0 1000 560" preserveAspectRatio="none"><path class="trail-shadow" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/><path class="trail-main" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/></svg><span class="trail-entry">🏡<b>基地入口</b></span><span class="trail-node node-forest" data-habitat="forest">🌳<b>森林棲地</b></span><span class="trail-node node-garden" data-habitat="garden">🦋<b>授粉花園</b></span><span class="trail-node node-wetland" data-habitat="wetland">💧<b>濕地棲地</b></span><span class="trail-node node-coast" data-habitat="coast">🌊<b>潮間帶</b></span><span class="trail-node node-green" data-habitat="green">♻️<b>綠能園區</b></span></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
@@ -1958,3 +2000,6 @@ function nextTrialQuestion(){if(!trialAnswered)return;if(++trialIndex<trialQuest
 function finishTrialQuiz(){trialQuiz.classList.add('hide');trialResult.classList.remove('hide');const total=trialQuestions.length,stars=Math.round(trialScore/total*5),level=TRIAL_LEVELS[trialDifficulty];trialStars.textContent='★'.repeat(stars)+'☆'.repeat(5-stars);trialScoreText.textContent=`${trialScore} / ${total}`;trialResultMessage.textContent=(trialScore===total?`太棒了！你完成了${level.world}的滿分挑戰！`:trialScore>=Math.ceil(total*.6)?`做得很好！再挑戰一次${level.name}難度會更厲害！`:'每學會一題，都是守護地球的一步！');const promises=['💧 今天我要記得關水龍頭。','♻️ 今天我要做好垃圾分類。','🌳 今天我要愛護花草樹木。','🐢 今天我要一起保護海洋生物。','💡 今天離開房間要記得關燈。'];trialPromiseText.textContent=promises[Math.floor(Math.random()*promises.length)];trialPromiseBtn.textContent='我願意做到 ✓';trialPromiseBtn.classList.remove('accepted');const s=loadTrialStats(),today=dateStr();if(s.date!==today){s.date=today;s.plays=0}s.plays=(s.plays||0)+1;s.bestByLevel=Array.isArray(s.bestByLevel)?s.bestByLevel:[s.best||0,0,0,0];if(total===5)s.bestByLevel[trialDifficulty]=Math.max(s.bestByLevel[trialDifficulty]||0,trialScore);if(trialDaily)s.dailyDate=today;saveTrialStats(s);updateTrialStatsView();if(typeof burst==='function')burst('🎉',14)}
 function acceptTrialPromise(){trialPromiseBtn.textContent='太棒了！一起做到 🌱';trialPromiseBtn.classList.add('accepted')}
 function trialToGoogleLogin(){exitTrialMode();setTimeout(()=>{document.getElementById('googleLoginBtn')?.scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('googleLoginBtn')?.focus()},100)}
+
+/* ===== V10.6.1：基地棲地互動與文字清晰度 ===== */
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeExplorationHabitat();});
