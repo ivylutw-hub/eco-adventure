@@ -872,7 +872,7 @@ function renderBaseSky(){
   if(!scene)return;
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
   const mode=baseLiveWeather?.mode||baseTimeMode();
-  scene.className=`base-scene ${mode} weather-${weather.id}`;
+  scene.className=`base-scene ${mode} weather-${weather.id}${st.baseEditMode?' is-editing':''}`;
   const windSpeed=Math.max(0,Number(baseLiveWeather?.windSpeed)||0);
   const windDuration=windSpeed<1?0:Math.max(1.8,Math.min(24,36/(windSpeed+0.8)));
   scene.style.setProperty('--wind-spin-duration',windDuration?`${windDuration.toFixed(2)}s`:'0s');
@@ -1220,10 +1220,15 @@ function renderBaseResidents(){
 
 let baseShopCategory='all';
 function baseItemCategory(id){
-  if(['tree','pine','palm','cherry','shrub','flowers','grass','butterflyGarden','ecoPond','birdhouse'].includes(id))return 'nature';
+  if(['tree','pine','palm','cherry','shrub','birdhouse'].includes(id))return 'trees';
+  if(['flowers','grass','butterflyGarden','ecoPond'].includes(id))return 'flowers';
   if(['solar','wind','recycle','rainBarrel','ecoLamp','battery','bike','compost'].includes(id))return 'eco';
   if(['logRest','rockRest','streamRest','bench','pavilion','boardwalk','birdDeck'].includes(id))return 'rest';
   return 'learn';
+}
+function baseBroadCategory(id){
+  const category=baseItemCategory(id);
+  return ['trees','flowers'].includes(category)?'nature':category;
 }
 function setBaseShopCategory(category,btn){
   baseShopCategory=category||'all';
@@ -1231,19 +1236,32 @@ function setBaseShopCategory(category,btn){
   renderBaseShop();
 }
 function baseQualityScores(){
-  const ids=(st.owned||[]);
-  const countBy=cat=>ids.reduce((n,id)=>n+(baseItemCategory(id)===cat?1:0),0);
-  const unique=new Set(ids).size,total=ids.length;
-  const nature=Math.min(100,countBy('nature')*9);
-  const eco=Math.min(100,countBy('eco')*12);
-  const beauty=Math.min(100,unique*5+Math.min(25,total*2));
-  const guardian=Math.min(100,Math.round((nature+eco+beauty)/3));
-  return {nature,eco,beauty,guardian};
+  const ids=(st.owned||[]),uniqueIds=new Set(ids);
+  const countBy=cat=>ids.reduce((n,id)=>n+(baseBroadCategory(id)===cat?1:0),0);
+  const natureItems=countBy('nature'),ecoItems=countBy('eco'),restItems=countBy('rest'),learnItems=countBy('learn');
+  const habitat=typeof baseHabitatStatus==='function'?baseHabitatStatus():{};
+  const residentKinds=['butterfly','bee','bird','squirrel','rabbit','otter'].filter(k=>habitat[k]?.ready).length;
+  const nature=Math.min(100,natureItems*8+Math.min(20,uniqueIds.size*2));
+  const biodiversity=Math.min(100,residentKinds*14+Math.min(16,natureItems*2));
+  const eco=Math.min(100,ecoItems*12+Math.min(16,learnItems*3));
+  const happiness=Math.min(100,restItems*12+residentKinds*6+Math.min(20,uniqueIds.size));
+  const guardian=Math.min(100,Math.round((nature+biodiversity+eco+happiness)/4));
+  return {nature,biodiversity,eco,happiness,guardian,residentKinds};
 }
 function updateBaseQuality(){
   const q=baseQualityScores();
-  [['baseNatureScore',q.nature],['baseEcoScore',q.eco],['baseBeautyScore',q.beauty],['baseGuardianScore',q.guardian]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
-  const hint=document.getElementById('baseEditHint');if(hint)hint.textContent=st.baseEditMode?'拖曳物件調整位置；完成後點「完成擺設」':'點擊「編輯基地」即可移動物件';
+  [['baseNatureScore',q.nature],['baseBiodiversityScore',q.biodiversity],['baseEcoScore',q.eco],['baseHappinessScore',q.happiness],['baseGuardianScore',q.guardian]].forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+  const levels=[
+    {min:0,name:'自然基地 Lv.1',hint:'增加樹木與花草，打造第一個生態角落。'},
+    {min:25,name:'綠意基地 Lv.2',hint:'加入環保設施與休憩空間，讓基地更完整。'},
+    {min:50,name:'生態基地 Lv.3',hint:'提高生態多樣性，吸引更多動物居民入住。'},
+    {min:75,name:'守護樂園 Lv.4',hint:'四項指標接近滿分，即可成為模範自然基地。'},
+    {min:90,name:'傳奇守護基地 Lv.5',hint:'基地已成為兼具生態、環保與幸福感的自然樂園！'}
+  ];
+  const level=[...levels].reverse().find(x=>q.guardian>=x.min)||levels[0];
+  const levelEl=document.getElementById('baseGrowthLevel'),hintEl=document.getElementById('baseGrowthHint');
+  if(levelEl)levelEl.textContent=level.name;if(hintEl)hintEl.textContent=level.hint;
+  const hint=document.getElementById('baseEditHint');if(hint)hint.textContent=st.baseEditMode?'分區提示已顯示：拖曳物件到合適區域，完成後點「完成擺設」':'點擊「編輯基地」即可移動物件';
 }
 function renderBaseShop(){
   const shopEl=document.getElementById('shop');if(!shopEl)return;
@@ -1257,7 +1275,7 @@ function renderBaseShop(){
 }
 function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
-  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="ground-bank bank-left"></div><div class="ground-bank bank-right"></div><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
+  baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="ground-bank bank-left"></div><div class="ground-bank bank-right"></div><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="base-zones" aria-hidden="true"><span class="base-zone zone-conservation"><b>🌳 生態保育區</b></span><span class="base-zone zone-garden"><b>🌸 花園區</b></span><span class="base-zone zone-learning"><b>📚 學習探索區</b></span><span class="base-zone zone-rest"><b>🪑 生活休憩區</b></span></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');

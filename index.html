@@ -15,7 +15,7 @@
 <title>環保冒險王 V10.2.3｜分析資料權限強化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10400" rel="stylesheet"/>
+<link href="style.css?v=10500" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -200,10 +200,11 @@
 </div>
 <div class="base-quality-strip" aria-label="基地成長指標">
 <div><span>🌿</span><small>自然度</small><b id="baseNatureScore">0</b></div>
-<div><span>♻️</span><small>環保度</small><b id="baseEcoScore">0</b></div>
-<div><span>✨</span><small>美觀度</small><b id="baseBeautyScore">0</b></div>
-<div><span>🛡️</span><small>守護值</small><b id="baseGuardianScore">0</b></div>
+<div><span>🦋</span><small>生態多樣性</small><b id="baseBiodiversityScore">0</b></div>
+<div><span>♻️</span><small>環保指數</small><b id="baseEcoScore">0</b></div>
+<div><span>😊</span><small>幸福度</small><b id="baseHappinessScore">0</b></div>
 </div>
+<div class="base-growth-card" aria-live="polite"><span class="base-growth-icon">🌱</span><div><b id="baseGrowthLevel">自然基地 Lv.1</b><small id="baseGrowthHint">增加不同類型的建設，解鎖更豐富的基地景觀。</small></div><em id="baseGuardianScore">0</em></div>
 </section>
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
@@ -218,7 +219,8 @@
 <div><b>基地建設商店</b><small>選擇分類，更快找到需要的建設</small></div>
 <div class="base-shop-filters" id="baseShopFilters" aria-label="基地商店分類">
 <button class="active" data-base-category="all" onclick="setBaseShopCategory('all',this)" type="button">全部</button>
-<button data-base-category="nature" onclick="setBaseShopCategory('nature',this)" type="button">🌿 自然</button>
+<button data-base-category="trees" onclick="setBaseShopCategory('trees',this)" type="button">🌳 樹木</button>
+<button data-base-category="flowers" onclick="setBaseShopCategory('flowers',this)" type="button">🌸 花草</button>
 <button data-base-category="eco" onclick="setBaseShopCategory('eco',this)" type="button">♻️ 環保</button>
 <button data-base-category="rest" onclick="setBaseShopCategory('rest',this)" type="button">🪑 休憩</button>
 <button data-base-category="learn" onclick="setBaseShopCategory('learn',this)" type="button">📚 學習</button>
@@ -523,6 +525,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10400"></script>
-<script src="firebase.js?v=10400"></script>
+<script src="game.js?v=10500"></script>
+<script src="firebase.js?v=10500"></script>
 </body></html>
