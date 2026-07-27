@@ -15,7 +15,7 @@
 <title>環保冒險王 V10.2.3｜分析資料權限強化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10203" rel="stylesheet"/>
+<link href="style.css?v=10204" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -206,7 +206,7 @@
 <button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
 <button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
 </div>
-<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
+<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small id="baseVillageSyncText">☁️ 登入後自動同步基地村</small></div>
 <div class="shop" id="shop"></div>
 </div>
 </div>
@@ -269,7 +269,7 @@
 </main>
 <main class="hide" id="adminPage">
 <div class="title admin-title">
-<div><small>ADMIN CONSOLE · V9.3.6</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
+<div><small>ADMIN CONSOLE · V10.2.4</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
 <button class="secondary" onclick="loadAdminDashboard()">🔄 全部重新整理</button>
 </div>
 <nav aria-label="管理後臺功能" class="admin-tabs">
@@ -506,6 +506,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10203"></script>
-<script src="firebase.js?v=10201"></script>
+<script src="game.js?v=10204"></script>
+<script src="firebase.js?v=10204"></script>
 </body></html>

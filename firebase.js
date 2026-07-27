@@ -1,6 +1,7 @@
 /* ===== V9.1 Google 登入、雲端存檔與每週排行榜 ===== */
 let cloudDb=null, cloudAuth=null, cloudUser=null, cloudReady=false, cloudSaveTimer=null, cloudLoading=false;
 let cloudRetryTimer=null, cloudWriteInProgress=false, cloudWriteQueued=false, cloudIsAdmin=false, cloudPlayerUnsubscribe=null;
+let publicBaseSyncTimer=null,publicBaseWriteInProgress=false,publicBaseWriteQueued=false,lastPublicBaseFingerprint='';
 let adminPlayersCache=[],adminQuestionsCache=[],adminEventsCache=[],adminRankingCache=[],adminEditingEventId=null;
 window.ECO_ACTIVE_EVENTS=[];window.ECO_CUSTOM_QUESTIONS=[];
 
@@ -256,7 +257,8 @@ async function syncAllCloudData(isNewPlayer=false){
  try{
   await writeWithRetry('玩家雲端存檔',()=>playerDoc().set(playerFields(isNewPlayer),{merge:true}));
   await writeWithRetry('排行榜資料同步',()=>weeklyDoc().set(weeklyFields(),{merge:true}));
-  setCloudStatus('online','☁️ 雲端進度已同步');
+  schedulePublicBaseSync();
+  setCloudStatus('online','☁️ 雲端進度與基地已同步');
  }catch(err){
   console.error('Firestore 同步最終失敗',err);notifyCloudError('⚠️ 雲端同步失敗，資料已保留在本機');
   cloudRetryTimer=setTimeout(()=>syncAllCloudData(false),5000);
@@ -603,17 +605,87 @@ window.addEventListener('offline',()=>setCloudStatus('offline','⚠️ 目前離
 initFirebase();
 
 
-/* ===== V9.4.1 Beta 5.1.21 公開基地資料 ===== */
+/* ===== V10.2.4 守護基地村雲端同步 ===== */
 function publicBaseDoc(){return cloudDb&&cloudUser?cloudDb.collection('publicBases').doc(cloudUser.uid):null}
-async function savePublicBase(){
- if(!cloudDb||!cloudUser)throw new Error('not signed in');ensureVillageState();
- const av=avatarById(st.avatar),placements=(st.basePlacements||[]).slice(0,80).map(p=>({itemId:p.itemId,x:Number(p.x)||50,y:Number(p.y)||60}));
- const old=await publicBaseDoc().get();const likes=old.exists?Number(old.data().likes)||0:0;
- await publicBaseDoc().set({uid:cloudUser.uid,name:String(st.name||cloudUser.displayName||'環保守護者').slice(0,12),avatar:av.icon,level:currentLevel(),title:String(st.specialTitle||titleForLevel(currentLevel())).slice(0,20),intro:String(st.baseIntro||'').slice(0,40),placements,paths:(st.basePaths||[]).slice(0,100),badges:typeof S!=='undefined'?S.filter(isDone).length:0,likes,visibility:'public',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+function normalizePublicPlacement(p){
+ return {
+  itemId:String(p?.itemId||''),
+  x:Math.max(0,Math.min(100,Number(p?.x)||50)),
+  y:Math.max(0,Math.min(100,Number(p?.y)||60)),
+  scale:Math.max(.55,Math.min(1.8,Number(p?.scale)||1)),
+  rotation:((Number(p?.rotation)||0)%360+360)%360,
+  mirrored:Boolean(p?.mirrored),
+  flowerVariant:Number.isFinite(Number(p?.flowerVariant))?Number(p.flowerVariant):null
+ };
 }
-async function removePublicBase(){if(publicBaseDoc())await publicBaseDoc().delete()}
+function publicBasePayload(){
+ if(typeof ensureVillageState==='function')ensureVillageState();
+ const av=avatarById(st.avatar);
+ return {
+  uid:cloudUser?.uid||'',
+  name:String(st.name||cloudUser?.displayName||'環保守護者').slice(0,12),
+  avatar:av.icon,
+  avatarId:String(st.avatar||'fox'),
+  level:currentLevel(),
+  title:String(st.specialTitle||titleForLevel(currentLevel())).slice(0,20),
+  intro:String(st.baseIntro||'').slice(0,40),
+  placements:(st.basePlacements||[]).slice(0,100).map(normalizePublicPlacement).filter(p=>p.itemId),
+  paths:(st.basePaths||[]).slice(0,100),
+  badges:typeof S!=='undefined'?S.filter(isDone).length:0,
+  visibility:st.baseVisibility==='private'?'private':'public',
+  schemaVersion:2
+ };
+}
+function publicBaseFingerprint(payload=publicBasePayload()){
+ const stable={...payload};delete stable.uid;
+ return JSON.stringify(stable);
+}
+function updateBaseVillageSyncText(text,mode=''){
+ const el=document.getElementById('baseVillageSyncText');
+ if(el){el.textContent=text;el.dataset.mode=mode;}
+}
+function schedulePublicBaseSync(force=false){
+ if(!cloudReady||!cloudDb||!cloudUser||!st.loggedIn)return;
+ clearTimeout(publicBaseSyncTimer);
+ publicBaseSyncTimer=setTimeout(()=>syncPublicBaseNow(force),force?0:700);
+}
+async function syncPublicBaseNow(force=false){
+ if(!cloudDb||!cloudUser||!st.loggedIn)return;
+ if(publicBaseWriteInProgress){publicBaseWriteQueued=true;return;}
+ publicBaseWriteInProgress=true;
+ try{
+  if(typeof ensureVillageState==='function')ensureVillageState();
+  updateBaseVillageSyncText('☁️ 基地村同步中…','syncing');
+  if(st.baseVisibility==='private'){
+   await removePublicBase();lastPublicBaseFingerprint='';
+   updateBaseVillageSyncText('🔒 私人基地不公開','private');return;
+  }
+  const payload=publicBasePayload(),fingerprint=publicBaseFingerprint(payload);
+  if(!force&&fingerprint===lastPublicBaseFingerprint){updateBaseVillageSyncText('✅ 基地村已同步','saved');return;}
+  await savePublicBase(payload);
+  lastPublicBaseFingerprint=fingerprint;
+  updateBaseVillageSyncText('✅ 基地村已同步','saved');
+ }catch(err){
+  console.error('守護基地村同步失敗',err);
+  updateBaseVillageSyncText('⚠️ 基地村同步失敗','error');
+ }finally{
+  publicBaseWriteInProgress=false;
+  if(publicBaseWriteQueued){publicBaseWriteQueued=false;schedulePublicBaseSync(true);}
+ }
+}
+async function savePublicBase(payload=publicBasePayload()){
+ if(!cloudDb||!cloudUser)throw new Error('not signed in');
+ const ref=publicBaseDoc();
+ const old=await ref.get();const likes=old.exists?Number(old.data().likes)||0:0;
+ await ref.set({...payload,uid:cloudUser.uid,likes,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+ lastPublicBaseFingerprint=publicBaseFingerprint(payload);
+}
+async function removePublicBase(){const ref=publicBaseDoc();if(ref)await ref.delete()}
 async function loadPublicBases(){
- if(!cloudDb)return[];const snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(30).get();
+ if(!cloudDb)return[];
+ let snap;
+ try{snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(100).get({source:'server'});}
+ catch(err){console.warn('基地村伺服器資料載入失敗，改用快取',err);snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(100).get();}
  return snap.docs.map(d=>{const x=d.data();return{...x,uid:d.id,updatedAtMs:x.updatedAt&&x.updatedAt.toMillis?x.updatedAt.toMillis():0}});
 }
 async function sendBaseLike(uid){
