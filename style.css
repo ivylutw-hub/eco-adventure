@@ -5112,3 +5112,41 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 @media(max-width:1050px){#basePage .shop{grid-template-columns:repeat(3,minmax(145px,1fr))!important}}
 @media(max-width:760px){.base-quality-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.base-shop-head{align-items:stretch;flex-direction:column}.base-shop-filters{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.base-shop-filters button{white-space:nowrap}#basePage .shop{grid-template-columns:repeat(2,minmax(138px,1fr))!important;max-height:420px}.base-status-row .base-edit-hint{width:100%;margin-left:0!important}.hill-far{bottom:31%}.hill-near{bottom:24%}}
 @media(max-width:470px){#basePage .shop{grid-template-columns:1fr!important}.base-quality-strip>div{padding:8px}.base-quality-strip b{font-size:16px}}
+
+
+/* ===== V10.3.1：山陵景深背景與物件鏡射修正 ===== */
+/* 山陵採四層景深：遠山、中景山、近山與山腳森林。 */
+.base-ridge-landscape{position:absolute!important;inset:0!important;overflow:hidden!important;pointer-events:none!important;z-index:1!important}
+.base-ridge-landscape .ridge{position:absolute;left:-5%;width:110%;bottom:20%;transform-origin:center bottom;filter:saturate(.92)}
+.ridge-distant{height:42%;bottom:31%!important;background:linear-gradient(180deg,rgba(137,174,177,.62),rgba(100,151,139,.72));clip-path:polygon(0 75%,7% 57%,14% 66%,23% 38%,31% 57%,39% 28%,48% 55%,58% 34%,67% 63%,76% 37%,85% 56%,93% 43%,100% 66%,100% 100%,0 100%)}
+.ridge-middle{height:35%;bottom:24%!important;background:linear-gradient(180deg,rgba(86,145,113,.72),rgba(64,125,84,.82));clip-path:polygon(0 72%,10% 45%,20% 65%,31% 31%,43% 61%,54% 37%,64% 70%,75% 39%,86% 66%,94% 46%,100% 58%,100% 100%,0 100%)}
+.ridge-foreground{height:27%;bottom:17%!important;background:linear-gradient(180deg,rgba(61,126,72,.86),rgba(46,105,61,.94));clip-path:polygon(0 70%,9% 51%,18% 64%,29% 37%,39% 66%,50% 43%,60% 69%,72% 38%,83% 64%,92% 47%,100% 61%,100% 100%,0 100%)}
+.ridge-forest{position:absolute;left:-2%;right:-2%;bottom:17%;height:12%;opacity:.72;background:repeating-linear-gradient(115deg,transparent 0 12px,rgba(28,84,49,.88) 13px 21px,transparent 22px 29px);clip-path:polygon(0 100%,0 72%,2% 42%,4% 70%,6% 31%,8% 68%,10% 37%,12% 72%,14% 28%,16% 70%,18% 40%,20% 73%,22% 34%,24% 67%,26% 25%,28% 68%,30% 39%,32% 72%,34% 29%,36% 66%,38% 42%,40% 73%,42% 30%,44% 65%,46% 37%,48% 71%,50% 27%,52% 68%,54% 41%,56% 72%,58% 32%,60% 66%,62% 39%,64% 72%,66% 26%,68% 67%,70% 42%,72% 72%,74% 31%,76% 66%,78% 38%,80% 72%,82% 28%,84% 68%,86% 42%,88% 72%,90% 33%,92% 66%,94% 39%,96% 72%,98% 31%,100% 68%,100% 100%)}
+.ridge-mist{position:absolute;width:42%;height:9%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.34),rgba(255,255,255,0) 72%);filter:blur(5px);opacity:.75;animation:ridgeMistDrift 24s ease-in-out infinite alternate}
+.ridge-mist-a{left:4%;bottom:46%}.ridge-mist-b{right:2%;bottom:38%;animation-delay:-11s}
+@keyframes ridgeMistDrift{to{transform:translateX(10%) scaleX(1.08);opacity:.48}}
+.base-scene.night .ridge-distant{background:linear-gradient(180deg,rgba(77,99,121,.64),rgba(48,83,76,.78))}.base-scene.night .ridge-middle{background:linear-gradient(180deg,rgba(43,82,72,.8),rgba(31,65,54,.9))}.base-scene.night .ridge-foreground{background:linear-gradient(180deg,rgba(28,68,49,.92),rgba(21,52,40,.98))}.base-scene.night .ridge-forest{opacity:.88;filter:brightness(.7)}
+.base-scene.weather-overcast .ridge-distant,.base-scene.weather-rainy .ridge-distant{filter:saturate(.58) brightness(.88)}
+
+/* 鏡射只套用在插畫本體，控制按鈕保持正常方向。 */
+#basePage .base-building>.eco-asset,
+#basePage .base-building>.asset-single-flower{
+  transform:scaleX(var(--building-mirror,1)) scale(var(--base-object-scale,1))!important;
+  transform-origin:center bottom!important;
+  transition:transform .2s ease!important;
+}
+#basePage .base-building>.eco-asset.asset-generic{
+  transform:scaleX(var(--building-mirror,1)) scale(var(--base-object-scale,1))!important;
+}
+#basePage .base-building-flowers{
+  transform:translate(-50%,-50%) rotate(var(--building-rotation,0deg)) scale(var(--building-scale,1))!important;
+}
+.base-preview-scene .base-building>.eco-asset,
+#visitorBaseScene .base-building>.eco-asset,
+#visitorBaseScene .base-building>.asset-single-flower{
+  transform:scaleX(var(--building-mirror,1))!important;
+  transform-origin:center bottom!important;
+}
+.base-building-mirror:active{transform:scale(.92)!important}
+@media(max-width:760px){.ridge-distant{bottom:35%!important}.ridge-middle{bottom:28%!important}.ridge-foreground,.ridge-forest{bottom:21%!important}.ridge-mist{display:none}}
+@media(prefers-reduced-motion:reduce){.ridge-mist{animation:none!important}}
