@@ -15,7 +15,7 @@
 <title>環保冒險王 V10.6.1｜基地互動與文字清晰優化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10.6.1" rel="stylesheet"/>
+<link href="style.css?v=10.7.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -107,7 +107,7 @@
 <small>EARTH GUARDIAN ADVENTURE</small>
 <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V10.6.1 基地互動優化</b><span>棲地節點與進度卡可點選，新增清楚的棲地說明、建設需求與商店引導</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V10.7.0 五大園區獨立基地</b><span>自然探索路線加入清楚園區說明；點選五大園區可進入各自獨立、可自由建設的基地</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -208,6 +208,11 @@
 <div class="base-growth-card" aria-live="polite"><span class="base-growth-icon">🌱</span><div><b id="baseGrowthLevel">自然基地 Lv.1</b><small id="baseGrowthHint">增加不同類型的建設，解鎖更豐富的基地景觀。</small></div><em id="baseGuardianScore">0</em></div>
 <div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>建設會沿步道逐步形成不同生態棲地，不再切成固定四格。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
 </section>
+<div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite">
+  <button type="button" onclick="exitHabitatBase()">← 返回自然探索路線</button>
+  <div><span id="habitatBaseNavIcon">🌳</span><div><b id="habitatBaseNavTitle">森林保育區</b><small id="habitatBaseNavDescription">在這裡自由建設專屬生態基地</small></div></div>
+  <strong id="habitatBaseBuildCount">已建設 0 項</strong>
+</div>
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
 <div class="build-toolbar-title"><b>建設工具</b><button class="habitat-hint-button" type="button" aria-label="查看動物棲地需求" title="動物棲地提示" onclick="openHabitatGuide()">💡</button></div>
@@ -485,7 +490,7 @@
     <div class="exploration-progress-wrap"><div><b>建設進度</b><strong id="explorationHabitatPercent">0%</strong></div><i><span id="explorationHabitatBar"></span></i></div>
     <section class="exploration-habitat-section"><h4>目前需要</h4><div id="explorationHabitatNeeds" class="exploration-needs"></div></section>
     <section class="exploration-habitat-section"><h4>完成後可發現</h4><div id="explorationHabitatResidents" class="exploration-residents"></div></section>
-    <div class="exploration-habitat-actions"><button class="secondary" type="button" onclick="closeExplorationHabitat()">返回基地</button><button class="primary" id="explorationHabitatShopButton" type="button" onclick="goToHabitatShop()">前往建設商店</button></div>
+    <div class="exploration-habitat-actions"><button class="secondary" type="button" onclick="closeExplorationHabitat()">返回基地</button><button class="primary" id="explorationHabitatShopButton" type="button" onclick="enterActiveHabitatBase()">進入園區建設</button></div>
   </div>
 </div>
 <div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
@@ -538,6 +543,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10.6.1"></script>
+<script src="game.js?v=10.7.0"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>
