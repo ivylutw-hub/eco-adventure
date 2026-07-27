@@ -5284,3 +5284,51 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 @media(prefers-reduced-motion:reduce){
   #basePage .ridge-distant,#basePage .ridge-middle,#basePage .ridge-foreground{animation:none!important}
 }
+
+/* =========================================================
+   V10.4.0 我的基地介面重設計：電腦版可明顯辨識的自然保護區景深
+   ========================================================= */
+#basePage .base-workspace-card{background:linear-gradient(180deg,#f7fff9 0,#edf8ef 100%);border:1px solid rgba(46,110,73,.18);box-shadow:0 20px 55px rgba(34,88,58,.14);overflow:hidden}
+#basePage .my-base-control-panel{background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(237,250,240,.94));border:1px solid rgba(58,132,82,.2);border-radius:24px;margin-bottom:14px;padding:16px 18px;box-shadow:0 8px 24px rgba(45,102,65,.08)}
+#basePage .my-base-panel-title>span{display:grid;place-items:center;width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#dff4d5,#bde7bc);box-shadow:inset 0 1px 0 #fff,0 5px 12px rgba(48,112,67,.16);font-size:26px}
+#basePage .base-village-entry{border-radius:16px!important;box-shadow:0 7px 16px rgba(37,105,67,.16)!important}
+#basePage .base-quality-strip>div{background:rgba(255,255,255,.78);border:1px solid rgba(55,127,77,.14);border-radius:15px;box-shadow:0 4px 12px rgba(49,103,67,.06)}
+
+#basePage .base-scene-frame,#visitorBaseScene{position:relative;isolation:isolate;background:#bfe7ff!important}
+#basePage .base-scene-frame{aspect-ratio:16/9!important;min-height:520px!important;max-height:none!important;border-radius:28px!important;border:7px solid rgba(255,255,255,.92)!important;box-shadow:0 24px 48px rgba(34,83,57,.2),0 0 0 1px rgba(45,112,70,.16)!important;overflow:hidden!important}
+#basePage .base-scene-frame::after{content:"太武山自然守護基地";position:absolute;z-index:80;left:22px;top:20px;padding:9px 15px;border-radius:999px;background:rgba(255,255,255,.82);backdrop-filter:blur(9px);color:#285a3b;font-weight:900;letter-spacing:.08em;box-shadow:0 6px 18px rgba(29,75,49,.14);pointer-events:none}
+#basePage .base-scene{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;min-height:0!important;overflow:hidden!important;background:linear-gradient(180deg,#82cef7 0%,#cceeff 47%,#eaf8e7 48%,#8fcd67 100%)!important}
+#basePage .base-scene.night{background:linear-gradient(180deg,#13264d 0%,#2d4d70 47%,#263f42 48%,#335b3c 100%)!important}
+
+.base-landscape-v104{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.landscape-sun-glow{position:absolute;right:7%;top:7%;width:25%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,245,178,.62),rgba(255,244,192,.15) 43%,transparent 72%);filter:blur(2px)}
+.mountain-layer{position:absolute;left:-4%;right:-4%;bottom:31%;height:45%;pointer-events:none}
+.mountain-layer i{position:absolute;bottom:0;width:36%;height:80%;transform:rotate(45deg);border-radius:15% 42% 10% 42%;transform-origin:center bottom;box-shadow:inset 14px 14px 28px rgba(255,255,255,.12)}
+.mountain-far{bottom:44%;height:34%;opacity:.9;filter:blur(.25px)}
+.mountain-far i{background:linear-gradient(135deg,#9ec4c7,#6f9fa0);box-shadow:inset 17px 17px 25px rgba(235,251,250,.26)}
+.mountain-far i:nth-child(1){left:-2%;width:39%;height:71%}.mountain-far i:nth-child(2){left:28%;width:43%;height:91%}.mountain-far i:nth-child(3){right:-1%;width:46%;height:73%}
+.mountain-mid{bottom:35%;height:39%}
+.mountain-mid i{background:linear-gradient(135deg,#6ca27c,#3f7658)}
+.mountain-mid i:nth-child(1){left:-8%;height:68%}.mountain-mid i:nth-child(2){left:17%;height:88%;width:38%}.mountain-mid i:nth-child(3){left:49%;height:67%;width:35%}.mountain-mid i:nth-child(4){right:-9%;height:92%;width:42%}
+.mountain-near{bottom:25%;height:32%}
+.mountain-near i{background:linear-gradient(135deg,#3e7d4d,#245d39);box-shadow:inset 13px 13px 24px rgba(135,190,121,.15)}
+.mountain-near i:nth-child(1){left:-8%;height:62%}.mountain-near i:nth-child(2){left:12%;height:83%;width:31%}.mountain-near i:nth-child(3){left:37%;height:66%;width:30%}.mountain-near i:nth-child(4){left:62%;height:91%;width:34%}.mountain-near i:nth-child(5){right:-10%;height:69%;width:32%}
+.forest-belt{position:absolute;left:-1%;right:-1%;bottom:22%;height:18%;display:flex;align-items:flex-end;justify-content:space-around;filter:drop-shadow(0 -3px 7px rgba(28,78,45,.18))}
+.forest-belt i{display:block;width:8.5%;height:75%;background:linear-gradient(135deg,#2f7242,#174d31);clip-path:polygon(50% 0,64% 25%,58% 25%,76% 52%,67% 52%,88% 84%,59% 84%,59% 100%,41% 100%,41% 84%,12% 84%,33% 52%,24% 52%,42% 25%,36% 25%);transform-origin:bottom center}
+.forest-belt i:nth-child(3n){height:92%;transform:scaleX(1.12)}.forest-belt i:nth-child(2n){height:68%;opacity:.92}.forest-belt i:nth-child(5n){height:82%;transform:scaleX(.88)}
+.landscape-mist{position:absolute;height:10%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.7),rgba(255,255,255,0) 72%);filter:blur(7px);opacity:.65}.mist-one{left:-3%;bottom:48%;width:54%}.mist-two{right:-7%;bottom:39%;width:48%;opacity:.46}
+.base-ground-v104{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;height:42%!important;z-index:4!important;background:linear-gradient(180deg,#78bd55 0,#65aa45 48%,#4c9139 100%)!important;border-radius:52% 52% 0 0/16% 16% 0 0;box-shadow:inset 0 12px 25px rgba(226,255,204,.24)}
+.base-ground-v104::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 12% 24%,rgba(255,255,255,.18) 0 2px,transparent 3px),radial-gradient(circle at 74% 63%,rgba(35,105,48,.16) 0 2px,transparent 3px),radial-gradient(circle at 42% 35%,rgba(250,245,172,.2) 0 1.5px,transparent 2.5px);background-size:75px 62px,92px 74px,54px 48px;opacity:.9}
+.ground-clearing{position:absolute;left:17%;right:17%;bottom:-20%;height:105%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(168,211,112,.72) 0 43%,rgba(110,177,76,.14) 64%,transparent 72%);transform:scaleY(.52)}
+.ground-bank{position:absolute;bottom:8%;width:28%;height:35%;border-radius:50%;background:radial-gradient(ellipse,rgba(45,122,57,.18),transparent 70%)}.bank-left{left:-7%}.bank-right{right:-7%}
+#basePage .base-path-layer{z-index:7!important}#basePage .base-residents{z-index:14!important}#basePage .base-buildings{z-index:18!important}
+#basePage .base-building{filter:drop-shadow(0 10px 7px rgba(30,73,39,.22));transition:filter .18s ease,transform .18s ease}
+#basePage .base-building:hover{filter:drop-shadow(0 13px 9px rgba(30,73,39,.28)) brightness(1.04)}
+#basePage .base-build-toolbar{margin-top:16px;border-radius:24px;background:rgba(255,255,255,.94);border:1px solid rgba(49,121,73,.16);box-shadow:0 10px 28px rgba(40,96,61,.1)}
+
+.base-scene.night .mountain-far i{background:linear-gradient(135deg,#60748b,#3e566d)}.base-scene.night .mountain-mid i{background:linear-gradient(135deg,#355e59,#234845)}.base-scene.night .mountain-near i{background:linear-gradient(135deg,#224d38,#17392d)}.base-scene.night .forest-belt i{background:linear-gradient(135deg,#173d2b,#0d2b20)}.base-scene.night .base-ground-v104{background:linear-gradient(180deg,#426e45,#315d39 55%,#244b31)!important}.base-scene.night .landscape-sun-glow{opacity:.1}
+
+@media (min-width:1101px){#basePage .base-dashboard-grid{max-width:1500px!important;margin:auto!important}#basePage .base-scene-frame{height:clamp(560px,56vw,760px)!important;aspect-ratio:auto!important}#basePage .base-scene-frame::after{font-size:15px}.mountain-far{bottom:45%}.mountain-mid{bottom:35%}.mountain-near{bottom:25%}.forest-belt{bottom:21%}.base-ground-v104{height:43%!important}}
+@media (max-width:1100px){#basePage .base-scene-frame{min-height:0!important;aspect-ratio:4/3!important}.mountain-far{bottom:48%;height:32%}.mountain-mid{bottom:39%;height:36%}.mountain-near{bottom:30%;height:30%}.forest-belt{bottom:26%;height:15%}.base-ground-v104{height:45%!important}}
+@media (max-width:700px){#basePage .base-scene-frame{aspect-ratio:4/5!important;border-width:4px!important;border-radius:22px!important}#basePage .base-scene-frame::after{left:12px;top:12px;font-size:11px;padding:7px 10px}.mountain-layer{left:-35%;right:-35%}.mountain-far{bottom:54%;height:27%}.mountain-mid{bottom:45%;height:31%}.mountain-near{bottom:35%;height:27%}.forest-belt{bottom:31%;height:13%;left:-10%;right:-10%}.forest-belt i{width:11%}.base-ground-v104{height:49%!important}.landscape-mist{display:none}.base-quality-strip{grid-template-columns:repeat(2,1fr)!important}}
+@media (prefers-reduced-motion:no-preference){.mountain-far{animation:v104Far 24s ease-in-out infinite alternate}.mountain-mid{animation:v104Mid 19s ease-in-out infinite alternate}.landscape-mist{animation:v104Mist 18s ease-in-out infinite alternate}@keyframes v104Far{to{transform:translateX(-.7%)}}@keyframes v104Mid{to{transform:translateX(.55%)}}@keyframes v104Mist{to{transform:translateX(8%);opacity:.35}}}
