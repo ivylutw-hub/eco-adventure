@@ -15,7 +15,7 @@
 <title>環保冒險王 V10.6.1｜基地互動與文字清晰優化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10.7.0" rel="stylesheet"/>
+<link href="style.css?v=10.7.1" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -107,7 +107,7 @@
 <small>EARTH GUARDIAN ADVENTURE</small>
 <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V10.7.0 五大園區獨立基地</b><span>自然探索路線加入清楚園區說明；點選五大園區可進入各自獨立、可自由建設的基地</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V10.7.1 五大園區主題地理環境</b><span>五大園區加入符合主題的獨立地形景觀；守護基地村與自然探索路線入口更清楚</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -192,7 +192,7 @@
 <section class="my-base-control-panel" aria-label="我的基地控制區">
 <div class="my-base-panel-head">
 <div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
-<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
+<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村・探索五大園區</span><b aria-hidden="true">→</b></button>
 </div>
 <div class="base-status-row">
 <span class="base-zoom-readout">畫面 <b id="baseZoomLabel">100%</b></span>
@@ -206,10 +206,10 @@
 <div><span>😊</span><small>幸福度</small><b id="baseHappinessScore">0</b></div>
 </div>
 <div class="base-growth-card" aria-live="polite"><span class="base-growth-icon">🌱</span><div><b id="baseGrowthLevel">自然基地 Lv.1</b><small id="baseGrowthHint">增加不同類型的建設，解鎖更豐富的基地景觀。</small></div><em id="baseGuardianScore">0</em></div>
-<div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>建設會沿步道逐步形成不同生態棲地，不再切成固定四格。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
+<div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>從守護基地村出發，選擇園區後進入符合主題地形的獨立建設基地。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
 </section>
 <div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite">
-  <button type="button" onclick="exitHabitatBase()">← 返回自然探索路線</button>
+  <button type="button" onclick="exitHabitatBase()">← 返回守護基地村・自然探索路線</button>
   <div><span id="habitatBaseNavIcon">🌳</span><div><b id="habitatBaseNavTitle">森林保育區</b><small id="habitatBaseNavDescription">在這裡自由建設專屬生態基地</small></div></div>
   <strong id="habitatBaseBuildCount">已建設 0 項</strong>
 </div>
@@ -543,6 +543,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=10.7.0"></script>
+<script src="game.js?v=10.7.1"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>

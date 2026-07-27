@@ -5403,3 +5403,77 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 .habitat-theme-wetland .ground-clearing{background:radial-gradient(ellipse at 68% 72%,rgba(80,183,207,.58) 0 13%,transparent 14%),radial-gradient(ellipse at center,rgba(211,239,172,.72),rgba(92,160,78,.25) 68%,transparent 69%)}.habitat-theme-coast .ground-clearing{background:linear-gradient(to top,rgba(232,210,154,.72) 0 30%,rgba(116,195,218,.58) 31% 44%,transparent 45%)}.habitat-theme-green .ground-clearing{background:radial-gradient(ellipse at center,rgba(226,248,189,.82),rgba(96,174,86,.3) 70%,transparent 71%)}
 @media(max-width:900px){.habitat-base-navigation{grid-template-columns:1fr auto}.habitat-base-navigation>button{grid-column:1/-1}.exploration-stops{grid-template-columns:repeat(2,minmax(0,1fr))}.exploration-stop{min-height:138px}}
 @media(max-width:600px){.habitat-base-navigation{grid-template-columns:1fr}.habitat-base-navigation strong{justify-self:start}.habitat-base-navigation b{font-size:18px}.habitat-base-navigation small{font-size:13px}.exploration-stops{grid-template-columns:1fr}.exploration-stop{min-height:124px}.exploration-stop small{-webkit-line-clamp:2}.habitat-scene-title{top:9%;width:88%;padding:9px 11px}.habitat-scene-title>b{font-size:18px}.habitat-scene-title>small{font-size:12px}.habitat-theme-decor::before{font-size:27px!important;letter-spacing:5px!important}}
+
+
+/* V10.7.1 — 五大園區主題地理環境 */
+.habitat-build-scene{overflow:hidden;background:#bfe5ff!important}
+.habitat-build-scene .base-landscape-v104,.habitat-build-scene .base-grassland{opacity:.16}
+.habitat-build-scene .base-buildings{z-index:26}
+.habitat-scene-title{z-index:32!important;top:3.5%!important;width:min(700px,88%)!important;padding:10px 17px!important}
+.habitat-scene-title>em{display:block;margin-top:5px;font-style:normal;font-size:13px;font-weight:900;color:#1d7045;letter-spacing:.03em}
+.base-scene.night .habitat-scene-title>em{color:#d8ffe9}
+.habitat-geography{position:absolute;inset:0;z-index:7;overflow:hidden;pointer-events:none;isolation:isolate}
+.habitat-geography>div{position:absolute;box-sizing:border-box}
+.habitat-geography .geo-back{inset:0;z-index:1}
+.habitat-geography .geo-mid{z-index:2}
+.habitat-geography .geo-front{z-index:3}
+.geo-label{left:3%;bottom:3%;z-index:18!important;padding:8px 12px;border-radius:13px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.9);box-shadow:0 5px 14px rgba(22,62,42,.17);color:#173f2a}
+.geo-label b,.geo-label small{display:block}.geo-label b{font-size:14px}.geo-label small{font-size:11px;margin-top:2px;font-weight:700}
+.base-scene.night .geo-label{background:rgba(13,38,30,.88);color:#fff}
+
+/* 森林：多層山陵、密林、小溪與林間空地 */
+.habitat-theme-forest{background:linear-gradient(#a9d9f1 0 34%,#82bd7e 35% 100%)!important}
+.habitat-theme-forest .geo-back{background:linear-gradient(to bottom,transparent 0 32%,#789d73 33% 50%,#4f7d55 51% 100%);clip-path:polygon(0 48%,12% 31%,24% 45%,38% 22%,52% 44%,67% 27%,82% 43%,100% 24%,100% 100%,0 100%)}
+.habitat-theme-forest .geo-mid{left:-5%;right:-5%;bottom:20%;height:42%;background:#376b43;clip-path:polygon(0 48%,8% 22%,16% 45%,23% 12%,31% 44%,40% 18%,48% 50%,58% 15%,66% 43%,75% 9%,84% 46%,92% 20%,100% 48%,100% 100%,0 100%)}
+.habitat-theme-forest .geo-front{left:0;right:0;bottom:0;height:39%;background:linear-gradient(160deg,#5f9a4e,#33703e)}
+.geo-tree-line{left:1%;right:1%;bottom:28%;height:22%;z-index:7!important;background:repeating-radial-gradient(ellipse at 4% 100%,#285a37 0 23px,transparent 24px 48px)}
+.geo-creek{left:19%;bottom:-9%;width:23%;height:54%;z-index:12!important;background:linear-gradient(90deg,#87d7e8,#d6f6f6 45%,#62baca);transform:rotate(13deg);border:5px solid rgba(199,232,188,.75);border-radius:50% 42% 30% 35%;box-shadow:inset 0 0 16px rgba(255,255,255,.65)}
+.geo-forest-clearing{right:10%;bottom:9%;width:38%;height:25%;z-index:9!important;background:radial-gradient(ellipse,#91c56e 0 48%,rgba(87,151,70,.4) 68%,transparent 70%);border-radius:50%}
+
+/* 授粉花園：開闊花田、果樹丘、蜿蜒花徑 */
+.habitat-theme-garden{background:linear-gradient(#bce7ff 0 38%,#a8d875 39% 100%)!important}
+.habitat-theme-garden .geo-back{background:linear-gradient(to bottom,transparent 0 42%,#83b963 43% 100%);clip-path:polygon(0 58%,14% 44%,28% 57%,43% 38%,60% 58%,76% 39%,100% 55%,100% 100%,0 100%)}
+.habitat-theme-garden .geo-mid{left:0;right:0;bottom:0;height:57%;background:linear-gradient(165deg,#b8df78,#7fbd61)}
+.habitat-theme-garden .geo-front{left:0;right:0;bottom:0;height:24%;background:#68aa53}
+.geo-flower-field{z-index:8!important;border-radius:50%;background:repeating-radial-gradient(circle,#fff7a6 0 3px,#f39bb9 4px 7px,transparent 8px 18px),#86c968}
+.field-a{left:4%;bottom:17%;width:38%;height:25%;transform:rotate(-5deg)}.field-b{right:4%;bottom:10%;width:37%;height:27%;transform:rotate(6deg)}
+.geo-garden-path{left:43%;bottom:-5%;width:15%;height:58%;z-index:11!important;background:#ead5a2;clip-path:polygon(35% 100%,64% 100%,58% 54%,72% 0,36% 0,47% 53%);filter:drop-shadow(0 0 3px rgba(88,62,29,.22))}
+.geo-orchard{right:7%;bottom:37%;width:34%;height:20%;z-index:9!important;background:repeating-radial-gradient(circle at 10% 80%,#568d42 0 18px,#345f36 19px 27px,transparent 28px 70px)}
+
+/* 濕地：淺水池、泥灘、蘆葦帶與木棧道 */
+.habitat-theme-wetland{background:linear-gradient(#a9ddec 0 40%,#8dbd91 41% 100%)!important}
+.habitat-theme-wetland .geo-back{background:linear-gradient(to bottom,transparent 0 47%,#709b77 48% 100%);clip-path:polygon(0 58%,18% 44%,35% 57%,52% 40%,72% 57%,87% 45%,100% 52%,100% 100%,0 100%)}
+.habitat-theme-wetland .geo-mid{inset:auto 0 0;height:50%;background:#6fa477}
+.habitat-theme-wetland .geo-front{inset:auto 0 0;height:22%;background:#607d55}
+.geo-wetland-water{left:9%;right:8%;bottom:5%;height:44%;z-index:7!important;border-radius:46% 54% 34% 42%;background:linear-gradient(175deg,#9fe5ea,#4eaabb);box-shadow:inset 0 8px 16px rgba(255,255,255,.38)}
+.geo-mudflat{left:3%;bottom:1%;width:54%;height:18%;z-index:8!important;background:#9a805c;border-radius:50% 50% 0 0;opacity:.82}
+.geo-reeds{bottom:28%;width:24%;height:26%;z-index:10!important;background:repeating-linear-gradient(83deg,transparent 0 9px,#678843 10px 13px,transparent 14px 20px)}
+.reeds-a{left:2%}.reeds-b{right:1%}
+.geo-boardwalk{left:31%;bottom:15%;width:54%;height:7%;z-index:13!important;background:repeating-linear-gradient(90deg,#8a6338 0 20px,#bc8a50 21px 39px);transform:rotate(-10deg);border:3px solid #654829;box-shadow:0 5px 7px rgba(49,43,28,.28)}
+
+/* 潮間帶：海面、沙灘、礁岩及潮池 */
+.habitat-theme-coast{background:linear-gradient(#a8e0f6 0 42%,#4caec7 43% 100%)!important}
+.habitat-theme-coast .geo-back{inset:auto 0 30%;height:35%;background:linear-gradient(#60bdd2,#258ea9)}
+.habitat-theme-coast .geo-mid{inset:auto 0 0;height:38%;background:linear-gradient(170deg,#efd996 0 65%,#c6ad72 66%)}
+.habitat-theme-coast .geo-front{inset:auto 0 0;height:12%;background:#d4bd7e}
+.geo-sea{left:0;right:0;top:39%;height:31%;z-index:5!important;background:linear-gradient(#68c6df,#2a91b4)}
+.geo-wave{left:-2%;right:-2%;height:10px;z-index:8!important;background:repeating-radial-gradient(ellipse at 10px 10px,#e8fbff 0 5px,transparent 6px 20px)}.wave-a{top:52%}.wave-b{top:59%;opacity:.72}
+.geo-beach{left:0;right:0;bottom:0;height:39%;z-index:9!important;background:linear-gradient(170deg,#f2dda0,#cdb579)}
+.geo-tidepool{z-index:11!important;background:radial-gradient(ellipse,#5fbcd2,#318ca6);border:6px solid #8c836f;border-radius:50%;box-shadow:inset 0 3px 8px rgba(255,255,255,.45)}.pool-a{left:12%;bottom:11%;width:24%;height:14%}.pool-b{right:15%;bottom:7%;width:18%;height:11%}
+.geo-rocks{left:3%;right:2%;bottom:18%;height:20%;z-index:12!important;background:repeating-radial-gradient(ellipse at 5% 90%,#706f68 0 19px,#4f5350 20px 26px,transparent 27px 76px)}
+
+/* 綠能：向陽緩坡、中央廣場與設備建設帶 */
+.habitat-theme-green{background:linear-gradient(#bde9ff 0 42%,#9dd177 43% 100%)!important}
+.habitat-theme-green .geo-back{background:linear-gradient(to bottom,transparent 0 47%,#73ae6b 48% 100%);clip-path:polygon(0 64%,18% 43%,36% 59%,55% 35%,74% 58%,91% 40%,100% 50%,100% 100%,0 100%)}
+.habitat-theme-green .geo-mid{inset:auto 0 0;height:51%;background:linear-gradient(160deg,#a8da7e,#69ae62)}
+.habitat-theme-green .geo-front{inset:auto 0 0;height:18%;background:#55994f}
+.geo-green-hills{left:0;right:0;bottom:18%;height:30%;z-index:7!important;background:radial-gradient(ellipse at 20% 100%,#79b767 0 33%,transparent 34%),radial-gradient(ellipse at 76% 100%,#7cb96b 0 38%,transparent 39%)}
+.geo-eco-plaza{left:31%;bottom:7%;width:38%;height:31%;z-index:10!important;background:radial-gradient(ellipse,#d8d5c2 0 56%,#a8ab9c 57% 66%,transparent 67%);border-radius:50%}
+.geo-energy-pad{bottom:24%;width:20%;height:14%;z-index:11!important;border:3px dashed rgba(255,255,255,.86);border-radius:16px;background:rgba(224,246,217,.42)}.pad-a{left:7%}.pad-b{right:7%}
+.geo-cycle-path{left:2%;right:2%;bottom:4%;height:8%;z-index:12!important;border-top:4px dashed rgba(255,255,255,.9);border-bottom:4px dashed rgba(255,255,255,.9);transform:rotate(-2deg)}
+
+@media(max-width:700px){
+ .habitat-scene-title{top:2%!important;width:93%!important;padding:7px 10px!important}.habitat-scene-title>span{font-size:22px}.habitat-scene-title>b{font-size:17px}.habitat-scene-title>small{font-size:11px;line-height:1.35}.habitat-scene-title>em{font-size:10px}
+ .geo-label{left:2%;bottom:1.5%;padding:5px 7px}.geo-label b{font-size:11px}.geo-label small{font-size:9px}
+ .geo-creek{width:29%}.geo-boardwalk{left:23%;width:66%}.geo-tidepool.pool-a{width:28%}.geo-eco-plaza{left:25%;width:50%}
+}

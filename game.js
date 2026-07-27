@@ -900,12 +900,23 @@ function renderBaseSky(){
 }
 let activeHabitatBase=null;
 const HABITAT_BASE_META={
-  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'種植多樣樹木、設置鳥屋與自然步道，打造鳥類與小型動物的安全家園。',shop:'trees'},
-  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'布置花朵、草地與蝴蝶花園，為蜜蜂和蝴蝶提供食物與休息空間。',shop:'flowers'},
-  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'建造生態池、雨水設施與木棧道，營造適合水生生物的濕地環境。',shop:'eco'},
-  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'利用礁岩、棧道與觀察設施，建立金門潮間帶生物的保護基地。',shop:'rest'},
-  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'設置太陽能、風力、回收與節水設備，發展低碳永續的智慧園區。',shop:'eco'}
+  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'山陵、森林、小溪與林間空地，適合建造鳥屋、昆蟲旅館及自然步道。',geography:'起伏山陵・闊葉森林・林間小溪',shop:'trees'},
+  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'開闊花田、果樹緩坡與蜿蜒花徑，為蜜蜂和蝴蝶提供蜜源與休息空間。',geography:'花田草原・果樹緩坡・授粉花徑',shop:'flowers'},
+  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'淺水池、泥灘、蘆葦帶與木棧道，營造水鳥、青蛙及歐亞水獺適合的環境。',geography:'淺水濕地・泥灘蘆葦・觀察水道',shop:'eco'},
+  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'沙灘、礁岩、潮池與海岸平台，建立鱟、招潮蟹和彈塗魚的金門潮間帶基地。',geography:'海岸沙灘・礁岩潮池・潮汐水域',shop:'rest'},
+  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'向陽緩坡、開放廣場與低碳設施用地，適合配置風力、太陽能及雨水回收系統。',geography:'向陽草坡・永續廣場・綠能設施帶',shop:'eco'}
 };
+function habitatGeographyMarkup(id,meta){
+  const common=`<div class="habitat-geography habitat-geography-${id}" aria-hidden="true"><div class="geo-back"></div><div class="geo-mid"></div><div class="geo-front"></div>`;
+  const details={
+    forest:'<div class="geo-creek"></div><div class="geo-tree-line"></div><div class="geo-forest-clearing"></div>',
+    garden:'<div class="geo-flower-field field-a"></div><div class="geo-flower-field field-b"></div><div class="geo-garden-path"></div><div class="geo-orchard"></div>',
+    wetland:'<div class="geo-wetland-water"></div><div class="geo-mudflat"></div><div class="geo-reeds reeds-a"></div><div class="geo-reeds reeds-b"></div><div class="geo-boardwalk"></div>',
+    coast:'<div class="geo-sea"></div><div class="geo-wave wave-a"></div><div class="geo-wave wave-b"></div><div class="geo-beach"></div><div class="geo-tidepool pool-a"></div><div class="geo-tidepool pool-b"></div><div class="geo-rocks"></div>',
+    green:'<div class="geo-green-hills"></div><div class="geo-eco-plaza"></div><div class="geo-energy-pad pad-a"></div><div class="geo-energy-pad pad-b"></div><div class="geo-cycle-path"></div>'
+  };
+  return common+(details[id]||'')+`<div class="geo-label"><b>${meta.geography||meta.short}</b><small>可自由擺放建設物件</small></div></div>`;
+}
 function ensureHabitatBase(id){
   if(!st.habitatBases||typeof st.habitatBases!=='object')st.habitatBases={};
   if(!st.habitatBases[id]||typeof st.habitatBases[id]!=='object')st.habitatBases[id]={owned:[],placements:[]};
@@ -920,7 +931,7 @@ function enterHabitatBase(id){
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}
-function exitHabitatBase(){activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已返回自然探索路線');}
+function exitHabitatBase(){activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已返回守護基地村的自然探索路線');}
 function ensureBaseLayout(){
   if(!Array.isArray(st.basePlacements))st.basePlacements=[];
   if(!Array.isArray(st.basePaths))st.basePaths=[];
@@ -1373,7 +1384,7 @@ function renderBase(){
   const nav=document.getElementById('habitatBaseNavigation');if(nav){nav.classList.toggle('hide',!habitatMeta);if(habitatMeta){document.getElementById('habitatBaseNavIcon').textContent=habitatMeta.icon;document.getElementById('habitatBaseNavTitle').textContent=habitatMeta.name;document.getElementById('habitatBaseNavDescription').textContent=habitatMeta.description;document.getElementById('habitatBaseBuildCount').textContent=`已建設 ${currentBaseOwned().length} 項`;}}
   document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
   baseScene.innerHTML='<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="ground-bank bank-left"></div><div class="ground-bank bank-right"></div><span class="grass-tuft grass-a">🌱</span><span class="grass-tuft grass-b">🌿</span><span class="grass-tuft grass-c">🌱</span><span class="wildflower wildflower-a">✿</span><span class="wildflower wildflower-b">✿</span><span class="wildflower wildflower-c">✿</span></div><div class="eco-trail-map" aria-label="自然探索步道，點擊棲地查看建設需求"><svg viewBox="0 0 1000 560" preserveAspectRatio="none"><path class="trail-shadow" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/><path class="trail-main" d="M70 485 C180 430 165 338 300 350 S455 470 545 360 S620 205 755 235 S850 330 945 175"/></svg><span class="trail-entry">🏡<b>基地入口</b></span><span class="trail-node node-forest" data-habitat="forest">🌳<b>森林保育區</b></span><span class="trail-node node-garden" data-habitat="garden">🦋<b>授粉花園</b></span><span class="trail-node node-wetland" data-habitat="wetland">💧<b>濕地生態園</b></span><span class="trail-node node-coast" data-habitat="coast">🌊<b>潮間帶保護區</b></span><span class="trail-node node-green" data-habitat="green">☀️<b>綠能科技園</b></span></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>';
-  if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small></div><div class="habitat-theme-decor" aria-hidden="true"></div>`);}
+  if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
