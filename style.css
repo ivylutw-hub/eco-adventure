@@ -5850,3 +5850,132 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
   .habitat-build-scene .habitat-scene-title span{font-size:22px!important}.habitat-build-scene .habitat-scene-title b{font-size:15px!important}.habitat-build-scene .habitat-scene-title small{display:none!important}
   .habitat-build-scene .geo-label small{display:none}.habitat-build-scene .geo-label{padding:7px 11px!important;border-radius:14px!important}
 }
+
+/* =========================================================
+   V11.2.1 園區入口精準點擊、森林與潮間帶自然化
+   ========================================================= */
+
+/* 電腦版固定使用原始繪本圖 3:2 構圖，確保透明點擊區與木牌位置一致 */
+@media (min-width: 901px){
+  #basePage .base-scene-frame{
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:3 / 2;
+  }
+  #basePage .base-scene-frame .base-scene{
+    height:100%!important;
+    min-height:0!important;
+  }
+  .storybook-village-scene>img{
+    object-fit:fill!important;
+    object-position:center!important;
+    transform:none!important;
+  }
+}
+
+/* 五個園區入口：每個透明按鈕只貼合背景圖中的實際木牌 */
+.village-park-sign::before{inset:-2px!important;border-radius:10px!important}
+.sign-forest{left:2.35%!important;top:70.2%!important;bottom:auto!important;width:11.25%!important;height:5.55%!important}
+.sign-garden{left:2.35%!important;top:76.15%!important;bottom:auto!important;width:11.25%!important;height:5.55%!important}
+.sign-wetland{left:2.35%!important;top:82.05%!important;bottom:auto!important;width:11.25%!important;height:5.55%!important}
+.sign-coast{left:80.45%!important;right:auto!important;top:67.15%!important;bottom:auto!important;width:13.15%!important;height:5.75%!important}
+.sign-green{left:80.45%!important;right:auto!important;top:73.25%!important;bottom:auto!important;width:13.15%!important;height:5.75%!important}
+
+/* 平板與手機使用較小、互不重疊的點擊區；不再套用舊版 23%～28% 大範圍 */
+@media(max-width:900px){
+  .sign-forest{left:2%!important;top:70%!important;width:12.5%!important;height:6%!important}
+  .sign-garden{left:2%!important;top:76.2%!important;width:12.5%!important;height:6%!important}
+  .sign-wetland{left:2%!important;top:82.4%!important;width:12.5%!important;height:6%!important}
+  .sign-coast{left:79.5%!important;top:67%!important;width:14.5%!important;height:6.2%!important}
+  .sign-green{left:79.5%!important;top:73.5%!important;width:14.5%!important;height:6.2%!important}
+}
+@media(max-width:600px){
+  .village-park-sign::before{inset:-1px!important}
+  .sign-forest{left:1.5%!important;top:69.8%!important;width:14%!important;height:6.2%!important}
+  .sign-garden{left:1.5%!important;top:76.2%!important;width:14%!important;height:6.2%!important}
+  .sign-wetland{left:1.5%!important;top:82.6%!important;width:14%!important;height:6.2%!important}
+  .sign-coast{left:78.5%!important;top:66.7%!important;width:16%!important;height:6.5%!important}
+  .sign-green{left:78.5%!important;top:73.5%!important;width:16%!important;height:6.5%!important}
+}
+
+/* 森林：以林緣包覆、溪谷引導視線，中央保留自然草坪供玩家建設 */
+.habitat-theme-forest .geo-back{
+  background:
+    radial-gradient(ellipse at 18% 100%,#658864 0 36%,transparent 37%),
+    radial-gradient(ellipse at 48% 100%,#789b70 0 45%,transparent 46%),
+    radial-gradient(ellipse at 82% 100%,#5d8060 0 38%,transparent 39%),
+    linear-gradient(180deg,transparent 0 58%,#76966e 59%)!important;
+  filter:saturate(.92)!important;
+}
+.habitat-theme-forest .geo-mid{
+  background:
+    radial-gradient(ellipse at -2% 88%,#315f3d 0 34%,transparent 35%),
+    radial-gradient(ellipse at 18% 98%,#47784a 0 31%,transparent 32%),
+    radial-gradient(ellipse at 82% 98%,#47784a 0 31%,transparent 32%),
+    radial-gradient(ellipse at 102% 88%,#315f3d 0 34%,transparent 35%),
+    linear-gradient(180deg,transparent 0 48%,#7cab68 49%)!important;
+}
+.habitat-theme-forest .geo-tree-line{
+  bottom:31%!important;height:36%!important;opacity:.94!important;
+  background:
+    radial-gradient(circle at 2% 92%,#244f35 0 38px,transparent 39px),
+    radial-gradient(circle at 10% 80%,#3d7145 0 48px,transparent 49px),
+    radial-gradient(circle at 19% 91%,#2f603d 0 43px,transparent 44px),
+    radial-gradient(circle at 81% 91%,#2f603d 0 43px,transparent 44px),
+    radial-gradient(circle at 90% 80%,#3d7145 0 48px,transparent 49px),
+    radial-gradient(circle at 98% 92%,#244f35 0 38px,transparent 39px)!important;
+}
+.habitat-theme-forest .geo-creek{
+  left:10%!important;bottom:-12%!important;width:13%!important;height:67%!important;
+  transform:rotate(10deg)!important;
+  background:
+    repeating-linear-gradient(8deg,transparent 0 21px,rgba(255,255,255,.38) 22px 25px,transparent 26px 48px),
+    linear-gradient(90deg,#4f9cad 0,#bde5df 44%,#eefaf0 52%,#79bdc3 72%,#438ca0 100%)!important;
+  box-shadow:inset 0 0 18px rgba(255,255,255,.78),0 0 0 5px rgba(70,107,58,.2)!important;
+}
+.habitat-theme-forest .geo-forest-clearing{
+  left:27%!important;right:18%!important;bottom:8%!important;height:38%!important;
+  background:
+    radial-gradient(circle at 20% 70%,rgba(255,244,178,.22) 0 3px,transparent 4px),
+    radial-gradient(circle at 76% 45%,rgba(255,255,220,.2) 0 3px,transparent 4px),
+    radial-gradient(ellipse at 50% 48%,#b9db91 0 49%,#9ec87c 69%,rgba(126,174,103,.18) 76%,transparent 78%)!important;
+}
+.habitat-theme-forest .geo-front{
+  background:
+    radial-gradient(circle at 8% 52%,#315f3d 0 26px,transparent 27px),
+    radial-gradient(circle at 18% 74%,#4f824d 0 22px,transparent 23px),
+    radial-gradient(circle at 82% 76%,#4f824d 0 23px,transparent 24px),
+    radial-gradient(circle at 94% 54%,#315f3d 0 27px,transparent 28px),
+    radial-gradient(ellipse at 50% 5%,#9bc77c 0 40%,#78ad67 72%,#649756 100%)!important;
+}
+
+/* 潮間帶：多層弧形浪線、退潮濕沙與潮池自然銜接 */
+.habitat-theme-coast .geo-sea{
+  background:
+    radial-gradient(ellipse at 52% 0,rgba(255,255,255,.34),transparent 34%),
+    linear-gradient(180deg,#69bdd0 0,#4da9bc 46%,#318ea8 100%)!important;
+}
+.habitat-theme-coast .geo-wave{
+  height:8%!important;
+  border-radius:48% 52% 54% 46%/60% 58% 42% 40%!important;
+  background:
+    radial-gradient(ellipse at 10% 100%,transparent 0 55%,rgba(255,255,255,.88) 57% 63%,transparent 65%),
+    radial-gradient(ellipse at 34% 100%,transparent 0 55%,rgba(255,255,255,.8) 57% 63%,transparent 65%),
+    radial-gradient(ellipse at 60% 100%,transparent 0 55%,rgba(255,255,255,.86) 57% 63%,transparent 65%),
+    radial-gradient(ellipse at 86% 100%,transparent 0 55%,rgba(255,255,255,.78) 57% 63%,transparent 65%)!important;
+  filter:drop-shadow(0 2px 2px rgba(255,255,255,.22));
+  animation:coastWaveDrift 7s ease-in-out infinite alternate;
+}
+.habitat-theme-coast .wave-a{left:-4%!important;right:3%!important;bottom:40.5%!important;transform:rotate(-1.2deg)!important;opacity:.9!important}
+.habitat-theme-coast .wave-b{left:2%!important;right:-5%!important;bottom:35.2%!important;transform:rotate(1.1deg)!important;opacity:.58!important;animation-delay:-3.5s}
+.habitat-theme-coast .geo-beach{
+  background:
+    linear-gradient(180deg,rgba(157,126,80,.2) 0 8%,transparent 9%),
+    radial-gradient(ellipse at 50% 0,#d2bd8d 0 13%,#ead7a8 39%,#f3e3bc 100%)!important;
+}
+.habitat-theme-coast .geo-tidepool{
+  background:radial-gradient(ellipse at 42% 34%,#b8e1df 0 12%,#69b2b8 42%,#438c9d 100%)!important;
+  box-shadow:inset 0 0 13px rgba(255,255,255,.7),0 3px 0 rgba(98,76,49,.18)!important;
+}
+@keyframes coastWaveDrift{from{transform:translateX(-.8%) scaleX(1)}to{transform:translateX(.8%) scaleX(1.025)}}
+@media(prefers-reduced-motion:reduce){.habitat-theme-coast .geo-wave{animation:none!important}}
