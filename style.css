@@ -6101,3 +6101,7 @@ body.quiz-mode #nextBtn{width:100%;margin-top:10px}
  .result-actions{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){body.quiz-mode .option,body.quiz-mode .bar i{transition:none!important}}
+
+/* V12.1.0 引導式學習 */
+.guided-feedback .guided-retry-btn{margin-top:16px;width:100%;min-height:52px;font-weight:800}
+.guided-feedback .explanation-card{border-left:5px solid #f2b84b}

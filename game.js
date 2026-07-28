@@ -1,6 +1,6 @@
-let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
+let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null,currentQuestionAttempt=1;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],habitatBases:{},basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:'',bearName:'小熊熊'}}
+function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],habitatBases:{},basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:'',bearName:'小熊熊',thinkingStars:0,firstAttemptTotal:0,firstAttemptCorrect:0,guidedCorrect:0}}
 function migrateFlowerBundlesV96(state){
   if(!state||state.flowerBundleV96Migrated)return state;
   const oldOwned=Array.isArray(state.owned)?state.owned:[];
@@ -179,6 +179,10 @@ function ensureProfile(){
   st.exp=Math.max(0,Number(st.exp)||0);
   st.totalCorrect=Math.max(0,Number(st.totalCorrect)||0);
   st.totalAnswered=Math.max(0,Number(st.totalAnswered)||0);
+  st.thinkingStars=Math.max(0,Number(st.thinkingStars)||0);
+  st.firstAttemptTotal=Math.max(0,Number(st.firstAttemptTotal)||0);
+  st.firstAttemptCorrect=Math.max(0,Number(st.firstAttemptCorrect)||0);
+  st.guidedCorrect=Math.max(0,Number(st.guidedCorrect)||0);
   if(!st.wrongNotes||typeof st.wrongNotes!=='object')st.wrongNotes={};
   if(!st.checkinHistory||typeof st.checkinHistory!=='object')st.checkinHistory={};
   if(!st.monthlyGuardianRewards||typeof st.monthlyGuardianRewards!=='object')st.monthlyGuardianRewards={};
@@ -663,7 +667,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.3 已完成答題畫面優化：題目與選項更清楚、進度顯示更完整，完成後新增學習成果卡。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.0 已加入引導式學習：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -740,6 +744,7 @@ function start(i){
 }
 function renderQ(){
  answered=false;
+ currentQuestionAttempt=1;
  selectedAnswer=null;
  const q=quiz[qi];
  quizCount.textContent=`第 ${qi+1} / ${quiz.length} 題`;
@@ -802,67 +807,107 @@ function markWeaknessMastered(q){
    st.wrongNotes[key].masteredAt=new Date().toISOString();
  }
 }
+function retryCurrentQuestion(){
+ answered=false;
+ selectedAnswer=null;
+ currentQuestionAttempt=2;
+ [...options.children].forEach(b=>{
+   b.disabled=false;
+   b.classList.remove('selected','good','bad','correct-answer');
+   b.setAttribute('aria-pressed','false');
+ });
+ feedback.className='feedback hide';
+ feedback.innerHTML='';
+ answerActions.classList.remove('hide');
+ submitAnswerBtn.disabled=true;
+ const nextButton=document.getElementById('nextBtn');
+ nextButton.classList.add('hide');
+ toast('再想一次，你一定可以！');
+ options.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function completeQuestionProgress(){
+ quizBar.style.width=((qi+1)/quiz.length*100)+'%';
+ const progressLabel=document.getElementById('quizProgressLabel');
+ if(progressLabel)progressLabel.textContent=`已完成 ${qi+1} 題`;
+ answerActions.classList.add('hide');
+ const nextButton=document.getElementById('nextBtn');
+ nextButton.disabled=false;
+ nextButton.classList.remove('hide');
+ ensureProgress();
+ if(!replayMode){
+   st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
+   st.unitScores[stage.id][unit]=score;
+ }
+ requestAnimationFrame(()=>{
+   if(window.matchMedia('(min-width: 701px)').matches){
+     nextButton.scrollIntoView({behavior:'smooth',block:'nearest'});
+   }
+ });
+}
+function awardCorrectAnswer(q,isGuided){
+ score++;
+ st.guardianEnergy=Math.min(100,Math.max(0,Number(st.guardianEnergy)||0)+2);
+ st.totalCorrect=(st.totalCorrect||0)+1;
+ if(isGuided){
+   st.guidedCorrect=(st.guidedCorrect||0)+1;
+   st.thinkingStars=(st.thinkingStars||0)+1;
+ }
+ if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
+ const expKey=`${stage.id}|${q.id}`;
+ let expGained=0;
+ if(!st.mainExpAwarded[expKey]){
+   const awardedExp=10*activeExpMultiplier();
+   addExp(awardedExp);
+   st.mainExpAwarded[expKey]=true;
+   expGained=awardedExp;
+   addWeeklyQuestionPoints(awardedExp);
+ }
+ markWeaknessMastered(q);
+ return expGained;
+}
 function submitSelectedAnswer(){
  if(answered||selectedAnswer===null){toast('請先選擇一個答案');return}
  answered=true;
- const q=quiz[qi],i=selectedAnswer,ok=i===q.ans;
- st.totalAnswered=(st.totalAnswered||0)+1;
- recordAnswerActivity();
- let expGained=0;
- if(ok){
-   score++;
-   st.guardianEnergy=Math.min(100,Math.max(0,Number(st.guardianEnergy)||0)+2);
-   st.totalCorrect=(st.totalCorrect||0)+1;
-   if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
-   const expKey=`${stage.id}|${q.id}`;
-   if(!st.mainExpAwarded[expKey]){
-     const awardedExp=10*activeExpMultiplier();
-     addExp(awardedExp);
-     st.mainExpAwarded[expKey]=true;
-     expGained=awardedExp;
-     addWeeklyQuestionPoints(awardedExp);
-   }
-   markWeaknessMastered(q);
- }else{
-   recordWrongNote(q);
+ const q=quiz[qi],i=selectedAnswer,ok=i===q.ans,isFirst=currentQuestionAttempt===1;
+ if(isFirst){
+   st.totalAnswered=(st.totalAnswered||0)+1;
+   st.firstAttemptTotal=(st.firstAttemptTotal||0)+1;
+   recordAnswerActivity();
+   if(ok)st.firstAttemptCorrect=(st.firstAttemptCorrect||0)+1;
  }
+ let expGained=0;
+ if(ok)expGained=awardCorrectAnswer(q,!isFirst);
  [...options.children].forEach((b,j)=>{
    b.disabled=true;
    b.classList.remove('selected');
    if(ok&&j===i)b.classList.add('good');
    if(!ok&&j===i)b.classList.add('bad');
  });
- feedback.className='feedback '+(ok?'good':'bad');
- const correctLetter=String.fromCharCode(65+q.ans);
- const correctText=q.opts[q.ans];
- feedback.innerHTML=ok
-   ?`<div class="feedback-heading"><span>✅</span><div><b>答對了！</b><small>小熊熊：又學會一個環保知識！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
-   :`<div class="feedback-heading"><span>🌱</span><div><b>沒關係，我們學會這一題了！</b><small>這題已收進怪獸弱點筆記，之後可以再複習。</small></div></div><div class="correct-answer-card"><small>正確答案</small><b>${correctLetter}. ${correctText}</b></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">本題不獲得經驗值，守護能量也不會下降</div>`;
- quizBar.style.width=((qi+1)/quiz.length*100)+'%';
- const progressLabel=document.getElementById('quizProgressLabel');
- if(progressLabel)progressLabel.textContent=`已完成 ${qi+1} 題`;
- [...options.children].forEach((b,j)=>{if(j===q.ans)b.classList.add('correct-answer')});
- answerActions.classList.add('hide');
- const nextButton=document.getElementById('nextBtn');
- nextButton.disabled=false;
- nextButton.classList.remove('hide');
- requestAnimationFrame(()=>{
-   if(window.matchMedia('(min-width: 701px)').matches){
-     nextButton.scrollIntoView({behavior:'smooth',block:'nearest'});
-   }
- });
- ensureProgress();
- if(!replayMode){
-   st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
-   st.unitScores[stage.id][unit]=score;
+ if(!ok&&isFirst){
+   feedback.className='feedback bad guided-feedback';
+   feedback.innerHTML=`<div class="feedback-heading"><span>🌱</span><div><b>這次還沒有答對喔！</b><small>小熊熊：沒關係，先看看解析，再想一次！</small></div></div><div class="explanation-card"><span class="feedback-label">題目解析</span><p>${q.exp}</p></div><div class="exp-gain">不公布答案，也不扣守護能量</div><button class="primary guided-retry-btn" type="button" onclick="retryCurrentQuestion()">💡 我懂了，再試一次！</button>`;
+   answerActions.classList.add('hide');
+   const nextButton=document.getElementById('nextBtn');
+   nextButton.classList.add('hide');
+   save();header();playSound('wrong');animateFeedback(false);updateSaveStatus('saved');
+   return;
  }
- save();
- header();
- updateWeaknessBadge();
- playSound(ok?'correct':'wrong');
- animateFeedback(ok);
- updateSaveStatus('saved');
+ if(ok){
+   feedback.className='feedback good';
+   feedback.innerHTML=isFirst
+    ?`<div class="feedback-heading"><span>✅</span><div><b>答對了！</b><small>小熊熊：又學會一個環保知識！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">${expGained?`✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
+    :`<div class="feedback-heading"><span>🌟</span><div><b>你自己找出答案了！</b><small>小熊熊：真棒！這次是靠理解答對的！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">⭐ 思考之星 +1${expGained?`　✨ +${expGained} EXP`:''}</div>`;
+ }else{
+   recordWrongNote(q);
+   const correctLetter=String.fromCharCode(65+q.ans),correctText=q.opts[q.ans];
+   [...options.children].forEach((b,j)=>{if(j===q.ans)b.classList.add('correct-answer')});
+   feedback.className='feedback bad';
+   feedback.innerHTML=`<div class="feedback-heading"><span>📚</span><div><b>我們再把這題學熟一點！</b><small>小熊熊：這題已收進怪獸弱點筆記，下次一定會更熟悉。</small></div></div><div class="correct-answer-card"><small>正確答案</small><b>${correctLetter}. ${correctText}</b></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">本題不獲得經驗值，守護能量也不會下降</div>`;
+ }
+ completeQuestionProgress();
+ save();header();updateWeaknessBadge();playSound(ok?'correct':'wrong');animateFeedback(ok);updateSaveStatus('saved');
 }
+
 let nextQuestionLocked=false;
 function nextQuestion(){
  if(!answered||nextQuestionLocked)return;
@@ -1912,10 +1957,13 @@ function renderProfile(){
   setAvatarElement(profileAvatarPreview,av,av.name);
   profileAvatarPreview.className=`profile-avatar frame-${fr.id}`;
   const accuracy=st.totalAnswered?Math.round(st.totalCorrect/st.totalAnswered*100):0;
+  const firstAccuracy=st.firstAttemptTotal?Math.round(st.firstAttemptCorrect/st.firstAttemptTotal*100):0;
   profileSummary.innerHTML=`
     <div><span>⭐</span><small>目前等級</small><b>Lv.${lv}</b></div>
     <div><span>🧠</span><small>累積答對</small><b>${st.totalCorrect||0} 題</b></div>
-    <div><span>🎯</span><small>答題正確率</small><b>${accuracy}%</b></div>
+    <div><span>🎯</span><small>整體答對率</small><b>${accuracy}%</b></div>
+    <div><span>⭐</span><small>思考之星</small><b>${st.thinkingStars||0} 顆</b></div>
+    <div><span>💡</span><small>一次答對率</small><b>${firstAccuracy}%</b></div>
     <div><span>🧭</span><small>完成單元</small><b>${totalCompletedUnits()}/${S.reduce((n,x)=>n+unitCount(x.id),0)}</b></div>
     <div><span>📚</span><small>冒險進度</small><b>${totalProgressQuestions()}/${S.reduce((n,x)=>n+unitCount(x.id)*10,0)}</b></div>
     <div><span>📅</span><small>遊戲天數</small><b>${st.playDays||0} 天</b></div>`;
