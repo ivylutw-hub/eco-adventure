@@ -532,9 +532,27 @@ function mountGlobalFooter(pageId){
  activePage.appendChild(status);
  activePage.appendChild(info);
 }
-let currentGamePage='villageHomePage',previousGamePage='villageHomePage',restoringBrowserHistory=false;
+let currentGamePage='villageHomePage',previousGamePage='villageHomePage',restoringBrowserHistory=false,allowQuizNavigation=false;
+const NAV_PAGE_IDS=['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage'];
+function ensurePageNavigation(){
+ NAV_PAGE_IDS.forEach(id=>{
+   const target=document.getElementById(id);
+   if(!target||target.querySelector(':scope > .page-navigation'))return;
+   const nav=document.createElement('nav');
+   nav.className='page-navigation';
+   nav.setAttribute('aria-label','頁面導覽');
+   nav.innerHTML='<button type="button" class="page-nav-back" onclick="goGameBack()">← 回上一頁</button><button type="button" class="page-nav-home" onclick="goGameHome()">⌂ 回首頁</button>';
+   target.prepend(nav);
+ });
+}
+function quizIsInProgress(){return currentGamePage==='quizPage'&&Array.isArray(quiz)&&quiz.length>0&&qi<quiz.length;}
+function confirmQuizLeave(){
+ if(!quizIsInProgress()||allowQuizNavigation)return true;
+ return window.confirm('🐻 小熊熊提醒你：\n\n目前正在挑戰中。離開後仍會保留已完成的題目進度，但本題尚未送出的選擇不會保留。\n\n確定要離開嗎？');
+}
 function ecoRouteState(pageId=currentGamePage,habitat=activeHabitatBase){return{ecoAdventure:true,page:pageId,habitat:habitat||null};}
 function page(id,options={}){
+ ensurePageNavigation();
  const changed=id!==currentGamePage;
  if(changed){previousGamePage=currentGamePage;currentGamePage=id;}
  ['villageHomePage','mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
@@ -560,16 +578,34 @@ function restoreEcoRoute(state){
    activeHabitatBase=state.page==='basePage'&&HABITAT_BASE_META[state.habitat]?state.habitat:null;
    if(state.page==='basePage'){renderBase();updateBaseDashboard();}
    page(state.page,{history:false});
- }finally{restoringBrowserHistory=false;}
+ }finally{restoringBrowserHistory=false;allowQuizNavigation=false;}
 }
-window.addEventListener('popstate',event=>restoreEcoRoute(event.state));
+window.addEventListener('popstate',event=>{
+ if(quizIsInProgress()&&!allowQuizNavigation){
+   if(!confirmQuizLeave()){
+     allowQuizNavigation=true;
+     window.history.go(1);
+     setTimeout(()=>{allowQuizNavigation=false;},250);
+     return;
+   }
+   allowQuizNavigation=true;
+ }
+ restoreEcoRoute(event.state);
+});
 if(!window.history.state?.ecoAdventure){window.history.replaceState(ecoRouteState('villageHomePage',null),'',window.location.href);}
 function goGameBack(){
- // 使用瀏覽器原生上一頁，讓畫面返回使用者實際瀏覽的前一頁。
- // 若目前沒有可返回的瀏覽紀錄，再回到遊戲冒險地圖，避免離開後停在空白頁。
+ if(!confirmQuizLeave())return;
+ allowQuizNavigation=true;
  if(window.history.length>1){window.history.back();return;}
- if(activeHabitatBase){exitHabitatBase();return;}
+ if(activeHabitatBase){exitHabitatBase();allowQuizNavigation=false;return;}
  showMap();
+ allowQuizNavigation=false;
+}
+function goGameHome(){
+ if(!confirmQuizLeave())return;
+ allowQuizNavigation=true;
+ showVillageHome();
+ allowQuizNavigation=false;
 }
 function showVillageHome(){
  ensureProfile();
@@ -627,7 +663,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.1 首頁已回歸題庫學習主軸，守護基地村改為學習後的獎勵與探索空間。</p><p>後續將加入節日活動、雙倍經驗與園區事件。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.2 已加入全站「回上一頁」與「回首頁」，冒險地圖維持原有設計。</p><p>後續將加入節日活動、雙倍經驗與園區事件。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -2143,3 +2179,5 @@ function trialToGoogleLogin(){exitTrialMode();setTimeout(()=>{document.getElemen
 
 /* ===== V10.6.1：基地棲地互動與文字清晰度 ===== */
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeExplorationHabitat();});
+
+window.addEventListener('beforeunload',event=>{if(quizIsInProgress()){event.preventDefault();event.returnValue='';}});

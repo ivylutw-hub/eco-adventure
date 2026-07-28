@@ -15,7 +15,7 @@
 <title>環保冒險王 V12.0.1｜題庫主視覺首頁</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=12.0.1" rel="stylesheet"/>
+<link href="style.css?v=12.0.2" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,9 +105,9 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V12.0.1</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V12.0.2</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V12.0.1 題庫主視覺首頁</b><span>首頁回歸題庫學習，基地村改為完成學習後的輔助獎勵入口</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V12.0.2 全站導航優化</b><span>每個功能頁面新增回上一頁與回首頁，冒險地圖維持原設計</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -192,7 +192,7 @@
 <div class="map" id="map"></div>
 </main>
 <main class="hide" id="stagePage">
-<button class="back" onclick="showMap()">← 回冒險地圖</button>
+
 <section class="stageHero">
 <div id="stageIcon"></div>
 <div><small id="stageCode"></small><h2 id="stageName"></h2><p id="stageDesc"></p></div>
@@ -202,7 +202,7 @@
 <h3>選擇單元</h3><div class="units" id="units"></div>
 </main>
 <main class="hide" id="quizPage">
-<div class="quizTop"><button class="back" onclick="quitQuiz()">← 暫停冒險</button><b id="quizCount"></b></div>
+<div class="quizTop"><b id="quizCount"></b></div>
 <div class="bar"><i id="quizBar"></i></div>
 <div class="enemy"><span id="enemyIcon">👾</span><div><small>環境危機</small><b id="enemyName"></b></div></div>
 <span class="tag" id="levelTag"></span>
@@ -605,6 +605,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=12.0.1"></script>
+<script src="game.js?v=12.0.2"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>

@@ -6019,3 +6019,37 @@ body.village-home-active .app{max-width:none!important;padding:0!important}
 body.village-home-active .home-nature-strip{display:none}body.village-home-active .header-nature-scene{opacity:.18}body.village-home-active #mainHeader{min-height:auto;padding-bottom:12px}body.village-home-active .tabs{position:relative;z-index:3}
 @media(max-width:820px){.learning-home-page{padding:15px!important}.learning-home-intro{align-items:flex-start;flex-direction:column}.learning-bear-tip{width:100%;min-width:0}.learning-primary-actions{grid-template-columns:1fr}.learning-stat-grid{grid-template-columns:repeat(2,1fr)}.learning-secondary-actions{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:500px){.learning-home-intro{padding:19px}.learning-primary-actions button{min-height:104px;padding:17px}.learning-primary-actions button>span{font-size:37px}.learning-primary-actions b{font-size:20px}.learning-progress-card{padding:16px}.learning-progress-card header{align-items:flex-start}.learning-stat-grid>div{padding:11px 8px}.learning-stat-grid b{font-size:16px}.learning-goal{grid-template-columns:1fr}.learning-secondary-actions{grid-template-columns:1fr}.learning-village-card{align-items:flex-start;flex-direction:column}.learning-village-card button{width:100%}}
+
+
+/* V12.0.2 全站頁面導航 */
+.page-navigation{
+  width:min(1480px,calc(100% - 28px));
+  margin:14px auto 18px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-start;
+  position:relative;
+  z-index:20;
+}
+.page-navigation button{
+  min-height:48px;
+  padding:10px 18px;
+  border:2px solid rgba(92,68,40,.22);
+  border-radius:14px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 4px 0 rgba(78,58,34,.14);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.page-navigation button:hover{transform:translateY(-1px);box-shadow:0 6px 0 rgba(78,58,34,.13)}
+.page-navigation button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(78,58,34,.13)}
+.page-nav-back{background:#fffaf0;color:#5a452d}
+.page-nav-home{background:#e9f7df;color:#285d35}
+#quizPage>.page-navigation{margin-bottom:8px}
+#quizPage .quizTop{justify-content:flex-end}
+@media(max-width:640px){
+ .page-navigation{width:calc(100% - 20px);margin:10px auto 14px;gap:8px;position:sticky;top:8px}
+ .page-navigation button{flex:1;min-width:0;padding:10px 8px;font-size:15px;background-clip:padding-box}
+}
