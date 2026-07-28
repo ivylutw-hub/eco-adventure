@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V12.0.1｜題庫主視覺首頁</title>
+<title>環保冒險王 V12.0.3｜答題體驗優化版</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=12.0.2" rel="stylesheet"/>
+<link href="style.css?v=12.0.3" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,9 +105,9 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V12.0.2</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V12.0.3</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V12.0.2 全站導航優化</b><span>每個功能頁面新增回上一頁與回首頁，冒險地圖維持原設計</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V12.0.3 答題體驗優化</b><span>題目與選項更易閱讀，答題回饋、進度與完成成果卡全面改善</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -202,11 +202,11 @@
 <h3>選擇單元</h3><div class="units" id="units"></div>
 </main>
 <main class="hide" id="quizPage">
-<div class="quizTop"><b id="quizCount"></b></div>
+<div class="quizTop"><b id="quizCount">第 1 / 10 題</b><span class="quiz-progress-label" id="quizProgressLabel">準備作答</span></div>
 <div class="bar"><i id="quizBar"></i></div>
 <div class="enemy"><span id="enemyIcon">👾</span><div><small>環境危機</small><b id="enemyName"></b></div></div>
 <span class="tag" id="levelTag"></span>
-<h2 id="question"></h2>
+<section class="question-card" aria-labelledby="question"><span class="question-kicker">請選出正確答案</span><h2 id="question"></h2></section>
 <div class="options" id="options"></div>
 <div class="answer-actions" id="answerActions">
 <button class="primary" disabled="" id="submitAnswerBtn" onclick="submitSelectedAnswer()">確定送出</button>
@@ -216,10 +216,12 @@
 </main>
 <main class="hide center" id="resultPage">
 <div class="resultIcon">🎉</div><small>UNIT COMPLETE</small><h2 id="resultTitle"></h2>
-<div class="score"><b id="score">0</b><span>分</span></div>
+<div class="score"><b id="score">0</b><span>%</span></div>
+<div class="result-summary" id="resultSummary"><div><small>完成題數</small><b id="resultQuestionCount">10 題</b></div><div><small>答對題數</small><b id="resultCorrectCount">0 題</b></div><div><small>答對率</small><b id="resultAccuracy">0%</b></div></div>
 <p id="resultMsg"></p>
+<div class="bear-result-message"><span aria-hidden="true">🐻</span><div><b>小熊熊</b><p id="bearResultMessage">今天又完成一次環保挑戰，做得真棒！</p></div></div>
 <div class="reward"><div>🪙<b id="coinReward">+1</b><small>單元獎勵</small></div><div>✨<b id="expReward">+0 EXP</b><small>守護經驗</small></div><div>⭐<b id="stars">★★★</b><small>本次表現</small></div></div>
-<button class="primary" id="backToStageBtn" onclick="backToStage(event)" type="button">回到關卡</button>
+<div class="result-actions"><button class="secondary" id="retryUnitBtn" onclick="replayCurrentUnit(event)" type="button">🔄 再挑戰一組</button><button class="primary" id="backToStageBtn" onclick="backToStage(event)" type="button">回到關卡</button><button class="secondary" onclick="goGameHome()" type="button">⌂ 回首頁</button></div>
 </main>
 <main class="hide" id="checkinPage">
 <div class="title"><div><small>MONTHLY CHECK-IN</small><h2>📅 每日簽到月曆</h2><p>每天登入留下守護足跡；月底全勤可獲得限定守護者。</p></div></div>
@@ -605,6 +607,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=12.0.2"></script>
+<script src="game.js?v=12.0.3"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>

@@ -663,7 +663,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.2 已加入全站「回上一頁」與「回首頁」，冒險地圖維持原有設計。</p><p>後續將加入節日活動、雙倍經驗與園區事件。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.3 已完成答題畫面優化：題目與選項更清楚、進度顯示更完整，完成後新增學習成果卡。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -742,15 +742,19 @@ function renderQ(){
  answered=false;
  selectedAnswer=null;
  const q=quiz[qi];
- quizCount.textContent=`${qi+1}/${quiz.length}`;
+ quizCount.textContent=`第 ${qi+1} / ${quiz.length} 題`;
  quizBar.style.width=(qi/quiz.length*100)+'%';
+ quizBar.parentElement?.setAttribute('aria-label',`答題進度：已完成 ${qi} 題，共 ${quiz.length} 題`);
+ const progressLabel=document.getElementById('quizProgressLabel');
+ if(progressLabel)progressLabel.textContent=qi===0?'準備作答':`已完成 ${qi} 題`;
  levelTag.textContent=q.level||stage.main;
  question.textContent=q.q;
  options.innerHTML='';
  q.opts.forEach((o,i)=>{
    const b=document.createElement('button');
    b.className='option';
-   b.innerHTML=`<b>${String.fromCharCode(65+i)}.</b> ${o}`;
+   b.innerHTML=`<span class="option-letter">${String.fromCharCode(65+i)}</span><span class="option-text">${o}</span>`;
+   b.setAttribute('aria-pressed','false');
    b.onclick=()=>selectAnswer(i);
    options.appendChild(b);
  });
@@ -829,9 +833,15 @@ function submitSelectedAnswer(){
    if(!ok&&j===i)b.classList.add('bad');
  });
  feedback.className='feedback '+(ok?'good':'bad');
+ const correctLetter=String.fromCharCode(65+q.ans);
+ const correctText=q.opts[q.ans];
  feedback.innerHTML=ok
-   ?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
-   :`<b>🤔 這題已記進「怪獸弱點筆記」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">不公布答案，也不立即重答；之後可回首頁筆記複習。</div><div class="exp-gain">本題不獲得經驗值</div>`;
+   ?`<div class="feedback-heading"><span>✅</span><div><b>答對了！</b><small>小熊熊：又學會一個環保知識！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
+   :`<div class="feedback-heading"><span>🌱</span><div><b>沒關係，我們學會這一題了！</b><small>這題已收進怪獸弱點筆記，之後可以再複習。</small></div></div><div class="correct-answer-card"><small>正確答案</small><b>${correctLetter}. ${correctText}</b></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">本題不獲得經驗值，守護能量也不會下降</div>`;
+ quizBar.style.width=((qi+1)/quiz.length*100)+'%';
+ const progressLabel=document.getElementById('quizProgressLabel');
+ if(progressLabel)progressLabel.textContent=`已完成 ${qi+1} 題`;
+ [...options.children].forEach((b,j)=>{if(j===q.ans)b.classList.add('correct-answer')});
  answerActions.classList.add('hide');
  const nextButton=document.getElementById('nextBtn');
  nextButton.disabled=false;
@@ -922,6 +932,14 @@ function finish(){
  save();
  resultTitle.textContent=`${stage.name}・單元 ${unit+1} 完成！`;
  document.getElementById('score').textContent=pct;
+ const resultQuestionCount=document.getElementById('resultQuestionCount');
+ const resultCorrectCount=document.getElementById('resultCorrectCount');
+ const resultAccuracy=document.getElementById('resultAccuracy');
+ const bearResultMessage=document.getElementById('bearResultMessage');
+ if(resultQuestionCount)resultQuestionCount.textContent=`${quiz.length} 題`;
+ if(resultCorrectCount)resultCorrectCount.textContent=`${score} 題`;
+ if(resultAccuracy)resultAccuracy.textContent=`${pct}%`;
+ if(bearResultMessage)bearResultMessage.textContent=perfect?'太厲害了，10 題全部答對！今天又成功守護地球一次！':pct>=80?'做得真棒！把剛才不熟的題目再複習一次，就會更進步。':'今天完成挑戰就是很棒的進步，我們慢慢把弱點變成力量！';
  resultMsg.textContent=perfect
    ?(firstPerfect?`本次 10 題全部答對，獲得 ${mainCoinReward} 枚金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。')
    :(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');
@@ -933,6 +951,12 @@ function finish(){
  header();
  page('resultPage');
  if(isDone(stage))setTimeout(()=>toast('🏅 恭喜獲得「'+stage.badgeName+'」！'),400);
+}
+function replayCurrentUnit(event){
+ if(event){event.preventDefault();event.stopPropagation();}
+ if(!stage||!Number.isInteger(unit)){backToStage(event);return false;}
+ start(unit);
+ return false;
 }
 function backToStage(event){
  if(event){event.preventDefault();event.stopPropagation();}
