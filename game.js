@@ -532,7 +532,9 @@ function mountGlobalFooter(pageId){
  activePage.appendChild(status);
  activePage.appendChild(info);
 }
+let currentGamePage='mapPage',previousGamePage='mapPage';
 function page(id){
+ if(id!==currentGamePage){previousGamePage=currentGamePage;currentGamePage=id;}
  ['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  const target=document.getElementById(id);
@@ -543,6 +545,13 @@ function page(id){
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+}
+function goGameBack(){
+ if(activeHabitatBase){exitHabitatBase();return;}
+ const target=previousGamePage&&document.getElementById(previousGamePage)?previousGamePage:'mapPage';
+ const from=currentGamePage;
+ page(target);
+ previousGamePage=from;
 }
 function showMap(){renderMap();header();page('mapPage')}
 function openStage(s){
@@ -909,14 +918,15 @@ const HABITAT_BASE_META={
 function habitatGeographyMarkup(id,meta){
   const common=`<div class="habitat-geography habitat-geography-${id}" aria-hidden="true"><div class="geo-back"></div><div class="geo-mid"></div><div class="geo-front"></div>`;
   const details={
-    forest:'<div class="geo-creek"></div><div class="geo-tree-line"></div><div class="geo-forest-clearing"></div><div class="cozy-decor forest-decor"><i>🍄</i><i>🌿</i><i>🪵</i><i>🦋</i></div>',
-    garden:'<div class="geo-flower-field field-a"></div><div class="geo-flower-field field-b"></div><div class="geo-garden-path"></div><div class="geo-orchard"></div><div class="cozy-decor garden-decor"><i>🌷</i><i>🌼</i><i>🐝</i><i>🦋</i></div>',
-    wetland:'<div class="geo-wetland-water"></div><div class="geo-mudflat"></div><div class="geo-reeds reeds-a"></div><div class="geo-reeds reeds-b"></div><div class="geo-boardwalk"></div><div class="cozy-decor wetland-decor"><i>🪷</i><i>🦆</i><i>🐸</i><i>🪶</i></div>',
+    forest:'<div class="geo-creek"></div><div class="geo-tree-line"></div><div class="geo-forest-clearing"></div><div class="cozy-decor forest-decor"><i>🍄</i><i>🌿</i><i>🪨</i><i>🦋</i></div>',
+    garden:'<div class="geo-flower-field field-a"></div><div class="geo-flower-field field-b"></div><div class="cozy-decor garden-decor"><i>🌷</i><i>🌼</i><i>🐝</i><i>🦋</i></div>',
+    wetland:'<div class="geo-wetland-water"></div><div class="geo-mudflat"></div><div class="geo-reeds reeds-a"></div><div class="geo-reeds reeds-b"></div><div class="cozy-decor wetland-decor"><i>🪷</i><i>🦆</i><i>🐸</i><i>🪶</i></div>',
     coast:'<div class="geo-sea"></div><div class="geo-wave wave-a"></div><div class="geo-wave wave-b"></div><div class="geo-beach"></div><div class="geo-tidepool pool-a"></div><div class="geo-tidepool pool-b"></div><div class="geo-rocks"></div><div class="cozy-decor coast-decor"><i>🐚</i><i>🦀</i><i>🌿</i><i>🐟</i></div>',
-    green:'<div class="geo-green-hills"></div><div class="geo-eco-plaza"></div><div class="geo-energy-pad pad-a"></div><div class="geo-energy-pad pad-b"></div><div class="geo-cycle-path"></div><div class="cozy-decor green-decor"><i>🌱</i><i>🚲</i><i>☀️</i><i>🕊️</i></div>'
+    green:'<div class="geo-green-hills"></div><div class="geo-meadow-stream"></div><div class="cozy-decor green-decor"><i>🌱</i><i>🌼</i><i>☀️</i><i>🕊️</i></div>'
   };
-  return common+(details[id]||'')+`<div class="geo-label"><b>${meta.geography||meta.short}</b><small>可自由擺放建設物件</small></div></div>`;
+  return common+(details[id]||'')+`<div class="geo-label"><b>${meta.geography||meta.short}</b><small>初始僅保留自然環境，所有設施由玩家自行建設</small></div></div>`;
 }
+
 function ensureHabitatBase(id){
   if(!st.habitatBases||typeof st.habitatBases!=='object')st.habitatBases={};
   if(!st.habitatBases[id]||typeof st.habitatBases[id]!=='object')st.habitatBases[id]={owned:[],placements:[]};
@@ -931,7 +941,7 @@ function enterHabitatBase(id){
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}
-function exitHabitatBase(){activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已返回守護基地村的自然探索路線');}
+function exitHabitatBase(){activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已回到上一頁：守護基地的自然探索路線');}
 function ensureBaseLayout(){
   if(!Array.isArray(st.basePlacements))st.basePlacements=[];
   if(!Array.isArray(st.basePaths))st.basePaths=[];
@@ -1392,7 +1402,7 @@ function renderBase(){
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   const activeOwned=currentBaseOwned(),activePlacements=currentBasePlacements();
-  if(!activeOwned.length){buildings.innerHTML=`<div class="base-empty">${habitatMeta?`${habitatMeta.icon} ${habitatMeta.name}目前還沒有建設。請從下方商店選擇合適設施，打造專屬園區！`:'基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！'}</div>`}
+  if(!activeOwned.length){buildings.innerHTML=`<div class="base-empty">${habitatMeta?`${habitatMeta.icon} ${habitatMeta.name}目前只有原始自然環境，尚未放置任何建設。請由下方商店挑選設施，自由打造專屬園區！`:'基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！'}</div>`}
   else activePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it,p)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
   renderBaseResidents();
   renderBaseSky();updateRealBaseWeather();

@@ -15,7 +15,7 @@
 <title>環保冒險王 V10.6.1｜基地互動與文字清晰優化</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=11.0.0" rel="stylesheet"/>
+<link href="style.css?v=11.0.1" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -107,7 +107,7 @@
 <small>EARTH GUARDIAN ADVENTURE</small>
 <h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V11.0.0 守護基地自然繪本介面重製</b><span>重新整理電腦版五大園區的遠、中、近景與自然曲線，減少素材拼貼感並保留寬敞建設空間</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V11.0.1 園區初始自然環境與返回流程修正</b><span>各園區初始只呈現自然地貌，不預先放置人工設施；「回到上一頁」會返回遊戲內上一個畫面</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -209,7 +209,7 @@
 <div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>從守護基地村出發，選擇園區後進入符合主題地形的獨立建設基地。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
 </section>
 <div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite">
-  <button type="button" onclick="exitHabitatBase()">← 返回守護基地村・自然探索路線</button>
+  <button type="button" onclick="goGameBack()">← 回到上一頁</button>
   <div><span id="habitatBaseNavIcon">🌳</span><div><b id="habitatBaseNavTitle">森林保育區</b><small id="habitatBaseNavDescription">在這裡自由建設專屬生態基地</small></div></div>
   <strong id="habitatBaseBuildCount">已建設 0 項</strong>
 </div>
@@ -252,7 +252,7 @@
 </section></main>
 
 <main class="hide" id="baseVillagePage">
-  <button class="back village-back-to-base" onclick="showBase()">← 回我的守護基地</button>
+  <button class="back village-back-to-base" onclick="goGameBack()">← 回到上一頁</button>
   <div class="title village-title">
     <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
     <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
@@ -279,7 +279,7 @@
   <section class="base-village-grid" id="baseVillageGrid"></section>
 </main>
 <main class="hide" id="visitorBasePage">
-  <button class="back" onclick="showBaseVillage()">← 回守護基地村</button>
+  <button class="back" onclick="goGameBack()">← 回到上一頁</button>
   <section class="visitor-base-head">
     <div class="visitor-owner"><span id="visitorAvatar">🌱</span><div><small>正在參觀</small><h2 id="visitorName">守護者基地</h2><p id="visitorIntro"></p></div></div>
     <div class="visitor-actions"><button id="visitorLikeBtn" onclick="likeCurrentVisitorBase()">♡ 送愛心</button><button id="visitorFavoriteBtn" onclick="toggleVisitorFavorite()">☆ 收藏</button></div>
@@ -543,6 +543,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=11.0.0"></script>
+<script src="game.js?v=11.0.1"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>
