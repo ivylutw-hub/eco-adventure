@@ -547,11 +547,11 @@ function page(id){
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
 function goGameBack(){
+ // 使用瀏覽器原生上一頁，讓畫面返回使用者實際瀏覽的前一頁。
+ // 若目前沒有可返回的瀏覽紀錄，再回到遊戲冒險地圖，避免離開後停在空白頁。
+ if(window.history.length>1){window.history.back();return;}
  if(activeHabitatBase){exitHabitatBase();return;}
- const target=previousGamePage&&document.getElementById(previousGamePage)?previousGamePage:'mapPage';
- const from=currentGamePage;
- page(target);
- previousGamePage=from;
+ showMap();
 }
 function showMap(){renderMap();header();page('mapPage')}
 function openStage(s){
@@ -1395,7 +1395,7 @@ function renderBase(){
   document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
   baseScene.innerHTML=habitatMeta
     ? `<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`
-    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><div class="storybook-build-zone"><b>自由建設草坪</b><small>點擊編輯基地後，可在這裡拖曳與擺放建設</small></div><button class="village-hotspot hotspot-shop" type="button" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"><span>🛒</span><b>守護商店</b><small>選購基地建設</small></button><button class="village-hotspot hotspot-explore" type="button" onclick="document.querySelector('.base-exploration-card')?.scrollIntoView({behavior:'smooth',block:'center'})"><span>🗺️</span><b>自然探索</b><small>前往五大園區</small></button><button class="village-hotspot hotspot-achievement" type="button" onclick="showAchievements()"><span>🏆</span><b>成就館</b><small>查看守護成就</small></button><button class="village-hotspot hotspot-guide" type="button" onclick="openHabitatGuide()"><span>📖</span><b>生態圖鑑</b><small>查看棲地需求</small></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-explore" type="button" aria-label="前往自然探索五大園區" title="自然探索" onclick="document.querySelector('.base-exploration-card')?.scrollIntoView({behavior:'smooth',block:'center'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
   if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');

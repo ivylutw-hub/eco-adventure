@@ -5642,30 +5642,39 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 .storybook-village-scene{position:absolute;inset:0;z-index:1;overflow:hidden;background:#d8efd1}
 .storybook-village-scene>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.9) contrast(.98) brightness(1.03);transform:scale(1.012)}
 .storybook-village-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,55,31,.02),transparent 54%,rgba(35,65,39,.12));pointer-events:none}
-.storybook-build-zone{position:absolute;z-index:5;left:50%;top:58%;transform:translate(-50%,-50%);width:33%;min-width:300px;min-height:138px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;border:3px dashed rgba(255,255,255,.92);border-radius:48% 52% 45% 55%/55% 43% 57% 45%;background:rgba(222,239,169,.43);box-shadow:inset 0 0 0 3px rgba(65,112,53,.18),0 8px 24px rgba(42,79,39,.12);backdrop-filter:blur(1px);color:#315b2e;pointer-events:none;text-shadow:0 1px 0 rgba(255,255,255,.9)}
-.storybook-build-zone b{font-size:22px;font-weight:950}.storybook-build-zone small{margin-top:5px;font-size:13px;font-weight:800}
-.village-hotspot{position:absolute;z-index:15;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;min-width:146px;padding:9px 12px;border:2px solid rgba(255,255,255,.94);border-radius:16px;background:rgba(255,250,226,.91);box-shadow:0 7px 18px rgba(61,75,41,.23);color:#3f552a;text-align:left;cursor:pointer;backdrop-filter:blur(6px);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
-.village-hotspot:hover,.village-hotspot:focus-visible{transform:translateY(-3px) scale(1.035);box-shadow:0 11px 25px rgba(48,66,34,.3);filter:brightness(1.03);outline:3px solid rgba(255,255,255,.9);outline-offset:2px}
-.village-hotspot span{grid-row:1/3;font-size:28px}.village-hotspot b{font-size:15px;font-weight:950;line-height:1.15}.village-hotspot small{font-size:11px;font-weight:750;color:#63704f;margin-top:2px}
-.hotspot-shop{right:9%;top:25%}.hotspot-explore{left:5%;bottom:15%}.hotspot-achievement{right:6%;bottom:23%}.hotspot-guide{left:7%;top:42%}
+/* V11.0.2：直接點選場景原有屋頂、館舍與告示牌文字，不再顯示額外入口卡片 */
+.storybook-build-zone{display:none!important}
+.village-hotspot{display:none!important}
+.village-scene-link{position:absolute;z-index:16;display:block;border:0;background:transparent;color:transparent;padding:0;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.village-scene-link::after{content:"";position:absolute;inset:0;border-radius:18px;box-shadow:none;transition:box-shadow .16s ease,background .16s ease}
+.village-scene-link:hover::after{background:rgba(255,255,255,.035)}
+.village-scene-link:focus-visible{outline:none}
+.village-scene-link:focus-visible::after{box-shadow:0 0 0 4px rgba(255,255,255,.96),0 0 0 8px rgba(68,112,51,.72)}
+/* 點擊範圍只覆蓋場景圖中原本的建築標牌，不另顯示按鈕 */
+.scene-link-shop{left:57%;top:13%;width:21%;height:31%}
+.scene-link-guide{left:5%;top:36%;width:22%;height:31%}
+.scene-link-achievement{right:4%;top:35%;width:22%;height:34%}
+.scene-link-explore{left:0;bottom:0;width:25%;height:39%}
+@media(max-width:900px){
+ .scene-link-shop{left:56%;top:14%;width:23%;height:30%}
+ .scene-link-guide{left:3%;top:36%;width:24%;height:31%}
+ .scene-link-achievement{right:2%;top:35%;width:24%;height:34%}
+ .scene-link-explore{left:0;bottom:0;width:28%;height:40%}
+}
+@media(max-width:600px){
+ .scene-link-shop{left:54%;top:15%;width:27%;height:29%}
+ .scene-link-guide{left:1%;top:37%;width:28%;height:30%}
+ .scene-link-achievement{right:0;top:36%;width:28%;height:33%}
+ .scene-link-explore{left:0;bottom:0;width:33%;height:41%}
+}
 #basePage .base-scene:not(.habitat-build-scene) .base-buildings{z-index:12}
 #basePage .base-scene:not(.habitat-build-scene) .base-residents{z-index:11}
 #basePage .base-scene:not(.habitat-build-scene) .base-empty{z-index:20;background:rgba(255,250,226,.92);border:2px solid rgba(255,255,255,.95);color:#456037;box-shadow:0 8px 22px rgba(54,77,38,.2)}
 #basePage .base-scene-frame::after{content:"守護基地村・自然繪本世界"!important;background:rgba(255,248,221,.9)!important;color:#3d5c2e!important;border:2px solid rgba(255,255,255,.88)}
 #basePage .my-base-control-panel{background:linear-gradient(135deg,rgba(255,251,232,.98),rgba(237,247,220,.96))!important;border-color:#c9d9ad!important}
 #basePage .base-quality-strip>div{background:rgba(255,252,236,.88)!important;border-color:#d7dfbd!important}
-@media(max-width:900px){
- .storybook-village-scene>img{object-position:center center}
- .storybook-build-zone{width:42%;min-width:230px;min-height:105px}.storybook-build-zone b{font-size:17px}.storybook-build-zone small{font-size:11px}
- .village-hotspot{min-width:116px;padding:7px 9px}.village-hotspot span{font-size:22px}.village-hotspot b{font-size:12px}.village-hotspot small{font-size:9px}
- .hotspot-shop{right:4%;top:25%}.hotspot-guide{left:3%;top:43%}.hotspot-explore{left:3%;bottom:12%}.hotspot-achievement{right:3%;bottom:20%}
-}
-@media(max-width:600px){
- .storybook-village-scene>img{object-fit:cover;object-position:center top}
- .storybook-build-zone{top:61%;width:54%;min-width:0;min-height:78px;padding:10px}.storybook-build-zone b{font-size:14px}.storybook-build-zone small{display:none}
- .village-hotspot{min-width:0;width:42px;height:42px;padding:0;display:grid;place-items:center;border-radius:50%}.village-hotspot span{font-size:21px;grid-row:auto}.village-hotspot b,.village-hotspot small{display:none}
- .hotspot-shop{right:7%;top:28%}.hotspot-guide{left:5%;top:46%}.hotspot-explore{left:6%;bottom:12%}.hotspot-achievement{right:6%;bottom:20%}
-}
+@media(max-width:900px){.storybook-village-scene>img{object-position:center center}}
+@media(max-width:600px){.storybook-village-scene>img{object-fit:cover;object-position:center top}}
 
 
 /* V11.0.1：園區初始畫面只保留自然地貌，人工建設由玩家自行放置 */
