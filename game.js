@@ -575,7 +575,34 @@ function showVillageHome(){
  ensureProfile();
  if(!st.bearName)st.bearName='小熊熊';
  const el=document.getElementById('villageBearName');if(el)el.textContent=st.bearName;
+ renderLearningHome();
  page('villageHomePage');
+}
+function renderLearningHome(){
+ const today=localDateKey();
+ const todayAnswered=st.todayAnsweredDate===today?(Number(st.todayAnswered)||0):0;
+ const accuracy=st.totalAnswered?Math.round((Number(st.totalCorrect)||0)/(Number(st.totalAnswered)||1)*100):0;
+ const completed=completedUnitCount(),total=totalUnitCount();
+ const goal=10,goalDone=Math.min(goal,todayAnswered),remaining=Math.max(0,goal-todayAnswered);
+ const set=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=value};
+ set('homeTodayAnswered',`${todayAnswered} 題`);
+ set('homeAccuracy',`${accuracy}%`);
+ set('homeCompletedUnits',`${completed} / ${total}`);
+ set('homeGuardianExp',`${Number(st.exp)||0} EXP`);
+ set('homeGoalText',remaining?`今日再完成 ${remaining} 題`:'今日學習目標已完成！');
+ const bar=document.getElementById('homeGoalBar');if(bar)bar.style.width=`${Math.min(100,goalDone/goal*100)}%`;
+ const message=document.getElementById('homeBearMessage');if(message)message.textContent=remaining?`今天再完成 ${remaining} 題吧！`:'今天的目標完成了，真棒！';
+ const lastStage=S.find(x=>x.id===(st.lastStageId||''));
+ const hint=document.getElementById('continueLearningHint');if(hint)hint.textContent=lastStage?`接續「${lastStage.name}」`:'從第一座環境世界開始';
+}
+function continueLearning(){
+ ensureProgress();
+ const target=S.find(x=>x.id===(st.lastStageId||''))||S.find(x=>stagePercent(x.id)<100)||S[0];
+ openStage(target);
+ for(let i=0;i<unitCount(target.id);i++){
+  const answered=getUnitAnswered(target.id,i);
+  if(answered>0&&answered<10&&!doneSet(target.id).has(i)){start(i);return;}
+ }
 }
 function openBearNameDialog(){
  const modal=document.getElementById('bearNameModal'),input=document.getElementById('bearNameInput');
@@ -600,7 +627,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0 守護基地村正式開放！五大園區與小熊熊命名功能已上線。</p><p>後續將加入節日活動、雙倍經驗與園區事件。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.0.1 首頁已回歸題庫學習主軸，守護基地村改為學習後的獎勵與探索空間。</p><p>後續將加入節日活動、雙倍經驗與園區事件。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
