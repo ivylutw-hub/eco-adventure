@@ -534,6 +534,7 @@ function mountGlobalFooter(pageId){
 }
 let currentGamePage='mapPage',previousGamePage='mapPage',restoringBrowserHistory=false;
 function ecoRouteState(pageId=currentGamePage,habitat=activeHabitatBase){return{ecoAdventure:true,page:pageId,habitat:habitat||null};}
+function sameEcoRoute(a,b){return !!(a&&b&&a.ecoAdventure&&b.ecoAdventure&&a.page===b.page&&(a.habitat||null)===(b.habitat||null));}
 function page(id,options={}){
  const changed=id!==currentGamePage;
  if(changed){previousGamePage=currentGamePage;currentGamePage=id;}
@@ -548,7 +549,8 @@ function page(id,options={}){
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
  if(changed&&!restoringBrowserHistory&&options.history!==false){
-   window.history.pushState(ecoRouteState(id,id==='basePage'?activeHabitatBase:null),'',window.location.href);
+   const nextRoute=ecoRouteState(id,id==='basePage'?activeHabitatBase:null);
+   if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);
  }
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
@@ -960,7 +962,7 @@ function enterHabitatBase(id){
   if(!HABITAT_BASE_META[id])return;
   activeHabitatBase=id;st.baseEditMode=false;ensureHabitatBase(id);closeExplorationHabitat();
   const meta=HABITAT_BASE_META[id];baseShopCategory=meta.shop||'all';renderBase();
-  if(!restoringBrowserHistory){window.history.pushState(ecoRouteState('basePage',id),'',window.location.href);}
+  if(!restoringBrowserHistory){const nextRoute=ecoRouteState('basePage',id);if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);}
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}

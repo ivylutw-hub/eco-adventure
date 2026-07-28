@@ -5812,3 +5812,97 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
  .habitat-build-scene .habitat-scene-title{top:2.8%!important}
  .habitat-build-scene .base-empty{bottom:7%!important}
 }
+
+/* =========================================================
+   V11.3.0：基地場景直接點擊、精準熱區與返回歷程強化
+   ========================================================= */
+/* 場景中的建築本體就是入口；熱區緊貼建築，不覆蓋道路或相鄰物件。 */
+.scene-link-cabin{left:9.4%;top:23.4%;width:17.2%;height:25.5%}
+.scene-link-shop{left:57.8%;top:24.2%;width:18.8%;height:23.8%}
+.scene-link-guide{left:3.5%;top:47.7%;width:20.3%;height:20.2%}
+.scene-link-achievement{left:76.4%;top:42.6%;width:19.3%;height:20.4%}
+.scene-link-daily{left:42.9%;top:56.6%;width:12.8%;height:15.6%}
+.scene-link-mailbox{left:58.2%;top:64.2%;width:9.7%;height:13.3%}
+.scene-link-bulletin{left:24.6%;top:64.0%;width:15.1%;height:14.2%}
+.village-scene-link::before{content:attr(title);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translate(-50%,6px);white-space:nowrap;background:rgba(255,250,229,.96);color:#385332;border:2px solid rgba(255,255,255,.95);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;box-shadow:0 7px 16px rgba(43,68,35,.2);opacity:0;transition:.16s ease;pointer-events:none}
+.village-scene-link:hover::before,.village-scene-link:focus-visible::before{opacity:1;transform:translate(-50%,0)}
+.village-scene-link:hover::after{background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 3px rgba(255,255,255,.62),0 6px 18px rgba(45,74,38,.12)}
+/* 五塊木牌維持獨立矩形，並用 clip-path 進一步排除牌子外的透明角落。 */
+.village-park-sign{clip-path:polygon(2% 12%,94% 0,100% 50%,94% 100%,3% 88%,0 50%);touch-action:manipulation}
+.village-park-sign::before{inset:0!important}
+@media(max-width:600px){
+ .village-scene-link::before{display:none}
+ .scene-link-cabin{left:8.5%;width:19%}.scene-link-shop{left:56.5%;width:21%}
+ .scene-link-guide{left:2.5%;width:22%}.scene-link-achievement{left:75%;width:21.5%}
+ .scene-link-daily{left:41.8%;width:15%}.scene-link-mailbox{left:57%;width:12%}.scene-link-bulletin{left:23.5%;width:17%}
+}
+
+/* =========================================================
+   V11.3.1：依原圖比例定位，點擊範圍只覆蓋牌面文字
+   ========================================================= */
+/*
+ * base-village-storybook.png 為 1536 × 1024（3:2）。
+ * 舊版容器在桌面與手機使用不同長寬比，圖片會被 cover 裁切，
+ * 造成百分比熱區和畫面錯位。守護基地村固定保持原圖比例後，
+ * 所有熱區在電腦、平板與手機都會跟著圖片同步縮放。
+ */
+#basePage .base-scene-frame:has(.storybook-village-scene){
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:3/2!important;
+  overflow:hidden!important;
+  background:#d8efd1!important;
+}
+#basePage .base-scene-frame:has(.storybook-village-scene)>.base-scene{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+}
+#basePage .base-scene-frame:has(.storybook-village-scene)::after{display:none!important}
+.storybook-village-scene>img{
+  object-fit:contain!important;
+  object-position:center!important;
+  transform:none!important;
+}
+
+/* 熱區只覆蓋圖片上真正可見的名稱牌／木牌文字，不再覆蓋整棟建築。 */
+.village-scene-link,.village-park-sign{
+  z-index:30!important;
+  border-radius:8px!important;
+  clip-path:none!important;
+  touch-action:manipulation;
+}
+.scene-link-cabin{left:14.1%!important;top:17.4%!important;width:9.2%!important;height:6.2%!important}
+.scene-link-shop{left:60.3%!important;top:18.8%!important;width:8.7%!important;height:7.0%!important}
+.scene-link-guide{left:8.3%!important;top:41.4%!important;width:9.1%!important;height:6.0%!important}
+.scene-link-achievement{left:82.6%!important;top:41.1%!important;width:8.1%!important;height:6.5%!important}
+.scene-link-daily{left:44.6%!important;top:55.9%!important;width:9.8%!important;height:6.1%!important}
+.scene-link-bulletin{left:25.8%!important;top:63.6%!important;width:10.8%!important;height:6.4%!important}
+.scene-link-mailbox{left:59.5%!important;top:63.6%!important;width:9.2%!important;height:6.5%!important}
+
+.sign-forest{left:3.0%!important;top:71.8%!important;width:11.2%!important;height:5.0%!important}
+.sign-garden{left:3.0%!important;top:76.8%!important;width:11.2%!important;height:5.0%!important}
+.sign-wetland{left:3.0%!important;top:81.9%!important;width:11.4%!important;height:5.1%!important}
+.sign-coast{left:81.1%!important;right:auto!important;top:67.5%!important;width:15.0%!important;height:6.1%!important}
+.sign-green{left:81.5%!important;right:auto!important;top:73.5%!important;width:14.1%!important;height:6.2%!important}
+
+/* 滑鼠或鍵盤聚焦時，只標示實際牌面；平常完全透明。 */
+.village-scene-link::after,.village-park-sign::before{
+  inset:0!important;
+  border-radius:8px!important;
+}
+.village-scene-link:hover::after,.village-scene-link:focus-visible::after,
+.village-park-sign:hover::before,.village-park-sign:focus-visible::before{
+  background:rgba(255,248,205,.12)!important;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.92),0 0 0 3px rgba(74,116,52,.5)!important;
+}
+/* 原圖已經有清楚文字，不再額外浮出提示泡泡擋住畫面。 */
+.village-scene-link::before,.village-park-sign::after{display:none!important}
+
+@media(max-width:700px){
+  #basePage .base-scene-frame:has(.storybook-village-scene){aspect-ratio:3/2!important;max-height:none!important}
+}
