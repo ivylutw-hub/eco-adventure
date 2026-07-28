@@ -6031,3 +6031,13 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
   #basePage .storybook-village-scene>img{object-fit:fill!important;object-position:center!important}
   #basePage .habitat-scene-title{max-width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
 }
+
+
+/* V11.2.4：主選單可點擊與玩家資訊卡資料同步修正 */
+.tabs{z-index:10020!important;pointer-events:auto!important;isolation:isolate!important}
+.tabs::before,.tabs::after{pointer-events:none!important}
+.tabs button{position:relative!important;z-index:2!important;pointer-events:auto!important;touch-action:manipulation!important}
+#basePage,#basePage *{--main-nav-safe-z:10020}
+#basePage .base-dashboard-grid,#basePage .base-workspace-card,#basePage .base-scene-frame{position:relative;z-index:auto}
+#basePage .base-profile-avatar.frame-none{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 4px 12px rgba(34,85,54,.18)}
+#basePage .base-profile-avatar img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}

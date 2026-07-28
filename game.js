@@ -571,6 +571,8 @@ function goGameBack(){
  showMap();
 }
 function showMap(){renderMap();header();page('mapPage')}
+function enableMainNavigation(){const nav=document.querySelector('.tabs');if(!nav)return;nav.style.pointerEvents='auto';nav.querySelectorAll('button').forEach(btn=>{btn.disabled=false;btn.style.pointerEvents='auto';btn.style.position='relative';btn.style.zIndex='2';});}
+document.addEventListener('DOMContentLoaded',enableMainNavigation);
 function openStage(s){
  if(!s||!s.id){s=S.find(x=>x.id===(st.lastStageId||"s1"))||S[0];}
  stage=s;
@@ -837,7 +839,7 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
-function showBase(){renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
+function showBase(){enableMainNavigation();renderBase();updateBaseDashboard();page('basePage');setTimeout(()=>{updateBaseClock();updateBaseDashboard();},0)}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
   {id:'cloudy',label:'多雲',icon:'🌤️'},
@@ -1075,15 +1077,18 @@ function showGuardianAlbum(){showHall()}
 function updateBaseDashboard(){
   if(!st)return;
   updateBaseClock();
-  const lv=currentLevel(), av=avatarById(st.avatar);
+  ensureProfile();
+  const lv=currentLevel(), av=avatarById(st.avatar), fr=frameById(st.frame);
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
-  set('baseProfileName',st.name||'環保守護者');
+  const playerDisplayName=String(st.name||((typeof cloudUser!=='undefined'&&cloudUser&&cloudUser.displayName)||'環保守護者')).trim()||'環保守護者';
+  set('baseProfileName',playerDisplayName);
   set('baseProfileLevel',`Lv.${lv}`);
   set('baseProfileTitle',st.specialTitle||titleForLevel(lv));
   const avatar=document.getElementById('baseProfileAvatar');
   if(avatar){
-    setAvatarElement(avatar,av,st.name||'環保守護者');
-    avatar.dataset.frame=st.frame||'none';
+    setAvatarElement(avatar,av,playerDisplayName);
+    avatar.className=`base-profile-avatar frame-${fr.id}`;
+    avatar.setAttribute('aria-label',`${playerDisplayName}的守護者頭像`);
   }
   const achievements=typeof buildAchievementList==='function'?buildAchievementList():[];
   const achieved=achievements.filter(a=>Number(a.progress)>=Number(a.goal)).length;
@@ -1091,9 +1096,9 @@ function updateBaseDashboard(){
   const answered=Math.max(0,Number(st.totalAnswered)||0);
   const correct=Math.max(0,Math.min(answered,Number(st.totalCorrect)||0));
   const accuracy=answered?Math.round(correct/answered*100):0;
-  const villageOwned=Array.isArray(st.owned)?st.owned.length:0;
-  const habitatOwned=Object.values(st.habitatBases||{}).reduce((sum,b)=>sum+(Array.isArray(b?.owned)?b.owned.length:0),0);
-  const totalBuilds=villageOwned+habitatOwned;
+  const villagePlacements=Array.isArray(st.basePlacements)?st.basePlacements.length:0;
+  const habitatPlacements=Object.values(st.habitatBases||{}).reduce((sum,b)=>sum+(Array.isArray(b?.placements)?b.placements.length:0),0);
+  const totalBuilds=villagePlacements+habitatPlacements;
   const completion=Math.min(100,Math.round(totalBuilds/25*100));
   set('baseProfileAchievements',`${achieved} / ${achievementTotal}`);
   set('baseProfileStreak',`${Math.max(0,Number(st.streak)||0)} 天`);
