@@ -43,8 +43,6 @@ function applyRemotePlayerSnapshot(data){
  const remote={...defaultState(),...data.state};
  remote.exp=Math.max(Number(remote.exp)||0,Number(data.guardianExp)||0);
  remote.coins=Math.max(Number(remote.coins)||0,Number(data.coins)||0);
- remote.totalAnswered=Math.max(Number(remote.totalAnswered)||0,Number(data.totalAnswered)||0);
- remote.totalCorrect=Math.max(Number(remote.totalCorrect)||0,Number(data.totalCorrect)||0);
  if(data.stageProgress&&typeof data.stageProgress==='object')remote.unitProgress=data.stageProgress;
  const remoteTime=cloudStateTime(remote),localTime=cloudStateTime(st);
  // 只接收真正較新的雲端存檔，避免自己的舊寫入覆蓋剛完成的挑戰。
@@ -101,7 +99,6 @@ function playerFields(includeCreatedAt=false){
   coins:Number(st.coins)||0,
   stageProgress:st.unitProgress||st.completed||{},
   totalAnswered:Number(st.totalAnswered)||0,
-  totalCorrect:Number(st.totalCorrect)||0,
   todayAnswered:Number(st.todayAnswered)||0,
   todayAnsweredDate:st.todayAnsweredDate||'',
   lastActiveAt:firebase.firestore.FieldValue.serverTimestamp(),
@@ -222,10 +219,6 @@ async function loadCloudPlayer(){
   const localSameUser=st.cloudUid===cloudUser.uid;
   if(data&&data.state){
    const remote={...defaultState(),...data.state};
-   remote.exp=Math.max(Number(remote.exp)||0,Number(data.guardianExp)||0);
-   remote.coins=Math.max(Number(remote.coins)||0,Number(data.coins)||0);
-   remote.totalAnswered=Math.max(Number(remote.totalAnswered)||0,Number(data.totalAnswered)||0);
-   remote.totalCorrect=Math.max(Number(remote.totalCorrect)||0,Number(data.totalCorrect)||0);
    const localTime=localSameUser?(Date.parse(st.savedAt||0)||0):0;
    const remoteTime=Date.parse(remote.savedAt||0)||0;
    // 只有同一個 Google UID 才能比較並沿用本機進度，避免不同帳號互相污染。
@@ -234,7 +227,7 @@ async function loadCloudPlayer(){
    // 相容早期只有頂層欄位、尚未包含完整 state 的玩家文件。
    // 若目前本機資料屬於另一個 UID，先從乾淨狀態建立，不能沿用舊玩家資料。
    const base=localSameUser?{...defaultState(),...st}:defaultState();
-   st={...base,exp:Number(data.guardianExp)||0,coins:Number(data.coins)||0,totalAnswered:Number(data.totalAnswered)||Number(base.totalAnswered)||0,totalCorrect:Number(data.totalCorrect)||Number(base.totalCorrect)||0,unitProgress:data.stageProgress||base.unitProgress||{}};
+   st={...base,exp:Number(data.guardianExp)||0,coins:Number(data.coins)||0,unitProgress:data.stageProgress||base.unitProgress||{}};
   }else{
    // 新 Google 帳號沒有雲端文件時，必須建立獨立的新玩家狀態。
    // 同一台裝置切換帳號時，絕不可把上一個帳號的名稱、進度、金幣與經驗帶過來。

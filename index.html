@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V11.2.4｜玩家資訊與主選單修正版</title>
+<title>環保冒險王 V11.2.1｜園區入口與自然場景修正版</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=11.2.4" rel="stylesheet"/>
+<link href="style.css?v=12.0.0" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,9 +105,9 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V12.0.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V11.2.4 玩家資訊與主選單修正版</b><span>修正守護基地玩家資料同步、頭像外框與基地完成度，並恢復世界地圖、守護基地等主選單的點選功能</span></div>
+<div class="home-version-note" aria-label="本次版本更新"><b>V12.0.0 守護基地村正式版</b><span>全新守護基地村首頁、小熊熊可由玩家自行命名、五大園區與四大功能看板正式整合</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -137,6 +137,37 @@
 <button onclick="showAchievements()">🏅 玩家成就</button>
 <button class="hide" id="adminNavBtn" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
 </nav>
+
+<main class="hide village-home-page" id="villageHomePage" aria-label="守護基地村首頁">
+  <section class="v12-village-scene">
+    <div class="v12-scene-shade" aria-hidden="true"></div>
+    <div class="v12-title-card"><small>EARTH GUARDIAN VILLAGE</small><h2>守護基地村</h2><p>和你的冒險夥伴一起探索五大生態園區</p></div>
+    <div class="v12-quick-actions" aria-label="快捷功能">
+      <button type="button" onclick="showWeaknessBook()"><span>📖</span>圖鑑</button>
+      <button type="button" onclick="openVillageFeature('backpack')"><span>🎒</span>背包</button>
+      <button type="button" onclick="showAchievements()"><span>🏆</span>成就</button>
+      <button type="button" onclick="showProfile()"><span>⚙️</span>設定</button>
+    </div>
+    <nav class="v12-park-signs" aria-label="五大生態園區">
+      <button type="button" onclick="openVillageHabitat('forest')"><span>🌳</span><b>森林保育區</b><small>探索森林・守護生態</small></button>
+      <button type="button" onclick="openVillageHabitat('pollinator')"><span>🌸</span><b>授粉花園</b><small>花香四溢・昆蟲好朋友</small></button>
+      <button type="button" onclick="openVillageHabitat('wetland')"><span>💧</span><b>濕地生態園</b><small>水鳥家園・濕地守護</small></button>
+      <button type="button" onclick="openVillageHabitat('intertidal')"><span>🐚</span><b>潮間帶保護區</b><small>潮汐之間・生命奇蹟</small></button>
+      <button type="button" onclick="openVillageHabitat('green')"><span>🍃</span><b>綠能科技園</b><small>綠能未來・永續生活</small></button>
+    </nav>
+    <button class="v12-bear-card" type="button" onclick="openBearNameDialog()" aria-label="替冒險夥伴命名">
+      <span class="v12-bear-avatar">🐻</span><span><b id="villageBearName">小熊熊</b><small>守護基地村的好朋友・點我改名</small></span>
+    </button>
+    <section class="v12-feature-row" aria-label="村莊功能">
+      <button type="button" onclick="openVillageFeature('notice')"><span>📢</span><b>生態公告欄</b><small>查看最新公告與活動</small><em>查看全部</em></button>
+      <button type="button" onclick="openVillageFeature('quests')"><span>📬</span><b>任務信箱</b><small>每日、每週與特殊任務</small><em>前往任務</em></button>
+      <button type="button" onclick="showWeaknessBook()"><span>📖</span><b>圖鑑館</b><small>收集生物與生態知識</small><em>前往圖鑑</em></button>
+      <button type="button" onclick="openVillageFeature('daily')"><span>📝</span><b>每日任務站</b><small>完成今日挑戰領獎勵</small><em>前往挑戰</em></button>
+    </section>
+    <div class="v12-village-footer"><button type="button" onclick="showMap()">🗺️ 冒險地圖</button><button type="button" onclick="showBase()">🏡 我的基地</button><button type="button" onclick="showLeaderboard()">🥇 排行榜</button></div>
+  </section>
+</main>
+
 <main id="mapPage">
 <div class="title">
 <div><small>OPEN WORLD MAP</small><h2>🗺️ 地球修復冒險地圖</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
@@ -471,16 +502,30 @@
 <section class="global-footer-info checkin-player-row" aria-label="每日簽到與玩家資訊" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch;width:min(1480px,calc(100% - 28px));margin:0 auto 26px;">
 <section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
 <aside class="base-player-card">
-<div class="base-player-card-title">玩家資訊卡 <small>即時玩家資料</small></div>
+<div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
 <div class="base-player-identity"><span class="base-profile-avatar" id="baseProfileAvatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
 <div class="base-player-stats">
 <div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
 <div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
-<div><span>🎯</span><small>答對率</small><b id="baseProfileAccuracy">0%</b></div>
+<div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
 <div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
 </div>
 </aside>
 </section>
+</div>
+
+
+<div class="modal hide" id="bearNameModal" role="dialog" aria-modal="true" aria-labelledby="bearNameTitle" onclick="closeBearNameDialog(event)">
+  <div class="modal-card bear-name-card" onclick="event.stopPropagation()">
+    <button class="modal-close" type="button" onclick="closeBearNameDialog()" aria-label="關閉">×</button>
+    <div class="bear-name-icon">🐻</div><small>YOUR ADVENTURE PARTNER</small><h3 id="bearNameTitle">替冒險夥伴取名字</h3>
+    <p>預設名稱是「小熊熊」，之後也可以隨時回來修改。</p>
+    <input id="bearNameInput" maxlength="10" placeholder="小熊熊" aria-label="冒險夥伴名稱">
+    <div class="bear-name-actions"><button type="button" class="secondary" onclick="useDefaultBearName()">保持小熊熊</button><button type="button" class="primary" onclick="saveBearName()">使用這個名字</button></div>
+  </div>
+</div>
+<div class="modal hide" id="villageFeatureModal" role="dialog" aria-modal="true" aria-labelledby="villageFeatureTitle" onclick="closeVillageFeature(event)">
+ <div class="modal-card village-feature-card" onclick="event.stopPropagation()"><button class="modal-close" type="button" onclick="closeVillageFeature()">×</button><div id="villageFeatureContent"></div></div>
 </div>
 
 <div class="modal hide" id="explorationHabitatModal" role="dialog" aria-modal="true" aria-labelledby="explorationHabitatTitle" onclick="closeExplorationHabitat(event)">
@@ -543,6 +588,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=11.2.4"></script>
+<script src="game.js?v=12.0.0"></script>
 <script src="firebase.js?v=10600"></script>
 </body></html>

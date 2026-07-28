@@ -5981,63 +5981,26 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 @media(prefers-reduced-motion:reduce){.habitat-theme-coast .geo-wave{animation:none!important}}
 
 /* =========================================================
-   V11.2.2 守護基地跨裝置畫面修復
-   - 使用相容性較高的 3:2 比例容器，避免桌機／平板高度歸零
-   - 手機完整顯示場景，不再裁切左右或上下內容
+   V12.0 守護基地村首頁
    ========================================================= */
-#basePage .base-scene-frame{
-  position:relative!important;
-  width:100%!important;
-  height:0!important;
-  min-height:0!important;
-  padding-top:66.6666667%!important;
-  aspect-ratio:auto!important;
-  overflow:hidden!important;
-  background:#d8efd1!important;
-}
-#basePage .base-scene-frame>.base-scene{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  border-radius:0!important;
-}
-#basePage .storybook-village-scene,
-#basePage .storybook-village-scene>img{
-  width:100%!important;
-  height:100%!important;
-}
-#basePage .storybook-village-scene>img{
-  object-fit:fill!important;
-  object-position:center!important;
-  transform:none!important;
-}
-/* 園區畫面同樣保持完整可視，不因裝置比例裁掉地形 */
-#basePage .habitat-build-scene{
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  overflow:hidden!important;
-}
-/* 小螢幕保留完整場景，文字與互動元件避免超出邊界 */
-@media(max-width:900px){
-  #basePage .base-scene-frame{padding-top:66.6666667%!important}
-  #basePage .base-time-overlay{max-width:calc(100% - 16px)!important}
-}
-@media(max-width:600px){
-  #basePage .base-scene-frame{padding-top:66.6666667%!important;border-radius:0!important}
-  #basePage .base-scene-frame>.base-scene{transform:scale(var(--base-zoom,1))!important;transform-origin:center!important}
-  #basePage .storybook-village-scene>img{object-fit:fill!important;object-position:center!important}
-  #basePage .habitat-scene-title{max-width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
-}
-
-
-/* V11.2.4：主選單可點擊與玩家資訊卡資料同步修正 */
-.tabs{z-index:10020!important;pointer-events:auto!important;isolation:isolate!important}
-.tabs::before,.tabs::after{pointer-events:none!important}
-.tabs button{position:relative!important;z-index:2!important;pointer-events:auto!important;touch-action:manipulation!important}
-#basePage,#basePage *{--main-nav-safe-z:10020}
-#basePage .base-dashboard-grid,#basePage .base-workspace-card,#basePage .base-scene-frame{position:relative;z-index:auto}
-#basePage .base-profile-avatar.frame-none{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 4px 12px rgba(34,85,54,.18)}
-#basePage .base-profile-avatar img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
+body.village-home-active{background:#183f2c;overflow-x:hidden}
+body.village-home-active #mainHeader,
+body.village-home-active .tabs,
+body.village-home-active .global-status-row,
+body.village-home-active .global-footer-info{display:none!important}
+body.village-home-active .app{max-width:none!important;padding:0!important}
+.village-home-page{width:100%;max-width:none!important;margin:0!important;padding:0!important;background:#173e2b!important;box-shadow:none!important;border:0!important}
+.v12-village-scene{position:relative;min-height:100svh;overflow:hidden;background-image:url('guardian-village-v12.png');background-size:cover;background-position:center 48%;font-family:"Noto Sans TC",system-ui,sans-serif;color:#3d2a14}
+.v12-village-scene:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,42,27,.15),transparent 28%,transparent 72%,rgba(13,42,27,.45));pointer-events:none}
+.v12-scene-shade{position:absolute;left:0;right:0;top:0;height:15%;background:linear-gradient(#173d29 0%,rgba(23,61,41,.74) 22%,transparent 100%);pointer-events:none}
+.v12-title-card{position:absolute;z-index:3;left:2.2%;top:2.3%;width:min(340px,28vw);padding:14px 20px 13px;text-align:center;background:linear-gradient(#fff9de,#efd9a6);border:4px solid #6c461f;border-radius:18px;box-shadow:0 8px 0 #3f2916,0 16px 28px #0005}
+.v12-title-card:before,.v12-title-card:after{content:"🌿";position:absolute;top:-13px;font-size:25px}.v12-title-card:before{left:-12px}.v12-title-card:after{right:-12px;transform:scaleX(-1)}
+.v12-title-card small{font-size:10px;font-weight:900;letter-spacing:1.6px;color:#7d633d}.v12-title-card h2{font-size:clamp(25px,3vw,43px);line-height:1;margin:4px 0 7px}.v12-title-card p{margin:0;font-size:13px;font-weight:800}
+.v12-quick-actions{position:absolute;z-index:4;right:2.3%;top:2.4%;display:flex;gap:10px}.v12-quick-actions button{border:0;background:transparent;color:#352719;font-weight:900;font-size:13px;cursor:pointer;text-shadow:0 2px #fff;transition:.18s}.v12-quick-actions button span{display:grid;place-items:center;width:54px;height:54px;margin:auto auto 3px;border-radius:50%;background:linear-gradient(#fffdf1,#ead7ae);border:3px solid #fff;box-shadow:0 3px 0 #80613a,0 5px 15px #0004;font-size:27px}.v12-quick-actions button:hover{transform:translateY(-4px) scale(1.04)}
+.v12-park-signs{position:absolute;z-index:4;left:1.6%;top:20%;width:min(310px,25vw);display:grid;gap:8px}.v12-park-signs button{position:relative;min-height:84px;padding:10px 40px 10px 64px;text-align:left;border:3px solid #4d2e14;border-radius:10px;background:linear-gradient(180deg,#9a612d,#70431f);box-shadow:0 5px 0 #3b230f,0 8px 15px #0004;color:#fff6d2;cursor:pointer;transition:.18s}.v12-park-signs button:after{content:"›";position:absolute;right:14px;top:17px;color:#ffd34d;font-size:35px;font-weight:900}.v12-park-signs button>span{position:absolute;left:13px;top:16px;font-size:36px;filter:drop-shadow(0 3px 1px #0005)}.v12-park-signs b,.v12-park-signs small{display:block}.v12-park-signs b{font-size:20px;text-shadow:0 2px #3b230f}.v12-park-signs small{font-size:11px;margin-top:3px;color:#ffeab2}.v12-park-signs button:hover,.v12-park-signs button:focus-visible{transform:translateX(8px) scale(1.02);filter:brightness(1.12)}
+.v12-bear-card{position:absolute;z-index:5;left:31%;bottom:28%;display:flex;align-items:center;gap:10px;padding:8px 13px 8px 8px;border:3px solid #5f3b1b;border-radius:18px;background:linear-gradient(#fff7d7,#e7c98c);box-shadow:0 5px 0 #3e2713,0 10px 22px #0004;cursor:pointer;transition:.2s}.v12-bear-card:hover{transform:translateY(-4px)}.v12-bear-avatar{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#6a8d45;font-size:40px}.v12-bear-card b,.v12-bear-card small{display:block;text-align:left}.v12-bear-card b{font-size:21px}.v12-bear-card small{font-size:11px;color:#73562e;margin-top:2px}
+.v12-feature-row{position:absolute;z-index:4;left:22%;right:14%;bottom:5.6%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.v12-feature-row button{min-width:0;padding:12px 10px 10px;border:4px solid #573719;border-radius:13px;background:linear-gradient(#fff8df,#e4c58b);box-shadow:0 6px 0 #3f2712,0 12px 18px #0005;color:#3e2c17;cursor:pointer;transition:.18s}.v12-feature-row button:hover{transform:translateY(-7px);filter:brightness(1.04)}.v12-feature-row span{font-size:28px}.v12-feature-row b,.v12-feature-row small,.v12-feature-row em{display:block}.v12-feature-row b{font-size:18px;margin:2px 0 6px}.v12-feature-row small{font-size:11px;min-height:30px}.v12-feature-row em{width:max-content;margin:8px auto 0;padding:5px 13px;border-radius:99px;background:#5d8d29;color:#fff;font-size:11px;font-style:normal;font-weight:900;box-shadow:inset 0 -2px #345c13}
+.v12-village-footer{position:absolute;z-index:5;right:2%;bottom:2%;display:grid;gap:6px}.v12-village-footer button{border:2px solid #573719;border-radius:999px;padding:8px 13px;background:#f6e3b8;color:#4b331a;font-weight:900;box-shadow:0 3px 0 #3d2815;cursor:pointer}.v12-village-footer button:hover{transform:translateX(-5px)}
+.bear-name-card,.village-feature-card{max-width:470px!important;text-align:center;background:linear-gradient(#fffaf0,#f1ddb0)!important;border:4px solid #64421f!important}.bear-name-icon,.village-feature-icon{font-size:68px}.bear-name-card h3,.village-feature-card h3{font-size:26px;margin:6px 0}.bear-name-card input{width:100%;box-sizing:border-box;margin:12px 0;padding:13px 15px;border:2px solid #af8a52;border-radius:13px;background:#fff;font-size:20px;text-align:center;font-weight:900}.bear-name-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.village-feature-card{text-align:left}.village-feature-card .village-feature-icon,.village-feature-card>small,.village-feature-card h3{text-align:center}.village-feature-card h4{font-size:18px;margin:16px 0 8px}.village-feature-card p,.village-feature-card li{line-height:1.7}.village-feature-card ul{padding-left:24px}
+@media(max-width:900px){.v12-village-scene{min-height:960px;background-position:center top}.v12-title-card{left:2%;width:55vw}.v12-quick-actions{top:15%;right:2%;gap:5px}.v12-quick-actions button span{width:43px;height:43px;font-size:22px}.v12-quick-actions button{font-size:10px}.v12-park-signs{top:24%;width:45vw}.v12-park-signs button{min-height:68px;padding-left:53px}.v12-park-signs button>span{font-size:29px}.v12-park-signs b{font-size:16px}.v12-bear-card{left:49%;bottom:40%}.v12-feature-row{left:3%;right:3%;bottom:8%;grid-template-columns:repeat(2,1fr)}.v12-village-footer{bottom:1%;grid-template-columns:repeat(3,1fr);left:3%;right:3%}}
+@media(max-width:560px){.v12-village-scene{min-height:1180px;background-size:auto 760px;background-repeat:no-repeat;background-color:#2f6a3e}.v12-title-card{width:82vw}.v12-quick-actions{top:14%;left:4%;right:4%;justify-content:flex-end}.v12-park-signs{top:24%;left:4%;width:92%}.v12-park-signs button{min-height:58px}.v12-bear-card{left:8%;right:8%;bottom:39%;justify-content:center}.v12-feature-row{bottom:6%;grid-template-columns:1fr 1fr}.v12-feature-row button{padding:9px 6px}.v12-feature-row b{font-size:15px}.v12-village-footer button{font-size:11px;padding:7px 4px}}
