@@ -5686,3 +5686,33 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 .habitat-build-scene .geo-cycle-path{display:none!important}
 .habitat-theme-green .geo-meadow-stream{left:58%;bottom:-8%;width:13%;height:52%;border-radius:55% 45% 20% 25%;transform:rotate(8deg);background:linear-gradient(90deg,#9ed7d8,#eefcf4 48%,#82c8cc);box-shadow:inset 0 0 16px rgba(255,255,255,.72);opacity:.72;z-index:4}
 .habitat-build-scene .base-empty{background:rgba(255,252,235,.92);border:2px dashed rgba(82,124,72,.45);color:#31563a;max-width:560px;line-height:1.7;padding:14px 18px;border-radius:18px;box-shadow:0 8px 18px rgba(45,80,50,.12)}
+
+/* =========================================================
+   V11.1.0 守護基地村：五大主題路標與瀏覽器歷程
+   ========================================================= */
+/* 五塊路標直接覆蓋繪本場景中原有告示牌；視覺仍以背景畫面為主。 */
+.village-park-sign{position:absolute;z-index:18;border:0;background:transparent;padding:0;cursor:pointer;color:transparent;-webkit-tap-highlight-color:transparent;transform-origin:center;transition:transform .18s ease,filter .18s ease}
+.village-park-sign span,.village-park-sign b{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.village-park-sign::before{content:"";position:absolute;inset:-5px;border-radius:16px;border:3px solid transparent;box-shadow:0 0 0 0 rgba(255,255,255,0);transition:.18s ease;pointer-events:none}
+.village-park-sign::after{content:attr(title);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translate(-50%,8px);white-space:nowrap;padding:7px 12px;border-radius:999px;background:rgba(255,250,225,.96);border:2px solid rgba(255,255,255,.94);box-shadow:0 8px 18px rgba(46,66,34,.22);font-size:13px;font-weight:950;color:#385332;opacity:0;pointer-events:none;transition:.18s ease}
+.village-park-sign:hover,.village-park-sign:focus-visible{transform:scale(1.045);filter:brightness(1.08) saturate(1.08);outline:none}
+.village-park-sign:hover::before,.village-park-sign:focus-visible::before{border-color:rgba(255,255,255,.93);box-shadow:0 0 0 4px var(--sign-glow,rgba(87,145,74,.55)),0 8px 20px rgba(44,70,35,.2)}
+.village-park-sign:hover::after,.village-park-sign:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.sign-forest{--sign-glow:rgba(69,130,70,.62);left:1.5%;bottom:24%;width:19%;height:8%}
+.sign-garden{--sign-glow:rgba(225,139,184,.65);left:1.5%;bottom:15.2%;width:19%;height:8%}
+.sign-wetland{--sign-glow:rgba(70,157,173,.65);left:1.5%;bottom:6.4%;width:19%;height:8%}
+.sign-coast{--sign-glow:rgba(67,151,191,.65);right:1.3%;bottom:23.4%;width:20.5%;height:8.6%}
+.sign-green{--sign-glow:rgba(119,166,73,.65);right:1.3%;bottom:14.3%;width:20.5%;height:8.6%}
+/* 舊版整區探索熱點停用，避免點到錯誤內容。 */
+.scene-link-explore{display:none!important}
+@media(max-width:900px){
+ .sign-forest,.sign-garden,.sign-wetland{left:.5%;width:23%}
+ .sign-coast,.sign-green{right:.3%;width:23.5%}
+ .village-park-sign::after{font-size:12px;padding:6px 9px}
+}
+@media(max-width:600px){
+ .sign-forest,.sign-garden,.sign-wetland{left:0;width:28%}
+ .sign-coast,.sign-green{right:0;width:28%}
+ .village-park-sign::after{display:none}
+ .village-park-sign:focus-visible::before{box-shadow:0 0 0 3px var(--sign-glow)}
+}

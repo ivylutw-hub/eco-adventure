@@ -532,20 +532,37 @@ function mountGlobalFooter(pageId){
  activePage.appendChild(status);
  activePage.appendChild(info);
 }
-let currentGamePage='mapPage',previousGamePage='mapPage';
-function page(id){
- if(id!==currentGamePage){previousGamePage=currentGamePage;currentGamePage=id;}
+let currentGamePage='mapPage',previousGamePage='mapPage',restoringBrowserHistory=false;
+function ecoRouteState(pageId=currentGamePage,habitat=activeHabitatBase){return{ecoAdventure:true,page:pageId,habitat:habitat||null};}
+function page(id,options={}){
+ const changed=id!==currentGamePage;
+ if(changed){previousGamePage=currentGamePage;currentGamePage=id;}
  ['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  const target=document.getElementById(id);
+ if(!target)return;
  target.classList.remove('hide');
  document.body.classList.toggle('admin-mode',id==='adminPage');
  if(id!=='adminPage') mountGlobalFooter(id);
  if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
+ if(changed&&!restoringBrowserHistory&&options.history!==false){
+   window.history.pushState(ecoRouteState(id,id==='basePage'?activeHabitatBase:null),'',window.location.href);
+ }
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
+function restoreEcoRoute(state){
+ if(!state||!state.ecoAdventure)return;
+ restoringBrowserHistory=true;
+ try{
+   activeHabitatBase=state.page==='basePage'&&HABITAT_BASE_META[state.habitat]?state.habitat:null;
+   if(state.page==='basePage'){renderBase();updateBaseDashboard();}
+   page(state.page,{history:false});
+ }finally{restoringBrowserHistory=false;}
+}
+window.addEventListener('popstate',event=>restoreEcoRoute(event.state));
+if(!window.history.state?.ecoAdventure){window.history.replaceState(ecoRouteState('mapPage',null),'',window.location.href);}
 function goGameBack(){
  // 使用瀏覽器原生上一頁，讓畫面返回使用者實際瀏覽的前一頁。
  // 若目前沒有可返回的瀏覽紀錄，再回到遊戲冒險地圖，避免離開後停在空白頁。
@@ -936,12 +953,14 @@ function currentBaseData(){return activeHabitatBase?ensureHabitatBase(activeHabi
 function currentBaseOwned(){return currentBaseData().owned;}
 function currentBasePlacements(){return currentBaseData().placements;}
 function enterHabitatBase(id){
-  if(!HABITAT_BASE_META[id])return;activeHabitatBase=id;st.baseEditMode=false;ensureHabitatBase(id);closeExplorationHabitat();
+  if(!HABITAT_BASE_META[id])return;
+  activeHabitatBase=id;st.baseEditMode=false;ensureHabitatBase(id);closeExplorationHabitat();
   const meta=HABITAT_BASE_META[id];baseShopCategory=meta.shop||'all';renderBase();
+  if(!restoringBrowserHistory){window.history.pushState(ecoRouteState('basePage',id),'',window.location.href);}
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}
-function exitHabitatBase(){activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已回到上一頁：守護基地的自然探索路線');}
+function exitHabitatBase(){if(window.history.state?.ecoAdventure&&window.history.state?.habitat){window.history.back();return;}activeHabitatBase=null;st.baseEditMode=false;baseShopCategory='all';renderBase();toast('已回到守護基地村');}
 function ensureBaseLayout(){
   if(!Array.isArray(st.basePlacements))st.basePlacements=[];
   if(!Array.isArray(st.basePaths))st.basePaths=[];
@@ -1395,7 +1414,7 @@ function renderBase(){
   document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
   baseScene.innerHTML=habitatMeta
     ? `<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`
-    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-explore" type="button" aria-label="前往自然探索五大園區" title="自然探索" onclick="document.querySelector('.base-exploration-card')?.scrollIntoView({behavior:'smooth',block:'center'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button><button class="village-park-sign sign-forest" type="button" aria-label="前往森林保育區" title="森林保育區" onclick="enterHabitatBase('forest')"><span>🌳</span><b>森林保育區</b></button><button class="village-park-sign sign-garden" type="button" aria-label="前往授粉花園" title="授粉花園" onclick="enterHabitatBase('garden')"><span>🌼</span><b>授粉花園</b></button><button class="village-park-sign sign-wetland" type="button" aria-label="前往濕地生態園" title="濕地生態園" onclick="enterHabitatBase('wetland')"><span>💧</span><b>濕地生態園</b></button><button class="village-park-sign sign-coast" type="button" aria-label="前往潮間帶保護區" title="潮間帶保護區" onclick="enterHabitatBase('coast')"><span>🌊</span><b>潮間帶保護區</b></button><button class="village-park-sign sign-green" type="button" aria-label="前往綠能科技園" title="綠能科技園" onclick="enterHabitatBase('green')"><span>☀️</span><b>綠能科技園</b></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
   if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
