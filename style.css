@@ -5979,3 +5979,55 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
 }
 @keyframes coastWaveDrift{from{transform:translateX(-.8%) scaleX(1)}to{transform:translateX(.8%) scaleX(1.025)}}
 @media(prefers-reduced-motion:reduce){.habitat-theme-coast .geo-wave{animation:none!important}}
+
+/* =========================================================
+   V11.2.2 守護基地跨裝置畫面修復
+   - 使用相容性較高的 3:2 比例容器，避免桌機／平板高度歸零
+   - 手機完整顯示場景，不再裁切左右或上下內容
+   ========================================================= */
+#basePage .base-scene-frame{
+  position:relative!important;
+  width:100%!important;
+  height:0!important;
+  min-height:0!important;
+  padding-top:66.6666667%!important;
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+  background:#d8efd1!important;
+}
+#basePage .base-scene-frame>.base-scene{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  border-radius:0!important;
+}
+#basePage .storybook-village-scene,
+#basePage .storybook-village-scene>img{
+  width:100%!important;
+  height:100%!important;
+}
+#basePage .storybook-village-scene>img{
+  object-fit:fill!important;
+  object-position:center!important;
+  transform:none!important;
+}
+/* 園區畫面同樣保持完整可視，不因裝置比例裁掉地形 */
+#basePage .habitat-build-scene{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+/* 小螢幕保留完整場景，文字與互動元件避免超出邊界 */
+@media(max-width:900px){
+  #basePage .base-scene-frame{padding-top:66.6666667%!important}
+  #basePage .base-time-overlay{max-width:calc(100% - 16px)!important}
+}
+@media(max-width:600px){
+  #basePage .base-scene-frame{padding-top:66.6666667%!important;border-radius:0!important}
+  #basePage .base-scene-frame>.base-scene{transform:scale(var(--base-zoom,1))!important;transform-origin:center!important}
+  #basePage .storybook-village-scene>img{object-fit:fill!important;object-position:center!important}
+  #basePage .habitat-scene-title{max-width:calc(100% - 16px)!important;left:8px!important;right:8px!important}
+}
