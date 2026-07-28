@@ -534,7 +534,6 @@ function mountGlobalFooter(pageId){
 }
 let currentGamePage='mapPage',previousGamePage='mapPage',restoringBrowserHistory=false;
 function ecoRouteState(pageId=currentGamePage,habitat=activeHabitatBase){return{ecoAdventure:true,page:pageId,habitat:habitat||null};}
-function sameEcoRoute(a,b){return !!(a&&b&&a.ecoAdventure&&b.ecoAdventure&&a.page===b.page&&(a.habitat||null)===(b.habitat||null));}
 function page(id,options={}){
  const changed=id!==currentGamePage;
  if(changed){previousGamePage=currentGamePage;currentGamePage=id;}
@@ -549,22 +548,17 @@ function page(id,options={}){
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
  if(changed&&!restoringBrowserHistory&&options.history!==false){
-   const nextRoute=ecoRouteState(id,id==='basePage'?activeHabitatBase:null);
-   if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);
+   window.history.pushState(ecoRouteState(id,id==='basePage'?activeHabitatBase:null),'',window.location.href);
  }
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
 function restoreEcoRoute(state){
+ if(!state||!state.ecoAdventure)return;
  restoringBrowserHistory=true;
  try{
-   // 瀏覽器返回到網站的初始紀錄時，安全回到冒險地圖，不留下空白畫面。
-   const route=state&&state.ecoAdventure?state:ecoRouteState('mapPage',null);
-   const validPages=new Set(['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']);
-   const target=validPages.has(route.page)?route.page:'mapPage';
-   activeHabitatBase=target==='basePage'&&HABITAT_BASE_META[route.habitat]?route.habitat:null;
-   if(target==='basePage'){renderBase();updateBaseDashboard();}
-   if(target==='mapPage')renderMap();
-   page(target,{history:false});
+   activeHabitatBase=state.page==='basePage'&&HABITAT_BASE_META[state.habitat]?state.habitat:null;
+   if(state.page==='basePage'){renderBase();updateBaseDashboard();}
+   page(state.page,{history:false});
  }finally{restoringBrowserHistory=false;}
 }
 window.addEventListener('popstate',event=>restoreEcoRoute(event.state));
@@ -932,11 +926,11 @@ function renderBaseSky(){
 }
 let activeHabitatBase=null;
 const HABITAT_BASE_META={
-  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'山陵、森林、小溪與林間空地，適合建造鳥屋、昆蟲旅館及自然步道。',geography:'起伏山陵・闊葉森林・林間小溪',shop:'trees'},
-  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'開闊花田、果樹緩坡與蜿蜒花徑，為蜜蜂和蝴蝶提供蜜源與休息空間。',geography:'花田草原・果樹緩坡・授粉花徑',shop:'flowers'},
-  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'淺水池、泥灘、蘆葦帶與木棧道，營造水鳥、青蛙及歐亞水獺適合的環境。',geography:'淺水濕地・泥灘蘆葦・觀察水道',shop:'eco'},
-  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'沙灘、礁岩、潮池與海岸平台，建立鱟、招潮蟹和彈塗魚的金門潮間帶基地。',geography:'海岸沙灘・礁岩潮池・潮汐水域',shop:'rest'},
-  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'向陽緩坡、開放廣場與低碳設施用地，適合配置風力、太陽能及雨水回收系統。',geography:'向陽草坡・永續廣場・綠能設施帶',shop:'eco'}
+  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'走進山谷森林與清澈溪流之間，在寬闊林間草坪打造屬於自己的保育基地。',geography:'森林山谷・林緣草坪・自然溪流',shop:'trees'},
+  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'柔和花丘與自然花叢環繞中央草坪，所有蜂箱、花架與設施都由玩家自行安排。',geography:'自然花丘・蜜源花叢・開闊草坪',shop:'flowers'},
+  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'蜿蜒水道、泥灘與蘆葦形成自然濕地，玩家可在乾燥草洲上逐步建設觀察設施。',geography:'蜿蜒水道・泥灘蘆葦・乾燥草洲',shop:'eco'},
+  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'海灣、自然沙灘、礁岩與潮池交錯，保留原始海岸，讓玩家自行規劃保育設施。',geography:'自然海灣・礁岩潮池・潮汐沙灘',shop:'rest'},
+  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'向陽谷地、自然溪流與開闊草坡保持未開發樣貌，綠能設備全部交由玩家自行建設。',geography:'向陽谷地・自然溪流・開闊草坡',shop:'eco'}
 };
 function habitatGeographyMarkup(id,meta){
   const common=`<div class="habitat-geography habitat-geography-${id}" aria-hidden="true"><div class="geo-back"></div><div class="geo-mid"></div><div class="geo-front"></div>`;
@@ -962,7 +956,7 @@ function enterHabitatBase(id){
   if(!HABITAT_BASE_META[id])return;
   activeHabitatBase=id;st.baseEditMode=false;ensureHabitatBase(id);closeExplorationHabitat();
   const meta=HABITAT_BASE_META[id];baseShopCategory=meta.shop||'all';renderBase();
-  if(!restoringBrowserHistory){const nextRoute=ecoRouteState('basePage',id);if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);}
+  if(!restoringBrowserHistory){window.history.pushState(ecoRouteState('basePage',id),'',window.location.href);}
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}
@@ -1420,7 +1414,7 @@ function renderBase(){
   document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
   baseScene.innerHTML=habitatMeta
     ? `<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`
-    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-cabin" type="button" aria-label="進入守護者小屋" title="守護者小屋" onclick="showProfile()"></button><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button><button class="village-scene-link scene-link-daily" type="button" aria-label="開啟每日任務站" title="每日任務站" onclick="showCheckinCalendar()"></button><button class="village-scene-link scene-link-mailbox" type="button" aria-label="開啟任務信箱" title="任務信箱" onclick="showWeaknessBook()"></button><button class="village-scene-link scene-link-bulletin" type="button" aria-label="開啟生態公告欄" title="生態公告欄" onclick="showLeaderboard()"></button><button class="village-park-sign sign-forest" type="button" aria-label="前往森林保育區" title="森林保育區" onclick="enterHabitatBase('forest')"><span>🌳</span><b>森林保育區</b></button><button class="village-park-sign sign-garden" type="button" aria-label="前往授粉花園" title="授粉花園" onclick="enterHabitatBase('garden')"><span>🌼</span><b>授粉花園</b></button><button class="village-park-sign sign-wetland" type="button" aria-label="前往濕地生態園" title="濕地生態園" onclick="enterHabitatBase('wetland')"><span>💧</span><b>濕地生態園</b></button><button class="village-park-sign sign-coast" type="button" aria-label="前往潮間帶保護區" title="潮間帶保護區" onclick="enterHabitatBase('coast')"><span>🌊</span><b>潮間帶保護區</b></button><button class="village-park-sign sign-green" type="button" aria-label="前往綠能科技園" title="綠能科技園" onclick="enterHabitatBase('green')"><span>☀️</span><b>綠能科技園</b></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button><button class="village-park-sign sign-forest" type="button" aria-label="前往森林保育區" title="森林保育區" onclick="enterHabitatBase('forest')"><span>🌳</span><b>森林保育區</b></button><button class="village-park-sign sign-garden" type="button" aria-label="前往授粉花園" title="授粉花園" onclick="enterHabitatBase('garden')"><span>🌼</span><b>授粉花園</b></button><button class="village-park-sign sign-wetland" type="button" aria-label="前往濕地生態園" title="濕地生態園" onclick="enterHabitatBase('wetland')"><span>💧</span><b>濕地生態園</b></button><button class="village-park-sign sign-coast" type="button" aria-label="前往潮間帶保護區" title="潮間帶保護區" onclick="enterHabitatBase('coast')"><span>🌊</span><b>潮間帶保護區</b></button><button class="village-park-sign sign-green" type="button" aria-label="前往綠能科技園" title="綠能科技園" onclick="enterHabitatBase('green')"><span>☀️</span><b>綠能科技園</b></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
   if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
   baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');

@@ -5717,192 +5717,136 @@ body,body.night-mode{background:var(--page-bg,#f4fbf6)!important;color:var(--ink
  .village-park-sign:focus-visible::before{box-shadow:0 0 0 3px var(--sign-glow)}
 }
 
-
 /* =========================================================
-   V11.2.0：精準路標點擊區＋五大園區繪本自然場景統一
+   V11.2.0 五大園區：守護基地同系自然繪本風
+   初始僅保留自然地景，所有人工設施由玩家自行建設
    ========================================================= */
-/* 點擊區只覆蓋實際木牌，不再包住周圍道路、花草或建築。 */
-.village-park-sign::before{inset:-2px!important;border-radius:10px!important;border-width:2px!important}
-.sign-forest{left:2.55%!important;top:72.7%!important;bottom:auto!important;width:11.9%!important;height:5.2%!important}
-.sign-garden{left:2.55%!important;top:78.1%!important;bottom:auto!important;width:11.9%!important;height:5.1%!important}
-.sign-wetland{left:2.55%!important;top:83.4%!important;bottom:auto!important;width:11.9%!important;height:5.2%!important}
-.sign-coast{left:81.7%!important;right:auto!important;top:67.6%!important;bottom:auto!important;width:13.2%!important;height:5.3%!important}
-.sign-green{left:81.7%!important;right:auto!important;top:73.1%!important;bottom:auto!important;width:13.2%!important;height:5.2%!important}
-@media(max-width:900px){
- .sign-forest{left:2.2%!important;width:12.8%!important}.sign-garden{left:2.2%!important;width:12.8%!important}.sign-wetland{left:2.2%!important;width:12.8%!important}
- .sign-coast,.sign-green{left:81%!important;width:14.2%!important}
-}
-@media(max-width:600px){
- .sign-forest,.sign-garden,.sign-wetland{left:1.3%!important;width:15.5%!important}
- .sign-coast,.sign-green{left:79.5%!important;width:16.8%!important}
-}
-
-/* 園區共用：與守護基地相同的溫暖自然繪本質感。 */
 .habitat-build-scene{
-  isolation:isolate;
-  background-color:#cfe9dd!important;
-  filter:saturate(.92) contrast(.97) brightness(1.025)!important;
+  --storybook-ink:#35543a;
+  --storybook-cream:#fff8df;
+  --storybook-shadow:rgba(43,73,45,.18);
+  background:linear-gradient(180deg,#cfeeff 0 38%,#d9edc4 39% 100%)!important;
+  border-radius:30px!important;
+  overflow:hidden!important;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.82),0 18px 42px rgba(54,83,52,.20)!important;
 }
 .habitat-build-scene::before{
-  content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
-  background:
-    radial-gradient(circle at 16% 12%,rgba(255,255,255,.42),transparent 20%),
-    radial-gradient(circle at 82% 18%,rgba(255,248,215,.28),transparent 23%),
-    linear-gradient(180deg,rgba(255,255,255,.12),transparent 38%,rgba(77,108,66,.06));
-  mix-blend-mode:soft-light;
+  content:"";position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),transparent 48%,rgba(39,68,39,.08));
 }
-.habitat-build-scene::after{
-  content:"";position:absolute;inset:0;z-index:16;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 0 100%,rgba(39,86,49,.24),transparent 25%),
-    radial-gradient(ellipse at 100% 100%,rgba(39,86,49,.22),transparent 25%),
-    linear-gradient(90deg,rgba(43,85,45,.12),transparent 8%,transparent 92%,rgba(43,85,45,.12));
-  box-shadow:inset 0 0 34px rgba(51,82,48,.13);
+.habitat-build-scene .base-sky{
+  display:block!important;position:absolute!important;inset:0 0 42%!important;z-index:0!important;
+  background:linear-gradient(180deg,#bfe6fb 0%,#e8f6ef 72%,rgba(239,248,224,.22) 100%)!important;
 }
-.habitat-geography{overflow:hidden!important}
-.habitat-geography .geo-back,.habitat-geography .geo-mid,.habitat-geography .geo-front{filter:saturate(.88) contrast(.96)}
-.habitat-build-scene .cozy-decor{display:none!important}
-.habitat-build-scene .base-empty{
-  background:rgba(255,251,229,.76)!important;border:2px dashed rgba(255,255,255,.86)!important;
-  color:#35563b!important;backdrop-filter:blur(4px);box-shadow:0 8px 22px rgba(43,75,46,.12)!important;
+.habitat-build-scene .base-sky::before,
+.habitat-build-scene .base-sky::after{
+  content:"";position:absolute;border-radius:999px;background:rgba(255,255,255,.82);filter:blur(.2px);box-shadow:38px 8px 0 rgba(255,255,255,.70),72px -3px 0 rgba(255,255,255,.76)
 }
-.habitat-build-scene .habitat-scene-title{max-width:min(680px,88%)!important}
-.habitat-build-scene .geo-label{z-index:17!important}
+.habitat-build-scene .base-sky::before{width:70px;height:22px;left:12%;top:18%;animation:v112Cloud 40s linear infinite}
+.habitat-build-scene .base-sky::after{width:56px;height:18px;right:17%;top:11%;animation:v112Cloud 50s linear infinite reverse}
+@keyframes v112Cloud{0%{transform:translateX(-12px)}50%{transform:translateX(20px)}100%{transform:translateX(-12px)}}
 
-/* 森林：遠山、林冠、溪谷、自然林間空地；不預設人工設施。 */
-.habitat-theme-forest{background:linear-gradient(180deg,#cbe8ef 0 34%,#a9c99e 35% 100%)!important}
-.habitat-theme-forest .geo-back{background:linear-gradient(180deg,#b8d3c4 0 44%,#839f7c 45% 100%)!important;clip-path:polygon(0 64%,10% 48%,19% 57%,31% 36%,43% 58%,56% 39%,69% 57%,82% 38%,92% 53%,100% 45%,100% 100%,0 100%)!important}
-.habitat-theme-forest .geo-mid{background:radial-gradient(ellipse at 10% 100%,#4d7657 0 35%,transparent 36%),radial-gradient(ellipse at 90% 100%,#486f53 0 38%,transparent 39%),linear-gradient(180deg,transparent 0 42%,#5e8863 43%)!important;clip-path:none!important}
-.habitat-theme-forest .geo-front{background:radial-gradient(ellipse at 50% 112%,#82ad6c 0 67%,#5f925b 68%)!important}
-.habitat-theme-forest .geo-tree-line{opacity:.82!important;background:repeating-radial-gradient(ellipse at 3% 100%,#53765a 0 28px,#3f6249 29px 42px,transparent 43px 88px)!important}
-.habitat-theme-forest .geo-creek{background:linear-gradient(90deg,#78bec7,#e8faf3 48%,#6bb2bd)!important;border:5px solid rgba(215,229,195,.72)!important;box-shadow:inset 0 0 15px rgba(255,255,255,.75),0 5px 12px rgba(49,83,71,.14)!important}
-.habitat-theme-forest .geo-forest-clearing{background:radial-gradient(ellipse,rgba(177,203,132,.82),rgba(116,158,94,.24) 70%,transparent 71%)!important}
-
-/* 授粉花園：自然花丘與草地，不放蜂箱、花架或人工步道。 */
-.habitat-theme-garden{background:linear-gradient(180deg,#d7edf3 0 38%,#c3d79d 39% 100%)!important}
-.habitat-theme-garden .geo-back{background:#afc596!important;clip-path:polygon(0 66%,15% 50%,29% 61%,45% 43%,61% 59%,77% 45%,100% 60%,100% 100%,0 100%)!important}
-.habitat-theme-garden .geo-mid{background:radial-gradient(ellipse at 18% 100%,#b9d38d 0 48%,transparent 49%),radial-gradient(ellipse at 82% 100%,#b2ce87 0 49%,transparent 50%),linear-gradient(#bfd797,#98be76)!important}
-.habitat-theme-garden .geo-front{background:radial-gradient(ellipse at 50% 115%,#8dbc72 0 70%,#74a961 71%)!important}
-.habitat-theme-garden .geo-flower-field{opacity:.72!important;background:radial-gradient(circle at 18% 24%,#fff1bf 0 3px,transparent 4px),radial-gradient(circle at 60% 65%,#e5a9bd 0 4px,transparent 5px),radial-gradient(circle at 82% 35%,#cbb8df 0 4px,transparent 5px),#9bc47d!important;background-size:31px 29px,39px 35px,36px 32px,auto!important}
-
-/* 濕地：曲折水道、泥灘、蘆葦與乾燥草洲，保持未開發自然樣貌。 */
-.habitat-theme-wetland{background:linear-gradient(180deg,#cfe7e8 0 40%,#aec6a9 41% 100%)!important}
-.habitat-theme-wetland .geo-back{background:#a5b9a3!important;clip-path:polygon(0 64%,18% 51%,35% 62%,53% 47%,72% 60%,88% 50%,100% 58%,100% 100%,0 100%)!important}
-.habitat-theme-wetland .geo-mid{background:linear-gradient(165deg,#99b89a,#7fa28b)!important}
-.habitat-theme-wetland .geo-wetland-water{background:radial-gradient(ellipse at 28% 28%,rgba(255,255,255,.34),transparent 22%),linear-gradient(165deg,#b7dfe1,#72b4b9)!important;border:4px solid rgba(211,226,196,.66)!important}
-.habitat-theme-wetland .geo-mudflat{background:#a89472!important;opacity:.58!important}
-.habitat-theme-wetland .geo-reeds{opacity:.78!important;filter:saturate(.8)}
-
-/* 潮間帶：開放海岸、自然弧形沙灘、礁岩與潮池，無預設平台。 */
-.habitat-theme-coast{background:linear-gradient(180deg,#d2e9ed 0 37%,#79bcc5 38% 100%)!important}
-.habitat-theme-coast .geo-sea{background:linear-gradient(180deg,#83c8d0,#53a5b2)!important}
-.habitat-theme-coast .geo-beach{background:linear-gradient(170deg,#f1dfb2,#d2bc88)!important;clip-path:polygon(0 28%,15% 18%,34% 31%,53% 16%,73% 30%,100% 18%,100% 100%,0 100%)!important}
-.habitat-theme-coast .geo-rocks{opacity:.68!important;filter:saturate(.7)}
-.habitat-theme-coast .geo-tidepool{background:radial-gradient(ellipse,#8bd1d7,#4f9eab)!important;border-color:#958d7d!important}
-
-/* 綠能園初始僅呈現河谷、向陽草坡與開闊草地；能源設備由玩家自行建設。 */
-.habitat-theme-green{background:linear-gradient(180deg,#d5ebef 0 40%,#bed69f 41% 100%)!important}
-.habitat-theme-green .geo-back{background:#a5c196!important;clip-path:polygon(0 67%,18% 48%,36% 63%,55% 43%,74% 62%,91% 47%,100% 57%,100% 100%,0 100%)!important}
-.habitat-theme-green .geo-mid{background:radial-gradient(ellipse at 15% 100%,#aacb8f 0 42%,transparent 43%),radial-gradient(ellipse at 85% 100%,#a4c68a 0 45%,transparent 46%),linear-gradient(#b7d49a,#8fbd78)!important}
-.habitat-theme-green .geo-front{background:#76a965!important}
-.habitat-theme-green .geo-green-hills{opacity:.68!important}
-.habitat-theme-green .geo-meadow-stream{background:linear-gradient(90deg,#8dcbce,#eef9ef 48%,#78babf)!important;opacity:.78!important}
-
-@media(min-width:1101px){
- .habitat-build-scene .habitat-scene-title{top:2.8%!important}
- .habitat-build-scene .base-empty{bottom:7%!important}
+/* 共通繪本景深 */
+.habitat-build-scene .base-landscape-v104{display:none!important}
+.habitat-build-scene .base-grassland{background:transparent!important;z-index:5!important}
+.habitat-build-scene .ground-clearing{display:none!important}
+.habitat-build-scene .habitat-geography{z-index:2!important;filter:none!important}
+.habitat-build-scene .habitat-geography .geo-back{opacity:1!important;filter:none!important}
+.habitat-build-scene .habitat-geography .geo-mid{opacity:1!important}
+.habitat-build-scene .habitat-geography .geo-front{opacity:1!important}
+.habitat-build-scene .habitat-scene-title{
+  z-index:26!important;top:18px!important;left:20px!important;right:auto!important;bottom:auto!important;
+  max-width:min(440px,calc(100% - 40px))!important;padding:12px 18px!important;border-radius:20px!important;
+  background:linear-gradient(135deg,rgba(255,250,227,.96),rgba(244,249,226,.93))!important;
+  border:2px solid rgba(255,255,255,.94)!important;box-shadow:0 8px 22px var(--storybook-shadow)!important;
+  color:var(--storybook-ink)!important;backdrop-filter:blur(5px)
 }
+.habitat-build-scene .habitat-scene-title span{font-size:28px!important}
+.habitat-build-scene .habitat-scene-title b{font-size:20px!important;letter-spacing:.02em}
+.habitat-build-scene .habitat-scene-title small{font-size:13px!important;color:#58705d!important;line-height:1.45}
+.habitat-build-scene .habitat-scene-title em{font-size:12px!important;color:#7b6333!important;background:#fff4c9!important;border-radius:999px;padding:4px 9px;margin-top:5px;display:inline-block!important}
+.habitat-build-scene .geo-label{
+  left:50%!important;bottom:18px!important;transform:translateX(-50%)!important;z-index:14!important;
+  min-width:min(520px,78%)!important;max-width:84%!important;padding:9px 16px!important;border-radius:18px!important;
+  text-align:center;background:rgba(255,249,224,.93)!important;border:2px solid rgba(255,255,255,.92)!important;
+  color:#425a3e!important;box-shadow:0 7px 18px rgba(45,72,43,.14)!important
+}
+.habitat-build-scene .geo-label b{display:block;font-size:14px}.habitat-build-scene .geo-label small{font-size:11px;color:#6b7969}
+.habitat-build-scene .cozy-decor{z-index:12!important;opacity:.88!important;filter:drop-shadow(0 3px 3px rgba(42,64,42,.18))}
+.habitat-build-scene .cozy-decor i{animation:v112DecorFloat 5.5s ease-in-out infinite;transform-origin:center bottom}
+.habitat-build-scene .cozy-decor i:nth-child(2){animation-delay:-1.2s}.habitat-build-scene .cozy-decor i:nth-child(3){animation-delay:-2.4s}.habitat-build-scene .cozy-decor i:nth-child(4){animation-delay:-3.6s}
+@keyframes v112DecorFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-3px) rotate(1deg)}}
 
-/* =========================================================
-   V11.3.0：基地場景直接點擊、精準熱區與返回歷程強化
-   ========================================================= */
-/* 場景中的建築本體就是入口；熱區緊貼建築，不覆蓋道路或相鄰物件。 */
-.scene-link-cabin{left:9.4%;top:23.4%;width:17.2%;height:25.5%}
-.scene-link-shop{left:57.8%;top:24.2%;width:18.8%;height:23.8%}
-.scene-link-guide{left:3.5%;top:47.7%;width:20.3%;height:20.2%}
-.scene-link-achievement{left:76.4%;top:42.6%;width:19.3%;height:20.4%}
-.scene-link-daily{left:42.9%;top:56.6%;width:12.8%;height:15.6%}
-.scene-link-mailbox{left:58.2%;top:64.2%;width:9.7%;height:13.3%}
-.scene-link-bulletin{left:24.6%;top:64.0%;width:15.1%;height:14.2%}
-.village-scene-link::before{content:attr(title);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translate(-50%,6px);white-space:nowrap;background:rgba(255,250,229,.96);color:#385332;border:2px solid rgba(255,255,255,.95);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;box-shadow:0 7px 16px rgba(43,68,35,.2);opacity:0;transition:.16s ease;pointer-events:none}
-.village-scene-link:hover::before,.village-scene-link:focus-visible::before{opacity:1;transform:translate(-50%,0)}
-.village-scene-link:hover::after{background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 3px rgba(255,255,255,.62),0 6px 18px rgba(45,74,38,.12)}
-/* 五塊木牌維持獨立矩形，並用 clip-path 進一步排除牌子外的透明角落。 */
-.village-park-sign{clip-path:polygon(2% 12%,94% 0,100% 50%,94% 100%,3% 88%,0 50%);touch-action:manipulation}
-.village-park-sign::before{inset:0!important}
+/* 森林保育區：山谷、林緣、溪流與中央草坪 */
+.habitat-theme-forest{background:linear-gradient(180deg,#c8e8f7 0 36%,#b9d59e 37% 100%)!important}
+.habitat-theme-forest .geo-back{
+  inset:13% -4% 34%!important;height:auto!important;
+  background:radial-gradient(ellipse at 13% 100%,#8eac82 0 33%,transparent 34%),radial-gradient(ellipse at 42% 100%,#9bb88a 0 42%,transparent 43%),radial-gradient(ellipse at 78% 100%,#7d9f76 0 38%,transparent 39%),linear-gradient(180deg,transparent 0 48%,#92b187 49%)!important;
+  clip-path:none!important;border-radius:0!important
+}
+.habitat-theme-forest .geo-mid{
+  left:-4%!important;right:-4%!important;bottom:25%!important;height:43%!important;
+  background:radial-gradient(circle at 8% 88%,#315e3d 0 7%,transparent 7.5%),radial-gradient(circle at 17% 80%,#3f7048 0 8%,transparent 8.5%),radial-gradient(circle at 28% 88%,#2e5b3a 0 8%,transparent 8.5%),radial-gradient(circle at 73% 86%,#356640 0 8%,transparent 8.5%),radial-gradient(circle at 84% 80%,#46764c 0 8%,transparent 8.5%),radial-gradient(circle at 94% 88%,#2e5b39 0 8%,transparent 8.5%),linear-gradient(180deg,transparent 0 55%,#56845b 56%)!important;
+  clip-path:none!important;border-radius:0!important
+}
+.habitat-theme-forest .geo-front{
+  left:-4%!important;right:-4%!important;bottom:-6%!important;height:43%!important;
+  background:radial-gradient(ellipse at 50% 5%,#9bc77c 0 40%,#78ad67 72%,#649756 100%)!important;
+  border-radius:50% 50% 0 0/18% 18% 0 0!important
+}
+.habitat-theme-forest .geo-creek{left:8%!important;bottom:-8%!important;width:16%!important;height:58%!important;transform:rotate(8deg)!important;border-radius:52% 48% 30% 22%!important;background:linear-gradient(90deg,#75bdc8,#dff6ed 47%,#63aab8)!important;box-shadow:inset 0 0 14px rgba(255,255,255,.8),0 0 0 4px rgba(105,139,80,.22)!important;opacity:.9!important}
+.habitat-theme-forest .geo-tree-line{left:0!important;right:0!important;bottom:29%!important;height:34%!important;background:repeating-radial-gradient(circle at 4% 100%,#4c7e4e 0 25px,#315e3c 26px 44px,transparent 45px 78px)!important;opacity:.72!important}
+.habitat-theme-forest .geo-forest-clearing{left:30%!important;right:20%!important;bottom:10%!important;height:34%!important;border-radius:52% 48% 46% 54%!important;background:radial-gradient(ellipse,#a9d58b 0 55%,rgba(154,198,124,.62) 70%,transparent 72%)!important;box-shadow:none!important}
+
+/* 授粉花園：自然花丘、果樹林緣與寬闊草坪 */
+.habitat-theme-garden{background:linear-gradient(180deg,#cfe9fa 0 36%,#dceab5 37% 100%)!important}
+.habitat-theme-garden .geo-back{inset:15% -5% 35%!important;background:radial-gradient(ellipse at 20% 100%,#b7ca91 0 42%,transparent 43%),radial-gradient(ellipse at 55% 100%,#c4d69c 0 47%,transparent 48%),radial-gradient(ellipse at 88% 100%,#a9c488 0 40%,transparent 41%)!important;clip-path:none!important}
+.habitat-theme-garden .geo-mid{left:-4%!important;right:-4%!important;bottom:21%!important;height:49%!important;background:radial-gradient(circle at 9% 68%,#f4b6c8 0 3%,transparent 3.4%),radial-gradient(circle at 14% 75%,#f5da69 0 3%,transparent 3.4%),radial-gradient(circle at 21% 70%,#c9a4df 0 3%,transparent 3.4%),radial-gradient(circle at 80% 73%,#f3b5c5 0 3%,transparent 3.4%),radial-gradient(circle at 87% 68%,#efcf62 0 3%,transparent 3.4%),linear-gradient(180deg,transparent 0 39%,#aed28a 40%)!important;border-radius:0!important}
+.habitat-theme-garden .geo-front{left:-3%!important;right:-3%!important;bottom:-6%!important;height:40%!important;background:radial-gradient(ellipse at 50% 8%,#b9d990 0 44%,#95c473 72%,#7fb061 100%)!important;border-radius:50% 50% 0 0/22% 22% 0 0!important}
+.habitat-theme-garden .geo-flower-field{bottom:12%!important;height:29%!important;border-radius:56% 44% 53% 47%!important;opacity:.78!important;background:radial-gradient(circle,#fff 0 8%,#ffd96b 9% 15%,transparent 16%) 0 0/34px 34px,radial-gradient(circle,#f5a8c0 0 10%,transparent 11%) 15px 10px/42px 42px,#8fc06f!important}
+.habitat-theme-garden .field-a{left:-4%!important;width:28%!important}.habitat-theme-garden .field-b{right:-5%!important;width:31%!important}
+
+/* 濕地生態園：蜿蜒水道、蘆葦帶與乾燥建設草洲 */
+.habitat-theme-wetland{background:linear-gradient(180deg,#c5e4ed 0 38%,#b7d0aa 39% 100%)!important}
+.habitat-theme-wetland .geo-back{inset:16% -4% 38%!important;background:radial-gradient(ellipse at 18% 100%,#8da989 0 43%,transparent 44%),radial-gradient(ellipse at 55% 100%,#9db69a 0 47%,transparent 48%),radial-gradient(ellipse at 89% 100%,#829f82 0 39%,transparent 40%)!important;clip-path:none!important}
+.habitat-theme-wetland .geo-mid{inset:auto -3% 0!important;height:57%!important;background:linear-gradient(180deg,#9fc5a0 0 27%,#7eaa8d 28% 100%)!important;border-radius:48% 52% 0 0/14% 14% 0 0!important}
+.habitat-theme-wetland .geo-front{inset:auto -4% -5%!important;height:27%!important;background:#688b66!important;border-radius:50% 50% 0 0/28% 28% 0 0!important}
+.habitat-theme-wetland .geo-wetland-water{left:4%!important;right:4%!important;bottom:8%!important;height:47%!important;border-radius:54% 46% 51% 49%!important;background:radial-gradient(ellipse at 54% 48%,#9ed7d2 0 22%,#69b3b4 58%,#4d989f 100%)!important;box-shadow:inset 0 0 22px rgba(255,255,255,.55)!important;opacity:.95!important}
+.habitat-theme-wetland .geo-mudflat{left:25%!important;right:19%!important;bottom:11%!important;height:23%!important;border-radius:55% 45% 48% 52%!important;background:#a8996b!important;opacity:.5!important}
+.habitat-theme-wetland .geo-reeds{bottom:20%!important;height:34%!important;background:repeating-linear-gradient(82deg,transparent 0 7px,#6d8a4b 8px 11px,transparent 12px 17px)!important;opacity:.85!important}.habitat-theme-wetland .reeds-a{left:1%!important;width:23%!important}.habitat-theme-wetland .reeds-b{right:1%!important;width:24%!important}
+
+/* 潮間帶：海灣、礁岩潮池與自然沙灘 */
+.habitat-theme-coast{background:linear-gradient(180deg,#bfe3f5 0 34%,#79bfcd 35% 62%,#efdca8 63% 100%)!important}
+.habitat-theme-coast .geo-back{inset:16% 0 43%!important;background:radial-gradient(ellipse at 8% 100%,#789e8c 0 33%,transparent 34%),radial-gradient(ellipse at 78% 100%,#73968a 0 38%,transparent 39%),linear-gradient(180deg,transparent 0 62%,#72a58f 63%)!important}
+.habitat-theme-coast .geo-mid{left:-3%!important;right:-3%!important;bottom:-2%!important;height:47%!important;background:linear-gradient(172deg,transparent 0 22%,#f0dfae 23% 74%,#d3bb82 75%)!important;clip-path:polygon(0 25%,13% 20%,28% 30%,45% 20%,62% 31%,80% 19%,100% 27%,100% 100%,0 100%)!important}
+.habitat-theme-coast .geo-front{left:-3%!important;right:-3%!important;bottom:-4%!important;height:15%!important;background:#d7c18a!important}
+.habitat-theme-coast .geo-sea{left:0!important;right:0!important;bottom:31%!important;height:39%!important;background:linear-gradient(180deg,#75c1d3,#4aa3b8)!important;box-shadow:inset 0 15px 25px rgba(255,255,255,.18)!important}
+.habitat-theme-coast .geo-wave{height:4%!important;border-radius:50%!important;background:repeating-linear-gradient(90deg,transparent 0 20px,rgba(255,255,255,.82) 22px 52px,transparent 54px 75px)!important}.habitat-theme-coast .wave-a{bottom:42%!important}.habitat-theme-coast .wave-b{bottom:36%!important;opacity:.55!important}
+.habitat-theme-coast .geo-beach{left:-2%!important;right:-2%!important;bottom:-3%!important;height:44%!important;background:linear-gradient(180deg,#f4e5b9,#dbc28a)!important;clip-path:polygon(0 31%,15% 20%,33% 30%,50% 19%,69% 31%,84% 20%,100% 28%,100% 100%,0 100%)!important}
+.habitat-theme-coast .geo-tidepool{bottom:10%!important;height:13%!important;background:#6eb1b7!important;border:5px solid rgba(108,92,60,.42)!important;box-shadow:inset 0 0 12px rgba(255,255,255,.55)!important}.habitat-theme-coast .pool-a{left:18%!important;width:19%!important}.habitat-theme-coast .pool-b{right:16%!important;width:17%!important}
+.habitat-theme-coast .geo-rocks{left:3%!important;right:3%!important;bottom:12%!important;height:18%!important;background:radial-gradient(ellipse at 10% 65%,#6d746e 0 8%,transparent 9%),radial-gradient(ellipse at 23% 78%,#7f8279 0 7%,transparent 8%),radial-gradient(ellipse at 74% 70%,#686f69 0 8%,transparent 9%),radial-gradient(ellipse at 90% 74%,#85887e 0 7%,transparent 8%)!important}
+
+/* 綠能科技園：尚未建設的向陽谷地與自然溪流 */
+.habitat-theme-green{background:linear-gradient(180deg,#c5e7f7 0 38%,#c9dfa6 39% 100%)!important}
+.habitat-theme-green .geo-back{inset:14% -5% 35%!important;background:radial-gradient(ellipse at 14% 100%,#90b17c 0 40%,transparent 41%),radial-gradient(ellipse at 52% 100%,#a3c18b 0 47%,transparent 48%),radial-gradient(ellipse at 88% 100%,#86aa77 0 41%,transparent 42%)!important;clip-path:none!important}
+.habitat-theme-green .geo-mid{left:-3%!important;right:-3%!important;bottom:18%!important;height:51%!important;background:radial-gradient(ellipse at 14% 100%,#99c57b 0 48%,transparent 49%),radial-gradient(ellipse at 86% 100%,#95c078 0 48%,transparent 49%),linear-gradient(180deg,transparent 0 39%,#abd18b 40%)!important;border-radius:0!important}
+.habitat-theme-green .geo-front{left:-4%!important;right:-4%!important;bottom:-5%!important;height:36%!important;background:radial-gradient(ellipse at 50% 5%,#b5d992 0 43%,#8fc172 73%,#72aa5d 100%)!important;border-radius:50% 50% 0 0/21% 21% 0 0!important}
+.habitat-theme-green .geo-green-hills{left:0!important;right:0!important;bottom:27%!important;height:27%!important;background:radial-gradient(ellipse at 10% 100%,#6e9e61 0 35%,transparent 36%),radial-gradient(ellipse at 88% 100%,#739f66 0 38%,transparent 39%)!important;opacity:.72!important}
+.habitat-theme-green .geo-meadow-stream{left:59%!important;bottom:-10%!important;width:12%!important;height:56%!important;transform:rotate(7deg)!important;border-radius:55% 45% 20% 25%!important;background:linear-gradient(90deg,#79bec5,#eaf8ef 48%,#69adb8)!important;box-shadow:inset 0 0 14px rgba(255,255,255,.74),0 0 0 4px rgba(91,137,71,.16)!important;opacity:.88!important}
+
+/* 建設物件永遠顯示在自然地景之上 */
+.habitat-build-scene .base-buildings{z-index:18!important}
+.habitat-build-scene .base-residents{z-index:17!important}
+.habitat-build-scene .base-empty{z-index:21!important;top:52%!important;max-width:520px!important;background:rgba(255,250,226,.94)!important;border:2px dashed rgba(83,122,72,.42)!important;color:#405a3c!important}
+
+@media(max-width:900px){
+  .habitat-build-scene .habitat-scene-title{top:12px!important;left:12px!important;max-width:calc(100% - 24px)!important;padding:10px 13px!important}
+  .habitat-build-scene .habitat-scene-title b{font-size:17px!important}.habitat-build-scene .habitat-scene-title small{font-size:12px!important}
+  .habitat-build-scene .geo-label{bottom:10px!important;min-width:82%!important}
+}
 @media(max-width:600px){
- .village-scene-link::before{display:none}
- .scene-link-cabin{left:8.5%;width:19%}.scene-link-shop{left:56.5%;width:21%}
- .scene-link-guide{left:2.5%;width:22%}.scene-link-achievement{left:75%;width:21.5%}
- .scene-link-daily{left:41.8%;width:15%}.scene-link-mailbox{left:57%;width:12%}.scene-link-bulletin{left:23.5%;width:17%}
-}
-
-/* =========================================================
-   V11.3.1：依原圖比例定位，點擊範圍只覆蓋牌面文字
-   ========================================================= */
-/*
- * base-village-storybook.png 為 1536 × 1024（3:2）。
- * 舊版容器在桌面與手機使用不同長寬比，圖片會被 cover 裁切，
- * 造成百分比熱區和畫面錯位。守護基地村固定保持原圖比例後，
- * 所有熱區在電腦、平板與手機都會跟著圖片同步縮放。
- */
-#basePage .base-scene-frame:has(.storybook-village-scene){
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
-  aspect-ratio:3/2!important;
-  overflow:hidden!important;
-  background:#d8efd1!important;
-}
-#basePage .base-scene-frame:has(.storybook-village-scene)>.base-scene{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-}
-#basePage .base-scene-frame:has(.storybook-village-scene)::after{display:none!important}
-.storybook-village-scene>img{
-  object-fit:contain!important;
-  object-position:center!important;
-  transform:none!important;
-}
-
-/* 熱區只覆蓋圖片上真正可見的名稱牌／木牌文字，不再覆蓋整棟建築。 */
-.village-scene-link,.village-park-sign{
-  z-index:30!important;
-  border-radius:8px!important;
-  clip-path:none!important;
-  touch-action:manipulation;
-}
-.scene-link-cabin{left:14.1%!important;top:17.4%!important;width:9.2%!important;height:6.2%!important}
-.scene-link-shop{left:60.3%!important;top:18.8%!important;width:8.7%!important;height:7.0%!important}
-.scene-link-guide{left:8.3%!important;top:41.4%!important;width:9.1%!important;height:6.0%!important}
-.scene-link-achievement{left:82.6%!important;top:41.1%!important;width:8.1%!important;height:6.5%!important}
-.scene-link-daily{left:44.6%!important;top:55.9%!important;width:9.8%!important;height:6.1%!important}
-.scene-link-bulletin{left:25.8%!important;top:63.6%!important;width:10.8%!important;height:6.4%!important}
-.scene-link-mailbox{left:59.5%!important;top:63.6%!important;width:9.2%!important;height:6.5%!important}
-
-.sign-forest{left:3.0%!important;top:71.8%!important;width:11.2%!important;height:5.0%!important}
-.sign-garden{left:3.0%!important;top:76.8%!important;width:11.2%!important;height:5.0%!important}
-.sign-wetland{left:3.0%!important;top:81.9%!important;width:11.4%!important;height:5.1%!important}
-.sign-coast{left:81.1%!important;right:auto!important;top:67.5%!important;width:15.0%!important;height:6.1%!important}
-.sign-green{left:81.5%!important;right:auto!important;top:73.5%!important;width:14.1%!important;height:6.2%!important}
-
-/* 滑鼠或鍵盤聚焦時，只標示實際牌面；平常完全透明。 */
-.village-scene-link::after,.village-park-sign::before{
-  inset:0!important;
-  border-radius:8px!important;
-}
-.village-scene-link:hover::after,.village-scene-link:focus-visible::after,
-.village-park-sign:hover::before,.village-park-sign:focus-visible::before{
-  background:rgba(255,248,205,.12)!important;
-  box-shadow:inset 0 0 0 2px rgba(255,255,255,.92),0 0 0 3px rgba(74,116,52,.5)!important;
-}
-/* 原圖已經有清楚文字，不再額外浮出提示泡泡擋住畫面。 */
-.village-scene-link::before,.village-park-sign::after{display:none!important}
-
-@media(max-width:700px){
-  #basePage .base-scene-frame:has(.storybook-village-scene){aspect-ratio:3/2!important;max-height:none!important}
+  .habitat-build-scene{border-radius:22px!important}
+  .habitat-build-scene .habitat-scene-title{right:10px!important;max-width:none!important}
+  .habitat-build-scene .habitat-scene-title span{font-size:22px!important}.habitat-build-scene .habitat-scene-title b{font-size:15px!important}.habitat-build-scene .habitat-scene-title small{display:none!important}
+  .habitat-build-scene .geo-label small{display:none}.habitat-build-scene .geo-label{padding:7px 11px!important;border-radius:14px!important}
 }
