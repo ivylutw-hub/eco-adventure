@@ -1,3 +1,10 @@
+// 環境部環境資料開放平臺 API 設定。
+// 請至 https://data.moenv.gov.tw/api_term 申請 API Key，並填入下方字串。
+// 未設定時，AQI 會顯示「官方資料待設定」，不再以第三方數值估算。
+window.ECO_CONFIG = Object.assign({
+  MOENV_API_KEY: ''
+}, window.ECO_CONFIG || {});
+
 
 const S=[
 {id:'s1',name:'蒼翠萌芽境',icon:'🌱',code:'STAGE 01',desc:'從生活環保知識開始，喚醒沉睡的大地。',main:'初級',support:'中級',badge:'🌿',badgeName:'萌芽守護徽章',enemy:'🌀',enemyName:'浪費旋風'},

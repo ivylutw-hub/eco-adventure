@@ -1011,7 +1011,17 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
-function showBase(){activeHabitatBase=null;renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
+function showBase(){
+  activeHabitatBase=null;
+  page('basePage');
+  requestAnimationFrame(()=>{
+    renderBase();
+    updateBaseDashboard();
+    updateBaseClock();
+    const toolbar=document.querySelector('#basePage .base-build-toolbar');
+    if(toolbar)toolbar.classList.add('base-build-ready');
+  });
+}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
   {id:'cloudy',label:'多雲',icon:'🌤️'},
@@ -1276,17 +1286,6 @@ function updateBaseDashboard(){
   set('baseProfileCompletion',`${Math.min(100,Math.round(owned/12*100))}% 完成`);
   const sw=document.getElementById('baseEditSwitch');if(sw){sw.classList.toggle('on',!!st.baseEditMode);const em=sw.querySelector('em');if(em)em.textContent=st.baseEditMode?'開':'關'}
 }
-function interpolateAQI(value,breakpoints){
-  const v=Number(value);if(!Number.isFinite(v)||v<0)return null;
-  for(const [cl,ch,il,ih] of breakpoints){if(v<=ch)return Math.round((ih-il)/(ch-cl)*(v-cl)+il)}
-  return 500;
-}
-function calculateTaiwanAQI(current){
-  // 依台灣環境部 AQI 分級，以 Open-Meteo 即時 PM2.5、PM10 濃度估算；取兩者副指標較高值。
-  const pm25=interpolateAQI(current.pm2_5,[[0,15.4,0,50],[15.5,35.4,51,100],[35.5,54.4,101,150],[54.5,150.4,151,200],[150.5,250.4,201,300],[250.5,350.4,301,400],[350.5,500.4,401,500]]);
-  const pm10=interpolateAQI(current.pm10,[[0,50,0,50],[51,100,51,100],[101,254,101,150],[255,354,151,200],[355,424,201,300],[425,504,301,400],[505,604,401,500]]);
-  const values=[pm25,pm10].filter(Number.isFinite);return values.length?Math.max(...values):null;
-}
 function aqiLevel(aqi){if(aqi<=50)return'良好';if(aqi<=100)return'普通';if(aqi<=150)return'對敏感族群不健康';if(aqi<=200)return'對所有族群不健康';if(aqi<=300)return'非常不健康';return'危害'}
 function aqiMeta(aqi){
   if(aqi<=50)return{key:'green',label:'良好',advice:'空氣品質佳，適合戶外活動。'};
@@ -1296,19 +1295,37 @@ function aqiMeta(aqi){
   if(aqi<=300)return{key:'purple',label:'非常不健康',advice:'請減少戶外活動並留意健康狀況。'};
   return{key:'brown',label:'危害',advice:'建議留在室內並避免戶外活動。'};
 }
-function updateAqiDisplay(aq){
+function updateAqiDisplay(aq,record=null){
   const value=document.getElementById('natureAqi'), level=document.getElementById('natureAqiLevel');
   const flag=document.getElementById('natureAqiFlag'), metric=document.getElementById('homeAqiMetric');
+  const time=document.getElementById('natureAqiUpdateTime');
   if(!Number.isFinite(aq)){
-    if(value)value.textContent='--';if(level)level.textContent='暫無資料';
+    if(value)value.textContent='--';if(level)level.textContent=record?.message||'官方資料待設定';
     if(flag)flag.dataset.level='unknown';
-    if(metric){metric.dataset.tooltip='AQI 暫無資料';metric.setAttribute('aria-label','AQI 暫無資料');metric.title='AQI 暫無資料';}
+    const tip=record?.message||'環境部官方 AQI 暫無資料';
+    if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
+    if(time)time.textContent='資料來源：環境部空氣品質監測網';
     return;
   }
-  const meta=aqiMeta(aq), tip=`台灣 AQI 估算：${aq}（${meta.label}）｜依金湖即時 PM2.5／PM10 濃度換算；${meta.advice}`;
+  const meta=aqiMeta(aq), site=record?.sitename||record?.SiteName||'金門', publish=record?.publishtime||record?.PublishTime||'';
+  const tip=`環境部官方 AQI：${aq}（${meta.label}）｜${site}測站${publish?`｜更新 ${publish}`:''}；${meta.advice}`;
   if(value)value.textContent=aq;if(level)level.textContent=meta.label;
   if(flag)flag.dataset.level=meta.key;
   if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
+  if(time)time.textContent=`資料來源：環境部 ${site}測站${publish?`・${publish}`:''}`;
+}
+async function fetchMoenvAqi(){
+  const apiKey=String(window.ECO_CONFIG?.MOENV_API_KEY||'').trim();
+  if(!apiKey)return{aqi:null,message:'官方資料待設定'};
+  const url=`https://data.moenv.gov.tw/api/v2/AQX_P_432?api_key=${encodeURIComponent(apiKey)}&limit=1000&sort=publishtime%20desc&format=json`;
+  const response=await fetch(url,{cache:'no-store'});
+  if(!response.ok)throw new Error(`MOENV AQI ${response.status}`);
+  const data=await response.json();
+  const records=Array.isArray(data?.records)?data.records:Array.isArray(data)?data:[];
+  const kinmen=records.filter(r=>String(r.county||r.County||'').includes('金門'));
+  const preferred=kinmen.find(r=>String(r.sitename||r.SiteName||'').includes('金門'))||kinmen[0];
+  const aqi=Number(preferred?.aqi??preferred?.AQI);
+  return Number.isFinite(aqi)?{aqi,record:preferred}:{aqi:null,message:'環境部金門測站暫無資料'};
 }
 function setupAqiTouchTip(){
   const metric=document.getElementById('homeAqiMetric');if(!metric||metric.dataset.touchReady)return;
@@ -1322,16 +1339,21 @@ function setupAqiTouchTip(){
 async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
-    const [forecast,air]=await Promise.all([
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json()),
-      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=pm2_5,pm10&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json())
+    const [forecast,officialAqi]=await Promise.all([
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('weather '+r.status);return r.json()}),
+      fetchMoenvAqi().catch(error=>{console.warn('環境部 AQI 載入失敗',error);return{aqi:null,message:'環境部官方資料暫時無法連線'}})
     ]);
-    const c=forecast.current||{}, aq=calculateTaiwanAQI(air.current||{});
+    const c=forecast.current||{};
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
-    updateAqiDisplay(aq);setupAqiTouchTip();
-  }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
+    updateAqiDisplay(officialAqi.aqi,officialAqi.record||officialAqi);setupAqiTouchTip();
+    const badge=document.getElementById('natureLiveBadge');if(badge)badge.textContent='LIVE';
+  }catch(e){
+    const badge=document.getElementById('natureLiveBadge');if(badge)badge.textContent='OFFLINE';
+    document.getElementById('natureWeather').textContent='暫無資料';
+    updateAqiDisplay(null,{message:'環境部官方資料暫時無法連線'});
+  }
 }
 setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);

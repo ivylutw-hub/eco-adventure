@@ -6180,3 +6180,14 @@ body.quiz-mode #nextBtn{width:100%;margin-top:10px}
 #basePage .base-scene.day.weather-overcast{background:linear-gradient(#92adb8 0%,#c3d0d3 72%,#dce3e1 100%)!important}
 #basePage .base-scene.day.weather-rainy{background:linear-gradient(#667f8d 0%,#9aabb2 72%,#c5cfcc 100%)!important}
 #basePage .base-residents,#basePage .single-base-storybook,#basePage .season-decor{display:none!important}
+
+/* V12.1.4：玩家首頁不顯示開發版本資訊；基地建設區保持清楚可見。 */
+.home-version-note{display:none!important}
+.aqi-update-time{grid-column:1/-1;display:block;text-align:right;color:#587064;font-size:11px;margin-top:-4px}
+#basePage .base-build-toolbar{display:grid!important;visibility:visible!important;opacity:1!important;min-height:180px!important}
+#basePage .build-toolbar-title{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap}
+#basePage .build-toolbar-title>b{font-size:18px;color:#285f3b}
+#basePage .build-toolbar-title>small{display:block!important;color:#6b7d70;font-size:12px}
+#basePage .base-scene-frame{display:block!important;visibility:visible!important;min-height:430px}
+#basePage #baseScene{display:block!important;visibility:visible!important;min-height:430px}
+@media(max-width:760px){.aqi-update-time{text-align:left}.base-scene-frame,#basePage #baseScene{min-height:390px!important}}
