@@ -667,7 +667,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.2 已修復守護基地畫面與首頁地方資訊：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.3 已校正 AQI 顯示並重建守護基地起始自然環境：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -1070,10 +1070,10 @@ function moonPhaseSvg(phase){
 }
 function currentBaseSeason(date=new Date()){
   const month=date.getMonth()+1;
-  if(month>=3&&month<=5)return {id:'spring',icon:'🌸',name:'春季',description:'新芽、花朵與柔和春光陪伴基地成長'};
-  if(month>=6&&month<=8)return {id:'summer',icon:'🌻',name:'夏季',description:'濃綠草地、盛開花朵與活潑夏日生態'};
-  if(month>=9&&month<=11)return {id:'autumn',icon:'🍁',name:'秋季',description:'金黃草地、暖色落葉與清爽秋風'};
-  return {id:'winter',icon:'❄️',name:'冬季',description:'銀白霜景、常綠植物與寧靜冬日氣氛'};
+  if(month>=3&&month<=5)return {id:'spring',icon:'🌸',name:'春季',description:'依實際月份呈現春季色調，基地起始只保留天空、山丘與草地'};
+  if(month>=6&&month<=8)return {id:'summer',icon:'🌻',name:'夏季',description:'依實際月份呈現夏季濃綠草地，天氣同步金湖即時狀況'};
+  if(month>=9&&month<=11)return {id:'autumn',icon:'🍁',name:'秋季',description:'依實際月份呈現秋季暖色草地與落葉效果'};
+  return {id:'winter',icon:'❄️',name:'冬季',description:'依實際月份呈現冬季霜雪色調，降雨仍依即時天氣顯示'};
 }
 function updateBaseSeasonUI(season){
   const icon=document.getElementById('baseSeasonIcon'),title=document.getElementById('baseSeasonTitle'),desc=document.getElementById('baseSeasonDescription'),label=document.getElementById('baseSeasonLabel');
@@ -1111,7 +1111,7 @@ function renderBaseSky(){
       <span class="base-rain" aria-hidden="true">${Array.from({length:22},(_,i)=>`<i style="--x:${4+(i*13)%92}%;--delay:${(i%11)*.8}s;--duration:${9+(i%5)*1.2}s"></i>`).join('')}</span>`;
   }
   if(badge){const moon=realMoonPhase(new Date());badge.textContent=mode==='day'?`白天・${weather.icon} ${weather.label}`:`夜晚・${moon.emoji} ${moon.label}・${weather.icon} ${weather.label}`;badge.title=mode==='day'?'基地依金門即時天氣顯示':`目前月相：${moon.label}（月齡約 ${moon.age.toFixed(1)} 天）`; }
-  if(scene.querySelector('.base-residents'))renderBaseResidents();
+  // 起始基地只保留天空、山丘與草地；動植物與設施均由玩家自行建設。
 }
 let activeHabitatBase=null;
 const HABITAT_BASE_META={
@@ -1276,6 +1276,17 @@ function updateBaseDashboard(){
   set('baseProfileCompletion',`${Math.min(100,Math.round(owned/12*100))}% 完成`);
   const sw=document.getElementById('baseEditSwitch');if(sw){sw.classList.toggle('on',!!st.baseEditMode);const em=sw.querySelector('em');if(em)em.textContent=st.baseEditMode?'開':'關'}
 }
+function interpolateAQI(value,breakpoints){
+  const v=Number(value);if(!Number.isFinite(v)||v<0)return null;
+  for(const [cl,ch,il,ih] of breakpoints){if(v<=ch)return Math.round((ih-il)/(ch-cl)*(v-cl)+il)}
+  return 500;
+}
+function calculateTaiwanAQI(current){
+  // 依台灣環境部 AQI 分級，以 Open-Meteo 即時 PM2.5、PM10 濃度估算；取兩者副指標較高值。
+  const pm25=interpolateAQI(current.pm2_5,[[0,15.4,0,50],[15.5,35.4,51,100],[35.5,54.4,101,150],[54.5,150.4,151,200],[150.5,250.4,201,300],[250.5,350.4,301,400],[350.5,500.4,401,500]]);
+  const pm10=interpolateAQI(current.pm10,[[0,50,0,50],[51,100,51,100],[101,254,101,150],[255,354,151,200],[355,424,201,300],[425,504,301,400],[505,604,401,500]]);
+  const values=[pm25,pm10].filter(Number.isFinite);return values.length?Math.max(...values):null;
+}
 function aqiLevel(aqi){if(aqi<=50)return'良好';if(aqi<=100)return'普通';if(aqi<=150)return'對敏感族群不健康';if(aqi<=200)return'對所有族群不健康';if(aqi<=300)return'非常不健康';return'危害'}
 function aqiMeta(aqi){
   if(aqi<=50)return{key:'green',label:'良好',advice:'空氣品質佳，適合戶外活動。'};
@@ -1294,7 +1305,7 @@ function updateAqiDisplay(aq){
     if(metric){metric.dataset.tooltip='AQI 暫無資料';metric.setAttribute('aria-label','AQI 暫無資料');metric.title='AQI 暫無資料';}
     return;
   }
-  const meta=aqiMeta(aq), tip=`AQI：${aq}（${meta.label}）｜${meta.advice}`;
+  const meta=aqiMeta(aq), tip=`台灣 AQI 估算：${aq}（${meta.label}）｜依金湖即時 PM2.5／PM10 濃度換算；${meta.advice}`;
   if(value)value.textContent=aq;if(level)level.textContent=meta.label;
   if(flag)flag.dataset.level=meta.key;
   if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
@@ -1313,9 +1324,9 @@ async function updateNatureDashboard(){
   try{
     const [forecast,air]=await Promise.all([
       fetch('https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json()),
-      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=us_aqi&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json())
+      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=pm2_5,pm10&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json())
     ]);
-    const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
+    const c=forecast.current||{}, aq=calculateTaiwanAQI(air.current||{});
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
@@ -1601,7 +1612,7 @@ function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
   const nav=document.getElementById('habitatBaseNavigation');if(nav)nav.classList.add('hide');
   const season=currentBaseSeason();
-  baseScene.innerHTML=`<div class="single-base-storybook" aria-label="單一守護基地遊戲畫面"><img src="base-village-storybook.png?v=12.1.2" alt="守護基地自然繪本遊戲場景"/><div class="single-base-season-tint" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="season-decor season-decor-spring" aria-hidden="true">🌸 <i>🌷</i><i>🌼</i><i>🦋</i></div><div class="season-decor season-decor-summer" aria-hidden="true">🌻 <i>🌺</i><i>🦋</i><i>🐝</i></div><div class="season-decor season-decor-autumn" aria-hidden="true">🍁 <i>🍂</i><i>🍄</i><i>🍃</i></div><div class="season-decor season-decor-winter" aria-hidden="true">❄️ <i>❄️</i><i>🌲</i><i>☃️</i></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+  baseScene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="starter-nature" aria-label="守護基地起始自然環境"><div class="starter-mountain mountain-back"></div><div class="starter-mountain mountain-front"></div><div class="starter-hill hill-back"></div><div class="starter-hill hill-front"></div><div class="starter-grass"></div><div class="season-nature season-spring" aria-hidden="true"></div><div class="season-nature season-summer" aria-hidden="true"></div><div class="season-nature season-autumn" aria-hidden="true"></div><div class="season-nature season-winter" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-buildings"></div>`;
   baseScene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings');
   const titleTools=document.getElementById('baseTitleTools');
