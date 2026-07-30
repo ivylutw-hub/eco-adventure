@@ -667,7 +667,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.1 已加入引導式學習：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.2 已修復守護基地畫面與首頁地方資訊：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -1030,7 +1030,7 @@ function weatherFromCode(code){
 async function updateRealBaseWeather(force=false){
  if(!force&&Date.now()-baseWeatherFetchedAt<15*60*1000&&baseLiveWeather){renderBaseSky();return;}
  try{
-  const url='https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=weather_code,is_day,wind_speed_10m&timezone=auto';
+  const url='https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei';
   const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('weather '+response.status);
   const data=await response.json(),current=data.current||{};
   baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night',windSpeed:Math.max(0,Number(current.wind_speed_10m)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
@@ -1312,8 +1312,8 @@ async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
     const [forecast,air]=await Promise.all([
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
-      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json()),
+      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=us_aqi&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>r.json())
     ]);
     const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
@@ -1601,7 +1601,7 @@ function renderBase(){
   ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
   const nav=document.getElementById('habitatBaseNavigation');if(nav)nav.classList.add('hide');
   const season=currentBaseSeason();
-  baseScene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="season-decor season-decor-spring">🌸 <i>🌷</i><i>🌼</i><i>🦋</i></div><div class="season-decor season-decor-summer">🌻 <i>🌺</i><i>🦋</i><i>🐝</i></div><div class="season-decor season-decor-autumn">🍁 <i>🍂</i><i>🍄</i><i>🍃</i></div><div class="season-decor season-decor-winter">❄️ <i>❄️</i><i>🌲</i><i>☃️</i></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+  baseScene.innerHTML=`<div class="single-base-storybook" aria-label="單一守護基地遊戲畫面"><img src="base-village-storybook.png?v=12.1.2" alt="守護基地自然繪本遊戲場景"/><div class="single-base-season-tint" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="season-decor season-decor-spring" aria-hidden="true">🌸 <i>🌷</i><i>🌼</i><i>🦋</i></div><div class="season-decor season-decor-summer" aria-hidden="true">🌻 <i>🌺</i><i>🦋</i><i>🐝</i></div><div class="season-decor season-decor-autumn" aria-hidden="true">🍁 <i>🍂</i><i>🍄</i><i>🍃</i></div><div class="season-decor season-decor-winter" aria-hidden="true">❄️ <i>❄️</i><i>🌲</i><i>☃️</i></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
   baseScene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);baseScene.onclick=null;
   const buildings=baseScene.querySelector('.base-buildings');
   const titleTools=document.getElementById('baseTitleTools');
