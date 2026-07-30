@@ -667,7 +667,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.0 已加入引導式學習：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.1 已加入引導式學習：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -1011,7 +1011,7 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
-function showBase(){renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
+function showBase(){activeHabitatBase=null;renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
   {id:'cloudy',label:'多雲',icon:'🌤️'},
@@ -1068,12 +1068,27 @@ function moonPhaseSvg(phase){
   };
   return `<span class="moon-phase" role="img" aria-label="${label}"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${shapes[index]||shapes[4]}</svg></span>`;
 }
+function currentBaseSeason(date=new Date()){
+  const month=date.getMonth()+1;
+  if(month>=3&&month<=5)return {id:'spring',icon:'🌸',name:'春季',description:'新芽、花朵與柔和春光陪伴基地成長'};
+  if(month>=6&&month<=8)return {id:'summer',icon:'🌻',name:'夏季',description:'濃綠草地、盛開花朵與活潑夏日生態'};
+  if(month>=9&&month<=11)return {id:'autumn',icon:'🍁',name:'秋季',description:'金黃草地、暖色落葉與清爽秋風'};
+  return {id:'winter',icon:'❄️',name:'冬季',description:'銀白霜景、常綠植物與寧靜冬日氣氛'};
+}
+function updateBaseSeasonUI(season){
+  const icon=document.getElementById('baseSeasonIcon'),title=document.getElementById('baseSeasonTitle'),desc=document.getElementById('baseSeasonDescription'),label=document.getElementById('baseSeasonLabel');
+  if(icon)icon.textContent=season.icon;
+  if(title)title.textContent=`${season.name}守護基地`;
+  if(desc)desc.textContent=season.description;
+  if(label)label.textContent=`${season.icon} ${season.name}`;
+}
 function renderBaseSky(){
   const scene=document.getElementById('baseScene');
   if(!scene)return;
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
   const mode=baseLiveWeather?.mode||baseTimeMode();
-  scene.className=`base-scene ${mode} weather-${weather.id}${st.baseEditMode?' is-editing':''}${activeHabitatBase?` habitat-build-scene habitat-theme-${activeHabitatBase}`:''}`;
+  const season=currentBaseSeason(); updateBaseSeasonUI(season);
+  scene.className=`base-scene ${mode} weather-${weather.id} season-${season.id}${st.baseEditMode?' is-editing':''}`;
   const windSpeed=Math.max(0,Number(baseLiveWeather?.windSpeed)||0);
   const windDuration=windSpeed<1?0:Math.max(1.8,Math.min(24,36/(windSpeed+0.8)));
   scene.style.setProperty('--wind-spin-duration',windDuration?`${windDuration.toFixed(2)}s`:'0s');
@@ -1123,7 +1138,7 @@ function ensureHabitatBase(id){
   if(!st.habitatBases[id]||typeof st.habitatBases[id]!=='object')st.habitatBases[id]={owned:[],placements:[]};
   const b=st.habitatBases[id];if(!Array.isArray(b.owned))b.owned=[];if(!Array.isArray(b.placements))b.placements=[];return b;
 }
-function currentBaseData(){return activeHabitatBase?ensureHabitatBase(activeHabitatBase):{owned:st.owned,placements:st.basePlacements};}
+function currentBaseData(){return {owned:st.owned,placements:st.basePlacements};}
 function currentBaseOwned(){return currentBaseData().owned;}
 function currentBasePlacements(){return currentBaseData().placements;}
 function enterHabitatBase(id){
@@ -1582,43 +1597,37 @@ function renderBaseShop(){
   if(!shopEl.children.length)shopEl.innerHTML='<div class="base-shop-empty">這個分類目前沒有可購買的建設。</div>';
 }
 function renderBase(){
-  ensureBaseLayout();if(activeHabitatBase)ensureHabitatBase(activeHabitatBase);st.basePaths=[];baseCoins.textContent=st.coins;
-  const habitatMeta=activeHabitatBase?HABITAT_BASE_META[activeHabitatBase]:null;
-  const nav=document.getElementById('habitatBaseNavigation');if(nav){nav.classList.toggle('hide',!habitatMeta);if(habitatMeta){document.getElementById('habitatBaseNavIcon').textContent=habitatMeta.icon;document.getElementById('habitatBaseNavTitle').textContent=habitatMeta.name;document.getElementById('habitatBaseNavDescription').textContent=habitatMeta.description;document.getElementById('habitatBaseBuildCount').textContent=`已建設 ${currentBaseOwned().length} 項`;}}
-  document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
-  baseScene.innerHTML=habitatMeta
-    ? `<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`
-    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png?v=11.2.1" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button><button class="village-park-sign sign-forest" type="button" aria-label="前往森林保育區" title="森林保育區" onclick="enterHabitatBase('forest')"><span>🌳</span><b>森林保育區</b></button><button class="village-park-sign sign-garden" type="button" aria-label="前往授粉花園" title="授粉花園" onclick="enterHabitatBase('garden')"><span>🌼</span><b>授粉花園</b></button><button class="village-park-sign sign-wetland" type="button" aria-label="前往濕地生態園" title="濕地生態園" onclick="enterHabitatBase('wetland')"><span>💧</span><b>濕地生態園</b></button><button class="village-park-sign sign-coast" type="button" aria-label="前往潮間帶保護區" title="潮間帶保護區" onclick="enterHabitatBase('coast')"><span>🌊</span><b>潮間帶保護區</b></button><button class="village-park-sign sign-green" type="button" aria-label="前往綠能科技園" title="綠能科技園" onclick="enterHabitatBase('green')"><span>☀️</span><b>綠能科技園</b></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
-  if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
-  baseScene.onclick=null;
-  const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
+  activeHabitatBase=null;
+  ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
+  const nav=document.getElementById('habitatBaseNavigation');if(nav)nav.classList.add('hide');
+  const season=currentBaseSeason();
+  baseScene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div><div class="season-decor season-decor-spring">🌸 <i>🌷</i><i>🌼</i><i>🦋</i></div><div class="season-decor season-decor-summer">🌻 <i>🌺</i><i>🦋</i><i>🐝</i></div><div class="season-decor season-decor-autumn">🍁 <i>🍂</i><i>🍄</i><i>🍃</i></div><div class="season-decor season-decor-winter">❄️ <i>❄️</i><i>🌲</i><i>☃️</i></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+  baseScene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);baseScene.onclick=null;
+  const buildings=baseScene.querySelector('.base-buildings');
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
-  const activeOwned=currentBaseOwned(),activePlacements=currentBasePlacements();
-  if(!activeOwned.length){buildings.innerHTML=`<div class="base-empty">${habitatMeta?`${habitatMeta.icon} ${habitatMeta.name}目前只有原始自然環境，尚未放置任何建設。請由下方商店挑選設施，自由打造專屬園區！`:'基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！'}</div>`}
+  const activeOwned=st.owned,activePlacements=st.basePlacements;
+  if(!activeOwned.length){buildings.innerHTML='<div class="base-empty">守護基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
   else activePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it,p)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
-  renderBaseResidents();
-  renderBaseSky();updateRealBaseWeather();
+  renderBaseResidents();renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
-  renderBaseShop();
-  updateBaseQuality();
-  if(!activeHabitatBase)updateBaseExploration();
-  updateBaseDashboard();
+  renderBaseShop();updateBaseQuality();updateBaseDashboard();
 }
+
 function buyItem(id){
   const it=ITEMS.find(x=>x.id===id);if(!it)return;if(st.coins<it.cost){toast('金幣不足，完成更多單元再回來建設吧！');return}
   st.coins-=it.cost;const data=currentBaseData(),owned=data.owned,placements=data.placements;
   if(id==='flowers'){
     const start=owned.length;
     for(let i=0;i<10;i++)owned.push(id);
-    if(!activeHabitatBase)ensureBaseLayout();else for(let i=0;i<10;i++)placements.push({key:`habitat-${activeHabitatBase}-${Date.now()}-${i}-flowers`,itemId:'flowers',x:28+(i%5)*10,y:62+Math.floor(i/5)*10,flowerVariant:i,scale:.72});
+    ensureBaseLayout();
     for(let i=0;i<10;i++){
-      const p=activeHabitatBase?placements[placements.length-10+i]:st.basePlacements.find(x=>x.key===`base-${start+i}-flowers`);
+      const p=st.basePlacements.find(x=>x.key===`base-${start+i}-flowers`);
       if(p){p.flowerVariant=i;p.scale=.72;p.x=28+(i%5)*10;p.y=62+Math.floor(i/5)*10;}
     }
     save();header();renderBase();toast('🌸 已獲得 10 朵花，每朵都可以獨立移動與調整！');return;
   }
-  owned.push(id);if(!activeHabitatBase)ensureBaseLayout();else{const index=placements.length,col=index%6,row=Math.floor(index/6)%4;placements.push({key:`habitat-${activeHabitatBase}-${Date.now()}-${index}-${id}`,itemId:id,x:12+col*15,y:73-row*15,scale:1});}save();header();renderBase();toast(`✨ 已在${activeHabitatBase?HABITAT_BASE_META[activeHabitatBase].name:'基地'}新增「${it.name}」，可以進入編輯模式自由擺放！`)
+  owned.push(id);ensureBaseLayout();save();header();renderBase();toast(`✨ 已在守護基地新增「${it.name}」，可以進入編輯模式自由擺放！`)
 }
 
 

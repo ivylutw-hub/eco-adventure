@@ -6102,6 +6102,29 @@ body.quiz-mode #nextBtn{width:100%;margin-top:10px}
 }
 @media(prefers-reduced-motion:reduce){body.quiz-mode .option,body.quiz-mode .bar i{transition:none!important}}
 
-/* V12.1.0 引導式學習 */
+/* V12.1.1 引導式學習 */
 .guided-feedback .guided-retry-btn{margin-top:16px;width:100%;min-height:52px;font-weight:800}
 .guided-feedback .explanation-card{border-left:5px solid #f2b84b}
+
+/* ===== V12.1.1 單一守護基地與四季變化 ===== */
+.base-village-entry{display:none!important}
+.base-exploration-card,.habitat-base-navigation{display:none!important}
+.base-season-card{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(239,250,239,.88));border:1px solid rgba(75,130,83,.18);box-shadow:0 8px 20px rgba(40,90,54,.08)}
+.base-season-card>div{display:flex;align-items:center;gap:12px}.base-season-card span{font-size:2rem}.base-season-card b,.base-season-card small{display:block}.base-season-card strong{white-space:nowrap;padding:7px 11px;border-radius:999px;background:#fff;color:#356342}
+#basePage .base-scene-frame::after{content:"四季守護基地"!important}
+#baseScene{transition:background 1s ease,filter 1s ease}
+#baseScene .season-decor{display:none;position:absolute;z-index:18;inset:auto 4% 6% 4%;font-size:clamp(24px,4vw,50px);justify-content:space-around;align-items:end;pointer-events:none;filter:drop-shadow(0 5px 4px rgba(0,0,0,.15))}
+#baseScene .season-decor i{font-style:normal;animation:seasonFloat 4.5s ease-in-out infinite alternate}
+#baseScene.season-spring .season-decor-spring,#baseScene.season-summer .season-decor-summer,#baseScene.season-autumn .season-decor-autumn,#baseScene.season-winter .season-decor-winter{display:flex}
+#baseScene.season-spring .base-grassland{filter:saturate(1.12) brightness(1.07)}
+#baseScene.season-summer .base-grassland{filter:saturate(1.28) brightness(1.03)}
+#baseScene.season-autumn .base-grassland{filter:sepia(.28) saturate(1.2) hue-rotate(-12deg)}
+#baseScene.season-autumn .forest-belt{filter:sepia(.45) saturate(1.35) hue-rotate(-18deg)}
+#baseScene.season-winter .base-grassland{filter:saturate(.55) brightness(1.22)}
+#baseScene.season-winter .mountain-layer{filter:saturate(.62) brightness(1.12)}
+#baseScene.season-winter::before{content:"";position:absolute;z-index:16;inset:0;pointer-events:none;background-image:radial-gradient(circle,#fff 0 2px,transparent 2.5px);background-size:54px 54px;opacity:.62;animation:seasonSnow 10s linear infinite}
+#baseScene.season-autumn::before{content:"🍂";position:absolute;z-index:16;left:8%;top:20%;font-size:24px;pointer-events:none;animation:seasonLeaf 8s linear infinite}
+@keyframes seasonFloat{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-10px) rotate(4deg)}}
+@keyframes seasonSnow{from{background-position:0 -60px}to{background-position:25px 120px}}
+@keyframes seasonLeaf{0%{transform:translate(0,-20px) rotate(0);opacity:0}15%{opacity:1}100%{transform:translate(72vw,480px) rotate(520deg);opacity:0}}
+@media(max-width:700px){.base-season-card{padding:11px 12px}.base-season-card span{font-size:1.6rem}.base-season-card small{font-size:.78rem}}

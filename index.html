@@ -178,8 +178,8 @@
       <button type="button" onclick="showLeaderboard()"><span>🥇</span><div><b>每週排行</b><small>和守護者一起努力</small></div></button>
     </section>
 
-    <section class="learning-village-card" aria-label="守護基地村">
-      <div><span>🌳</span><div><small>LEARNING REWARD AREA</small><h3>守護基地村</h3><p>完成題庫後，到基地看看收藏、建設與生態園區。</p></div></div>
+    <section class="learning-village-card" aria-label="守護基地">
+      <div><span>🌳</span><div><small>LEARNING REWARD AREA</small><h3>守護基地</h3><p>完成題庫後，到基地看看收藏、建設與生態園區。</p></div></div>
       <button type="button" onclick="showBaseVillage()">前往基地村</button>
     </section>
   </section>
@@ -242,7 +242,7 @@
 <section class="my-base-control-panel" aria-label="我的基地控制區">
 <div class="my-base-panel-head">
 <div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
-<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>進入繪本守護基地村・探索五大園區</span><b aria-hidden="true">→</b></button>
+<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>查看其他守護者的基地</span><b aria-hidden="true">→</b></button>
 </div>
 <div class="base-status-row">
 <span class="base-zoom-readout">畫面 <b id="baseZoomLabel">100%</b></span>
@@ -256,9 +256,9 @@
 <div><span>😊</span><small>幸福度</small><b id="baseHappinessScore">0</b></div>
 </div>
 <div class="base-growth-card" aria-live="polite"><span class="base-growth-icon">🌱</span><div><b id="baseGrowthLevel">自然基地 Lv.1</b><small id="baseGrowthHint">增加不同類型的建設，解鎖更豐富的基地景觀。</small></div><em id="baseGuardianScore">0</em></div>
-<div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>從守護基地村出發，選擇園區後進入符合主題地形的獨立建設基地。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
+<div class="base-season-card" aria-live="polite"><div><span id="baseSeasonIcon">🌿</span><div><b id="baseSeasonTitle">四季守護基地</b><small id="baseSeasonDescription">基地會依月份自動呈現春、夏、秋、冬景色。</small></div></div><strong id="baseSeasonLabel">自動</strong></div>
 </section>
-<div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite">
+<div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite" hidden>
   <button type="button" onclick="goGameBack()">← 回到上一頁</button>
   <div><span id="habitatBaseNavIcon">🌳</span><div><b id="habitatBaseNavTitle">森林保育區</b><small id="habitatBaseNavDescription">在這裡自由建設專屬生態基地</small></div></div>
   <strong id="habitatBaseBuildCount">已建設 0 項</strong>
@@ -304,7 +304,7 @@
 <main class="hide" id="baseVillagePage">
   <button class="back village-back-to-base" onclick="goGameBack()">← 回到上一頁</button>
   <div class="title village-title">
-    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
+    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
     <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
   </div>
   <section class="village-controls">
