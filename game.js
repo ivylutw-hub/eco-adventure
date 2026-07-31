@@ -1,6 +1,6 @@
-let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null,currentQuestionAttempt=1;
+let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],habitatBases:{},basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:'',bearName:'小熊熊',thinkingStars:0,firstAttemptTotal:0,firstAttemptCorrect:0,guidedCorrect:0}}
+function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],habitatBases:{},basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
 function migrateFlowerBundlesV96(state){
   if(!state||state.flowerBundleV96Migrated)return state;
   const oldOwned=Array.isArray(state.owned)?state.owned:[];
@@ -140,7 +140,7 @@ function importSave(event){
       playerName.textContent=st.name||'環保守護者';
       header();
       renderMap();
-      showVillageHome();
+      page('mapPage');
       toast('⬆️ 存檔已成功匯入');
     }catch(err){
       alert('無法匯入這個存檔，請確認是本遊戲匯出的 JSON 檔案。');
@@ -179,10 +179,6 @@ function ensureProfile(){
   st.exp=Math.max(0,Number(st.exp)||0);
   st.totalCorrect=Math.max(0,Number(st.totalCorrect)||0);
   st.totalAnswered=Math.max(0,Number(st.totalAnswered)||0);
-  st.thinkingStars=Math.max(0,Number(st.thinkingStars)||0);
-  st.firstAttemptTotal=Math.max(0,Number(st.firstAttemptTotal)||0);
-  st.firstAttemptCorrect=Math.max(0,Number(st.firstAttemptCorrect)||0);
-  st.guidedCorrect=Math.max(0,Number(st.guidedCorrect)||0);
   if(!st.wrongNotes||typeof st.wrongNotes!=='object')st.wrongNotes={};
   if(!st.checkinHistory||typeof st.checkinHistory!=='object')st.checkinHistory={};
   if(!st.monthlyGuardianRewards||typeof st.monthlyGuardianRewards!=='object')st.monthlyGuardianRewards={};
@@ -303,26 +299,15 @@ function login(){
   enterGame();
 }
 function enterGame(){
-  // 登入完成後，任何次要畫面渲染失敗都不可阻斷玩家進入遊戲。
-  try{ensureProfile()}catch(err){console.warn('玩家資料初始化失敗，使用基本資料繼續',err)}
-  const loginEl=document.getElementById('loginPage');
-  const gameEl=document.getElementById('game');
-  if(loginEl)loginEl.classList.add('hide');
-  if(gameEl)gameEl.classList.remove('hide');
-  const playerNameEl=document.getElementById('playerName');
-  if(playerNameEl)playerNameEl.textContent=st.name||'環保守護者';
-  try{header()}catch(err){console.warn('頁首更新失敗',err)}
-  try{renderMap()}catch(err){console.warn('冒險地圖預先載入失敗',err)}
-  try{updateSaveStatus('saved')}catch(err){console.warn('存檔狀態更新失敗',err)}
-  try{updateSoundButton()}catch(err){console.warn('聲音按鈕更新失敗',err)}
-  // 首頁與守護基地相關內容延後繪製，避免基地元件錯誤造成整個登入失敗。
-  setTimeout(()=>{
-    try{showVillageHome()}
-    catch(err){
-      console.error('學習首頁載入失敗，改用安全首頁',err);
-      try{page('villageHomePage')}catch(_e){}
-    }
-  },0);
+  ensureProfile();
+  loginPage.classList.add('hide');
+  game.classList.remove('hide');
+  playerName.textContent=st.name;
+  header();
+  renderMap();
+  updateSaveStatus('saved');
+  updateSoundButton();
+  page('mapPage');
 }
 function dailyLogin(){
   const t=dateStr();
@@ -547,149 +532,50 @@ function mountGlobalFooter(pageId){
  activePage.appendChild(status);
  activePage.appendChild(info);
 }
-let currentGamePage='villageHomePage',previousGamePage='villageHomePage',restoringBrowserHistory=false,allowQuizNavigation=false;
-const NAV_PAGE_IDS=['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage'];
-function ensurePageNavigation(){
- NAV_PAGE_IDS.forEach(id=>{
-   const target=document.getElementById(id);
-   if(!target||target.querySelector(':scope > .page-navigation'))return;
-   const nav=document.createElement('nav');
-   nav.className='page-navigation';
-   nav.setAttribute('aria-label','頁面導覽');
-   nav.innerHTML='<button type="button" class="page-nav-back" onclick="goGameBack()">← 回上一頁</button><button type="button" class="page-nav-home" onclick="goGameHome()">⌂ 回首頁</button>';
-   target.prepend(nav);
- });
-}
-function quizIsInProgress(){return currentGamePage==='quizPage'&&Array.isArray(quiz)&&quiz.length>0&&qi<quiz.length;}
-function confirmQuizLeave(){
- if(!quizIsInProgress()||allowQuizNavigation)return true;
- return window.confirm('🐻 小熊熊提醒你：\n\n目前正在挑戰中。離開後仍會保留已完成的題目進度，但本題尚未送出的選擇不會保留。\n\n確定要離開嗎？');
-}
+let currentGamePage='mapPage',previousGamePage='mapPage',restoringBrowserHistory=false;
 function ecoRouteState(pageId=currentGamePage,habitat=activeHabitatBase){return{ecoAdventure:true,page:pageId,habitat:habitat||null};}
+function sameEcoRoute(a,b){return !!(a&&b&&a.ecoAdventure&&b.ecoAdventure&&a.page===b.page&&(a.habitat||null)===(b.habitat||null));}
 function page(id,options={}){
- ensurePageNavigation();
  const changed=id!==currentGamePage;
  if(changed){previousGamePage=currentGamePage;currentGamePage=id;}
- ['villageHomePage','mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
+ ['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
    .forEach(x=>document.getElementById(x).classList.add('hide'));
  const target=document.getElementById(id);
  if(!target)return;
  target.classList.remove('hide');
  document.body.classList.toggle('admin-mode',id==='adminPage');
- document.body.classList.toggle('village-home-active',id==='villageHomePage');
  if(id!=='adminPage') mountGlobalFooter(id);
  if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
  if(changed&&!restoringBrowserHistory&&options.history!==false){
-   window.history.pushState(ecoRouteState(id,id==='basePage'?activeHabitatBase:null),'',window.location.href);
+   const nextRoute=ecoRouteState(id,id==='basePage'?activeHabitatBase:null);
+   if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);
  }
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
 function restoreEcoRoute(state){
- if(!state||!state.ecoAdventure)return;
  restoringBrowserHistory=true;
  try{
-   activeHabitatBase=state.page==='basePage'&&HABITAT_BASE_META[state.habitat]?state.habitat:null;
-   if(state.page==='basePage'){renderBase();updateBaseDashboard();}
-   page(state.page,{history:false});
- }finally{restoringBrowserHistory=false;allowQuizNavigation=false;}
+   // 瀏覽器返回到網站的初始紀錄時，安全回到冒險地圖，不留下空白畫面。
+   const route=state&&state.ecoAdventure?state:ecoRouteState('mapPage',null);
+   const validPages=new Set(['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']);
+   const target=validPages.has(route.page)?route.page:'mapPage';
+   activeHabitatBase=target==='basePage'&&HABITAT_BASE_META[route.habitat]?route.habitat:null;
+   if(target==='basePage'){renderBase();updateBaseDashboard();}
+   if(target==='mapPage')renderMap();
+   page(target,{history:false});
+ }finally{restoringBrowserHistory=false;}
 }
-window.addEventListener('popstate',event=>{
- if(quizIsInProgress()&&!allowQuizNavigation){
-   if(!confirmQuizLeave()){
-     allowQuizNavigation=true;
-     window.history.go(1);
-     setTimeout(()=>{allowQuizNavigation=false;},250);
-     return;
-   }
-   allowQuizNavigation=true;
- }
- restoreEcoRoute(event.state);
-});
-if(!window.history.state?.ecoAdventure){window.history.replaceState(ecoRouteState('villageHomePage',null),'',window.location.href);}
+window.addEventListener('popstate',event=>restoreEcoRoute(event.state));
+if(!window.history.state?.ecoAdventure){window.history.replaceState(ecoRouteState('mapPage',null),'',window.location.href);}
 function goGameBack(){
- if(!confirmQuizLeave())return;
- allowQuizNavigation=true;
+ // 使用瀏覽器原生上一頁，讓畫面返回使用者實際瀏覽的前一頁。
+ // 若目前沒有可返回的瀏覽紀錄，再回到遊戲冒險地圖，避免離開後停在空白頁。
  if(window.history.length>1){window.history.back();return;}
- if(activeHabitatBase){exitHabitatBase();allowQuizNavigation=false;return;}
+ if(activeHabitatBase){exitHabitatBase();return;}
  showMap();
- allowQuizNavigation=false;
 }
-function goGameHome(){
- if(!confirmQuizLeave())return;
- allowQuizNavigation=true;
- showVillageHome();
- allowQuizNavigation=false;
-}
-function showVillageHome(){
- ensureProfile();
- if(!st.bearName)st.bearName='小熊熊';
- const el=document.getElementById('villageBearName');if(el)el.textContent=st.bearName;
- renderLearningHome();
- page('villageHomePage');
-}
-function renderLearningHome(){
- const today=localDateKey();
- const todayAnswered=st.todayAnsweredDate===today?(Number(st.todayAnswered)||0):0;
- const accuracy=st.totalAnswered?Math.round((Number(st.totalCorrect)||0)/(Number(st.totalAnswered)||1)*100):0;
- const completed=completedUnitCount(),total=totalUnitCount();
- const goal=10,goalDone=Math.min(goal,todayAnswered),remaining=Math.max(0,goal-todayAnswered);
- const set=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=value};
- set('homeTodayAnswered',`${todayAnswered} 題`);
- set('homeAccuracy',`${accuracy}%`);
- set('homeCompletedUnits',`${completed} / ${total}`);
- set('homeGuardianExp',`${Number(st.exp)||0} EXP`);
- set('homeGoalText',remaining?`今日再完成 ${remaining} 題`:'今日學習目標已完成！');
- const bar=document.getElementById('homeGoalBar');if(bar)bar.style.width=`${Math.min(100,goalDone/goal*100)}%`;
- const message=document.getElementById('homeBearMessage');if(message)message.textContent=remaining?`今天再完成 ${remaining} 題吧！`:'今天的目標完成了，真棒！';
- const lastStage=S.find(x=>x.id===(st.lastStageId||''));
- const hint=document.getElementById('continueLearningHint');if(hint)hint.textContent=lastStage?`接續「${lastStage.name}」`:'從第一座環境世界開始';
-}
-function continueLearning(){
- ensureProgress();
- const target=S.find(x=>x.id===(st.lastStageId||''))||S.find(x=>stagePercent(x.id)<100)||S[0];
- openStage(target);
- for(let i=0;i<unitCount(target.id);i++){
-  const answered=getUnitAnswered(target.id,i);
-  if(answered>0&&answered<10&&!doneSet(target.id).has(i)){start(i);return;}
- }
-}
-function openBearNameDialog(){
- const modal=document.getElementById('bearNameModal'),input=document.getElementById('bearNameInput');
- if(input)input.value=st.bearName||'小熊熊';
- if(modal)modal.classList.remove('hide');
- setTimeout(()=>input&&input.focus(),80);
-}
-function closeBearNameDialog(event){if(event&&event.target!==event.currentTarget)return;document.getElementById('bearNameModal')?.classList.add('hide')}
-function saveBearName(){
- const input=document.getElementById('bearNameInput');
- const value=(input?.value||'').trim().slice(0,10)||'小熊熊';
- st.bearName=value;save();
- const label=document.getElementById('villageBearName');if(label)label.textContent=value;
- closeBearNameDialog();toast(`🐻 冒險夥伴的新名字是「${value}」！`);
-}
-function useDefaultBearName(){const input=document.getElementById('bearNameInput');if(input)input.value='小熊熊';saveBearName()}
-function openVillageHabitat(id){
- const map={pollinator:'garden',intertidal:'coast'};id=map[id]||id;
- if(!HABITAT_BASE_META[id])return;
- activeHabitatBase=id;ensureHabitatBase(id);renderBase();updateBaseDashboard();page('basePage');
- toast(`${HABITAT_BASE_META[id].icon} 已進入${HABITAT_BASE_META[id].name}`);
-}
-function openVillageFeature(type){
- const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>守護小提醒</h4><p>每天完成一個學習單元，累積知識與守護能量，讓自己的自然基地慢慢成長。</p><p>答錯也沒關係，先閱讀解析再挑戰一次，就能把不熟悉的知識變成新的力量。</p>'},
-  quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
-  daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
-  backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
- }[type];
- if(!data)return;
- const content=document.getElementById('villageFeatureContent');
- if(content)content.innerHTML=`<div class="village-feature-icon">${data.icon}</div><small>GUARDIAN VILLAGE</small><h3 id="villageFeatureTitle">${data.title}</h3>${data.html}`;
- document.getElementById('villageFeatureModal')?.classList.remove('hide');
-}
-function closeVillageFeature(event){if(event&&event.target!==event.currentTarget)return;document.getElementById('villageFeatureModal')?.classList.add('hide')}
-
 function showMap(){renderMap();header();page('mapPage')}
 function openStage(s){
  if(!s||!s.id){s=S.find(x=>x.id===(st.lastStageId||"s1"))||S[0];}
@@ -755,22 +641,17 @@ function start(i){
 }
 function renderQ(){
  answered=false;
- currentQuestionAttempt=1;
  selectedAnswer=null;
  const q=quiz[qi];
- quizCount.textContent=`第 ${qi+1} / ${quiz.length} 題`;
+ quizCount.textContent=`${qi+1}/${quiz.length}`;
  quizBar.style.width=(qi/quiz.length*100)+'%';
- quizBar.parentElement?.setAttribute('aria-label',`答題進度：已完成 ${qi} 題，共 ${quiz.length} 題`);
- const progressLabel=document.getElementById('quizProgressLabel');
- if(progressLabel)progressLabel.textContent=qi===0?'準備作答':`已完成 ${qi} 題`;
  levelTag.textContent=q.level||stage.main;
  question.textContent=q.q;
  options.innerHTML='';
  q.opts.forEach((o,i)=>{
    const b=document.createElement('button');
    b.className='option';
-   b.innerHTML=`<span class="option-letter">${String.fromCharCode(65+i)}</span><span class="option-text">${o}</span>`;
-   b.setAttribute('aria-pressed','false');
+   b.innerHTML=`<b>${String.fromCharCode(65+i)}.</b> ${o}`;
    b.onclick=()=>selectAnswer(i);
    options.appendChild(b);
  });
@@ -818,107 +699,61 @@ function markWeaknessMastered(q){
    st.wrongNotes[key].masteredAt=new Date().toISOString();
  }
 }
-function retryCurrentQuestion(){
- answered=false;
- selectedAnswer=null;
- currentQuestionAttempt=2;
- [...options.children].forEach(b=>{
-   b.disabled=false;
-   b.classList.remove('selected','good','bad','correct-answer');
-   b.setAttribute('aria-pressed','false');
- });
- feedback.className='feedback hide';
- feedback.innerHTML='';
- answerActions.classList.remove('hide');
- submitAnswerBtn.disabled=true;
- const nextButton=document.getElementById('nextBtn');
- nextButton.classList.add('hide');
- toast('再想一次，你一定可以！');
- options.scrollIntoView({behavior:'smooth',block:'center'});
-}
-function completeQuestionProgress(){
- quizBar.style.width=((qi+1)/quiz.length*100)+'%';
- const progressLabel=document.getElementById('quizProgressLabel');
- if(progressLabel)progressLabel.textContent=`已完成 ${qi+1} 題`;
- answerActions.classList.add('hide');
- const nextButton=document.getElementById('nextBtn');
- nextButton.disabled=false;
- nextButton.classList.remove('hide');
- ensureProgress();
- if(!replayMode){
-   st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
-   st.unitScores[stage.id][unit]=score;
- }
- requestAnimationFrame(()=>{
-   if(window.matchMedia('(min-width: 701px)').matches){
-     nextButton.scrollIntoView({behavior:'smooth',block:'nearest'});
-   }
- });
-}
-function awardCorrectAnswer(q,isGuided){
- score++;
- st.guardianEnergy=Math.min(100,Math.max(0,Number(st.guardianEnergy)||0)+2);
- st.totalCorrect=(st.totalCorrect||0)+1;
- if(isGuided){
-   st.guidedCorrect=(st.guidedCorrect||0)+1;
-   st.thinkingStars=(st.thinkingStars||0)+1;
- }
- if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
- const expKey=`${stage.id}|${q.id}`;
- let expGained=0;
- if(!st.mainExpAwarded[expKey]){
-   const awardedExp=10*activeExpMultiplier();
-   addExp(awardedExp);
-   st.mainExpAwarded[expKey]=true;
-   expGained=awardedExp;
-   addWeeklyQuestionPoints(awardedExp);
- }
- markWeaknessMastered(q);
- return expGained;
-}
 function submitSelectedAnswer(){
  if(answered||selectedAnswer===null){toast('請先選擇一個答案');return}
  answered=true;
- const q=quiz[qi],i=selectedAnswer,ok=i===q.ans,isFirst=currentQuestionAttempt===1;
- if(isFirst){
-   st.totalAnswered=(st.totalAnswered||0)+1;
-   st.firstAttemptTotal=(st.firstAttemptTotal||0)+1;
-   recordAnswerActivity();
-   if(ok)st.firstAttemptCorrect=(st.firstAttemptCorrect||0)+1;
- }
+ const q=quiz[qi],i=selectedAnswer,ok=i===q.ans;
+ st.totalAnswered=(st.totalAnswered||0)+1;
+ recordAnswerActivity();
  let expGained=0;
- if(ok)expGained=awardCorrectAnswer(q,!isFirst);
+ if(ok){
+   score++;
+   st.guardianEnergy=Math.min(100,Math.max(0,Number(st.guardianEnergy)||0)+2);
+   st.totalCorrect=(st.totalCorrect||0)+1;
+   if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
+   const expKey=`${stage.id}|${q.id}`;
+   if(!st.mainExpAwarded[expKey]){
+     const awardedExp=10*activeExpMultiplier();
+     addExp(awardedExp);
+     st.mainExpAwarded[expKey]=true;
+     expGained=awardedExp;
+     addWeeklyQuestionPoints(awardedExp);
+   }
+   markWeaknessMastered(q);
+ }else{
+   recordWrongNote(q);
+ }
  [...options.children].forEach((b,j)=>{
    b.disabled=true;
    b.classList.remove('selected');
    if(ok&&j===i)b.classList.add('good');
    if(!ok&&j===i)b.classList.add('bad');
  });
- if(!ok&&isFirst){
-   feedback.className='feedback bad guided-feedback';
-   feedback.innerHTML=`<div class="feedback-heading"><span>🌱</span><div><b>這次還沒有答對喔！</b><small>小熊熊：沒關係，先看看解析，再想一次！</small></div></div><div class="explanation-card"><span class="feedback-label">題目解析</span><p>${q.exp}</p></div><div class="exp-gain">不公布答案，也不扣守護能量</div><button class="primary guided-retry-btn" type="button" onclick="retryCurrentQuestion()">💡 我懂了，再試一次！</button>`;
-   answerActions.classList.add('hide');
-   const nextButton=document.getElementById('nextBtn');
-   nextButton.classList.add('hide');
-   save();header();playSound('wrong');animateFeedback(false);updateSaveStatus('saved');
-   return;
+ feedback.className='feedback '+(ok?'good':'bad');
+ feedback.innerHTML=ok
+   ?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
+   :`<b>🤔 這題已記進「怪獸弱點筆記」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">不公布答案，也不立即重答；之後可回首頁筆記複習。</div><div class="exp-gain">本題不獲得經驗值</div>`;
+ answerActions.classList.add('hide');
+ const nextButton=document.getElementById('nextBtn');
+ nextButton.disabled=false;
+ nextButton.classList.remove('hide');
+ requestAnimationFrame(()=>{
+   if(window.matchMedia('(min-width: 701px)').matches){
+     nextButton.scrollIntoView({behavior:'smooth',block:'nearest'});
+   }
+ });
+ ensureProgress();
+ if(!replayMode){
+   st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
+   st.unitScores[stage.id][unit]=score;
  }
- if(ok){
-   feedback.className='feedback good';
-   feedback.innerHTML=isFirst
-    ?`<div class="feedback-heading"><span>✅</span><div><b>答對了！</b><small>小熊熊：又學會一個環保知識！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">${expGained?`✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
-    :`<div class="feedback-heading"><span>🌟</span><div><b>你自己找出答案了！</b><small>小熊熊：真棒！這次是靠理解答對的！</small></div></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">⭐ 思考之星 +1${expGained?`　✨ +${expGained} EXP`:''}</div>`;
- }else{
-   recordWrongNote(q);
-   const correctLetter=String.fromCharCode(65+q.ans),correctText=q.opts[q.ans];
-   [...options.children].forEach((b,j)=>{if(j===q.ans)b.classList.add('correct-answer')});
-   feedback.className='feedback bad';
-   feedback.innerHTML=`<div class="feedback-heading"><span>📚</span><div><b>我們再把這題學熟一點！</b><small>小熊熊：這題已收進怪獸弱點筆記，下次一定會更熟悉。</small></div></div><div class="correct-answer-card"><small>正確答案</small><b>${correctLetter}. ${correctText}</b></div><div class="explanation-card"><span class="feedback-label">答案解析</span><p>${q.exp}</p></div><div class="exp-gain">本題不獲得經驗值，守護能量也不會下降</div>`;
- }
- completeQuestionProgress();
- save();header();updateWeaknessBadge();playSound(ok?'correct':'wrong');animateFeedback(ok);updateSaveStatus('saved');
+ save();
+ header();
+ updateWeaknessBadge();
+ playSound(ok?'correct':'wrong');
+ animateFeedback(ok);
+ updateSaveStatus('saved');
 }
-
 let nextQuestionLocked=false;
 function nextQuestion(){
  if(!answered||nextQuestionLocked)return;
@@ -988,14 +823,6 @@ function finish(){
  save();
  resultTitle.textContent=`${stage.name}・單元 ${unit+1} 完成！`;
  document.getElementById('score').textContent=pct;
- const resultQuestionCount=document.getElementById('resultQuestionCount');
- const resultCorrectCount=document.getElementById('resultCorrectCount');
- const resultAccuracy=document.getElementById('resultAccuracy');
- const bearResultMessage=document.getElementById('bearResultMessage');
- if(resultQuestionCount)resultQuestionCount.textContent=`${quiz.length} 題`;
- if(resultCorrectCount)resultCorrectCount.textContent=`${score} 題`;
- if(resultAccuracy)resultAccuracy.textContent=`${pct}%`;
- if(bearResultMessage)bearResultMessage.textContent=perfect?'太厲害了，10 題全部答對！今天又成功守護地球一次！':pct>=80?'做得真棒！把剛才不熟的題目再複習一次，就會更進步。':'今天完成挑戰就是很棒的進步，我們慢慢把弱點變成力量！';
  resultMsg.textContent=perfect
    ?(firstPerfect?`本次 10 題全部答對，獲得 ${mainCoinReward} 枚金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。')
    :(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');
@@ -1008,12 +835,6 @@ function finish(){
  page('resultPage');
  if(isDone(stage))setTimeout(()=>toast('🏅 恭喜獲得「'+stage.badgeName+'」！'),400);
 }
-function replayCurrentUnit(event){
- if(event){event.preventDefault();event.stopPropagation();}
- if(!stage||!Number.isInteger(unit)){backToStage(event);return false;}
- start(unit);
- return false;
-}
 function backToStage(event){
  if(event){event.preventDefault();event.stopPropagation();}
  const target=(stage&&stage.id)?stage:(S.find(x=>x.id===st.lastStageId)||S[0]);
@@ -1022,20 +843,7 @@ function backToStage(event){
 }
 function quitQuiz(){backToStage()}
 function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.createElement('div');d.className='badge'+(e?' earned':'');d.innerHTML=`<div class="medal">${s.badge}</div><h3>${s.badgeName}</h3><p>${e?'已獲得':'尚未獲得'}</p>`;hall.appendChild(d)});legend.classList.toggle('locked',!S.every(isDone));page('hallPage')}
-function showBase(){
-  activeHabitatBase=null;
-  page('basePage');
-  const draw=()=>{
-    renderBase();
-    updateBaseDashboard();
-    updateBaseClock();
-    const toolbar=document.querySelector('#basePage .base-build-toolbar');
-    if(toolbar)toolbar.classList.add('base-build-ready');
-  };
-  draw();
-  requestAnimationFrame(draw);
-  setTimeout(draw,120);
-}
+function showBase(){renderBase();updateBaseDashboard();page('basePage');setTimeout(updateBaseClock,0)}
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
   {id:'cloudy',label:'多雲',icon:'🌤️'},
@@ -1054,7 +862,7 @@ function weatherFromCode(code){
 async function updateRealBaseWeather(force=false){
  if(!force&&Date.now()-baseWeatherFetchedAt<15*60*1000&&baseLiveWeather){renderBaseSky();return;}
  try{
-  const url='https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei';
+  const url='https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=weather_code,is_day,wind_speed_10m&timezone=auto';
   const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('weather '+response.status);
   const data=await response.json(),current=data.current||{};
   baseLiveWeather={weather:weatherFromCode(current.weather_code),mode:Number(current.is_day)===1?'day':'night',windSpeed:Math.max(0,Number(current.wind_speed_10m)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
@@ -1092,27 +900,12 @@ function moonPhaseSvg(phase){
   };
   return `<span class="moon-phase" role="img" aria-label="${label}"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${shapes[index]||shapes[4]}</svg></span>`;
 }
-function currentBaseSeason(date=new Date()){
-  const month=date.getMonth()+1;
-  if(month>=3&&month<=5)return {id:'spring',icon:'🌸',name:'春季',description:'依實際月份呈現春季色調，基地起始只保留天空、山丘與草地'};
-  if(month>=6&&month<=8)return {id:'summer',icon:'🌻',name:'夏季',description:'依實際月份呈現夏季濃綠草地，天氣同步金湖即時狀況'};
-  if(month>=9&&month<=11)return {id:'autumn',icon:'🍁',name:'秋季',description:'依實際月份呈現秋季暖色草地與落葉效果'};
-  return {id:'winter',icon:'❄️',name:'冬季',description:'依實際月份呈現冬季霜雪色調，降雨仍依即時天氣顯示'};
-}
-function updateBaseSeasonUI(season){
-  const icon=document.getElementById('baseSeasonIcon'),title=document.getElementById('baseSeasonTitle'),desc=document.getElementById('baseSeasonDescription'),label=document.getElementById('baseSeasonLabel');
-  if(icon)icon.textContent=season.icon;
-  if(title)title.textContent=`${season.name}守護基地`;
-  if(desc)desc.textContent=season.description;
-  if(label)label.textContent=`${season.icon} ${season.name}`;
-}
 function renderBaseSky(){
   const scene=document.getElementById('baseScene');
   if(!scene)return;
   const weather=baseLiveWeather?.weather||BASE_WEATHERS[baseWeatherIndex]||BASE_WEATHERS[0];
   const mode=baseLiveWeather?.mode||baseTimeMode();
-  const season=currentBaseSeason(); updateBaseSeasonUI(season);
-  scene.className=`base-scene ${mode} weather-${weather.id} season-${season.id}${st.baseEditMode?' is-editing':''}`;
+  scene.className=`base-scene ${mode} weather-${weather.id}${st.baseEditMode?' is-editing':''}${activeHabitatBase?` habitat-build-scene habitat-theme-${activeHabitatBase}`:''}`;
   const windSpeed=Math.max(0,Number(baseLiveWeather?.windSpeed)||0);
   const windDuration=windSpeed<1?0:Math.max(1.8,Math.min(24,36/(windSpeed+0.8)));
   scene.style.setProperty('--wind-spin-duration',windDuration?`${windDuration.toFixed(2)}s`:'0s');
@@ -1135,15 +928,15 @@ function renderBaseSky(){
       <span class="base-rain" aria-hidden="true">${Array.from({length:22},(_,i)=>`<i style="--x:${4+(i*13)%92}%;--delay:${(i%11)*.8}s;--duration:${9+(i%5)*1.2}s"></i>`).join('')}</span>`;
   }
   if(badge){const moon=realMoonPhase(new Date());badge.textContent=mode==='day'?`白天・${weather.icon} ${weather.label}`:`夜晚・${moon.emoji} ${moon.label}・${weather.icon} ${weather.label}`;badge.title=mode==='day'?'基地依金門即時天氣顯示':`目前月相：${moon.label}（月齡約 ${moon.age.toFixed(1)} 天）`; }
-  // 起始基地只保留天空、山丘與草地；動植物與設施均由玩家自行建設。
+  if(scene.querySelector('.base-residents'))renderBaseResidents();
 }
 let activeHabitatBase=null;
 const HABITAT_BASE_META={
-  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'走進山谷森林與清澈溪流之間，在寬闊林間草坪打造屬於自己的保育基地。',geography:'森林山谷・林緣草坪・自然溪流',shop:'trees'},
-  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'柔和花丘與自然花叢環繞中央草坪，所有蜂箱、花架與設施都由玩家自行安排。',geography:'自然花丘・蜜源花叢・開闊草坪',shop:'flowers'},
-  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'蜿蜒水道、泥灘與蘆葦形成自然濕地，玩家可在乾燥草洲上逐步建設觀察設施。',geography:'蜿蜒水道・泥灘蘆葦・乾燥草洲',shop:'eco'},
-  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'海灣、自然沙灘、礁岩與潮池交錯，保留原始海岸，讓玩家自行規劃保育設施。',geography:'自然海灣・礁岩潮池・潮汐沙灘',shop:'rest'},
-  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'向陽谷地、自然溪流與開闊草坡保持未開發樣貌，綠能設備全部交由玩家自行建設。',geography:'向陽谷地・自然溪流・開闊草坡',shop:'eco'}
+  forest:{icon:'🌳',name:'森林保育區',short:'森林',description:'山陵、森林、小溪與林間空地，適合建造鳥屋、昆蟲旅館及自然步道。',geography:'起伏山陵・闊葉森林・林間小溪',shop:'trees'},
+  garden:{icon:'🌼',name:'授粉花園',short:'花園',description:'開闊花田、果樹緩坡與蜿蜒花徑，為蜜蜂和蝴蝶提供蜜源與休息空間。',geography:'花田草原・果樹緩坡・授粉花徑',shop:'flowers'},
+  wetland:{icon:'💧',name:'濕地生態園',short:'濕地',description:'淺水池、泥灘、蘆葦帶與木棧道，營造水鳥、青蛙及歐亞水獺適合的環境。',geography:'淺水濕地・泥灘蘆葦・觀察水道',shop:'eco'},
+  coast:{icon:'🌊',name:'潮間帶保護區',short:'潮間帶',description:'沙灘、礁岩、潮池與海岸平台，建立鱟、招潮蟹和彈塗魚的金門潮間帶基地。',geography:'海岸沙灘・礁岩潮池・潮汐水域',shop:'rest'},
+  green:{icon:'☀️',name:'綠能科技園',short:'綠能',description:'向陽緩坡、開放廣場與低碳設施用地，適合配置風力、太陽能及雨水回收系統。',geography:'向陽草坡・永續廣場・綠能設施帶',shop:'eco'}
 };
 function habitatGeographyMarkup(id,meta){
   const common=`<div class="habitat-geography habitat-geography-${id}" aria-hidden="true"><div class="geo-back"></div><div class="geo-mid"></div><div class="geo-front"></div>`;
@@ -1162,14 +955,14 @@ function ensureHabitatBase(id){
   if(!st.habitatBases[id]||typeof st.habitatBases[id]!=='object')st.habitatBases[id]={owned:[],placements:[]};
   const b=st.habitatBases[id];if(!Array.isArray(b.owned))b.owned=[];if(!Array.isArray(b.placements))b.placements=[];return b;
 }
-function currentBaseData(){return {owned:st.owned,placements:st.basePlacements};}
+function currentBaseData(){return activeHabitatBase?ensureHabitatBase(activeHabitatBase):{owned:st.owned,placements:st.basePlacements};}
 function currentBaseOwned(){return currentBaseData().owned;}
 function currentBasePlacements(){return currentBaseData().placements;}
 function enterHabitatBase(id){
   if(!HABITAT_BASE_META[id])return;
   activeHabitatBase=id;st.baseEditMode=false;ensureHabitatBase(id);closeExplorationHabitat();
   const meta=HABITAT_BASE_META[id];baseShopCategory=meta.shop||'all';renderBase();
-  if(!restoringBrowserHistory){window.history.pushState(ecoRouteState('basePage',id),'',window.location.href);}
+  if(!restoringBrowserHistory){const nextRoute=ecoRouteState('basePage',id);if(!sameEcoRoute(window.history.state,nextRoute))window.history.pushState(nextRoute,'',window.location.href);}
   document.getElementById('baseScene')?.scrollIntoView({behavior:'smooth',block:'center'});toast(`已進入「${meta.name}」，可以開始專屬建設！`);
 }
 function enterActiveHabitatBase(){if(activeExplorationHabitat)enterHabitatBase(activeExplorationHabitat.id);}
@@ -1309,49 +1102,19 @@ function aqiMeta(aqi){
   if(aqi<=300)return{key:'purple',label:'非常不健康',advice:'請減少戶外活動並留意健康狀況。'};
   return{key:'brown',label:'危害',advice:'建議留在室內並避免戶外活動。'};
 }
-function updateAqiDisplay(aq,record=null){
+function updateAqiDisplay(aq){
   const value=document.getElementById('natureAqi'), level=document.getElementById('natureAqiLevel');
   const flag=document.getElementById('natureAqiFlag'), metric=document.getElementById('homeAqiMetric');
-  const time=document.getElementById('natureAqiUpdateTime');
   if(!Number.isFinite(aq)){
-    if(value)value.textContent='--';if(level)level.textContent=record?.message||'官方資料待設定';
+    if(value)value.textContent='--';if(level)level.textContent='暫無資料';
     if(flag)flag.dataset.level='unknown';
-    const tip=record?.message||'環境部官方 AQI 暫無資料';
-    if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
-    if(time)time.textContent='資料來源：環境部空氣品質監測網';
+    if(metric){metric.dataset.tooltip='AQI 暫無資料';metric.setAttribute('aria-label','AQI 暫無資料');metric.title='AQI 暫無資料';}
     return;
   }
-  const meta=aqiMeta(aq), site=record?.sitename||record?.SiteName||'金門', publish=record?.publishtime||record?.PublishTime||'';
-  const tip=`環境部官方 AQI：${aq}（${meta.label}）｜${site}測站${publish?`｜更新 ${publish}`:''}；${meta.advice}`;
+  const meta=aqiMeta(aq), tip=`AQI：${aq}（${meta.label}）｜${meta.advice}`;
   if(value)value.textContent=aq;if(level)level.textContent=meta.label;
   if(flag)flag.dataset.level=meta.key;
   if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
-  if(time)time.textContent=`${record?.source||'環境部空氣品質監測網'}${site?`・${site}`:''}${publish?`・${publish}`:''}`;
-}
-async function fetchMoenvAqi(){
-  // 有設定環境部 API Key 時，優先讀取官方金門測站 AQI。
-  const apiKey=String(window.ECO_CONFIG?.MOENV_API_KEY||'').trim();
-  if(apiKey){
-    try{
-      const url=`https://data.moenv.gov.tw/api/v2/AQX_P_432?api_key=${encodeURIComponent(apiKey)}&limit=1000&sort=publishtime%20desc&format=json`;
-      const response=await fetch(url,{cache:'no-store'});
-      if(!response.ok)throw new Error(`MOENV AQI ${response.status}`);
-      const data=await response.json();
-      const records=Array.isArray(data?.records)?data.records:Array.isArray(data)?data:[];
-      const kinmen=records.filter(r=>String(r.county||r.County||'').includes('金門'));
-      const preferred=kinmen.find(r=>String(r.sitename||r.SiteName||'').includes('金門'))||kinmen[0];
-      const aqi=Number(preferred?.aqi??preferred?.AQI);
-      if(Number.isFinite(aqi))return{aqi,record:{...preferred,source:'環境部官方測站'}};
-    }catch(error){console.warn('環境部官方 AQI 讀取失敗，改用免設定備援資料。',error);}
-  }
-  // 免 API Key 備援：取得金湖座標即時 AQI，再依環境部 AQI 六級標準呈現。
-  const fallbackUrl='https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=us_aqi&timezone=Asia%2FTaipei';
-  const response=await fetch(fallbackUrl,{cache:'no-store'});
-  if(!response.ok)throw new Error(`AQI fallback ${response.status}`);
-  const data=await response.json();
-  const aqi=Math.round(Number(data?.current?.us_aqi));
-  if(!Number.isFinite(aqi))return{aqi:null,message:'AQI 暫時無法取得'};
-  return{aqi,record:{sitename:'金湖地區',publishtime:data?.current?.time||'',source:'即時空品資料；分級依環境部標準'}};
 }
 function setupAqiTouchTip(){
   const metric=document.getElementById('homeAqiMetric');if(!metric||metric.dataset.touchReady)return;
@@ -1365,21 +1128,16 @@ function setupAqiTouchTip(){
 async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
-    const [forecast,officialAqi]=await Promise.all([
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.4408&longitude=118.4171&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=Asia%2FTaipei',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('weather '+r.status);return r.json()}),
-      fetchMoenvAqi().catch(error=>{console.warn('環境部 AQI 載入失敗',error);return{aqi:null,message:'環境部官方資料暫時無法連線'}})
+    const [forecast,air]=await Promise.all([
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
+      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
     ]);
-    const c=forecast.current||{};
+    const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
-    updateAqiDisplay(officialAqi.aqi,officialAqi.record||officialAqi);setupAqiTouchTip();
-    const badge=document.getElementById('natureLiveBadge');if(badge)badge.textContent='LIVE';
-  }catch(e){
-    const badge=document.getElementById('natureLiveBadge');if(badge)badge.textContent='OFFLINE';
-    document.getElementById('natureWeather').textContent='暫無資料';
-    updateAqiDisplay(null,{message:'環境部官方資料暫時無法連線'});
-  }
+    updateAqiDisplay(aq);setupAqiTouchTip();
+  }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
 }
 setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
@@ -1656,41 +1414,43 @@ function renderBaseShop(){
   if(!shopEl.children.length)shopEl.innerHTML='<div class="base-shop-empty">這個分類目前沒有可購買的建設。</div>';
 }
 function renderBase(){
-  activeHabitatBase=null;
-  const scene=document.getElementById('baseScene');
-  const coinEl=document.getElementById('baseCoins');
-  if(!scene){console.error('找不到守護基地遊戲畫面 #baseScene');return;}
-  ensureBaseLayout();st.basePaths=[];if(coinEl)coinEl.textContent=st.coins;
-  const nav=document.getElementById('habitatBaseNavigation');if(nav)nav.classList.add('hide');
-  const season=currentBaseSeason();
-  scene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="starter-nature" aria-label="守護基地起始自然環境"><div class="starter-mountain mountain-back"></div><div class="starter-mountain mountain-front"></div><div class="starter-hill hill-back"></div><div class="starter-hill hill-front"></div><div class="starter-grass"></div><div class="season-nature season-spring" aria-hidden="true"></div><div class="season-nature season-summer" aria-hidden="true"></div><div class="season-nature season-autumn" aria-hidden="true"></div><div class="season-nature season-winter" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-buildings"></div>`;
-  scene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);scene.onclick=null;
-  scene.style.display='block';scene.style.visibility='visible';scene.style.opacity='1';
-  const buildings=scene.querySelector('.base-buildings');
+  ensureBaseLayout();if(activeHabitatBase)ensureHabitatBase(activeHabitatBase);st.basePaths=[];baseCoins.textContent=st.coins;
+  const habitatMeta=activeHabitatBase?HABITAT_BASE_META[activeHabitatBase]:null;
+  const nav=document.getElementById('habitatBaseNavigation');if(nav){nav.classList.toggle('hide',!habitatMeta);if(habitatMeta){document.getElementById('habitatBaseNavIcon').textContent=habitatMeta.icon;document.getElementById('habitatBaseNavTitle').textContent=habitatMeta.name;document.getElementById('habitatBaseNavDescription').textContent=habitatMeta.description;document.getElementById('habitatBaseBuildCount').textContent=`已建設 ${currentBaseOwned().length} 項`;}}
+  document.querySelector('.base-exploration-card')?.classList.toggle('hide',!!habitatMeta);
+  baseScene.innerHTML=habitatMeta
+    ? `<div class="base-sky" aria-hidden="true"></div><div class="base-weather-badge"></div><div class="base-landscape-v104" aria-hidden="true"><div class="landscape-sun-glow"></div><div class="mountain-layer mountain-far"><i></i><i></i><i></i></div><div class="mountain-layer mountain-mid"><i></i><i></i><i></i><i></i></div><div class="mountain-layer mountain-near"><i></i><i></i><i></i><i></i><i></i></div><div class="forest-belt"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="landscape-mist mist-one"></div><div class="landscape-mist mist-two"></div></div><div class="base-grassland base-ground-v104" aria-hidden="true"><div class="ground-clearing"></div></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-path-layer"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`
+    : `<div class="storybook-village-scene" aria-label="自然繪本風守護基地村"><img src="base-village-storybook.png" alt="守護基地村自然繪本場景"/><div class="storybook-village-shade"></div><button class="village-scene-link scene-link-cabin" type="button" aria-label="進入守護者小屋" title="守護者小屋" onclick="showProfile()"></button><button class="village-scene-link scene-link-shop" type="button" aria-label="進入守護商店" title="守護商店" onclick="document.getElementById('baseShopFilters')?.scrollIntoView({behavior:'smooth',block:'start'})"></button><button class="village-scene-link scene-link-achievement" type="button" aria-label="進入成就館" title="成就館" onclick="showAchievements()"></button><button class="village-scene-link scene-link-guide" type="button" aria-label="進入生態圖鑑館" title="生態圖鑑館" onclick="openHabitatGuide()"></button><button class="village-scene-link scene-link-daily" type="button" aria-label="開啟每日任務站" title="每日任務站" onclick="showCheckinCalendar()"></button><button class="village-scene-link scene-link-mailbox" type="button" aria-label="開啟任務信箱" title="任務信箱" onclick="showWeaknessBook()"></button><button class="village-scene-link scene-link-bulletin" type="button" aria-label="開啟生態公告欄" title="生態公告欄" onclick="showLeaderboard()"></button><button class="village-park-sign sign-forest" type="button" aria-label="前往森林保育區" title="森林保育區" onclick="enterHabitatBase('forest')"><span>🌳</span><b>森林保育區</b></button><button class="village-park-sign sign-garden" type="button" aria-label="前往授粉花園" title="授粉花園" onclick="enterHabitatBase('garden')"><span>🌼</span><b>授粉花園</b></button><button class="village-park-sign sign-wetland" type="button" aria-label="前往濕地生態園" title="濕地生態園" onclick="enterHabitatBase('wetland')"><span>💧</span><b>濕地生態園</b></button><button class="village-park-sign sign-coast" type="button" aria-label="前往潮間帶保護區" title="潮間帶保護區" onclick="enterHabitatBase('coast')"><span>🌊</span><b>潮間帶保護區</b></button><button class="village-park-sign sign-green" type="button" aria-label="前往綠能科技園" title="綠能科技園" onclick="enterHabitatBase('green')"><span>☀️</span><b>綠能科技園</b></button></div><div class="base-weather-badge"></div><div class="base-residents" aria-label="基地生態住民"></div><div class="base-buildings"></div>`;
+  if(habitatMeta){baseScene.classList.add('habitat-build-scene',`habitat-theme-${activeHabitatBase}`);const trail=baseScene.querySelector('.eco-trail-map');if(trail)trail.remove();const ground=baseScene.querySelector('.base-grassland');if(ground)ground.insertAdjacentHTML('beforeend',`<div class="habitat-scene-title"><span>${habitatMeta.icon}</span><b>${habitatMeta.name}</b><small>${habitatMeta.description}</small><em>${habitatMeta.geography||''}</em></div>`);baseScene.insertAdjacentHTML('beforeend',habitatGeographyMarkup(activeHabitatBase,habitatMeta));}
+  baseScene.onclick=null;
+  const buildings=baseScene.querySelector('.base-buildings'),paths=baseScene.querySelector('.base-path-layer');
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
-  const activeOwned=st.owned,activePlacements=st.basePlacements;
-  if(!activeOwned.length){buildings.innerHTML='<div class="base-empty">守護基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！</div>'}
+  const activeOwned=currentBaseOwned(),activePlacements=currentBasePlacements();
+  if(!activeOwned.length){buildings.innerHTML=`<div class="base-empty">${habitatMeta?`${habitatMeta.icon} ${habitatMeta.name}目前只有原始自然環境，尚未放置任何建設。請由下方商店挑選設施，自由打造專屬園區！`:'基地目前還很空曠，完成單元賺取金幣，開始第一項建設吧！'}</div>`}
   else activePlacements.forEach(p=>{const it=ITEMS.find(x=>x.id===p.itemId);if(!it)return;if(!Number.isFinite(Number(p.scale)))p.scale=1;const el=document.createElement('div');el.className='base-building base-building-'+it.id+(st.baseEditMode?' editable':'');el.setAttribute('role','button');el.tabIndex=0;el.title=st.baseEditMode?`拖曳「${it.name}」調整位置；拖曳右下角控制點調整大小`:it.name;el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.setProperty('--building-scale',p.scale);el.style.setProperty('--building-rotation',(Number(p.rotation)||0)+'deg');el.style.setProperty('--building-mirror',p.mirrored?-1:1);el.innerHTML=`${baseBuildingArt(it,p)}${st.baseEditMode?`<button type="button" class="base-building-delete" aria-label="刪除${it.name}" title="刪除物件" onclick="event.stopPropagation();removeBaseBuilding('${p.key}')">×</button><button type="button" class="base-building-mirror" aria-label="鏡像${it.name}" title="鏡像調整方向" onclick="event.stopPropagation();mirrorBaseBuilding('${p.key}')">↔</button><span class="base-building-resize-handle" role="button" aria-label="拖曳調整${it.name}大小" title="拖曳調整大小"></span>`:''}`;bindBaseBuildingDrag(el,p);const resizeHandle=el.querySelector('.base-building-resize-handle');if(resizeHandle)bindBaseBuildingResize(resizeHandle,el,p);buildings.appendChild(el)});
-  renderBaseResidents();renderBaseSky();updateRealBaseWeather();
+  renderBaseResidents();
+  renderBaseSky();updateRealBaseWeather();
   if(baseWeatherTimer)clearInterval(baseWeatherTimer);baseWeatherTimer=setInterval(()=>{if(!document.getElementById('basePage').classList.contains('hide'))updateRealBaseWeather(true)},15*60*1000);
-  renderBaseShop();updateBaseQuality();updateBaseDashboard();
+  renderBaseShop();
+  updateBaseQuality();
+  if(!activeHabitatBase)updateBaseExploration();
+  updateBaseDashboard();
 }
-
 function buyItem(id){
   const it=ITEMS.find(x=>x.id===id);if(!it)return;if(st.coins<it.cost){toast('金幣不足，完成更多單元再回來建設吧！');return}
   st.coins-=it.cost;const data=currentBaseData(),owned=data.owned,placements=data.placements;
   if(id==='flowers'){
     const start=owned.length;
     for(let i=0;i<10;i++)owned.push(id);
-    ensureBaseLayout();
+    if(!activeHabitatBase)ensureBaseLayout();else for(let i=0;i<10;i++)placements.push({key:`habitat-${activeHabitatBase}-${Date.now()}-${i}-flowers`,itemId:'flowers',x:28+(i%5)*10,y:62+Math.floor(i/5)*10,flowerVariant:i,scale:.72});
     for(let i=0;i<10;i++){
-      const p=st.basePlacements.find(x=>x.key===`base-${start+i}-flowers`);
+      const p=activeHabitatBase?placements[placements.length-10+i]:st.basePlacements.find(x=>x.key===`base-${start+i}-flowers`);
       if(p){p.flowerVariant=i;p.scale=.72;p.x=28+(i%5)*10;p.y=62+Math.floor(i/5)*10;}
     }
     save();header();renderBase();toast('🌸 已獲得 10 朵花，每朵都可以獨立移動與調整！');return;
   }
-  owned.push(id);ensureBaseLayout();save();header();renderBase();toast(`✨ 已在守護基地新增「${it.name}」，可以進入編輯模式自由擺放！`)
+  owned.push(id);if(!activeHabitatBase)ensureBaseLayout();else{const index=placements.length,col=index%6,row=Math.floor(index/6)%4;placements.push({key:`habitat-${activeHabitatBase}-${Date.now()}-${index}-${id}`,itemId:id,x:12+col*15,y:73-row*15,scale:1});}save();header();renderBase();toast(`✨ 已在${activeHabitatBase?HABITAT_BASE_META[activeHabitatBase].name:'基地'}新增「${it.name}」，可以進入編輯模式自由擺放！`)
 }
 
 
@@ -2029,13 +1789,10 @@ function renderProfile(){
   setAvatarElement(profileAvatarPreview,av,av.name);
   profileAvatarPreview.className=`profile-avatar frame-${fr.id}`;
   const accuracy=st.totalAnswered?Math.round(st.totalCorrect/st.totalAnswered*100):0;
-  const firstAccuracy=st.firstAttemptTotal?Math.round(st.firstAttemptCorrect/st.firstAttemptTotal*100):0;
   profileSummary.innerHTML=`
     <div><span>⭐</span><small>目前等級</small><b>Lv.${lv}</b></div>
     <div><span>🧠</span><small>累積答對</small><b>${st.totalCorrect||0} 題</b></div>
-    <div><span>🎯</span><small>整體答對率</small><b>${accuracy}%</b></div>
-    <div><span>⭐</span><small>思考之星</small><b>${st.thinkingStars||0} 顆</b></div>
-    <div><span>💡</span><small>一次答對率</small><b>${firstAccuracy}%</b></div>
+    <div><span>🎯</span><small>答題正確率</small><b>${accuracy}%</b></div>
     <div><span>🧭</span><small>完成單元</small><b>${totalCompletedUnits()}/${S.reduce((n,x)=>n+unitCount(x.id),0)}</b></div>
     <div><span>📚</span><small>冒險進度</small><b>${totalProgressQuestions()}/${S.reduce((n,x)=>n+unitCount(x.id)*10,0)}</b></div>
     <div><span>📅</span><small>遊戲天數</small><b>${st.playDays||0} 天</b></div>`;
@@ -2323,5 +2080,3 @@ function trialToGoogleLogin(){exitTrialMode();setTimeout(()=>{document.getElemen
 
 /* ===== V10.6.1：基地棲地互動與文字清晰度 ===== */
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeExplorationHabitat();});
-
-window.addEventListener('beforeunload',event=>{if(quizIsInProgress()){event.preventDefault();event.returnValue='';}});
