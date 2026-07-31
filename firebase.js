@@ -277,8 +277,15 @@ async function loadCloudPlayer(){
    loginMessage('已登入，目前使用本機存檔。');setGoogleButton(false,'✅ 已登入');
    setCloudStatus('offline','☁️ 雲端暫時無法連線，進度已保留在本機');
   }catch(fallbackErr){
-   console.error('本機備援登入也失敗',fallbackErr);
-   loginMessage('登入初始化未完成，請重新整理後再試。');setGoogleButton(false,'重新嘗試 Google 登入');
+   console.error('本機備援登入部分功能失敗',fallbackErr);
+   // 即使首頁某個元件出錯，只要 Google 驗證成功仍直接解除登入頁遮罩。
+   const loginEl=document.getElementById('loginPage');
+   const gameEl=document.getElementById('game');
+   if(loginEl)loginEl.classList.add('hide');
+   if(gameEl)gameEl.classList.remove('hide');
+   loginMessage('已登入，部分畫面正在重新載入。');
+   setGoogleButton(false,'✅ 已登入');
+   setTimeout(()=>{try{showVillageHome()}catch(err){console.error('安全首頁重試失敗',err)}},300);
   }
  }finally{cloudLoading=false}
 }
@@ -635,10 +642,11 @@ ensureWeeklyLocal();
 document.addEventListener('DOMContentLoaded',()=>{
  const backBtn=document.getElementById('backToStageBtn');
  if(backBtn)backBtn.addEventListener('click',backToStage);
+ // 等 DOM、Firebase SDK 與遊戲主程式都載入完成後才初始化登入。
+ initFirebase();
 });
 window.addEventListener('online',()=>{setCloudStatus('online','☁️ 網路已恢復，正在自動同步。');scheduleCloudSave();});
 window.addEventListener('offline',()=>setCloudStatus('offline','⚠️ 目前離線，進度會先保留在本機。'));
-initFirebase();
 
 
 /* ===== V10.2.4 守護基地村雲端同步 ===== */

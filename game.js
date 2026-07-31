@@ -303,15 +303,26 @@ function login(){
   enterGame();
 }
 function enterGame(){
-  ensureProfile();
-  loginPage.classList.add('hide');
-  game.classList.remove('hide');
-  playerName.textContent=st.name;
-  header();
-  renderMap();
-  updateSaveStatus('saved');
-  updateSoundButton();
-  showVillageHome();
+  // 登入完成後，任何次要畫面渲染失敗都不可阻斷玩家進入遊戲。
+  try{ensureProfile()}catch(err){console.warn('玩家資料初始化失敗，使用基本資料繼續',err)}
+  const loginEl=document.getElementById('loginPage');
+  const gameEl=document.getElementById('game');
+  if(loginEl)loginEl.classList.add('hide');
+  if(gameEl)gameEl.classList.remove('hide');
+  const playerNameEl=document.getElementById('playerName');
+  if(playerNameEl)playerNameEl.textContent=st.name||'環保守護者';
+  try{header()}catch(err){console.warn('頁首更新失敗',err)}
+  try{renderMap()}catch(err){console.warn('冒險地圖預先載入失敗',err)}
+  try{updateSaveStatus('saved')}catch(err){console.warn('存檔狀態更新失敗',err)}
+  try{updateSoundButton()}catch(err){console.warn('聲音按鈕更新失敗',err)}
+  // 首頁與守護基地相關內容延後繪製，避免基地元件錯誤造成整個登入失敗。
+  setTimeout(()=>{
+    try{showVillageHome()}
+    catch(err){
+      console.error('學習首頁載入失敗，改用安全首頁',err);
+      try{page('villageHomePage')}catch(_e){}
+    }
+  },0);
 }
 function dailyLogin(){
   const t=dateStr();
