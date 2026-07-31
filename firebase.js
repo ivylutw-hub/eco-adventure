@@ -1,7 +1,6 @@
 /* ===== V9.1 Google 登入、雲端存檔與每週排行榜 ===== */
 let cloudDb=null, cloudAuth=null, cloudUser=null, cloudReady=false, cloudSaveTimer=null, cloudLoading=false;
 let cloudRetryTimer=null, cloudWriteInProgress=false, cloudWriteQueued=false, cloudIsAdmin=false, cloudPlayerUnsubscribe=null;
-let publicBaseSyncTimer=null,publicBaseWriteInProgress=false,publicBaseWriteQueued=false,lastPublicBaseFingerprint='';
 let adminPlayersCache=[],adminQuestionsCache=[],adminEventsCache=[],adminRankingCache=[],adminEditingEventId=null;
 window.ECO_ACTIVE_EVENTS=[];window.ECO_CUSTOM_QUESTIONS=[];
 
@@ -257,8 +256,7 @@ async function syncAllCloudData(isNewPlayer=false){
  try{
   await writeWithRetry('玩家雲端存檔',()=>playerDoc().set(playerFields(isNewPlayer),{merge:true}));
   await writeWithRetry('排行榜資料同步',()=>weeklyDoc().set(weeklyFields(),{merge:true}));
-  schedulePublicBaseSync();
-  setCloudStatus('online','☁️ 雲端進度與基地已同步');
+  setCloudStatus('online','☁️ 雲端進度已同步');
  }catch(err){
   console.error('Firestore 同步最終失敗',err);notifyCloudError('⚠️ 雲端同步失敗，資料已保留在本機');
   cloudRetryTimer=setTimeout(()=>syncAllCloudData(false),5000);
@@ -388,30 +386,17 @@ async function refreshLeaderboard(mode=activeRankingMode){
   const myIndex=rows.findIndex(x=>x.uid===cloudUser.uid);
   if(isWeekly&&myIndex>=0){const currentRank=myIndex+1;if(!st.bestWeeklyRank||currentRank<st.bestWeeklyRank){st.bestWeeklyRank=currentRank;save();}}
   if(rank)rank.textContent=myIndex>=0?`第 ${myIndex+1} 名`:'500 名以外';list.innerHTML='';
-  rows.forEach((x,i)=>{
-   const canViewAnalysis=cloudIsAdmin||x.uid===cloudUser.uid;
-   const row=document.createElement(canViewAnalysis?'button':'div');
-   if(canViewAnalysis)row.type='button';
-   row.className='rank-row'+(canViewAnalysis?' rank-row-button':' rank-row-private')+(x.uid===cloudUser.uid?' me':'');
-   if(canViewAnalysis)row.setAttribute('aria-label',cloudIsAdmin&&x.uid!==cloudUser.uid?`以管理員身分查看 ${x.name||'環保守護者'} 的分析`:'查看我的學習分析');
-   const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);const score=isWeekly?Number(x.points||0):Number(x.guardianExp||0);const scoreLabel=isWeekly?'本週積分':'守護經驗';
-   row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${score.toLocaleString('zh-TW')}</b><small>${scoreLabel}</small></div>${canViewAnalysis?`<span class="rank-open">${cloudIsAdmin&&x.uid!==cloudUser.uid?'管理員查看分析':'我的分析'} ›</span>`:'<span class="rank-open rank-private-label">分析不公開</span>'}`;
-   if(canViewAnalysis)row.addEventListener('click',()=>openRankProfile(i));
-   list.appendChild(row);
-  });
+  rows.forEach((x,i)=>{const row=document.createElement('button');row.type='button';row.className='rank-row rank-row-button'+(x.uid===cloudUser.uid?' me':'');row.setAttribute('aria-label',`查看 ${x.name||'環保守護者'} 的守護數據`);const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);const score=isWeekly?Number(x.points||0):Number(x.guardianExp||0);const scoreLabel=isWeekly?'本週積分':'守護經驗';row.innerHTML=`<div class="rank-no">${medal}</div><div class="rank-player"><span class="rank-avatar">${String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱')}</span><div><b>${escapeRankText(x.name||'環保守護者')}</b><small>Lv.${Number(x.level)||1}・完成 ${Number(x.completedUnits)||0} 單元</small></div></div><div class="rank-points"><b>${score.toLocaleString('zh-TW')}</b><small>${scoreLabel}</small></div><span class="rank-open">查看分析 ›</span>`;row.addEventListener('click',()=>openRankProfile(i));list.appendChild(row);});
   setCloudStatus('online',`☁️ ${isWeekly?'每週':'總'}排行榜已更新`);
  }catch(err){console.error('讀取排行榜失敗',err);const trulyOffline=navigator.onLine===false;list.innerHTML=`<div class="empty-ranking">${trulyOffline?'目前沒有網路連線。':'雲端排行榜暫時忙碌，請按「更新排行」再試一次。'}</div>`;setCloudStatus(trulyOffline?'offline':'waiting',trulyOffline?'⚠️ 目前離線':'☁️ 雲端連線中，請稍後重試');}
 }
 function rankClamp(value){return Math.max(0,Math.min(100,Number(value)||0))}
 function rankMetric(label,value,icon){return `<div class="rank-data-item"><span>${icon}</span><small>${label}</small><b>${escapeRankText(value)}</b></div>`}
 function rankBar(label,value,detail){const pct=rankClamp(value);return `<div class="rank-analysis-row"><div><b>${label}</b><small>${detail}</small></div><div class="rank-analysis-track"><i style="width:${pct}%"></i></div><strong>${Math.round(pct)}</strong></div>`}
-function openRankProfile(index,options={}){
- const x=options.player||leaderboardRowsCache[index];if(!x)return;
- const isOwn=Boolean(cloudUser&&x.uid===cloudUser.uid);
- if(!cloudIsAdmin&&!isOwn){toast('基於資料隱私，只能查看自己的學習分析');return;}
- const analysisMode=options.mode||activeRankingMode;
+function openRankProfile(index){
+ const x=leaderboardRowsCache[index];if(!x)return;
  const modal=document.getElementById('rankProfileModal'),content=document.getElementById('rankProfileContent');if(!modal||!content)return;
- const rank=Number(options.rank)||index+1,totalAnswered=Math.max(0,Number(x.totalAnswered)||0),totalCorrect=Math.max(0,Number(x.totalCorrect)||0);
+ const rank=index+1,totalAnswered=Math.max(0,Number(x.totalAnswered)||0),totalCorrect=Math.max(0,Number(x.totalCorrect)||0);
  const accuracy=Number.isFinite(Number(x.accuracy))?Number(x.accuracy):(totalAnswered?Math.round(totalCorrect/totalAnswered*100):0);
  const completed=Math.max(0,Number(x.completedUnits)||0),perfect=Math.max(0,Number(x.perfectUnits)||0),streak=Math.max(0,Number(x.streak)||0),ach=Math.max(0,Number(x.achievements)||0),badges=Math.max(0,Number(x.badges)||0);
  const activityScore=rankClamp(totalAnswered/5),accuracyScore=rankClamp(accuracy),completionScore=rankClamp(completed/0.4),perfectScore=rankClamp(perfect*12.5),streakScore=rankClamp(streak*7),achievementScore=rankClamp(ach/0.15);
@@ -419,11 +404,11 @@ function openRankProfile(index,options={}){
  const praise=strongest[0][1]>=70?`${strongest[0][0]}表現最亮眼`:'正在穩定累積守護力量';
  const improve=strongest[strongest.length-1][1]<55?`下一步可加強「${strongest[strongest.length-1][0]}」`:'各項能力發展相當均衡';
  const avatar=String(x.avatar||'🌱').includes('/')?`<img class="guardian-avatar-img rank-profile-avatar-img" src="${x.avatar}" alt="守護者">`:(x.avatar||'🌱');
- content.innerHTML=`<header class="rank-profile-head"><div class="rank-profile-avatar">${avatar}</div><div><small>${analysisMode==='weekly'?'MY WEEKLY ANALYSIS':cloudIsAdmin&&!isOwn?'ADMIN PLAYER ANALYSIS':'MY LEARNING ANALYSIS'}</small><h2 id="rankProfileTitle">${escapeRankText(x.name||'環保守護者')}</h2><p>${escapeRankText(x.title||'地球守護者')}・Lv.${Number(x.level)||1}・${analysisMode==='weekly'?'本週':'總排行'}第 ${rank} 名</p></div><div class="rank-profile-rank">#${rank}</div></header>
+ content.innerHTML=`<header class="rank-profile-head"><div class="rank-profile-avatar">${avatar}</div><div><small>${activeRankingMode==='weekly'?'WEEKLY GUARDIAN PROFILE':'ALL-TIME GUARDIAN PROFILE'}</small><h2 id="rankProfileTitle">${escapeRankText(x.name||'環保守護者')}</h2><p>${escapeRankText(x.title||'地球守護者')}・Lv.${Number(x.level)||1}・${activeRankingMode==='weekly'?'本週':'總排行'}第 ${rank} 名</p></div><div class="rank-profile-rank">#${rank}</div></header>
  <section class="rank-data-grid">${rankMetric('守護經驗',Number(x.guardianExp||0).toLocaleString('zh-TW'),'⭐')}${rankMetric('守護金幣',Number(x.coins||0).toLocaleString('zh-TW'),'🪙')}${rankMetric('榮耀徽章',`${badges} 枚`,'🏅')}${rankMetric('連續登入',`${streak} 天`,'🔥')}${rankMetric('累計答題',`${totalAnswered} 題`,'📝')}${rankMetric('答題正確率',`${Math.round(accuracy)}%`,'🎯')}${rankMetric('完成單元',`${completed} 個`,'🗺️')}${rankMetric('解鎖成就',`${ach} 個`,'🏆')}</section>
- <section class="rank-analysis-card"><div class="rank-section-title"><div><small>PLAYER ANALYSIS</small><h3>📊 ${cloudIsAdmin&&!isOwn?'玩家學習分析':'我的學習分析'}</h3></div><span>${cloudIsAdmin&&!isOwn?'管理員權限':'僅自己可見'}</span></div>
+ <section class="rank-analysis-card"><div class="rank-section-title"><div><small>PLAYER ANALYSIS</small><h3>📊 守護能力分析表</h3></div><span>公開數據</span></div>
  ${rankBar('答題活躍',activityScore,`${totalAnswered} 題累計作答`)}${rankBar('答題正確',accuracyScore,`${Math.round(accuracy)}% 正確率`)}${rankBar('關卡完成',completionScore,`${completed} 個本週完成單元`)}${rankBar('滿分挑戰',perfectScore,`${perfect} 個滿分單元`)}${rankBar('持續登入',streakScore,`${streak} 天連續登入`)}${rankBar('成就收藏',achievementScore,`${ach} 個已解鎖成就`)}</section>
- <section class="rank-report"><b>🌟 守護分析報告</b><p>${praise}，${improve}。這份分析僅供本人查看；管理員因維護與輔導需要可查看所有玩家資料。排行榜本身不顯示 Email、UID、學校、班級或個別答題內容。</p></section>`;
+ <section class="rank-report"><b>🌟 守護分析報告</b><p>${praise}，${improve}。排行榜僅顯示遊戲中的公開統計，不會顯示真實姓名、學校、班級或個別答題內容。</p></section>`;
  modal.classList.remove('hide');document.body.classList.add('modal-open');modal.querySelector('.rank-profile-close')?.focus();
 }
 function closeRankProfile(event){if(event&&event.target!==event.currentTarget)return;const modal=document.getElementById('rankProfileModal');if(modal)modal.classList.add('hide');document.body.classList.remove('modal-open')}
@@ -493,7 +478,7 @@ function renderAdminPlayers(){
    <label>經驗值<input type="number" min="0" data-field="guardianExp" value="${Number(x.guardianExp)||0}"></label>
    <label>關卡進度<select data-field="stage"><option value="">保持目前</option><option value="s1">完成 Stage 1</option><option value="s2">完成至 Stage 2</option><option value="s3">完成至 Stage 3</option><option value="s4">完成全部 Stage</option><option value="reset">重設關卡進度</option></select></label>
    <label class="admin-check"><input type="checkbox" data-field="isAdmin" ${x.isAdmin===true?'checked':''}> 管理員</label>
-   <div class="admin-player-actions"><button class="secondary" onclick="openAdminPlayerAnalysis('${x.uid}')">📊 查看分析</button><button class="primary" onclick="adminSavePlayer('${x.uid}',this)">儲存</button><button class="secondary" onclick="adminResetPlayer('${x.uid}')">重設遊戲紀錄</button><button class="warning" onclick="adminSuspendPlayer('${x.uid}')">停用帳號</button><button class="danger" onclick="adminDeletePlayer('${x.uid}')">永久刪除</button></div>`;
+   <div class="admin-player-actions"><button class="primary" onclick="adminSavePlayer('${x.uid}',this)">儲存</button><button class="secondary" onclick="adminResetPlayer('${x.uid}')">重設遊戲紀錄</button><button class="warning" onclick="adminSuspendPlayer('${x.uid}')">停用帳號</button><button class="danger" onclick="adminDeletePlayer('${x.uid}')">永久刪除</button></div>`;
   list.appendChild(row);
  });
 }
@@ -503,14 +488,6 @@ function completedStateThrough(stageId,state){
  const max=S.findIndex(s=>s.id===stageId);
  S.forEach((s,i)=>{if(i<=max){const count=unitCount(s.id);next.completed[s.id]=Array.from({length:count},(_,n)=>n);next.unitProgress[s.id]=Array(count).fill(10);next.unitScores[s.id]=Array(count).fill(10);}});
  return next;
-}
-function openAdminPlayerAnalysis(uid){
- if(!cloudIsAdmin){toast('此帳號沒有管理者權限');return;}
- const original=adminPlayersCache.find(x=>x.uid===uid);if(!original){toast('找不到玩家資料');return;}
- const player=normalizeTotalRankingRow({id:uid,data:()=>original});
- const sorted=[...adminPlayersCache].sort((a,b)=>(Number(b.guardianExp)||0)-(Number(a.guardianExp)||0));
- const rank=Math.max(1,sorted.findIndex(x=>x.uid===uid)+1);
- openRankProfile(0,{player,rank,mode:'total'});
 }
 async function adminSavePlayer(uid,button){
  const row=button.closest('.admin-player-editor'),coins=Math.max(0,Number(row.querySelector('[data-field="coins"]').value)||0),exp=Math.max(0,Number(row.querySelector('[data-field="guardianExp"]').value)||0);
@@ -605,87 +582,17 @@ window.addEventListener('offline',()=>setCloudStatus('offline','⚠️ 目前離
 initFirebase();
 
 
-/* ===== V10.2.4 守護基地村雲端同步 ===== */
+/* ===== V9.4.1 Beta 5.1.21 公開基地資料 ===== */
 function publicBaseDoc(){return cloudDb&&cloudUser?cloudDb.collection('publicBases').doc(cloudUser.uid):null}
-function normalizePublicPlacement(p){
- return {
-  itemId:String(p?.itemId||''),
-  x:Math.max(0,Math.min(100,Number(p?.x)||50)),
-  y:Math.max(0,Math.min(100,Number(p?.y)||60)),
-  scale:Math.max(.55,Math.min(1.8,Number(p?.scale)||1)),
-  rotation:((Number(p?.rotation)||0)%360+360)%360,
-  mirrored:Boolean(p?.mirrored),
-  flowerVariant:Number.isFinite(Number(p?.flowerVariant))?Number(p.flowerVariant):null
- };
+async function savePublicBase(){
+ if(!cloudDb||!cloudUser)throw new Error('not signed in');ensureVillageState();
+ const av=avatarById(st.avatar),placements=(st.basePlacements||[]).slice(0,80).map(p=>({itemId:p.itemId,x:Number(p.x)||50,y:Number(p.y)||60}));
+ const old=await publicBaseDoc().get();const likes=old.exists?Number(old.data().likes)||0:0;
+ await publicBaseDoc().set({uid:cloudUser.uid,name:String(st.name||cloudUser.displayName||'環保守護者').slice(0,12),avatar:av.icon,level:currentLevel(),title:String(st.specialTitle||titleForLevel(currentLevel())).slice(0,20),intro:String(st.baseIntro||'').slice(0,40),placements,paths:(st.basePaths||[]).slice(0,100),badges:typeof S!=='undefined'?S.filter(isDone).length:0,likes,visibility:'public',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
 }
-function publicBasePayload(){
- if(typeof ensureVillageState==='function')ensureVillageState();
- const av=avatarById(st.avatar);
- return {
-  uid:cloudUser?.uid||'',
-  name:String(st.name||cloudUser?.displayName||'環保守護者').slice(0,12),
-  avatar:av.icon,
-  avatarId:String(st.avatar||'fox'),
-  level:currentLevel(),
-  title:String(st.specialTitle||titleForLevel(currentLevel())).slice(0,20),
-  intro:String(st.baseIntro||'').slice(0,40),
-  placements:(st.basePlacements||[]).slice(0,100).map(normalizePublicPlacement).filter(p=>p.itemId),
-  paths:(st.basePaths||[]).slice(0,100),
-  badges:typeof S!=='undefined'?S.filter(isDone).length:0,
-  visibility:st.baseVisibility==='private'?'private':'public',
-  schemaVersion:2
- };
-}
-function publicBaseFingerprint(payload=publicBasePayload()){
- const stable={...payload};delete stable.uid;
- return JSON.stringify(stable);
-}
-function updateBaseVillageSyncText(text,mode=''){
- const el=document.getElementById('baseVillageSyncText');
- if(el){el.textContent=text;el.dataset.mode=mode;}
-}
-function schedulePublicBaseSync(force=false){
- if(!cloudReady||!cloudDb||!cloudUser||!st.loggedIn)return;
- clearTimeout(publicBaseSyncTimer);
- publicBaseSyncTimer=setTimeout(()=>syncPublicBaseNow(force),force?0:700);
-}
-async function syncPublicBaseNow(force=false){
- if(!cloudDb||!cloudUser||!st.loggedIn)return;
- if(publicBaseWriteInProgress){publicBaseWriteQueued=true;return;}
- publicBaseWriteInProgress=true;
- try{
-  if(typeof ensureVillageState==='function')ensureVillageState();
-  updateBaseVillageSyncText('☁️ 基地村同步中…','syncing');
-  if(st.baseVisibility==='private'){
-   await removePublicBase();lastPublicBaseFingerprint='';
-   updateBaseVillageSyncText('🔒 私人基地不公開','private');return;
-  }
-  const payload=publicBasePayload(),fingerprint=publicBaseFingerprint(payload);
-  if(!force&&fingerprint===lastPublicBaseFingerprint){updateBaseVillageSyncText('✅ 基地村已同步','saved');return;}
-  await savePublicBase(payload);
-  lastPublicBaseFingerprint=fingerprint;
-  updateBaseVillageSyncText('✅ 基地村已同步','saved');
- }catch(err){
-  console.error('守護基地村同步失敗',err);
-  updateBaseVillageSyncText('⚠️ 基地村同步失敗','error');
- }finally{
-  publicBaseWriteInProgress=false;
-  if(publicBaseWriteQueued){publicBaseWriteQueued=false;schedulePublicBaseSync(true);}
- }
-}
-async function savePublicBase(payload=publicBasePayload()){
- if(!cloudDb||!cloudUser)throw new Error('not signed in');
- const ref=publicBaseDoc();
- const old=await ref.get();const likes=old.exists?Number(old.data().likes)||0:0;
- await ref.set({...payload,uid:cloudUser.uid,likes,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
- lastPublicBaseFingerprint=publicBaseFingerprint(payload);
-}
-async function removePublicBase(){const ref=publicBaseDoc();if(ref)await ref.delete()}
+async function removePublicBase(){if(publicBaseDoc())await publicBaseDoc().delete()}
 async function loadPublicBases(){
- if(!cloudDb)return[];
- let snap;
- try{snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(100).get({source:'server'});}
- catch(err){console.warn('基地村伺服器資料載入失敗，改用快取',err);snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(100).get();}
+ if(!cloudDb)return[];const snap=await cloudDb.collection('publicBases').where('visibility','==','public').limit(30).get();
  return snap.docs.map(d=>{const x=d.data();return{...x,uid:d.id,updatedAtMs:x.updatedAt&&x.updatedAt.toMillis?x.updatedAt.toMillis():0}});
 }
 async function sendBaseLike(uid){

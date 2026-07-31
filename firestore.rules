@@ -7,7 +7,6 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/players/$(request.auth.uid))
         && get(/databases/$(database)/documents/players/$(request.auth.uid)).data.isAdmin == true;
     }
-    // 玩家主資料：本人只能讀寫自己；管理員可讀取全部玩家。
     match /players/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow create: if signedIn() && request.auth.uid == uid
@@ -16,14 +15,6 @@ service cloud.firestore {
                     && request.resource.data.get('isAdmin', false) == resource.data.get('isAdmin', false));
       allow delete: if isAdmin();
     }
-
-    // 若日後拆分學習分析集合，仍沿用相同權限：本人或管理員。
-    match /analytics/{uid} {
-      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
-      allow create, update: if signedIn() && (request.auth.uid == uid || isAdmin());
-      allow delete: if isAdmin();
-    }
-
     match /weeklyRankings/{weekId}/players/{uid} {
       allow read: if true;
       allow create, update: if isAdmin() || (signedIn() && request.auth.uid == uid

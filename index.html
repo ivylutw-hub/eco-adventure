@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V11.3.0｜基地直覺點擊與返回歷程強化</title>
+<title>環保冒險王 V10.2.2｜難度冒險地圖</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=11.3.1" rel="stylesheet"/>
+<link href="style.css?v=10202" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,9 +105,8 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.6.0</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.0</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-<div class="home-version-note" aria-label="本次版本更新"><b>V11.3.0 基地直覺點擊與返回歷程強化</b><span>守護者小屋、商店、成就館、圖鑑館、每日任務站、任務信箱與公告欄可直接點擊；五大園區木牌維持獨立精準熱區，並強化瀏覽器返回鍵的安全返回流程</span></div>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
   <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
@@ -192,27 +191,13 @@
 <section class="my-base-control-panel" aria-label="我的基地控制區">
 <div class="my-base-panel-head">
 <div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
-<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>進入繪本守護基地村・探索五大園區</span><b aria-hidden="true">→</b></button>
+<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
 </div>
 <div class="base-status-row">
-<span class="base-zoom-readout">畫面 <b id="baseZoomLabel">100%</b></span>
-<span>金幣 🪙 <b id="baseCoins">0</b></span>
-<span class="base-edit-hint" id="baseEditHint">點擊「編輯基地」即可移動物件</span>
+<span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
+<span>目前金幣：🪙 <b id="baseCoins">0</b></span>
 </div>
-<div class="base-quality-strip" aria-label="基地成長指標">
-<div><span>🌿</span><small>自然度</small><b id="baseNatureScore">0</b></div>
-<div><span>🦋</span><small>生態多樣性</small><b id="baseBiodiversityScore">0</b></div>
-<div><span>♻️</span><small>環保指數</small><b id="baseEcoScore">0</b></div>
-<div><span>😊</span><small>幸福度</small><b id="baseHappinessScore">0</b></div>
-</div>
-<div class="base-growth-card" aria-live="polite"><span class="base-growth-icon">🌱</span><div><b id="baseGrowthLevel">自然基地 Lv.1</b><small id="baseGrowthHint">增加不同類型的建設，解鎖更豐富的基地景觀。</small></div><em id="baseGuardianScore">0</em></div>
-<div class="base-exploration-card" aria-live="polite"><div class="exploration-head"><div><b>🗺️ 自然探索路線</b><small>從守護基地村出發，選擇園區後進入符合主題地形的獨立建設基地。</small></div><strong id="baseExplorationProgress">0 / 5</strong></div><div class="exploration-stops" id="baseExplorationStops"></div></div>
 </section>
-<div class="habitat-base-navigation hide" id="habitatBaseNavigation" aria-live="polite">
-  <button type="button" onclick="goGameBack()">← 回到上一頁</button>
-  <div><span id="habitatBaseNavIcon">🌳</span><div><b id="habitatBaseNavTitle">森林保育區</b><small id="habitatBaseNavDescription">在這裡自由建設專屬生態基地</small></div></div>
-  <strong id="habitatBaseBuildCount">已建設 0 項</strong>
-</div>
 <div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
 <div class="base-build-toolbar">
 <div class="build-toolbar-title"><b>建設工具</b><button class="habitat-hint-button" type="button" aria-label="查看動物棲地需求" title="動物棲地提示" onclick="openHabitatGuide()">💡</button></div>
@@ -221,18 +206,7 @@
 <button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
 <button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
 </div>
-<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small id="baseVillageSyncText">☁️ 登入後自動同步基地村</small></div>
-<div class="base-shop-head">
-<div><b>基地建設商店</b><small>選擇分類，更快找到需要的建設</small></div>
-<div class="base-shop-filters" id="baseShopFilters" aria-label="基地商店分類">
-<button class="active" data-base-category="all" onclick="setBaseShopCategory('all',this)" type="button">全部</button>
-<button data-base-category="trees" onclick="setBaseShopCategory('trees',this)" type="button">🌳 樹木</button>
-<button data-base-category="flowers" onclick="setBaseShopCategory('flowers',this)" type="button">🌸 花草</button>
-<button data-base-category="eco" onclick="setBaseShopCategory('eco',this)" type="button">♻️ 環保</button>
-<button data-base-category="rest" onclick="setBaseShopCategory('rest',this)" type="button">🪑 休憩</button>
-<button data-base-category="learn" onclick="setBaseShopCategory('learn',this)" type="button">📚 學習</button>
-</div>
-</div>
+<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
 <div class="shop" id="shop"></div>
 </div>
 </div>
@@ -252,7 +226,7 @@
 </section></main>
 
 <main class="hide" id="baseVillagePage">
-  <button class="back village-back-to-base" onclick="goGameBack()">← 回到上一頁</button>
+  <button class="back village-back-to-base" onclick="showBase()">← 回我的守護基地</button>
   <div class="title village-title">
     <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
     <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
@@ -279,7 +253,7 @@
   <section class="base-village-grid" id="baseVillageGrid"></section>
 </main>
 <main class="hide" id="visitorBasePage">
-  <button class="back" onclick="goGameBack()">← 回到上一頁</button>
+  <button class="back" onclick="showBaseVillage()">← 回守護基地村</button>
   <section class="visitor-base-head">
     <div class="visitor-owner"><span id="visitorAvatar">🌱</span><div><small>正在參觀</small><h2 id="visitorName">守護者基地</h2><p id="visitorIntro"></p></div></div>
     <div class="visitor-actions"><button id="visitorLikeBtn" onclick="likeCurrentVisitorBase()">♡ 送愛心</button><button id="visitorFavoriteBtn" onclick="toggleVisitorFavorite()">☆ 收藏</button></div>
@@ -295,7 +269,7 @@
 </main>
 <main class="hide" id="adminPage">
 <div class="title admin-title">
-<div><small>ADMIN CONSOLE · V10.2.4</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
+<div><small>ADMIN CONSOLE · V9.3.6</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
 <button class="secondary" onclick="loadAdminDashboard()">🔄 全部重新整理</button>
 </div>
 <nav aria-label="管理後臺功能" class="admin-tabs">
@@ -382,7 +356,7 @@
 <div class="cloud-status" id="cloudStatus">☁️ 正在連線排行榜…</div>
 <div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
 <div class="leaderboard-list" id="leaderboardList"></div>
-<p class="privacy-note">排行榜只顯示玩家自訂暱稱、頭像與必要排名資料，不顯示 Email、UID、學校或班級。一般玩家只能查看自己的學習分析；管理員可查看所有玩家分析。</p>
+<p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。點選玩家可查看公開的守護數據與分析。</p>
 </main>
 <div class="rank-profile-modal hide" id="rankProfileModal" role="dialog" aria-modal="true" aria-labelledby="rankProfileTitle" onclick="closeRankProfile(event)">
   <section class="rank-profile-panel" onclick="event.stopPropagation()">
@@ -482,17 +456,6 @@
 </aside>
 </section>
 </div>
-
-<div class="modal hide" id="explorationHabitatModal" role="dialog" aria-modal="true" aria-labelledby="explorationHabitatTitle" onclick="closeExplorationHabitat(event)">
-  <div class="modal-card exploration-habitat-card" onclick="event.stopPropagation()">
-    <button aria-label="關閉棲地資訊" class="modal-close" type="button" onclick="closeExplorationHabitat()">×</button>
-    <div class="exploration-habitat-head"><span id="explorationHabitatIcon">🌳</span><div><small>NATURE EXPLORATION</small><h3 id="explorationHabitatTitle">森林棲地</h3><p id="explorationHabitatDescription"></p></div></div>
-    <div class="exploration-progress-wrap"><div><b>建設進度</b><strong id="explorationHabitatPercent">0%</strong></div><i><span id="explorationHabitatBar"></span></i></div>
-    <section class="exploration-habitat-section"><h4>目前需要</h4><div id="explorationHabitatNeeds" class="exploration-needs"></div></section>
-    <section class="exploration-habitat-section"><h4>完成後可發現</h4><div id="explorationHabitatResidents" class="exploration-residents"></div></section>
-    <div class="exploration-habitat-actions"><button class="secondary" type="button" onclick="closeExplorationHabitat()">返回基地</button><button class="primary" id="explorationHabitatShopButton" type="button" onclick="enterActiveHabitatBase()">進入園區建設</button></div>
-  </div>
-</div>
 <div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
 <div class="modal-card habitat-guide-card" onclick="event.stopPropagation()">
 <button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button" onclick="closeHabitatGuide()">×</button>
@@ -543,6 +506,6 @@
 <script src="firebase-config.js?v=710"></script>
 <script src="questions.js?v=930"></script>
 <script src="config.js?v=920"></script>
-<script src="game.js?v=11.3.1"></script>
-<script src="firebase.js?v=10600"></script>
+<script src="game.js?v=10202"></script>
+<script src="firebase.js?v=10201"></script>
 </body></html>
