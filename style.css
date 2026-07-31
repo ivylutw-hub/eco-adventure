@@ -6191,3 +6191,16 @@ body.quiz-mode #nextBtn{width:100%;margin-top:10px}
 #basePage .base-scene-frame{display:block!important;visibility:visible!important;min-height:430px}
 #basePage #baseScene{display:block!important;visibility:visible!important;min-height:430px}
 @media(max-width:760px){.aqi-update-time{text-align:left}.base-scene-frame,#basePage #baseScene{min-height:390px!important}}
+
+
+/* V12.1.5：守護基地遊戲畫面強制顯示與自然背景備援。 */
+#basePage:not(.hide){display:block!important}
+#basePage .base-workspace-card,#basePage .base-scene-frame,#basePage #baseScene{position:relative!important;width:100%!important}
+#basePage .base-scene-frame{overflow:hidden!important;background:linear-gradient(#78cbed 0 58%,#69aa50 59% 100%)!important}
+#basePage #baseScene{height:clamp(430px,62vh,720px)!important;min-height:430px!important;opacity:1!important;z-index:1!important;overflow:hidden!important;background:linear-gradient(#72c9ef 0%,#bcecff 58%,#6db653 59%,#3f8c3e 100%)}
+#basePage #baseScene>.base-sky,#basePage #baseScene>.starter-nature,#basePage #baseScene>.base-buildings{display:block!important;visibility:visible!important;opacity:1}
+#basePage #baseScene>.base-sky{position:absolute!important;inset:0!important;z-index:2!important;pointer-events:none}
+#basePage #baseScene>.starter-nature{z-index:3!important}
+#basePage #baseScene>.base-buildings{position:absolute!important;inset:0!important;z-index:8!important}
+#basePage .base-empty{z-index:9!important;position:absolute!important;left:50%!important;bottom:8%!important;transform:translateX(-50%)!important;max-width:min(90%,520px)!important}
+@media(max-width:760px){#basePage #baseScene{height:430px!important;min-height:430px!important}}

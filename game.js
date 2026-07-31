@@ -667,7 +667,7 @@ function openVillageHabitat(id){
 }
 function openVillageFeature(type){
  const data={
-  notice:{icon:'📢',title:'生態公告欄',html:'<h4>最新公告</h4><p>V12.1.3 已校正 AQI 顯示並重建守護基地起始自然環境：第一次答錯只顯示解析、不公布答案；第二次答對可獲得思考之星，第二次仍答錯才收進弱點筆記。</p><p>冒險地圖與全站導航維持原有設計。</p>'},
+  notice:{icon:'📢',title:'生態公告欄',html:'<h4>守護小提醒</h4><p>每天完成一個學習單元，累積知識與守護能量，讓自己的自然基地慢慢成長。</p><p>答錯也沒關係，先閱讀解析再挑戰一次，就能把不熟悉的知識變成新的力量。</p>'},
   quests:{icon:'📬',title:'任務信箱',html:'<h4>今日任務</h4><ul><li>完成 1 個關卡</li><li>答對 20 題</li><li>前往一座生態園區</li></ul><button class="primary" type="button" onclick="closeVillageFeature();showMap()">前往冒險地圖</button>'},
   daily:{icon:'📝',title:'每日任務站',html:'<h4>今日挑戰</h4><p>完成每日登入、答題與園區探索，可以逐步累積守護獎勵。</p><button class="primary" type="button" onclick="closeVillageFeature();showCheckinCalendar()">查看每日簽到</button>'},
   backpack:{icon:'🎒',title:'背包',html:'<h4>功能準備中</h4><p>未來可在這裡查看園區裝飾、限定家具與活動收藏品。</p>'}
@@ -1014,13 +1014,16 @@ function showHall(){hall.innerHTML='';S.forEach(s=>{let e=isDone(s),d=document.c
 function showBase(){
   activeHabitatBase=null;
   page('basePage');
-  requestAnimationFrame(()=>{
+  const draw=()=>{
     renderBase();
     updateBaseDashboard();
     updateBaseClock();
     const toolbar=document.querySelector('#basePage .base-build-toolbar');
     if(toolbar)toolbar.classList.add('base-build-ready');
-  });
+  };
+  draw();
+  requestAnimationFrame(draw);
+  setTimeout(draw,120);
 }
 const BASE_WEATHERS=[
   {id:'sunny',label:'晴天',icon:'☀️'},
@@ -1312,20 +1315,32 @@ function updateAqiDisplay(aq,record=null){
   if(value)value.textContent=aq;if(level)level.textContent=meta.label;
   if(flag)flag.dataset.level=meta.key;
   if(metric){metric.dataset.tooltip=tip;metric.setAttribute('aria-label',tip);metric.title=tip;}
-  if(time)time.textContent=`資料來源：環境部 ${site}測站${publish?`・${publish}`:''}`;
+  if(time)time.textContent=`${record?.source||'環境部空氣品質監測網'}${site?`・${site}`:''}${publish?`・${publish}`:''}`;
 }
 async function fetchMoenvAqi(){
+  // 有設定環境部 API Key 時，優先讀取官方金門測站 AQI。
   const apiKey=String(window.ECO_CONFIG?.MOENV_API_KEY||'').trim();
-  if(!apiKey)return{aqi:null,message:'官方資料待設定'};
-  const url=`https://data.moenv.gov.tw/api/v2/AQX_P_432?api_key=${encodeURIComponent(apiKey)}&limit=1000&sort=publishtime%20desc&format=json`;
-  const response=await fetch(url,{cache:'no-store'});
-  if(!response.ok)throw new Error(`MOENV AQI ${response.status}`);
+  if(apiKey){
+    try{
+      const url=`https://data.moenv.gov.tw/api/v2/AQX_P_432?api_key=${encodeURIComponent(apiKey)}&limit=1000&sort=publishtime%20desc&format=json`;
+      const response=await fetch(url,{cache:'no-store'});
+      if(!response.ok)throw new Error(`MOENV AQI ${response.status}`);
+      const data=await response.json();
+      const records=Array.isArray(data?.records)?data.records:Array.isArray(data)?data:[];
+      const kinmen=records.filter(r=>String(r.county||r.County||'').includes('金門'));
+      const preferred=kinmen.find(r=>String(r.sitename||r.SiteName||'').includes('金門'))||kinmen[0];
+      const aqi=Number(preferred?.aqi??preferred?.AQI);
+      if(Number.isFinite(aqi))return{aqi,record:{...preferred,source:'環境部官方測站'}};
+    }catch(error){console.warn('環境部官方 AQI 讀取失敗，改用免設定備援資料。',error);}
+  }
+  // 免 API Key 備援：取得金湖座標即時 AQI，再依環境部 AQI 六級標準呈現。
+  const fallbackUrl='https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.4408&longitude=118.4171&current=us_aqi&timezone=Asia%2FTaipei';
+  const response=await fetch(fallbackUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error(`AQI fallback ${response.status}`);
   const data=await response.json();
-  const records=Array.isArray(data?.records)?data.records:Array.isArray(data)?data:[];
-  const kinmen=records.filter(r=>String(r.county||r.County||'').includes('金門'));
-  const preferred=kinmen.find(r=>String(r.sitename||r.SiteName||'').includes('金門'))||kinmen[0];
-  const aqi=Number(preferred?.aqi??preferred?.AQI);
-  return Number.isFinite(aqi)?{aqi,record:preferred}:{aqi:null,message:'環境部金門測站暫無資料'};
+  const aqi=Math.round(Number(data?.current?.us_aqi));
+  if(!Number.isFinite(aqi))return{aqi:null,message:'AQI 暫時無法取得'};
+  return{aqi,record:{sitename:'金湖地區',publishtime:data?.current?.time||'',source:'即時空品資料；分級依環境部標準'}};
 }
 function setupAqiTouchTip(){
   const metric=document.getElementById('homeAqiMetric');if(!metric||metric.dataset.touchReady)return;
@@ -1631,12 +1646,16 @@ function renderBaseShop(){
 }
 function renderBase(){
   activeHabitatBase=null;
-  ensureBaseLayout();st.basePaths=[];baseCoins.textContent=st.coins;
+  const scene=document.getElementById('baseScene');
+  const coinEl=document.getElementById('baseCoins');
+  if(!scene){console.error('找不到守護基地遊戲畫面 #baseScene');return;}
+  ensureBaseLayout();st.basePaths=[];if(coinEl)coinEl.textContent=st.coins;
   const nav=document.getElementById('habitatBaseNavigation');if(nav)nav.classList.add('hide');
   const season=currentBaseSeason();
-  baseScene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="starter-nature" aria-label="守護基地起始自然環境"><div class="starter-mountain mountain-back"></div><div class="starter-mountain mountain-front"></div><div class="starter-hill hill-back"></div><div class="starter-hill hill-front"></div><div class="starter-grass"></div><div class="season-nature season-spring" aria-hidden="true"></div><div class="season-nature season-summer" aria-hidden="true"></div><div class="season-nature season-autumn" aria-hidden="true"></div><div class="season-nature season-winter" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-buildings"></div>`;
-  baseScene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);baseScene.onclick=null;
-  const buildings=baseScene.querySelector('.base-buildings');
+  scene.innerHTML=`<div class="base-sky" aria-hidden="true"></div><div class="starter-nature" aria-label="守護基地起始自然環境"><div class="starter-mountain mountain-back"></div><div class="starter-mountain mountain-front"></div><div class="starter-hill hill-back"></div><div class="starter-hill hill-front"></div><div class="starter-grass"></div><div class="season-nature season-spring" aria-hidden="true"></div><div class="season-nature season-summer" aria-hidden="true"></div><div class="season-nature season-autumn" aria-hidden="true"></div><div class="season-nature season-winter" aria-hidden="true"></div></div><div class="base-weather-badge"></div><div class="night-life" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><span class="shooting-star"></span></div><div class="base-buildings"></div>`;
+  scene.classList.add(`season-${season.id}`);updateBaseSeasonUI(season);scene.onclick=null;
+  scene.style.display='block';scene.style.visibility='visible';scene.style.opacity='1';
+  const buildings=scene.querySelector('.base-buildings');
   const titleTools=document.getElementById('baseTitleTools');
   if(titleTools){const btns=titleTools.querySelectorAll('button');if(btns[0]){btns[0].classList.toggle('active',!!st.baseEditMode);btns[0].innerHTML=st.baseEditMode?'✅ <span>完成擺設</span>':'✋ <span>編輯基地</span>'}}
   const activeOwned=st.owned,activePlacements=st.basePlacements;
