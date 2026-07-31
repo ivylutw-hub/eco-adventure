@@ -1058,12 +1058,15 @@ function setupAqiTouchTip(){
 async function updateNatureDashboard(){
   const w=document.getElementById('natureWeather');if(!w)return;
   try{
-    const forecast=await fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('weather fetch failed');return r.json()});
-    const c=forecast.current||{};
+    const [forecast,air]=await Promise.all([
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
+      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
+    ]);
+    const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
-    // AQI 直接由環境部官方金門測站嵌入元件顯示，避免第三方 AQI 制式不同造成誤差。
+    updateAqiDisplay(aq);setupAqiTouchTip();
   }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
 }
 setInterval(updateBaseClock,60000);
