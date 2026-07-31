@@ -6204,3 +6204,16 @@ body.quiz-mode #nextBtn{width:100%;margin-top:10px}
 #basePage #baseScene>.base-buildings{position:absolute!important;inset:0!important;z-index:8!important}
 #basePage .base-empty{z-index:9!important;position:absolute!important;left:50%!important;bottom:8%!important;transform:translateX(-50%)!important;max-width:min(90%,520px)!important}
 @media(max-width:760px){#basePage #baseScene{height:430px!important;min-height:430px!important}}
+
+
+/* V12.1.6：守護基地可靠顯示與載入備援 */
+#basePage:not(.hide) .base-dashboard-grid,
+#basePage:not(.hide) .base-workspace-card,
+#basePage:not(.hide) .base-scene-frame,
+#basePage:not(.hide) #baseScene{display:block!important;visibility:visible!important;opacity:1!important}
+#basePage:not(.hide) .base-scene-frame{height:auto!important;min-height:430px!important}
+#basePage:not(.hide) #baseScene{position:relative!important;width:100%!important;height:clamp(430px,62vh,720px)!important;min-height:430px!important;background:linear-gradient(#69c8f1 0%,#b9ebff 56%,#79bc5a 57%,#438e42 100%)!important}
+#basePage:not(.hide) #baseScene:empty::before{content:"";position:absolute;inset:0;background:linear-gradient(165deg,transparent 0 49%,#86bc73 50% 67%,#56a04d 68% 100%),linear-gradient(#6ac8f2 0%,#c5efff 100%)}
+#basePage:not(.hide) #baseScene:empty::after{content:"基地自然環境載入中…";position:absolute;left:50%;bottom:8%;transform:translateX(-50%);padding:10px 15px;border-radius:999px;background:rgba(255,255,255,.9);color:#315c3b;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+#basePage:not(.hide) .base-build-toolbar{display:grid!important;visibility:visible!important;opacity:1!important}
+@media(max-width:760px){#basePage:not(.hide) #baseScene{height:430px!important;min-height:430px!important}}

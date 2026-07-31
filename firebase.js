@@ -209,41 +209,77 @@ async function checkAccountAccess(){
 }
 async function loadCloudPlayer(){
  if(!cloudReady||cloudLoading)return;cloudLoading=true;
+ let snap=null,data=null,cloudReadable=true;
  try{
+  // 帳號停用檢查若因規則尚未更新而失敗，checkAccountAccess 會自行相容。
   const access=await checkAccountAccess();
   if(!access.allowed){loginMessage(access.message);setGoogleButton(false,'帳號目前無法使用');await cloudAuth.signOut();return;}
-  const snap=await playerDoc().get();
-  const data=snap.exists?snap.data():null;
+
+  // 玩家主檔讀取失敗時，不阻斷登入與遊戲。這可相容尚未部署新版 Firestore Rules、
+  // 暫時離線或 Firestore 網路不穩的情況；進度仍保留在本機，稍後會自動重試同步。
+  try{
+   snap=await playerDoc().get();
+   data=snap.exists?snap.data():null;
+  }catch(readErr){
+   cloudReadable=false;
+   console.warn('玩家雲端存檔暫時無法讀取，改用本機存檔進入遊戲。',readErr);
+  }
+
   cloudIsAdmin=Boolean(data&&data.isAdmin===true);
   updateAdminAccess();
   const localSameUser=st.cloudUid===cloudUser.uid;
-  if(data&&data.state){
+
+  if(cloudReadable&&data&&data.state){
    const remote={...defaultState(),...data.state};
    const localTime=localSameUser?(Date.parse(st.savedAt||0)||0):0;
    const remoteTime=Date.parse(remote.savedAt||0)||0;
-   // 只有同一個 Google UID 才能比較並沿用本機進度，避免不同帳號互相污染。
    st=(localSameUser&&localTime>remoteTime)?{...defaultState(),...st}:remote;
-  }else if(data){
-   // 相容早期只有頂層欄位、尚未包含完整 state 的玩家文件。
-   // 若目前本機資料屬於另一個 UID，先從乾淨狀態建立，不能沿用舊玩家資料。
+  }else if(cloudReadable&&data){
    const base=localSameUser?{...defaultState(),...st}:defaultState();
    st={...base,exp:Number(data.guardianExp)||0,coins:Number(data.coins)||0,unitProgress:data.stageProgress||base.unitProgress||{}};
-  }else{
-   // 新 Google 帳號沒有雲端文件時，必須建立獨立的新玩家狀態。
-   // 同一台裝置切換帳號時，絕不可把上一個帳號的名稱、進度、金幣與經驗帶過來。
+  }else if(cloudReadable&&!data){
    st=localSameUser?{...defaultState(),...st}:defaultState();
    st.name=(cloudUser.displayName||'環保守護者').slice(0,12);
+  }else{
+   // 無法讀取雲端時只使用同一 UID 的本機資料；不同帳號則建立乾淨狀態。
+   st=localSameUser?{...defaultState(),...st}:defaultState();
+   if(!localSameUser)st.name=(cloudUser.displayName||'環保守護者').slice(0,12);
   }
+
   st.loggedIn=true;st.cloudUid=cloudUser.uid;
-  ensureProgress();ensureProfile();ensureWeeklyLocal();selectedLoginAvatar=st.avatar||'fox';nameInput.value=st.name;
-  await Promise.all([loadActiveActivities(),loadCustomQuestions()]);
+  ensureProgress();ensureProfile();ensureWeeklyLocal();selectedLoginAvatar=st.avatar||'fox';
+  const nameEl=document.getElementById('nameInput');if(nameEl)nameEl.value=st.name;
+
+  // 活動與自訂題目是附加功能，任何一項失敗都不可影響玩家進入遊戲。
+  await Promise.allSettled([loadActiveActivities(),loadCustomQuestions()]);
   dailyLogin();applyLoginActivityRewards();save();enterGame();
-  await syncAllCloudData(!snap.exists);
-  startCloudPlayerListener();
-  await playerDoc().set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(err=>console.error('更新登入時間失敗',err));
-  loginMessage(`已登入：${cloudUser.displayName||'Google 使用者'}`);setGoogleButton(false,'✅ 已登入');setCloudStatus('online','☁️ 雲端進度已同步');
+
+  if(cloudReadable){
+   await syncAllCloudData(Boolean(snap&&!snap.exists));
+   startCloudPlayerListener();
+   await playerDoc().set({lastLoginAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(err=>console.warn('更新登入時間失敗',err));
+   loginMessage(`已登入：${cloudUser.displayName||'Google 使用者'}`);
+   setCloudStatus('online','☁️ 雲端進度已同步');
+  }else{
+   // 避免顯示「雲端載入失敗」並卡在登入頁；玩家可先正常使用本機進度。
+   loginMessage(`已登入：${cloudUser.displayName||'Google 使用者'}（目前使用本機存檔）`);
+   setCloudStatus('offline','☁️ 雲端暫時無法連線，進度已安全保留在本機');
+   clearTimeout(cloudRetryTimer);
+   cloudRetryTimer=setTimeout(()=>syncAllCloudData(false),8000);
+  }
+  setGoogleButton(false,'✅ 已登入');
  }catch(err){
-  console.error('載入雲端存檔失敗',err);loginMessage('雲端存檔載入失敗，已保留本機資料，可稍後重試。');setGoogleButton(false,'重新嘗試 Google 登入');notifyCloudError('⚠️ 雲端載入失敗，遊戲仍可繼續');
+  console.error('Google 登入後初始化失敗',err);
+  // 最後一道防護：只要 Google 身分驗證成功，就允許用本機存檔進入遊戲。
+  try{
+   st={...defaultState(),...st,loggedIn:true,cloudUid:cloudUser&&cloudUser.uid};
+   ensureProgress();ensureProfile();ensureWeeklyLocal();save();enterGame();
+   loginMessage('已登入，目前使用本機存檔。');setGoogleButton(false,'✅ 已登入');
+   setCloudStatus('offline','☁️ 雲端暫時無法連線，進度已保留在本機');
+  }catch(fallbackErr){
+   console.error('本機備援登入也失敗',fallbackErr);
+   loginMessage('登入初始化未完成，請重新整理後再試。');setGoogleButton(false,'重新嘗試 Google 登入');
+  }
  }finally{cloudLoading=false}
 }
 function scheduleCloudSave(){
