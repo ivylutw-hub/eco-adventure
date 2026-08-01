@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V10.2.1｜難度冒險地圖</title>
+<title>環保冒險王 V10.2.3｜難度冒險地圖</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10201" rel="stylesheet"/>
+<link href="style.css?v=10203" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,15 +105,15 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.0</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.3</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
-  <div class="nature-location"><span>📍</span><div><small>目前位置</small><b id="natureLocation">金門縣</b></div></div>
+  <div class="nature-location"><span>📍</span><div><small>所在區域</small><b id="natureLocation">金門縣</b></div></div>
   <div class="home-nature-metric"><span>🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
   <div class="home-nature-metric"><span>🌡️</span><small>溫度</small><b id="natureTemp">--°C</b></div>
   <div class="home-nature-metric"><span>💧</span><small>濕度</small><b id="natureHumidity">--%</b></div>
-  <div class="home-nature-metric home-aqi-metric" id="homeAqiMetric" tabindex="0" aria-label="空氣品質讀取中"><span class="aqi-flag" id="natureAqiFlag" aria-hidden="true"><i></i></span><a class="nature-aqi-link" href="https://airtw.moenv.gov.tw/" target="_blank" rel="noopener noreferrer" aria-label="前往環境部空氣品質監測網">AQI</a><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
+  <div class="home-nature-metric home-aqi-metric" id="homeAqiMetric" tabindex="0" aria-label="空氣品質讀取中"><a class="nature-aqi-link" href="https://airtw.moenv.gov.tw/" target="_blank" rel="noopener noreferrer" aria-label="前往環境部空氣品質監測網">AQI</a><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
   <div class="nature-tip"><span>♻️</span><div><small>環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
   <i class="home-live-badge" id="natureLiveBadge">LIVE</i>
 </section>
@@ -136,6 +136,10 @@
 <button onclick="showAchievements()">🏅 玩家成就</button>
 <button class="hide" id="adminNavBtn" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
 </nav>
+<div class="page-nav-actions hide" id="pageNavActions" aria-label="頁面導覽">
+  <button type="button" onclick="goPreviousPage()">← 回上一頁</button>
+  <button type="button" onclick="goHomePage()">⌂ 回首頁</button>
+</div>
 <main id="mapPage">
 <div class="title">
 <div><small>OPEN WORLD MAP</small><h2>🗺️ 地球修復冒險地圖</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
@@ -464,6 +468,16 @@
 <div class="habitat-requirements" id="habitatRequirements"></div>
 </div>
 </div>
+<div class="modal hide" id="resumeQuizModal" role="dialog" aria-modal="true" aria-labelledby="resumeQuizTitle">
+<div class="modal-card resume-quiz-card">
+<h3 id="resumeQuizTitle">📘 要繼續上次的答題進度嗎？</h3>
+<p id="resumeQuizText">偵測到尚未完成的冒險。</p>
+<div class="resume-quiz-actions">
+<button class="secondary" type="button" onclick="discardSavedQuiz()">回首頁重新選擇</button>
+<button class="primary" type="button" onclick="resumeSavedQuiz()">繼續答題</button>
+</div>
+</div>
+</div>
 <div class="modal hide" id="logoutModal">
 <div class="modal-card">
 <button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLogout()">×</button>
@@ -503,9 +517,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=710"></script>
-<script src="questions.js?v=930"></script>
-<script src="config.js?v=920"></script>
-<script src="game.js?v=10201"></script>
-<script src="firebase.js?v=10201"></script>
+<script src="firebase-config.js?v=10203"></script>
+<script src="questions.js?v=10203"></script>
+<script src="config.js?v=10203"></script>
+<script src="game.js?v=10203"></script>
+<script src="firebase.js?v=10203"></script>
 </body></html>

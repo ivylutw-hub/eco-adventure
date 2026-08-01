@@ -1,5 +1,37 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
+const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuizV10203';
+let currentPageId='mapPage',pageHistory=[];
+function readActiveQuiz(){try{return JSON.parse(localStorage.getItem(ACTIVE_QUIZ_KEY)||'null')}catch(_e){return null}}
+function clearActiveQuiz(){try{localStorage.removeItem(ACTIVE_QUIZ_KEY)}catch(_e){}}
+function saveActiveQuiz(){
+ if(!stage||!stage.id||!Number.isInteger(unit)||!quiz.length||qi>=quiz.length)return;
+ try{localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify({stageId:stage.id,unit,qi,score,replayMode,updatedAt:new Date().toISOString()}))}catch(_e){}
+}
+function maybeOfferQuizResume(){
+ const data=readActiveQuiz(),modal=document.getElementById('resumeQuizModal'),text=document.getElementById('resumeQuizText');
+ if(!data||!modal||!S.some(s=>s.id===data.stageId)||!Number.isInteger(Number(data.unit)))return;
+ const s=S.find(x=>x.id===data.stageId),q=fixedUnitQuestions(s,Number(data.unit));
+ if(!q.length||Number(data.qi)<0||Number(data.qi)>=q.length){clearActiveQuiz();return}
+ if(text)text.textContent=`${s.name}・單元 ${Number(data.unit)+1}，已進行到第 ${Number(data.qi)+1} 題。`;
+ modal.classList.remove('hide');
+}
+function resumeSavedQuiz(){
+ const data=readActiveQuiz(),modal=document.getElementById('resumeQuizModal');if(modal)modal.classList.add('hide');
+ if(!data){showMap();return}
+ const s=S.find(x=>x.id===data.stageId);if(!s){clearActiveQuiz();showMap();return}
+ stage=s;unit=Number(data.unit);quiz=fixedUnitQuestions(stage,unit);qi=Math.max(0,Math.min(quiz.length-1,Number(data.qi)||0));score=Math.max(0,Number(data.score)||0);replayMode=Boolean(data.replayMode);
+ enemyIcon.textContent=stage.enemy;enemyName.textContent=stage.enemyName;page('quizPage');renderQ();saveActiveQuiz();
+}
+function discardSavedQuiz(){const modal=document.getElementById('resumeQuizModal');if(modal)modal.classList.add('hide');clearActiveQuiz();showMap()}
+function goHomePage(){if(currentPageId==='quizPage')saveActiveQuiz();showMap()}
+function goPreviousPage(){
+ if(currentPageId==='quizPage'){saveActiveQuiz();backToStage();return}
+ const previous=pageHistory.pop();
+ if(previous&&document.getElementById(previous)){page(previous,{skipHistory:true});return}
+ showMap();
+}
+
 function defaultState(){return{loggedIn:false,name:'環保守護者',coins:0,last:'',streak:0,completed:{},lastScores:{},owned:[],basePlacements:[],basePaths:[],baseEditMode:false,basePathMode:false,flowerBundleV96Migrated:false,checkinHistory:{},monthlyGuardianRewards:{},savedAt:'',unitProgress:{},unitScores:{},avatar:'fox',frame:'none',exp:0,totalCorrect:0,totalAnswered:0,todayAnswered:0,todayAnsweredDate:'',playDays:0,lastPlayDate:'',soundEnabled:true,wrongNotes:{},coinAwarded:{},mainExpAwarded:{},weaknessExpAwarded:{},weaknessCoinAwarded:{},eventClaims:{},guardianEnergy:0,achievementClaims:{},bestWeeklyRank:null,specialTitle:''}}
 function migrateFlowerBundlesV96(state){
   if(!state||state.flowerBundleV96Migrated)return state;
@@ -108,7 +140,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'9.6.1',
+    version:'10.2.3',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -306,7 +338,8 @@ function enterGame(){
   renderMap();
   updateSaveStatus('saved');
   updateSoundButton();
-  page('mapPage');
+  pageHistory=[];page('mapPage',{skipHistory:true});
+  setTimeout(maybeOfferQuizResume,450);
 }
 function dailyLogin(){
   const t=dateStr();
@@ -531,16 +564,21 @@ function mountGlobalFooter(pageId){
  activePage.appendChild(status);
  activePage.appendChild(info);
 }
-function page(id){
- ['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage']
-   .forEach(x=>document.getElementById(x).classList.add('hide'));
+function page(id,options={}){
+ const allPages=['mapPage','stagePage','quizPage','resultPage','basePage','baseVillagePage','visitorBasePage','hallPage','leaderboardPage','profilePage','weaknessPage','checkinPage','achievementPage','adminPage'];
+ if(!options.skipHistory&&currentPageId&&currentPageId!==id&&document.getElementById(currentPageId)&&currentPageId!=='mapPage'){
+   if(pageHistory[pageHistory.length-1]!==currentPageId)pageHistory.push(currentPageId);
+   if(pageHistory.length>20)pageHistory.shift();
+ }
+ allPages.forEach(x=>document.getElementById(x).classList.add('hide'));
  const target=document.getElementById(id);
- target.classList.remove('hide');
+ target.classList.remove('hide');currentPageId=id;
  document.body.classList.toggle('admin-mode',id==='adminPage');
  if(id!=='adminPage') mountGlobalFooter(id);
  if(typeof updateBaseDashboard==='function')updateBaseDashboard();
  document.body.classList.toggle('quiz-mode',id==='quizPage');
  document.body.classList.toggle('result-mode',id==='resultPage');
+ const nav=document.getElementById('pageNavActions');if(nav)nav.classList.toggle('hide',id==='mapPage');
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
 function showMap(){renderMap();header();page('mapPage')}
@@ -605,6 +643,7 @@ function start(i){
  enemyName.textContent=stage.enemyName;
  page('quizPage');
  renderQ();
+ saveActiveQuiz();
 }
 function renderQ(){
  answered=false;
@@ -629,6 +668,7 @@ function renderQ(){
  nextButton.classList.add('hide');
  answerActions.classList.remove('hide');
  submitAnswerBtn.disabled=true;
+ saveActiveQuiz();
 }
 function selectAnswer(i){
  if(answered)return;
@@ -715,6 +755,7 @@ function submitSelectedAnswer(){
    st.unitScores[stage.id][unit]=score;
  }
  save();
+ saveActiveQuiz();
  header();
  updateWeaknessBadge();
  playSound(ok?'correct':'wrong');
@@ -769,6 +810,7 @@ function stageReward(stageId,type='main'){
  return Number(reward[type])||0;
 }
 function finish(){
+ clearActiveQuiz();
  ensureProgress();
  const d=doneSet(stage.id);
  const first=!d.has(unit);
@@ -1837,7 +1879,28 @@ let trialQuestions=[],trialIndex=0,trialScore=0,trialAnswered=false,trialDaily=f
 function loadTrialStats(){try{return Object.assign({date:'',plays:0,bestByLevel:[0,0,0,0],streak:0,dailyDate:''},JSON.parse(localStorage.getItem(TRIAL_STORAGE_KEY)||'{}'))}catch{return{date:'',plays:0,bestByLevel:[0,0,0,0],streak:0,dailyDate:''}}}
 function saveTrialStats(x){localStorage.setItem(TRIAL_STORAGE_KEY,JSON.stringify(x))}
 function updateTrialStatsView(){const s=loadTrialStats(),today=dateStr();if(s.date!==today){s.date=today;s.plays=0;saveTrialStats(s)};s.bestByLevel=Array.isArray(s.bestByLevel)?s.bestByLevel:[s.best||0,0,0,0];const a=document.getElementById('trialPlayCount'),b=document.getElementById('trialBestScore');if(a)a.textContent=s.plays||0;if(b)b.textContent=`${s.bestByLevel[trialDifficulty]||0} / 5`}
-function getTrialPool(level=trialDifficulty){const easy=TRIAL_QUESTIONS.slice(0,24),medium=TRIAL_QUESTIONS.slice(12),advanced=TRIAL_ADVANCED_QUESTIONS.slice(0,11),challenge=TRIAL_ADVANCED_QUESTIONS.slice(5);return level===0?easy:level===1?medium:level===2?[...TRIAL_QUESTIONS.slice(24),...advanced]:[...advanced,...challenge]}
+function flattenOfficialQuestions(value){
+  if(!Array.isArray(value))return [];
+  return value.flat(Infinity).filter(q=>q&&typeof q==='object'&&!Array.isArray(q)&&Array.isArray(q.opts)&&typeof q.q==='string');
+}
+function officialQuestionToTrial(q){
+  const topic=q.level||'環保知識';
+  const icons={'初級':'🌱','中級':'🌿','中高級':'🌊','高級':'🌍'};
+  return [topic,icons[q.level]||'🌏',q.q,[...q.opts],Number(q.ans),q.exp||'一起把這個環保知識記起來吧！',q.id];
+}
+function getOfficialTrialPool(levels=null){
+  const bank=window.QUESTION_BANK||{};
+  const selected=levels||Object.keys(bank);
+  return selected.flatMap(level=>flattenOfficialQuestions(bank[level])).map(officialQuestionToTrial);
+}
+function getTrialPool(level=trialDifficulty){
+  const easy=TRIAL_QUESTIONS.slice(0,24);
+  const medium=TRIAL_QUESTIONS.slice(12);
+  if(level===0)return easy;
+  if(level===1)return medium;
+  if(level===2)return getOfficialTrialPool(['初級','中級']);
+  return getOfficialTrialPool();
+}
 function setTrialDifficulty(value,animate=false){const old=trialDifficulty;trialDifficulty=Math.max(0,Math.min(3,Number(value)||0));localStorage.setItem('ecoTrialDifficulty',String(trialDifficulty));const level=TRIAL_LEVELS[trialDifficulty],welcome=document.getElementById('trialWelcome');if(!welcome)return;welcome.classList.remove('world-meadow','world-forest','world-ocean','world-earth','swipe-left','swipe-right');welcome.classList.add(level.className);if(animate&&old!==trialDifficulty){welcome.classList.add(trialDifficulty>old?'swipe-left':'swipe-right');setTimeout(()=>welcome.classList.remove('swipe-left','swipe-right'),320)}trialDifficultySlider.value=trialDifficulty;trialWorldTitle.textContent=level.world;trialWorldDesc.textContent=`適合${level.grade}，${level.desc}`;trialDifficultyStars.textContent=level.stars;trialDifficultyStars.setAttribute('aria-label',`難度 ${trialDifficulty+1} 顆星`);trialTeacherSpeech.textContent=level.speech;trialWorldAnimal.textContent=level.animal;trialWorldLandmark.textContent=level.landmark;trialStartBtn.textContent=`🚀 開始${level.name}挑戰`;[...trialLevelDots.children].forEach((x,i)=>x.classList.toggle('active',i===trialDifficulty));const thumb=['#45a958','#d2a629','#e77b35','#6350a3'][trialDifficulty];trialDifficultySlider.style.setProperty('--thumb-color',thumb);trialWorldLandmark.classList.remove('trial-world-change');void trialWorldLandmark.offsetWidth;trialWorldLandmark.classList.add('trial-world-change');updateTrialStatsView()}
 function openTrialMode(){loginPage.classList.add('hide');game.classList.add('hide');trialPage.classList.remove('hide');showTrialWelcome();setTrialDifficulty(trialDifficulty);window.scrollTo({top:0,behavior:'smooth'})}
 function exitTrialMode(){trialPage.classList.add('hide');loginPage.classList.remove('hide');closeTrialHow();window.scrollTo({top:0,behavior:'smooth'})}
