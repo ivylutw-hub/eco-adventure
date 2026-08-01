@@ -1,4 +1,4 @@
-let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
+let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null,questionAttempt=0;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
 const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuiz';
 const RESUME_PROMPT_SESSION_KEY='ecoAdventureResumePromptShown';
@@ -707,6 +707,7 @@ function start(i){
 function renderQ(){
  answered=false;
  selectedAnswer=null;
+ questionAttempt=0;
  const q=quiz[qi];
  quizCount.textContent=`${qi+1}/${quiz.length}`;
  quizBar.style.width=(qi/quiz.length*100)+'%';
@@ -767,12 +768,14 @@ function markWeaknessMastered(q){
 }
 function submitSelectedAnswer(){
  if(answered||selectedAnswer===null){toast('請先選擇一個答案');return}
- answered=true;
  const q=quiz[qi],i=selectedAnswer,ok=i===q.ans;
+ questionAttempt+=1;
  st.totalAnswered=(st.totalAnswered||0)+1;
  recordAnswerActivity();
  let expGained=0;
+
  if(ok){
+   answered=true;
    score++;
    st.guardianEnergy=Math.min(100,Math.max(0,Number(st.guardianEnergy)||0)+2);
    st.totalCorrect=(st.totalCorrect||0)+1;
@@ -786,19 +789,63 @@ function submitSelectedAnswer(){
      addWeeklyQuestionPoints(awardedExp);
    }
    markWeaknessMastered(q);
- }else{
-   recordWrongNote(q);
+   [...options.children].forEach((b,j)=>{
+     b.disabled=true;
+     b.classList.remove('selected');
+     if(j===i)b.classList.add('good');
+   });
+   feedback.className='feedback good';
+   feedback.innerHTML=questionAttempt>1
+     ?`<b>🌟 太棒了！第二次自己答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
+     :`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`;
+   answerActions.classList.add('hide');
+   const nextButton=document.getElementById('nextBtn');
+   nextButton.disabled=false;
+   nextButton.classList.remove('hide');
+   requestAnimationFrame(()=>{
+     if(window.matchMedia('(min-width: 701px)').matches){
+       nextButton.scrollIntoView({behavior:'smooth',block:'nearest'});
+     }
+   });
+   ensureProgress();
+   if(!replayMode){
+     st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
+     st.unitScores[stage.id][unit]=score;
+   }
+   save();saveActiveQuiz();header();updateWeaknessBadge();playSound('correct');animateFeedback(true);updateSaveStatus('saved');
+   return;
  }
+
+ // 第一次答錯：不公布答案、不顯示解析、不前往下一題，讓玩家再答一次。
+ if(questionAttempt===1){
+   [...options.children].forEach((b,j)=>{
+     b.disabled=false;
+     b.classList.remove('selected','good','bad');
+     if(j===i)b.classList.add('bad');
+     b.setAttribute('aria-pressed','false');
+   });
+   feedback.className='feedback bad';
+   feedback.innerHTML='<b>🤔 第一次沒有答對，再想一次吧！</b><div class="feedback-note">請重新選擇答案；這次不會公布答案，也不會跳到下一題。</div>';
+   selectedAnswer=null;
+   answered=false;
+   submitAnswerBtn.disabled=true;
+   answerActions.classList.remove('hide');
+   const nextButton=document.getElementById('nextBtn');
+   nextButton.classList.add('hide');
+   playSound('wrong');animateFeedback(false);saveActiveQuiz();updateSaveStatus('saved');
+   return;
+ }
+
+ // 第二次仍答錯：顯示解析，並加入怪獸弱點後才允許前往下一題。
+ answered=true;
+ recordWrongNote(q);
  [...options.children].forEach((b,j)=>{
    b.disabled=true;
-   b.classList.remove('selected');
-   if(ok&&j===i)b.classList.add('good');
-   if(!ok&&j===i)b.classList.add('bad');
+   b.classList.remove('selected','good');
+   if(j===i)b.classList.add('bad');
  });
- feedback.className='feedback '+(ok?'good':'bad');
- feedback.innerHTML=ok
-   ?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${expGained? `✨ +${expGained} EXP`:'本題經驗值已領取，不重複計分'}</div>`
-   :`<b>🤔 這題已記進「怪獸弱點筆記」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">不公布答案，也不立即重答；之後可回首頁筆記複習。</div><div class="exp-gain">本題不獲得經驗值</div>`;
+ feedback.className='feedback bad';
+ feedback.innerHTML=`<b>👾 這題已加入「怪獸弱點」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">先讀懂解析，再到怪獸弱點中複習；此處不直接公布正確答案。</div><div class="exp-gain">本題不獲得經驗值</div>`;
  answerActions.classList.add('hide');
  const nextButton=document.getElementById('nextBtn');
  nextButton.disabled=false;
@@ -813,13 +860,7 @@ function submitSelectedAnswer(){
    st.unitProgress[stage.id][unit]=Math.min(quiz.length,qi+1);
    st.unitScores[stage.id][unit]=score;
  }
- save();
- saveActiveQuiz();
- header();
- updateWeaknessBadge();
- playSound(ok?'correct':'wrong');
- animateFeedback(ok);
- updateSaveStatus('saved');
+ save();saveActiveQuiz();header();updateWeaknessBadge();playSound('wrong');animateFeedback(false);updateSaveStatus('saved');
 }
 let nextQuestionLocked=false;
 function nextQuestion(){
@@ -1162,7 +1203,7 @@ function getPlayerPosition(){
   navigator.geolocation.getCurrentPosition(
    pos=>resolve({latitude:pos.coords.latitude,longitude:pos.coords.longitude}),
    err=>reject(err),
-   {enableHighAccuracy:false,timeout:12000,maximumAge:10*60*1000}
+   {enableHighAccuracy:true,timeout:20000,maximumAge:0}
   );
  });
 }
@@ -1180,10 +1221,10 @@ async function updateNatureDashboard(){
     const {latitude,longitude}=await getPlayerPosition();
     const [forecast,air,locationName]=await Promise.all([
       fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('天氣資料讀取失敗');return r.json()}),
-      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi&timezone=auto`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('AQI 資料讀取失敗');return r.json()}),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current=us_aqi,pm2_5,pm10&timezone=auto&cell_selection=nearest&forecast_days=1`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('AQI 資料讀取失敗');return r.json()}),
       reverseLocationName(latitude,longitude)
     ]);
-    if(locationEl)locationEl.textContent=locationName;
+    if(locationEl){locationEl.textContent=locationName;locationEl.title=`定位座標：${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;}
     if(badge)badge.textContent='LIVE';
     const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
