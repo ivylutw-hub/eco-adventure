@@ -1,6 +1,7 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
 const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuiz';
+const RESUME_PROMPT_SESSION_KEY='ecoAdventureResumePromptShown';
 const LEGACY_ACTIVE_QUIZ_KEYS=['ecoAdventureActiveQuizV10204','ecoAdventureActiveQuizV10203','ecoAdventureActiveQuizV10202','ecoAdventureActiveQuizV10201'];
 let resumePromptShownFor='';
 function normalizeActiveQuiz(data){
@@ -45,20 +46,26 @@ function saveActiveQuiz(){
  const data={stageId:stage.id,unit,qi,score,replayMode,updatedAt:new Date().toISOString()};
  try{localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify(data))}catch(_e){}
 }
-function maybeOfferQuizResume(force=false){
+function hasShownResumePromptThisSession(){
+ try{return sessionStorage.getItem(RESUME_PROMPT_SESSION_KEY)==='1'}catch(_e){return Boolean(resumePromptShownFor)}
+}
+function markResumePromptShownThisSession(){
+ resumePromptShownFor='shown';
+ try{sessionStorage.setItem(RESUME_PROMPT_SESSION_KEY,'1')}catch(_e){}
+}
+function maybeOfferQuizResume(){
+ if(hasShownResumePromptThisSession())return false;
  const data=readActiveQuiz(),modal=document.getElementById('resumeQuizModal'),text=document.getElementById('resumeQuizText');
  if(!data||!modal)return false;
  const s=S.find(x=>x.id===data.stageId),q=s?fixedUnitQuestions(s,Number(data.unit)):[];
  if(!s||!q.length||Number(data.qi)<0||Number(data.qi)>=q.length){clearActiveQuiz();return false}
- const signature=`${data.stageId}|${data.unit}|${data.qi}|${data.updatedAt}`;
- if(!force&&resumePromptShownFor===signature&&!modal.classList.contains('hide'))return true;
  if(modal.parentElement!==document.body)document.body.appendChild(modal);
  if(text)text.textContent=`${s.name}・單元 ${Number(data.unit)+1}，將從第 ${Number(data.qi)+1} 題繼續。`;
+ markResumePromptShownThisSession();
  modal.classList.remove('hide');
  modal.removeAttribute('hidden');
  modal.style.display='grid';
  document.body.classList.add('modal-open');
- resumePromptShownFor=signature;
  return true;
 }
 function closeResumeQuizModal(){
@@ -67,13 +74,14 @@ function closeResumeQuizModal(){
  document.body.classList.remove('modal-open');
 }
 function resumeSavedQuiz(){
+ markResumePromptShownThisSession();
  const data=readActiveQuiz();closeResumeQuizModal();
  if(!data){showMap();return}
  const s=S.find(x=>x.id===data.stageId);if(!s){clearActiveQuiz();showMap();return}
  stage=s;unit=Number(data.unit);quiz=fixedUnitQuestions(stage,unit);qi=Math.max(0,Math.min(quiz.length-1,Number(data.qi)||0));score=Math.max(0,Number(data.score)||0);replayMode=Boolean(data.replayMode);
  enemyIcon.textContent=stage.enemy;enemyName.textContent=stage.enemyName;page('quizPage');renderQ();saveActiveQuiz();
 }
-function discardSavedQuiz(){closeResumeQuizModal();clearActiveQuiz();showMap()}
+function discardSavedQuiz(){markResumePromptShownThisSession();closeResumeQuizModal();clearActiveQuiz();showMap()}
 function goHomePage(){if(currentPageId==='quizPage')saveActiveQuiz();showMap()}
 function goPreviousPage(){
  if(currentPageId==='quizPage'){saveActiveQuiz();backToStage();return}
@@ -389,13 +397,9 @@ function enterGame(){
   updateSaveStatus('saved');
   updateSoundButton();
   pageHistory=[];page('mapPage',{skipHistory:true});
-  setTimeout(()=>maybeOfferQuizResume(true),120);
-  setTimeout(()=>maybeOfferQuizResume(true),900);
+  setTimeout(()=>maybeOfferQuizResume(),250);
 }
 
-window.addEventListener('pageshow',()=>{if(st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
-window.addEventListener('focus',()=>{if(st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
 function dailyLogin(){
   const t=dateStr();
   if(!st.checkinHistory||typeof st.checkinHistory!=='object')st.checkinHistory={};
