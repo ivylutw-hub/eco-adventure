@@ -1,9 +1,21 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuizV10203';
+const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuizV10204';
+const LEGACY_ACTIVE_QUIZ_KEYS=['ecoAdventureActiveQuizV10203','ecoAdventureActiveQuizV10202','ecoAdventureActiveQuizV10201','ecoAdventureActiveQuiz'];
 let currentPageId='mapPage',pageHistory=[];
-function readActiveQuiz(){try{return JSON.parse(localStorage.getItem(ACTIVE_QUIZ_KEY)||'null')}catch(_e){return null}}
-function clearActiveQuiz(){try{localStorage.removeItem(ACTIVE_QUIZ_KEY)}catch(_e){}}
+function readActiveQuiz(){
+ try{
+  let raw=localStorage.getItem(ACTIVE_QUIZ_KEY);
+  if(!raw){
+   for(const key of LEGACY_ACTIVE_QUIZ_KEYS){
+    raw=localStorage.getItem(key);
+    if(raw){localStorage.setItem(ACTIVE_QUIZ_KEY,raw);break}
+   }
+  }
+  return JSON.parse(raw||'null');
+ }catch(_e){return null}
+}
+function clearActiveQuiz(){try{localStorage.removeItem(ACTIVE_QUIZ_KEY);LEGACY_ACTIVE_QUIZ_KEYS.forEach(key=>localStorage.removeItem(key))}catch(_e){}}
 function saveActiveQuiz(){
  if(!stage||!stage.id||!Number.isInteger(unit)||!quiz.length||qi>=quiz.length)return;
  try{localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify({stageId:stage.id,unit,qi,score,replayMode,updatedAt:new Date().toISOString()}))}catch(_e){}
@@ -140,7 +152,7 @@ function exportSave(){
   manualSave();
   const payload={
     app:'環保冒險王',
-    version:'10.2.3',
+    version:'10.2.4',
     exportedAt:new Date().toISOString(),
     data:st
   };
@@ -339,7 +351,8 @@ function enterGame(){
   updateSaveStatus('saved');
   updateSoundButton();
   pageHistory=[];page('mapPage',{skipHistory:true});
-  setTimeout(maybeOfferQuizResume,450);
+  setTimeout(maybeOfferQuizResume,120);
+  setTimeout(maybeOfferQuizResume,900);
 }
 function dailyLogin(){
   const t=dateStr();
@@ -1097,19 +1110,48 @@ function setupAqiTouchTip(){
   metric.addEventListener('touchcancel',clear,{passive:true});
   document.addEventListener('touchstart',e=>{if(!metric.contains(e.target))clear()},{passive:true});
 }
+function getPlayerPosition(){
+ return new Promise((resolve,reject)=>{
+  if(!navigator.geolocation){reject(new Error('此瀏覽器不支援定位'));return}
+  navigator.geolocation.getCurrentPosition(
+   pos=>resolve({latitude:pos.coords.latitude,longitude:pos.coords.longitude}),
+   err=>reject(err),
+   {enableHighAccuracy:false,timeout:12000,maximumAge:10*60*1000}
+  );
+ });
+}
+async function reverseLocationName(latitude,longitude){
+ try{
+  const url=`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&localityLanguage=zh`;
+  const data=await fetch(url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('位置名稱讀取失敗');return r.json()});
+  return data.locality||data.city||data.principalSubdivision||data.countryName||'目前位置';
+ }catch(_e){return '目前位置'}
+}
 async function updateNatureDashboard(){
-  const w=document.getElementById('natureWeather');if(!w)return;
+  const w=document.getElementById('natureWeather'),locationEl=document.getElementById('natureLocation'),badge=document.getElementById('natureLiveBadge');if(!w)return;
+  if(locationEl)locationEl.textContent='定位中';
   try{
-    const [forecast,air]=await Promise.all([
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=24.43&longitude=118.32&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto',{cache:'no-store'}).then(r=>r.json()),
-      fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=24.43&longitude=118.32&current=us_aqi&timezone=auto',{cache:'no-store'}).then(r=>r.json())
+    const {latitude,longitude}=await getPlayerPosition();
+    const [forecast,air,locationName]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('天氣資料讀取失敗');return r.json()}),
+      fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi&timezone=auto`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('AQI 資料讀取失敗');return r.json()}),
+      reverseLocationName(latitude,longitude)
     ]);
+    if(locationEl)locationEl.textContent=locationName;
+    if(badge)badge.textContent='LIVE';
     const c=forecast.current||{}, aq=Math.round(Number(air.current?.us_aqi));
     const sharedWeather=weatherFromCode(c.weather_code);document.getElementById('natureWeather').textContent=sharedWeather.label;baseLiveWeather={weather:sharedWeather,mode:Number(c.is_day)===1?'day':baseTimeMode(),windSpeed:Math.max(0,Number(c.wind_speed_10m)||Number(baseLiveWeather?.windSpeed)||0)};baseWeatherFetchedAt=Date.now();renderBaseSky();
     document.getElementById('natureTemp').textContent=Number.isFinite(Number(c.temperature_2m))?`${Math.round(c.temperature_2m)}°C`:'--°C';
     document.getElementById('natureHumidity').textContent=Number.isFinite(Number(c.relative_humidity_2m))?`${Math.round(c.relative_humidity_2m)}%`:'--%';
     updateAqiDisplay(aq);setupAqiTouchTip();
-  }catch(e){document.getElementById('natureLiveBadge').textContent='OFFLINE';document.getElementById('natureWeather').textContent='暫無資料';}
+  }catch(e){
+    if(badge)badge.textContent='需開啟定位';
+    if(locationEl)locationEl.textContent='尚未取得位置';
+    document.getElementById('natureWeather').textContent='請允許定位';
+    document.getElementById('natureTemp').textContent='--°C';
+    document.getElementById('natureHumidity').textContent='--%';
+    updateAqiDisplay(NaN);setupAqiTouchTip();
+  }
 }
 setInterval(updateBaseClock,60000);
 setTimeout(updateNatureDashboard,800);
