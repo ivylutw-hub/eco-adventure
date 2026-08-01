@@ -1,41 +1,79 @@
 let st=load(), stage,unit,quiz=[],qi=0,score=0,answered=false,replayMode=false,selectedLoginAvatar='fox',selectedAnswer=null,weaknessFilter='all',weaknessQuizNote=null,weaknessSelectedAnswer=null;
 let baseWeatherTimer=null,baseWeatherIndex=Math.floor(Math.random()*4);
-const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuizV10204';
-const LEGACY_ACTIVE_QUIZ_KEYS=['ecoAdventureActiveQuizV10203','ecoAdventureActiveQuizV10202','ecoAdventureActiveQuizV10201','ecoAdventureActiveQuiz'];
-let currentPageId='mapPage',pageHistory=[];
+const ACTIVE_QUIZ_KEY='ecoAdventureActiveQuiz';
+const LEGACY_ACTIVE_QUIZ_KEYS=['ecoAdventureActiveQuizV10204','ecoAdventureActiveQuizV10203','ecoAdventureActiveQuizV10202','ecoAdventureActiveQuizV10201'];
+let resumePromptShownFor='';
+function normalizeActiveQuiz(data){
+ if(!data||typeof data!=='object')return null;
+ const stageId=String(data.stageId||'');
+ const unit=Number(data.unit),qi=Number(data.qi),score=Number(data.score||0);
+ if(!S.some(s=>s.id===stageId)||!Number.isInteger(unit)||unit<0||!Number.isFinite(qi))return null;
+ return {stageId,unit,qi:Math.max(0,Math.floor(qi)),score:Math.max(0,score),replayMode:Boolean(data.replayMode),updatedAt:data.updatedAt||new Date().toISOString()};
+}
+function inferActiveQuizFromProgress(){
+ ensureProgress();
+ let candidate=null;
+ for(const s of S){
+  const progress=st.unitProgress?.[s.id]||{};
+  for(const [unitKey,value] of Object.entries(progress)){
+   const unit=Number(unitKey),answered=Number(value)||0;
+   if(Number.isInteger(unit)&&answered>0&&answered<10&&!doneSet(s.id).has(unit)){
+    candidate={stageId:s.id,unit,qi:answered,score:Number(st.unitScores?.[s.id]?.[unit]||0),replayMode:false,updatedAt:new Date().toISOString()};
+   }
+  }
+ }
+ return candidate;
+}
 function readActiveQuiz(){
  try{
   let raw=localStorage.getItem(ACTIVE_QUIZ_KEY);
   if(!raw){
    for(const key of LEGACY_ACTIVE_QUIZ_KEYS){
     raw=localStorage.getItem(key);
-    if(raw){localStorage.setItem(ACTIVE_QUIZ_KEY,raw);break}
+    if(raw)break;
    }
   }
-  return JSON.parse(raw||'null');
- }catch(_e){return null}
+  let data=normalizeActiveQuiz(JSON.parse(raw||'null'));
+  if(!data)data=inferActiveQuizFromProgress();
+  if(data)localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify(data));
+  return data;
+ }catch(_e){return inferActiveQuizFromProgress()}
 }
-function clearActiveQuiz(){try{localStorage.removeItem(ACTIVE_QUIZ_KEY);LEGACY_ACTIVE_QUIZ_KEYS.forEach(key=>localStorage.removeItem(key))}catch(_e){}}
+function clearActiveQuiz(){try{localStorage.removeItem(ACTIVE_QUIZ_KEY);LEGACY_ACTIVE_QUIZ_KEYS.forEach(key=>localStorage.removeItem(key))}catch(_e){} resumePromptShownFor=''}
 function saveActiveQuiz(){
  if(!stage||!stage.id||!Number.isInteger(unit)||!quiz.length||qi>=quiz.length)return;
- try{localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify({stageId:stage.id,unit,qi,score,replayMode,updatedAt:new Date().toISOString()}))}catch(_e){}
+ const data={stageId:stage.id,unit,qi,score,replayMode,updatedAt:new Date().toISOString()};
+ try{localStorage.setItem(ACTIVE_QUIZ_KEY,JSON.stringify(data))}catch(_e){}
 }
-function maybeOfferQuizResume(){
+function maybeOfferQuizResume(force=false){
  const data=readActiveQuiz(),modal=document.getElementById('resumeQuizModal'),text=document.getElementById('resumeQuizText');
- if(!data||!modal||!S.some(s=>s.id===data.stageId)||!Number.isInteger(Number(data.unit)))return;
- const s=S.find(x=>x.id===data.stageId),q=fixedUnitQuestions(s,Number(data.unit));
- if(!q.length||Number(data.qi)<0||Number(data.qi)>=q.length){clearActiveQuiz();return}
- if(text)text.textContent=`${s.name}・單元 ${Number(data.unit)+1}，已進行到第 ${Number(data.qi)+1} 題。`;
+ if(!data||!modal)return false;
+ const s=S.find(x=>x.id===data.stageId),q=s?fixedUnitQuestions(s,Number(data.unit)):[];
+ if(!s||!q.length||Number(data.qi)<0||Number(data.qi)>=q.length){clearActiveQuiz();return false}
+ const signature=`${data.stageId}|${data.unit}|${data.qi}|${data.updatedAt}`;
+ if(!force&&resumePromptShownFor===signature&&!modal.classList.contains('hide'))return true;
+ if(modal.parentElement!==document.body)document.body.appendChild(modal);
+ if(text)text.textContent=`${s.name}・單元 ${Number(data.unit)+1}，將從第 ${Number(data.qi)+1} 題繼續。`;
  modal.classList.remove('hide');
+ modal.removeAttribute('hidden');
+ modal.style.display='grid';
+ document.body.classList.add('modal-open');
+ resumePromptShownFor=signature;
+ return true;
+}
+function closeResumeQuizModal(){
+ const modal=document.getElementById('resumeQuizModal');
+ if(modal){modal.classList.add('hide');modal.style.display='';}
+ document.body.classList.remove('modal-open');
 }
 function resumeSavedQuiz(){
- const data=readActiveQuiz(),modal=document.getElementById('resumeQuizModal');if(modal)modal.classList.add('hide');
+ const data=readActiveQuiz();closeResumeQuizModal();
  if(!data){showMap();return}
  const s=S.find(x=>x.id===data.stageId);if(!s){clearActiveQuiz();showMap();return}
  stage=s;unit=Number(data.unit);quiz=fixedUnitQuestions(stage,unit);qi=Math.max(0,Math.min(quiz.length-1,Number(data.qi)||0));score=Math.max(0,Number(data.score)||0);replayMode=Boolean(data.replayMode);
  enemyIcon.textContent=stage.enemy;enemyName.textContent=stage.enemyName;page('quizPage');renderQ();saveActiveQuiz();
 }
-function discardSavedQuiz(){const modal=document.getElementById('resumeQuizModal');if(modal)modal.classList.add('hide');clearActiveQuiz();showMap()}
+function discardSavedQuiz(){closeResumeQuizModal();clearActiveQuiz();showMap()}
 function goHomePage(){if(currentPageId==='quizPage')saveActiveQuiz();showMap()}
 function goPreviousPage(){
  if(currentPageId==='quizPage'){saveActiveQuiz();backToStage();return}
@@ -351,9 +389,13 @@ function enterGame(){
   updateSaveStatus('saved');
   updateSoundButton();
   pageHistory=[];page('mapPage',{skipHistory:true});
-  setTimeout(maybeOfferQuizResume,120);
-  setTimeout(maybeOfferQuizResume,900);
+  setTimeout(()=>maybeOfferQuizResume(true),120);
+  setTimeout(()=>maybeOfferQuizResume(true),900);
 }
+
+window.addEventListener('pageshow',()=>{if(st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
+window.addEventListener('focus',()=>{if(st.loggedIn)setTimeout(()=>maybeOfferQuizResume(true),80)});
 function dailyLogin(){
   const t=dateStr();
   if(!st.checkinHistory||typeof st.checkinHistory!=='object')st.checkinHistory={};
