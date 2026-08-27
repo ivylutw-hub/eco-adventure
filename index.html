@@ -523,4 +523,90 @@
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
 <script src="pet-admin-addon.js?v=1"></script>
+
+<script>
+/* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
+   記錄 SPA 內實際顯示過的 main 畫面，而不是固定回某一頁。
+   若沒有站內上一頁，才退回瀏覽器上一頁；再沒有才回冒險地圖。
+*/
+(function(){
+  const navStack = [];
+  let goingBack = false;
+
+  function currentAppPage(){
+    const pages = document.querySelectorAll('#game main[id]');
+    for(const el of pages){
+      if(!el.classList.contains('hide')) return el.id;
+    }
+    return null;
+  }
+
+  function installPageHistory(){
+    if(typeof window.page !== 'function'){
+      setTimeout(installPageHistory, 50);
+      return;
+    }
+    if(window.page.__realBackPatched) return;
+
+    const originalPage = window.page;
+
+    function trackedPage(id){
+      const current = currentAppPage();
+
+      if(!goingBack && current && current !== id){
+        const last = navStack[navStack.length - 1];
+        if(last !== current) navStack.push(current);
+
+        // 避免使用很久後堆疊無限增長
+        if(navStack.length > 50) navStack.shift();
+      }
+
+      return originalPage.apply(this, arguments);
+    }
+
+    trackedPage.__realBackPatched = true;
+    trackedPage.__originalPage = originalPage;
+    window.page = trackedPage;
+
+    // 覆蓋舊版固定返回邏輯
+    window.goPreviousPage = function(){
+      let previous = null;
+
+      while(navStack.length){
+        const candidate = navStack.pop();
+        if(candidate && document.getElementById(candidate)){
+          previous = candidate;
+          break;
+        }
+      }
+
+      if(previous){
+        goingBack = true;
+        try{
+          originalPage(previous);
+        }finally{
+          setTimeout(()=>{ goingBack = false; }, 0);
+        }
+        return;
+      }
+
+      // 若站內沒有歷史（例如直接用網址開這一頁），才用瀏覽器歷史。
+      if(window.history.length > 1){
+        window.history.back();
+      }else if(typeof window.showMap === 'function'){
+        window.showMap();
+      }else{
+        window.location.href = 'index.html';
+      }
+    };
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', installPageHistory, {once:true});
+  }else{
+    installPageHistory();
+  }
+})();
+</script>
+
 </body></html>
