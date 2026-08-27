@@ -16,7 +16,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
-<link href="pet-system-addon.css?v=42" rel="stylesheet"/>
+<link href="pet-system-addon.css?v=43" rel="stylesheet"/>
 <style id="petGuardianCriticalStyles">
 
 /* ===== 毛孩守護者 V4.2：完整冒險卡片版面 ===== */
@@ -232,6 +232,26 @@
 }
 
 </style>
+
+<style id="petGuardianMobileTapFix">
+#petGuardianNavBtn{
+  position:relative;
+  z-index:3;
+  pointer-events:auto !important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(0,0,0,.08);
+  cursor:pointer;
+}
+#petGuardianNavBtn *{
+  pointer-events:none;
+}
+@media (hover:none) and (pointer:coarse){
+  #petGuardianNavBtn{
+    min-height:46px;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -344,7 +364,7 @@
 </header>
 <nav class="tabs">
 <button onclick="showMap()">📚 環保知識</button>
-<button id="petGuardianNavBtn" type="button" onclick="showPetGuardian()">🐾 毛孩守護者</button>
+<button id="petGuardianNavBtn" type="button" aria-label="毛孩守護者">🐾 毛孩守護者</button>
 <button onclick="showBase()">🌍 守護基地</button>
 <button onclick="showHall()">🏆 榮耀殿堂</button>
 <button onclick="showLeaderboard()">🥇 每週排行</button>
@@ -739,8 +759,7 @@
 <script src="config.js?v=10207"></script>
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
-<script src="pet-admin-addon.js?v=1"></script>
-<script src="pet-system-addon.js?v=42"></script>
+<script src="pet-system-addon.js?v=43"></script>
 
 <script>
 /* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
@@ -980,8 +999,47 @@
   function petFinish(){petEnsure();const idx=pu-1,d=st.completed[ps],first=!d.includes(idx),perfect=pscore===pquiz.length,ck=`${ps}|${idx}`,firstPerfect=perfect&&!st.coinAwarded[ck],reward=PET_STAGE[ps].reward;if(first)d.push(idx);if(firstPerfect){st.coins=(Number(st.coins)||0)+reward;st.coinAwarded[ck]=true}st.unitProgress[ps][idx]=10;st.unitScores[ps][idx]=pscore;const pct=Math.round(pscore/pquiz.length*100);save();if(typeof header==='function')header();document.getElementById('petResultTitle').textContent=`${PET_STAGE[ps].name}・單元 ${pu} 完成！`;document.getElementById('petResultScore').textContent=pct;document.getElementById('petResultMsg').textContent=perfect?(firstPerfect?`本次 10 題全部答對，獲得 ${reward} 枚守護金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。'):(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');document.getElementById('petCoinReward').textContent=firstPerfect?`+${reward}`:(perfect?'已領取':'未獲得');const earned=pquiz.filter(q=>st.mainExpAwarded[`${ps}|${q.id}`]).length*10;document.getElementById('petExpReward').textContent=`本單元累計 ${earned} EXP`;document.getElementById('petStars').textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';preplay=false;showPart('petAdventureResult')}
 
   function patchNavigation(){
-    const b=document.getElementById('petGuardianNavBtn');if(b){b.onclick=showPetGuardian;b.removeAttribute('data-href');}
-    document.querySelectorAll('.tabs button').forEach(btn=>{if(btn.textContent.includes('冒險地圖'))btn.innerHTML=btn.innerHTML.replace('冒險地圖','環保知識')});
+    const b=document.getElementById('petGuardianNavBtn');
+    if(b && !b.dataset.petBound){
+      b.dataset.petBound='1';
+      b.removeAttribute('onclick');
+      b.removeAttribute('data-href');
+
+      let lastPointerAt=0;
+      const openPet=function(ev){
+        if(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+        if(typeof window.showPetGuardian==='function'){
+          window.showPetGuardian();
+        }
+      };
+
+      b.addEventListener('pointerup',function(ev){
+        lastPointerAt=Date.now();
+        openPet(ev);
+      },{passive:false});
+
+      b.addEventListener('click',function(ev){
+        if(Date.now()-lastPointerAt<600){
+          ev.preventDefault();
+          ev.stopPropagation();
+          return;
+        }
+        openPet(ev);
+      },false);
+
+      /* Older iOS fallback */
+      if(!window.PointerEvent){
+        b.addEventListener('touchend',openPet,{passive:false});
+      }
+    }
+    document.querySelectorAll('.tabs button').forEach(btn=>{
+      if(btn.textContent.includes('冒險地圖')){
+        btn.innerHTML=btn.innerHTML.replace('冒險地圖','環保知識');
+      }
+    });
   }
   function patchPage(){if(typeof window.page!=='function'||window.page.__petPageAware)return;const old=window.page;const wrapped=function(id){document.getElementById('petGuardianPage')?.classList.add('hide');return old.apply(this,arguments)};wrapped.__petPageAware=true;window.page=wrapped}
   function patchWeaknessLabels(){if(typeof window.renderWeaknessBook!=='function'||window.renderWeaknessBook.__petV3)return;const old=window.renderWeaknessBook;const w=function(){const r=old.apply(this,arguments);setTimeout(()=>{const sel=document.getElementById('weaknessUnitSearch');if(sel)[...sel.options].forEach(o=>{if(o.value.startsWith('pet1|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet1/i,'毛孩守護者｜責任飼主基礎');if(o.value.startsWith('pet2|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet2/i,'毛孩守護者｜動物福利進階')})},0);return r};w.__petV3=true;window.renderWeaknessBook=w}
