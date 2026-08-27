@@ -16,7 +16,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
-<link href="pet-system-addon.css?v=32" rel="stylesheet"/>
+<link href="pet-system-addon.css?v=4" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -129,6 +129,7 @@
 </header>
 <nav class="tabs">
 <button onclick="showMap()">📚 環保知識</button>
+<button id="petGuardianNavBtn" type="button" onclick="showPetGuardian()">🐾 毛孩守護者</button>
 <button onclick="showBase()">🌍 守護基地</button>
 <button onclick="showHall()">🏆 榮耀殿堂</button>
 <button onclick="showLeaderboard()">🥇 每週排行</button>
@@ -524,7 +525,7 @@
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
 <script src="pet-admin-addon.js?v=1"></script>
-<script src="pet-system-addon.js?v=32"></script>
+<script src="pet-system-addon.js?v=4"></script>
 
 <script>
 /* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
@@ -716,7 +717,30 @@
     document.getElementById('petMainCoins').textContent=`🪙 ${Number(st.coins)||0}`;
     document.getElementById('petMainDone').textContent=`${st.completed.pet1.length+st.completed.pet2.length} / 6 單元`;
   }
-  window.showPetGuardian=function(){if(!ready()){setTimeout(showPetGuardian,120);return}makePage();hideAllMain();document.getElementById('petGuardianPage').classList.remove('hide');showPart('petAdventureHome');renderPetHome();if(typeof header==='function')header()};
+  window.showPetGuardian=function(){
+    makePage();
+    hideAllMain();
+    const pg=document.getElementById('petGuardianPage');
+    if(pg)pg.classList.remove('hide');
+    showPart('petAdventureHome');
+    if(ready()){
+      petEnsure();renderPetHome();if(typeof header==='function')header();
+    }else{
+      const u1=document.getElementById('petMainUnits1'),u2=document.getElementById('petMainUnits2');
+      if(u1)u1.innerHTML='<div class="pet-loading-card">☁️ 正在載入毛孩題庫與玩家進度…</div>';
+      if(u2)u2.innerHTML='';
+      let tries=0;
+      const timer=setInterval(()=>{
+        tries++;
+        if(ready()){
+          clearInterval(timer);petEnsure();renderPetHome();if(typeof header==='function')header();
+        }else if(tries>=50){
+          clearInterval(timer);
+          if(u1)u1.innerHTML='<div class="pet-loading-card error">⚠️ 毛孩系統載入失敗，請重新整理頁面後再試。</div>';
+        }
+      },100);
+    }
+  };
 
   window.startPetUnit=function(s,u){
     if(!ready())return;petEnsure();ps=s;pu=u;pquiz=qs(s,u);if(!pquiz.length){toast('這個毛孩單元目前沒有題目');return}
@@ -746,31 +770,16 @@
   }
   function patchPage(){if(typeof window.page!=='function'||window.page.__petPageAware)return;const old=window.page;const wrapped=function(id){document.getElementById('petGuardianPage')?.classList.add('hide');return old.apply(this,arguments)};wrapped.__petPageAware=true;window.page=wrapped}
   function patchWeaknessLabels(){if(typeof window.renderWeaknessBook!=='function'||window.renderWeaknessBook.__petV3)return;const old=window.renderWeaknessBook;const w=function(){const r=old.apply(this,arguments);setTimeout(()=>{const sel=document.getElementById('weaknessUnitSearch');if(sel)[...sel.options].forEach(o=>{if(o.value.startsWith('pet1|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet1/i,'毛孩守護者｜責任飼主基礎');if(o.value.startsWith('pet2|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet2/i,'毛孩守護者｜動物福利進階')})},0);return r};w.__petV3=true;window.renderWeaknessBook=w}
-  function install(){if(!ready()){setTimeout(install,120);return}makePage();petEnsure();patchNavigation();patchPage();patchWeaknessLabels();const mo=new MutationObserver(()=>patchNavigation());const tabs=document.querySelector('.tabs');if(tabs)mo.observe(tabs,{childList:true,subtree:true});try{if(sessionStorage.getItem('openIntegratedPetGuardian')==='1'){sessionStorage.removeItem('openIntegratedPetGuardian');showPetGuardian()}}catch(e){}}
+  function install(){
+    makePage();patchNavigation();patchPage();
+    if(ready()){petEnsure();patchWeaknessLabels();}
+    else setTimeout(()=>{if(ready()){petEnsure();patchWeaknessLabels();}},500);
+    try{if(sessionStorage.getItem('openIntegratedPetGuardian')==='1'){sessionStorage.removeItem('openIntegratedPetGuardian');showPetGuardian()}}catch(e){}
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
 
 
-/* V3.2：毛孩入口直接綁定，不依賴外部 addon 是否載入。 */
-(function(){
-  function bindPetEntry(){
-    const b=document.getElementById('petGuardianNavBtn');
-    if(!b)return;
-    b.onclick=function(event){
-      if(event){event.preventDefault();event.stopPropagation();}
-      if(typeof window.showPetGuardian==='function') window.showPetGuardian();
-      return false;
-    };
-  }
-  document.addEventListener('click',function(e){
-    const t=e.target&&e.target.closest?e.target.closest('#petGuardianNavBtn'):null;
-    if(!t)return;
-    e.preventDefault();e.stopPropagation();
-    if(typeof window.showPetGuardian==='function')window.showPetGuardian();
-  },true);
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindPetEntry,{once:true});else bindPetEntry();
-  setTimeout(bindPetEntry,500);setTimeout(bindPetEntry,1500);
-})();
 </script>
 
 </body></html>
