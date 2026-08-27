@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>毛孩守護者｜PaGamO 模擬練習</title>
+<style>
+:root{--ink:#34251f;--muted:#7b6860;--bg:#fff7ed;--card:#fff;--line:#ead8ca;--main:#d97706;--good:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif;background:linear-gradient(#fff7ed,#fffbeb);color:var(--ink)}
+.wrap{max-width:900px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0}.top a,.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:800;text-decoration:none;cursor:pointer}
+.top a{background:#fff;border:1px solid var(--line);color:var(--ink)}.hero{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 12px 30px #7c2d1210}
+.hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,44px)}.hero p{color:var(--muted);margin:0}.cloud{margin-top:10px;font-size:14px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px 0}@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.stage{background:#fff;border:2px solid var(--line);border-radius:20px;padding:20px;text-align:left;cursor:pointer}.stage:hover{border-color:#f59e0b}.stage .icon{font-size:42px}.stage h2{margin:8px 0}.stage p{color:var(--muted)}
+.progress{height:10px;background:#f3e8dc;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--main)}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;margin-top:18px}.hide{display:none!important}
+.qtop{display:flex;justify-content:space-between;color:var(--muted);font-weight:700}.question{font-size:clamp(21px,4vw,30px);line-height:1.45;margin:22px 0}
+.opts{display:grid;gap:12px}.opt{border:2px solid var(--line);background:#fff;border-radius:16px;padding:15px;text-align:left;font-size:17px;cursor:pointer}.opt.sel{border-color:#f59e0b;background:#fffbeb}.opt.good{border-color:var(--good);background:#f0fdf4}.opt.bad{border-color:var(--bad);background:#fef2f2}
+.actions{display:flex;gap:10px;margin-top:18px}.btn{background:var(--main);color:#fff;flex:1}.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.feedback{margin-top:16px;padding:16px;border-radius:14px;line-height:1.6}.feedback.good{background:#f0fdf4}.feedback.bad{background:#fef2f2}
+.result{text-align:center}.score{font-size:72px;font-weight:900;color:var(--main)}
+</style></head>
+<body><div class="wrap">
+<div class="top"><a href="index.html">← 回環保冒險王</a><b>🐾 毛孩守護者</b></div>
+<section class="hero"><h1>🐶 浪牠不流浪：毛孩守護者</h1><p>獨立練習區，不會和環保知識競賽的 s1～s4 題庫與進度混在一起。</p><div id="cloudState" class="cloud">☁️ 正在讀取毛孩題庫…</div></section>
+<section id="home"><div class="grid">
+<button class="stage" onclick="startStage('pet1')"><div class="icon">🐕</div><small>PET STAGE 01</small><h2>責任飼主基礎</h2><p>安全互動、晶片、醫療、飼養責任</p><div class="progress"><i id="p1" style="width:0%"></i></div></button>
+<button class="stage" onclick="startStage('pet2')"><div class="icon">🐾</div><small>PET STAGE 02</small><h2>動物福利進階</h2><p>動物福利、外來種、救援與情境判斷</p><div class="progress"><i id="p2" style="width:0%"></i></div></button>
+</div></section>
+<section id="quiz" class="card hide"><div class="qtop"><span id="stageLabel"></span><span id="count"></span></div><div class="progress"><i id="bar"></i></div><div id="q" class="question"></div><div id="opts" class="opts"></div><div id="feedback" class="feedback hide"></div><div class="actions"><button class="btn secondary" onclick="goHome()">回首頁</button><button id="submit" class="btn" onclick="submitAnswer()" disabled>確定送出</button><button id="next" class="btn hide" onclick="nextQ()">下一題</button></div></section>
+<section id="result" class="card result hide"><div>🎉 完成練習</div><div id="score" class="score">0</div><p id="resultText"></p><button class="btn" onclick="goHome()">回毛孩守護者首頁</button></section>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js?v=710"></script>
+<script>
+let BANK={pet1:[],pet2:[]},stageId='',quiz=[],qi=0,good=0,selected=null,answered=false;
+const KEY='petGuardianProgressV1';let prog=JSON.parse(localStorage.getItem(KEY)||'{}');
+function saveProg(){localStorage.setItem(KEY,JSON.stringify(prog));renderProgress()}
+function renderProgress(){p1.style.width=((prog.pet1||0)*10)+'%';p2.style.width=((prog.pet2||0)*10)+'%'}
+function fallback(){
+ const rows=FALLBACK; rows.forEach(r=>BANK[r.stageId].push({level:r.level,q:r.q,opts:[r.A,r.B,r.C,r.D],ans:'ABCD'.indexOf(r.ans),exp:r.exp}));
+}
+async function loadBank(){
+ try{
+  if(window.ECO_FIREBASE_CONFIG&&typeof firebase!=='undefined'){
+   if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
+   const db=firebase.firestore();
+   const snap=await db.collection('customQuestions').where('active','==',true).limit(500).get();
+   snap.docs.forEach(d=>{const x=d.data();if(BANK[x.stageId]&&Number(x.unit)===1)BANK[x.stageId].push({level:x.level||'',q:x.q,opts:x.opts||[],ans:Number(x.ans)||0,exp:x.exp||''})});
+  }
+ }catch(e){console.warn(e)}
+ if(!BANK.pet1.length&&!BANK.pet2.length) fallback();
+ cloudState.textContent=`✅ 題庫已載入：基礎 ${BANK.pet1.length} 題・進階 ${BANK.pet2.length} 題`;
+ renderProgress();
+}
+function startStage(id){
+ stageId=id;quiz=(BANK[id]||[]).slice(0,10);if(!quiz.length){alert('這個毛孩題庫目前沒有題目。請先在管理後臺匯入 pet1 / pet2 題目。');return}
+ qi=0;good=0;home.classList.add('hide');result.classList.add('hide');quizEl().classList.remove('hide');renderQ();
+}
+function quizEl(){return document.getElementById('quiz')}
+function renderQ(){answered=false;selected=null;const x=quiz[qi];stageLabel.textContent=stageId==='pet1'?'🐕 責任飼主基礎':'🐾 動物福利進階';count.textContent=`${qi+1}/${quiz.length}`;bar.style.width=(qi/quiz.length*100)+'%';q.textContent=x.q;opts.innerHTML='';x.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<b>${String.fromCharCode(65+i)}.</b> ${o}`;b.onclick=()=>select(i);opts.appendChild(b)});feedback.className='feedback hide';submit.disabled=true;submit.classList.remove('hide');next.classList.add('hide')}
+function select(i){if(answered)return;selected=i;[...opts.children].forEach((b,j)=>b.classList.toggle('sel',i===j));submit.disabled=false}
+function submitAnswer(){if(selected===null)return;answered=true;const x=quiz[qi],ok=selected===x.ans;if(ok)good++;[...opts.children].forEach((b,j)=>{b.disabled=true;b.classList.remove('sel');if(j===x.ans)b.classList.add('good');if(j===selected&&!ok)b.classList.add('bad')});feedback.className='feedback '+(ok?'good':'bad');feedback.innerHTML=`<b>${ok?'✅ 答對了！':'❌ 這題再記一下'}</b><br>正確答案：${String.fromCharCode(65+x.ans)}<br><b>解析：</b>${x.exp}`;submit.classList.add('hide');next.classList.remove('hide')}
+function nextQ(){qi++;if(qi>=quiz.length)finish();else renderQ()}
+function finish(){prog[stageId]=Math.max(prog[stageId]||0,good);saveProg();quizEl().classList.add('hide');result.classList.remove('hide');score.textContent=`${good*10}分`;resultText.textContent=`答對 ${good}/${quiz.length} 題。`}
+function goHome(){quizEl().classList.add('hide');result.classList.add('hide');home.classList.remove('hide');renderProgress()}
+const FALLBACK = [{"stageId": "pet1", "unit": 1, "level": "初級", "q": "小明在路邊看到一隻看起來受傷的流浪狗，最適合怎麼做？", "A": "立刻用手抱牠", "B": "找大人協助並聯絡相關單位", "C": "拿石頭把牠趕走", "D": "帶回家但不告訴家人", "ans": "B", "exp": "受傷或受驚的動物可能因害怕而攻擊，應保持安全距離，請大人協助並聯絡適當單位。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "飼養寵物前，最重要的是先考慮什麼？", "A": "寵物可不可愛", "B": "朋友有沒有養", "C": "自己是否有時間、能力與經濟條件照顧牠", "D": "寵物的名字好不好聽", "ans": "C", "exp": "飼養動物是長期責任，應先評估時間、空間、照顧能力及相關費用。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "幫犬貓植入晶片，主要作用是什麼？", "A": "讓牠跑得更快", "B": "幫助確認身分及飼主資訊", "C": "防止牠生病", "D": "讓牠變聰明", "ans": "B", "exp": "晶片可作為寵物身分識別，搭配寵物登記資料有助於走失後聯絡飼主。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "家裡的狗一直吠叫，最好的處理方式是？", "A": "直接打牠", "B": "找出牠吠叫的原因，再適當訓練", "C": "不給牠吃飯", "D": "把牠丟到外面", "ans": "B", "exp": "狗吠可能與害怕、焦慮、警戒或需求有關，應先了解原因並用適當方式訓練。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "發現有人長期把狗綁在烈日下，又沒有水喝，應該怎麼做？", "A": "當作沒看到", "B": "拍影片嘲笑", "C": "告訴可信任的大人並尋求動保單位協助", "D": "偷偷把狗帶走", "ans": "C", "exp": "動物應有基本飲水、遮蔽與適當照顧；兒童應先確保自身安全，再請大人或相關單位協助。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "養寵物後，下面哪一項是飼主應盡的責任？", "A": "想餵就餵", "B": "提供適當飲食、醫療與生活環境", "C": "生病時放著自己好", "D": "不想養就放到街上", "ans": "B", "exp": "負責任的飼主應提供動物適當的食物、飲水、醫療、活動空間與照護。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "狗狗看到陌生人時一直低吼，這可能代表什麼？", "A": "一定很開心", "B": "可能感到害怕或警戒", "C": "想睡覺", "D": "想唱歌", "ans": "B", "exp": "低吼常是警戒或不舒服的訊號，應尊重牠的距離，不要強行接近。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "遇到陌生的狗時，哪個做法比較安全？", "A": "突然從背後抱牠", "B": "大聲尖叫", "C": "保持距離，不隨便摸牠", "D": "拉牠的尾巴", "ans": "C", "exp": "不熟悉的動物可能因受驚而產生防衛行為，保持適當距離較安全。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "如果寵物生病了，最適合怎麼做？", "A": "上網隨便找藥給牠吃", "B": "帶去給獸醫師檢查", "C": "不理牠", "D": "餵很多零食", "ans": "B", "exp": "動物生病應由獸醫師判斷病因與治療方式，不應自行使用人用藥物。"}, {"stageId": "pet1", "unit": 1, "level": "初級", "q": "飼主不想再養寵物時，最不適當的做法是？", "A": "尋找合適的新飼主", "B": "向合法管道求助", "C": "隨意棄養", "D": "諮詢動保相關單位", "ans": "C", "exp": "棄養會讓動物面臨疾病、受傷與生存風險，也可能造成社會與生態問題。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "下列哪一種行為比較符合動物福利？", "A": "讓動物長期沒有乾淨飲水", "B": "提供適當空間、飲食與照顧", "C": "為了好玩故意嚇牠", "D": "把動物關在過小空間", "ans": "B", "exp": "動物福利重視適當的飲食、環境、健康照護與避免不必要的痛苦。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "小華想養兔子，他最應該先做什麼？", "A": "先買回家再研究", "B": "先了解兔子的飲食、空間及照顧需求", "C": "只看照片", "D": "問同學喜不喜歡", "ans": "B", "exp": "不同動物的生活需求不同，飼養前應充分了解物種特性及長期照護需求。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "為什麼不能隨意放生外來種寵物？", "A": "因為牠們會找不到名字", "B": "可能破壞原本的生態環境", "C": "因為牠們不會走路", "D": "因為牠們一定會回家", "ans": "B", "exp": "外來種進入自然環境後可能競爭食物、捕食原生物種或傳播疾病，影響生態平衡。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "發現路邊有幼貓，第一件事應該怎麼做？", "A": "立刻抱走", "B": "先觀察周遭是否有母貓並確保安全", "C": "大聲驅趕", "D": "餵巧克力", "ans": "B", "exp": "幼貓身邊可能有母貓照顧，若環境安全可先觀察，不宜急著帶走。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "狗狗一直追自己的尾巴，主人應該怎麼做？", "A": "一直鼓勵牠追", "B": "觀察是否過度頻繁，必要時諮詢獸醫", "C": "把牠尾巴綁起來", "D": "完全不用理", "ans": "B", "exp": "偶爾追尾巴可能是玩耍，但若頻繁或伴隨啃咬，可能與皮膚、疼痛或行為問題有關。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "下列哪種食物通常不適合隨意餵狗？", "A": "巧克力", "B": "合適的犬用飼料", "C": "乾淨飲水", "D": "獸醫建議的食物", "ans": "A", "exp": "巧克力含有對犬隻有害的成分，不應隨意餵食。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "想摸陌生人的狗之前，最適合怎麼做？", "A": "直接摸", "B": "先詢問飼主是否可以", "C": "從背後偷摸", "D": "拉牠耳朵", "ans": "B", "exp": "先詢問飼主並觀察狗的反應，可降低驚嚇或被咬傷的風險。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "寵物走失時，晶片及寵物登記有什麼幫助？", "A": "增加寵物體力", "B": "幫助聯絡飼主", "C": "讓寵物認路", "D": "讓寵物不會害怕", "ans": "B", "exp": "掃描晶片並查詢登記資料後，可協助辨識寵物並聯絡飼主。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "看到有人故意傷害動物，最適合怎麼辦？", "A": "加入一起玩", "B": "拍照後只傳給朋友", "C": "優先確保自身安全，告訴大人並尋求相關單位協助", "D": "完全不理會", "ans": "C", "exp": "遇到疑似虐待動物情況，應先確保自身安全，再由可信任的大人或相關單位協助處理。"}, {"stageId": "pet2", "unit": 1, "level": "進階", "q": "下列哪一個人最像「負責任的飼主」？", "A": "小美每天照顧寵物，生病時帶牠看醫生", "B": "小強覺得麻煩就不餵寵物", "C": "小華出去玩就把寵物丟在路邊", "D": "小芳故意逗弄寵物讓牠害怕", "ans": "A", "exp": "負責任的飼主會持續提供飲食、健康照護與安全的生活環境。"}];
+loadBank();
+</script></body></html>
