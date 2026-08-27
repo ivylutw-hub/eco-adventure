@@ -16,7 +16,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
-<link href="pet-system-addon.css?v=3" rel="stylesheet"/>
+<link href="pet-system-addon.css?v=31" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -524,7 +524,7 @@
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
 <script src="pet-admin-addon.js?v=1"></script>
-<script src="pet-system-addon.js?v=3"></script>
+<script src="pet-system-addon.js?v=31"></script>
 
 <script>
 /* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
@@ -641,6 +641,49 @@
       clearInterval(timer);
     }
   },200);
+})();
+</script>
+
+
+<script>
+/* V3.1 毛孩守護者入口強制攔截：
+   舊 pet-admin-addon.js 仍可能把按鈕導向 pet-guardian.html，
+   所以在 capture 階段先攔截，直接開啟主程式內的毛孩守護者。 */
+(function(){
+  function isPetGuardianControl(el){
+    if(!el) return false;
+    const target=el.closest ? el.closest('button,a') : null;
+    if(!target) return false;
+    return target.id==='petGuardianNavBtn' ||
+      String(target.textContent||'').includes('毛孩守護者');
+  }
+
+  document.addEventListener('click',function(event){
+    if(!isPetGuardianControl(event.target)) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    if(typeof window.showPetGuardian==='function'){
+      window.showPetGuardian();
+      return false;
+    }
+
+    // 新模組仍在初始化時，稍等片刻再開啟，不跳到其他頁。
+    let tries=0;
+    const timer=setInterval(function(){
+      tries++;
+      if(typeof window.showPetGuardian==='function'){
+        clearInterval(timer);
+        window.showPetGuardian();
+      }else if(tries>=30){
+        clearInterval(timer);
+        console.error('毛孩守護者模組尚未載入');
+      }
+    },100);
+    return false;
+  },true);
 })();
 </script>
 

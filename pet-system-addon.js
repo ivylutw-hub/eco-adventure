@@ -219,7 +219,7 @@
       <div class="pet-home-title">
         <div><small>RESPONSIBLE PET CARE</small><h2>🐾 毛孩之家</h2>
         <p>把「毛孩守護者」學到的責任飼養觀念，實際用在每天的照顧任務。</p></div>
-        <a href="pet-guardian.html">📚 去毛孩守護者答題</a>
+        <a href="#" onclick="showPetGuardian();return false;">📚 去毛孩守護者答題</a>
       </div>
       <div id="petHomePanel"></div>`;
     const savePanel=base.querySelector('.save-panel');
