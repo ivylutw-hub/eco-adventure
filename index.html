@@ -16,7 +16,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
-<link href="pet-system-addon.css?v=43" rel="stylesheet"/>
+<link href="pet-system-addon.css?v=50" rel="stylesheet"/>
 <style id="petGuardianCriticalStyles">
 
 /* ===== 毛孩守護者 V4.2：完整冒險卡片版面 ===== */
@@ -232,26 +232,6 @@
 }
 
 </style>
-
-<style id="petGuardianMobileTapFix">
-#petGuardianNavBtn{
-  position:relative;
-  z-index:3;
-  pointer-events:auto !important;
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:rgba(0,0,0,.08);
-  cursor:pointer;
-}
-#petGuardianNavBtn *{
-  pointer-events:none;
-}
-@media (hover:none) and (pointer:coarse){
-  #petGuardianNavBtn{
-    min-height:46px;
-  }
-}
-</style>
-
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -364,7 +344,7 @@
 </header>
 <nav class="tabs">
 <button onclick="showMap()">📚 環保知識</button>
-<button id="petGuardianNavBtn" type="button" aria-label="毛孩守護者">🐾 毛孩守護者</button>
+<button id="petGuardianNavBtn" type="button" onclick="showPetGuardian()">🐾 毛孩守護者</button>
 <button onclick="showBase()">🌍 守護基地</button>
 <button onclick="showHall()">🏆 榮耀殿堂</button>
 <button onclick="showLeaderboard()">🥇 每週排行</button>
@@ -413,6 +393,73 @@
 <div class="reward"><div>🪙<b id="coinReward">+1</b><small>單元獎勵</small></div><div>✨<b id="expReward">+0 EXP</b><small>守護經驗</small></div><div>⭐<b id="stars">★★★</b><small>本次表現</small></div></div>
 <button class="primary" id="backToStageBtn" onclick="backToStage(event)" type="button">回到關卡</button>
 </main>
+
+<main class="hide pet-guardian-main" id="petGuardianPage">
+  <section id="petAdventureHome">
+    <div class="title pet-adventure-title">
+      <div>
+        <small>PET GUARDIAN KNOWLEDGE</small>
+        <h2>🐾 毛孩守護者</h2>
+        <p>和「環保知識」使用同一套答題、存檔、金幣、EXP 與怪獸弱點圖鑑機制。</p>
+      </div>
+      <div class="pet-main-summary">
+        <b id="petMainCoins">🪙 0</b>
+        <span id="petMainDone">0 / 6 單元</span>
+      </div>
+    </div>
+
+    <section class="pet-stage-block">
+      <div class="pet-stage-heading">
+        <h3>🐕 責任飼主基礎</h3>
+        <small>PET STAGE 01</small>
+      </div>
+      <div class="pet-map-units" id="petMainUnits1"></div>
+    </section>
+
+    <section class="pet-stage-block">
+      <div class="pet-stage-heading">
+        <h3>🐾 動物福利進階</h3>
+        <small>PET STAGE 02</small>
+      </div>
+      <div class="pet-map-units" id="petMainUnits2"></div>
+    </section>
+  </section>
+
+  <section class="hide pet-adventure-quiz" id="petAdventureQuiz">
+    <div class="quizTop">
+      <button class="back" type="button" onclick="showPetGuardian()">← 暫停冒險</button>
+      <b id="petQuizCount"></b>
+    </div>
+    <div class="bar"><i id="petQuizBar"></i></div>
+    <div class="enemy">
+      <span id="petEnemyIcon">🐾</span>
+      <div><small>毛孩守護任務</small><b id="petEnemyName">責任飼養迷霧</b></div>
+    </div>
+    <span class="tag" id="petLevelTag"></span>
+    <h2 id="petQuestion"></h2>
+    <div class="options" id="petOptions"></div>
+    <div class="answer-actions" id="petAnswerActions">
+      <button class="primary" disabled id="petSubmitBtn" type="button">確定送出</button>
+    </div>
+    <div class="feedback hide" id="petFeedback"></div>
+    <button class="primary hide" id="petNextBtn" type="button">下一題 →</button>
+  </section>
+
+  <section class="hide center pet-adventure-result" id="petAdventureResult">
+    <div class="resultIcon">🐾</div>
+    <small>UNIT COMPLETE</small>
+    <h2 id="petResultTitle"></h2>
+    <div class="score"><b id="petResultScore">0</b><span>分</span></div>
+    <p id="petResultMsg"></p>
+    <div class="reward">
+      <div>🪙<b id="petCoinReward">未獲得</b><small>滿分獎勵</small></div>
+      <div>✨<b id="petExpReward">0 EXP</b><small>守護經驗</small></div>
+      <div>⭐<b id="petStars">★</b><small>本次表現</small></div>
+    </div>
+    <button class="primary" type="button" onclick="showPetGuardian()">回毛孩守護者</button>
+  </section>
+</main>
+
 <main class="hide" id="checkinPage">
 <div class="title"><div><small>MONTHLY CHECK-IN</small><h2>📅 每日簽到月曆</h2><p>每天登入留下守護足跡；月底全勤可獲得限定守護者。</p></div></div>
 <section class="checkin-card">
@@ -759,7 +806,7 @@
 <script src="config.js?v=10207"></script>
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
-<script src="pet-system-addon.js?v=43"></script>
+<script src="pet-system-addon.js?v=50"></script>
 
 <script>
 /* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
@@ -912,30 +959,7 @@
   function answered(s,u){petEnsure();return Math.max(0,Math.min(10,Number(st.unitProgress[s][u-1]||0)))}
   function savedScore(s,u){petEnsure();return Math.max(0,Number(st.unitScores[s][u-1]||0))}
 
-  function makePage(){
-    if(document.getElementById('petGuardianPage'))return;
-    const game=document.getElementById('game');if(!game)return;
-    const main=document.createElement('main');main.id='petGuardianPage';main.className='hide pet-guardian-main';
-    main.innerHTML=`
-      <section id="petAdventureHome">
-        <div class="title pet-adventure-title"><div><small>PET GUARDIAN KNOWLEDGE</small><h2>🐾 毛孩守護者</h2><p>和「環保知識」使用同一套答題、存檔、金幣、EXP 與怪獸弱點圖鑑機制。</p></div><div class="pet-main-summary"><b id="petMainCoins">🪙 0</b><span id="petMainDone">0 / 6 單元</span></div></div>
-        <section class="pet-stage-block"><div class="pet-stage-heading"><h3>🐕 責任飼主基礎</h3><small>PET STAGE 01</small></div><div class="pet-map-units" id="petMainUnits1"></div></section>
-        <section class="pet-stage-block"><div class="pet-stage-heading"><h3>🐾 動物福利進階</h3><small>PET STAGE 02</small></div><div class="pet-map-units" id="petMainUnits2"></div></section>
-      </section>
-      <section id="petAdventureQuiz" class="hide pet-adventure-quiz">
-        <div class="quizTop"><button class="back" type="button" onclick="showPetGuardian()">← 暫停冒險</button><b id="petQuizCount"></b></div>
-        <div class="bar"><i id="petQuizBar"></i></div>
-        <div class="enemy"><span id="petEnemyIcon">🐾</span><div><small>毛孩守護任務</small><b id="petEnemyName">責任飼養迷霧</b></div></div>
-        <span class="tag" id="petLevelTag"></span><h2 id="petQuestion"></h2><div class="options" id="petOptions"></div>
-        <div class="answer-actions" id="petAnswerActions"><button class="primary" disabled id="petSubmitBtn" type="button">確定送出</button></div>
-        <div class="feedback hide" id="petFeedback"></div><button class="primary hide" id="petNextBtn" type="button">下一題 →</button>
-      </section>
-      <section id="petAdventureResult" class="hide center pet-adventure-result"><div class="resultIcon">🐾</div><small>UNIT COMPLETE</small><h2 id="petResultTitle"></h2><div class="score"><b id="petResultScore">0</b><span>分</span></div><p id="petResultMsg"></p><div class="reward"><div>🪙<b id="petCoinReward">未獲得</b><small>滿分獎勵</small></div><div>✨<b id="petExpReward">0 EXP</b><small>守護經驗</small></div><div>⭐<b id="petStars">★</b><small>本次表現</small></div></div><button class="primary" type="button" onclick="showPetGuardian()">回毛孩守護者</button></section>`;
-    const stats=game.querySelector('.stats.global-status-row');
-    if(stats)game.insertBefore(main,stats);else game.appendChild(main);
-    document.getElementById('petSubmitBtn').onclick=petSubmit;
-    document.getElementById('petNextBtn').onclick=petNext;
-  }
+  function makePage(){ return document.getElementById('petGuardianPage'); }
   function hideAllMain(){document.querySelectorAll('#game main[id]').forEach(x=>x.classList.add('hide'))}
   function showPart(id){['petAdventureHome','petAdventureQuiz','petAdventureResult'].forEach(x=>document.getElementById(x)?.classList.add('hide'));document.getElementById(id)?.classList.remove('hide');document.body.classList.toggle('quiz-mode',id==='petAdventureQuiz');requestAnimationFrame(()=>scrollTo({top:0,left:0,behavior:'auto'}))}
 
@@ -952,22 +976,33 @@
     document.getElementById('petMainDone').textContent=`${st.completed.pet1.length+st.completed.pet2.length} / 6 單元`;
   }
   window.showPetGuardian=function(){
-    makePage();
-    hideAllMain();
-    const pg=document.getElementById('petGuardianPage');
-    if(pg)pg.classList.remove('hide');
-    showPart('petAdventureHome');
-    if(ready()){
-      petEnsure();renderPetHome();if(typeof header==='function')header();
+    if(typeof window.page==='function'){
+      window.page('petGuardianPage');
     }else{
-      const u1=document.getElementById('petMainUnits1'),u2=document.getElementById('petMainUnits2');
+      document.querySelectorAll('#game main[id]').forEach(x=>x.classList.add('hide'));
+      document.getElementById('petGuardianPage')?.classList.remove('hide');
+    }
+
+    showPart('petAdventureHome');
+
+    if(ready()){
+      petEnsure();
+      renderPetHome();
+      if(typeof header==='function')header();
+    }else{
+      const u1=document.getElementById('petMainUnits1');
+      const u2=document.getElementById('petMainUnits2');
       if(u1)u1.innerHTML='<div class="pet-loading-card">☁️ 正在載入毛孩題庫與玩家進度…</div>';
       if(u2)u2.innerHTML='';
+
       let tries=0;
       const timer=setInterval(()=>{
         tries++;
         if(ready()){
-          clearInterval(timer);petEnsure();renderPetHome();if(typeof header==='function')header();
+          clearInterval(timer);
+          petEnsure();
+          renderPetHome();
+          if(typeof header==='function')header();
         }else if(tries>=50){
           clearInterval(timer);
           if(u1)u1.innerHTML='<div class="pet-loading-card error">⚠️ 毛孩系統載入失敗，請重新整理頁面後再試。</div>';
@@ -1000,40 +1035,9 @@
 
   function patchNavigation(){
     const b=document.getElementById('petGuardianNavBtn');
-    if(b && !b.dataset.petBound){
-      b.dataset.petBound='1';
-      b.removeAttribute('onclick');
+    if(b){
+      b.onclick=showPetGuardian;
       b.removeAttribute('data-href');
-
-      let lastPointerAt=0;
-      const openPet=function(ev){
-        if(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-        }
-        if(typeof window.showPetGuardian==='function'){
-          window.showPetGuardian();
-        }
-      };
-
-      b.addEventListener('pointerup',function(ev){
-        lastPointerAt=Date.now();
-        openPet(ev);
-      },{passive:false});
-
-      b.addEventListener('click',function(ev){
-        if(Date.now()-lastPointerAt<600){
-          ev.preventDefault();
-          ev.stopPropagation();
-          return;
-        }
-        openPet(ev);
-      },false);
-
-      /* Older iOS fallback */
-      if(!window.PointerEvent){
-        b.addEventListener('touchend',openPet,{passive:false});
-      }
     }
     document.querySelectorAll('.tabs button').forEach(btn=>{
       if(btn.textContent.includes('冒險地圖')){
@@ -1041,10 +1045,31 @@
       }
     });
   }
-  function patchPage(){if(typeof window.page!=='function'||window.page.__petPageAware)return;const old=window.page;const wrapped=function(id){document.getElementById('petGuardianPage')?.classList.add('hide');return old.apply(this,arguments)};wrapped.__petPageAware=true;window.page=wrapped}
+  function patchPage(){
+    if(typeof window.page!=='function'||window.page.__petNativeAware)return;
+    const old=window.page;
+
+    const wrapped=function(id){
+      const pet=document.getElementById('petGuardianPage');
+
+      if(id==='petGuardianPage'){
+        document.querySelectorAll('#game main[id]').forEach(el=>el.classList.add('hide'));
+        pet?.classList.remove('hide');
+        document.body.classList.remove('quiz-mode');
+        requestAnimationFrame(()=>scrollTo({top:0,left:0,behavior:'auto'}));
+        return;
+      }
+
+      pet?.classList.add('hide');
+      return old.apply(this,arguments);
+    };
+
+    wrapped.__petNativeAware=true;
+    window.page=wrapped;
+  }
   function patchWeaknessLabels(){if(typeof window.renderWeaknessBook!=='function'||window.renderWeaknessBook.__petV3)return;const old=window.renderWeaknessBook;const w=function(){const r=old.apply(this,arguments);setTimeout(()=>{const sel=document.getElementById('weaknessUnitSearch');if(sel)[...sel.options].forEach(o=>{if(o.value.startsWith('pet1|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet1/i,'毛孩守護者｜責任飼主基礎');if(o.value.startsWith('pet2|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet2/i,'毛孩守護者｜動物福利進階')})},0);return r};w.__petV3=true;window.renderWeaknessBook=w}
   function install(){
-    makePage();patchNavigation();patchPage();
+    patchNavigation();patchPage();
     if(ready()){petEnsure();patchWeaknessLabels();}
     else setTimeout(()=>{if(ready()){petEnsure();patchWeaknessLabels();}},500);
     try{if(sessionStorage.getItem('openIntegratedPetGuardian')==='1'){sessionStorage.removeItem('openIntegratedPetGuardian');showPetGuardian()}}catch(e){}
