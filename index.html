@@ -2,6 +2,7 @@
 
 <html lang="zh-Hant">
 <head>
+<!-- PET_NATIVE_QUIZ_FIX_V51 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <meta content="#0b6b50" name="theme-color"/>
@@ -16,7 +17,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
-<link href="pet-system-addon.css?v=50" rel="stylesheet"/>
+<link href="pet-system-addon.css?v=51" rel="stylesheet"/>
 <style id="petGuardianCriticalStyles">
 
 /* ===== 毛孩守護者 V4.2：完整冒險卡片版面 ===== */
@@ -439,10 +440,10 @@
     <h2 id="petQuestion"></h2>
     <div class="options" id="petOptions"></div>
     <div class="answer-actions" id="petAnswerActions">
-      <button class="primary" disabled id="petSubmitBtn" type="button">確定送出</button>
+      <button class="primary" disabled id="petSubmitBtn" type="button" onclick="petSubmit()">確定送出</button>
     </div>
     <div class="feedback hide" id="petFeedback"></div>
-    <button class="primary hide" id="petNextBtn" type="button">下一題 →</button>
+    <button class="primary hide" id="petNextBtn" type="button" onclick="petNext()">下一題 →</button>
   </section>
 
   <section class="hide center pet-adventure-result" id="petAdventureResult">
@@ -806,7 +807,7 @@
 <script src="config.js?v=10207"></script>
 <script src="game.js?v=10207"></script>
 <script src="firebase.js?v=10207"></script>
-<script src="pet-system-addon.js?v=50"></script>
+<script src="pet-system-addon.js?v=51"></script>
 
 <script>
 /* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
@@ -1031,6 +1032,8 @@
     document.getElementById('petAnswerActions').classList.add('hide');document.getElementById('petNextBtn').classList.remove('hide');
   }
   function petNext(){if(!panswered)return;pqi++;if(pqi>=pquiz.length)petFinish();else petRenderQ()}
+  window.petSubmit=petSubmit;
+  window.petNext=petNext;
   function petFinish(){petEnsure();const idx=pu-1,d=st.completed[ps],first=!d.includes(idx),perfect=pscore===pquiz.length,ck=`${ps}|${idx}`,firstPerfect=perfect&&!st.coinAwarded[ck],reward=PET_STAGE[ps].reward;if(first)d.push(idx);if(firstPerfect){st.coins=(Number(st.coins)||0)+reward;st.coinAwarded[ck]=true}st.unitProgress[ps][idx]=10;st.unitScores[ps][idx]=pscore;const pct=Math.round(pscore/pquiz.length*100);save();if(typeof header==='function')header();document.getElementById('petResultTitle').textContent=`${PET_STAGE[ps].name}・單元 ${pu} 完成！`;document.getElementById('petResultScore').textContent=pct;document.getElementById('petResultMsg').textContent=perfect?(firstPerfect?`本次 10 題全部答對，獲得 ${reward} 枚守護金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。'):(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');document.getElementById('petCoinReward').textContent=firstPerfect?`+${reward}`:(perfect?'已領取':'未獲得');const earned=pquiz.filter(q=>st.mainExpAwarded[`${ps}|${q.id}`]).length*10;document.getElementById('petExpReward').textContent=`本單元累計 ${earned} EXP`;document.getElementById('petStars').textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';preplay=false;showPart('petAdventureResult')}
 
   function patchNavigation(){
