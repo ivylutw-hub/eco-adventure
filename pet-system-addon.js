@@ -394,3 +394,31 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
 })();
+
+
+/* 毛孩錯題在怪獸弱點圖鑑中的標籤與怪獸資訊 */
+(function installPetWeaknessPolish(){
+  function patch(){
+    if(typeof window.renderWeaknessBook==='function'&&!window.renderWeaknessBook.__petLabelPatched){
+      const old=window.renderWeaknessBook;
+      const wrapped=function(){
+        const r=old.apply(this,arguments);
+        setTimeout(()=>{
+          const sel=document.getElementById('weaknessUnitSearch');
+          if(sel){
+            [...sel.options].forEach(o=>{
+              if(o.value.startsWith('pet1|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet1/i,'毛孩守護者｜責任飼主基礎');
+              if(o.value.startsWith('pet2|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet2/i,'毛孩守護者｜動物福利進階');
+            });
+          }
+        },0);
+        return r;
+      };
+      wrapped.__petLabelPatched=true;
+      window.renderWeaknessBook=wrapped;
+    }else if(typeof window.renderWeaknessBook!=='function'){
+      setTimeout(patch,120);
+    }
+  }
+  patch();
+})();
