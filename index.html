@@ -1083,4 +1083,100 @@
 
 </script>
 
+
+<script id="petAdminImportPatchV52">
+/* 毛孩題庫後台匯入補丁：只擴充可接受 stageId，不碰前台導覽 */
+(function(){
+  const install=function(){
+    if(typeof window.adminImportQuestions!=='function' ||
+       typeof parseCsvLine!=='function' ||
+       typeof normalizeImportedQuestion!=='function'){
+      setTimeout(install,150);
+      return;
+    }
+    if(window.adminImportQuestions.__petImportPatched)return;
+
+    window.adminImportQuestions=async function(event){
+      const file=event.target.files?.[0];
+      if(!file)return;
+
+      try{
+        const text=await file.text();
+        let rows;
+
+        if(file.name.toLowerCase().endsWith('.json')){
+          const parsed=JSON.parse(text);
+          rows=Array.isArray(parsed)?parsed:parsed.questions;
+        }else{
+          const lines=text.replace(/^\ufeff/,'').split(/\r?\n/).filter(Boolean);
+          if(!lines.length)throw new Error('空白檔案');
+          const heads=parseCsvLine(lines.shift()).map(x=>x.trim());
+          rows=lines.map(line=>Object.fromEntries(
+            parseCsvLine(line).map((v,i)=>[heads[i],v])
+          ));
+        }
+
+        const allowed=['s1','s2','s3','s4','pet1','pet2'];
+
+        rows=(rows||[])
+          .map(normalizeImportedQuestion)
+          .filter(q =>
+            q.q &&
+            q.opts.length===4 &&
+            allowed.includes(q.stageId) &&
+            Number.isInteger(q.unit) &&
+            q.unit>=1 &&
+            q.unit<=3
+          );
+
+        if(!rows.length)throw new Error('沒有可匯入題目');
+
+        if(!confirm(`確認匯入 ${rows.length} 題？`))return;
+
+        for(let i=0;i<rows.length;i+=400){
+          const batch=cloudDb.batch();
+          rows.slice(i,i+400).forEach(q=>{
+            const ref=cloudDb.collection('customQuestions').doc();
+            batch.set(ref,{
+              ...q,
+              createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+            });
+          });
+          await batch.commit();
+        }
+
+        toast(`已匯入 ${rows.length} 題`);
+        await loadAdminQuestions();
+        await loadCustomQuestions();
+
+      }catch(err){
+        console.error('毛孩題庫匯入失敗',err);
+        toast(`匯入失敗：${err.message||'請檢查檔案格式'}`);
+      }finally{
+        event.target.value='';
+      }
+    };
+
+    window.adminImportQuestions.__petImportPatched=true;
+
+    /* 後台手動新增題目時，也把毛孩 Stage 顯示出來 */
+    const sel=document.getElementById('adminQuestionStage');
+    if(sel && !sel.querySelector('option[value="pet1"]')){
+      sel.insertAdjacentHTML(
+        'beforeend',
+        '<option value="pet1">毛孩守護者－責任飼主基礎</option>'+
+        '<option value="pet2">毛孩守護者－動物福利進階</option>'
+      );
+    }
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',install,{once:true});
+  }else{
+    install();
+  }
+})();
+</script>
+
 </body></html>
