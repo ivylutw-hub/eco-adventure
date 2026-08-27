@@ -609,4 +609,37 @@
 })();
 </script>
 
+
+<script>
+/* 從「毛孩守護者」返回時，回到登入後的環保冒險王首頁，而不是停在登入頁。 */
+(function(){
+  let shouldReturnHome=false;
+  try{
+    shouldReturnHome=sessionStorage.getItem('ecoReturnToHome')==='1';
+    if(shouldReturnHome) sessionStorage.removeItem('ecoReturnToHome');
+  }catch(e){}
+  if(!shouldReturnHome)return;
+
+  let attempts=0;
+  const timer=setInterval(()=>{
+    attempts++;
+    const game=document.getElementById('game');
+    const login=document.getElementById('loginPage');
+
+    // 主程式已恢復登入狀態時，直接回冒險地圖。
+    if(game && !game.classList.contains('hide') && typeof window.showMap==='function'){
+      clearInterval(timer);
+      window.showMap();
+      window.scrollTo({top:0,left:0,behavior:'auto'});
+      return;
+    }
+
+    // 最多等待約 8 秒讓 Firebase 恢復登入。
+    if(attempts>=40){
+      clearInterval(timer);
+    }
+  },200);
+})();
+</script>
+
 </body></html>
