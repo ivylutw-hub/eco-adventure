@@ -17,6 +17,458 @@
 <link href="manifest.webmanifest" rel="manifest"/>
 <link href="style.css?v=10207" rel="stylesheet"/>
 <link href="pet-system-addon.css?v=41" rel="stylesheet"/>
+<style>
+/* ===== 毛孩守護者：完整卡片版面修正 ===== */
+
+#petGuardianPage{
+  width:min(1480px,calc(100% - 36px));
+  margin:16px auto 30px;
+  padding:20px;
+  border:1px solid #e2d6b9;
+  border-radius:24px;
+  background:linear-gradient(145deg,#fffdf7,#fbfff9);
+  box-shadow:0 12px 30px rgba(47,83,70,.08);
+}
+
+/* 毛孩守護者標題 */
+#petGuardianPage .pet-adventure-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:3px 2px 18px;
+  border-bottom:1px solid #e8dfca;
+}
+
+#petGuardianPage .pet-adventure-title small{
+  color:#59766c;
+  font-size:12px;
+  letter-spacing:.08em;
+  font-weight:900;
+}
+
+#petGuardianPage .pet-adventure-title h2{
+  margin:5px 0;
+  color:#075e49;
+  font-size:clamp(27px,3vw,38px);
+}
+
+#petGuardianPage .pet-adventure-title p{
+  margin:0;
+  color:#687a73;
+  line-height:1.55;
+}
+
+/* 金幣、完成單元 */
+.pet-main-summary{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.pet-main-summary > *{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:9px 14px;
+  border:1px solid #d4e4dc;
+  border-radius:14px;
+  background:#fff;
+  color:#386557;
+  font-weight:900;
+  box-shadow:0 4px 12px rgba(48,83,70,.05);
+}
+
+/* Stage 區域 */
+.pet-stage-block{
+  margin-top:24px;
+}
+
+.pet-stage-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:11px;
+  padding:0 2px;
+}
+
+.pet-stage-heading h3{
+  margin:0;
+  font-size:22px;
+  color:#274a3f;
+}
+
+.pet-stage-heading small{
+  font-size:12px;
+  color:#7b8e87;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+
+/* 三個單元排列 */
+.pet-map-units{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+
+/* 單元卡片 */
+.pet-map-unit{
+  appearance:none;
+  -webkit-appearance:none;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-height:230px;
+  padding:18px;
+
+  border:1.5px solid #d5e5de;
+  border-radius:20px;
+  background:#fff;
+
+  color:#29473d;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+
+  box-shadow:0 7px 19px rgba(45,83,70,.07);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.pet-map-unit:hover{
+  transform:translateY(-3px);
+  border-color:#84cdb0;
+  box-shadow:0 13px 26px rgba(45,83,70,.13);
+}
+
+.pet-map-unit:active{
+  transform:scale(.99);
+}
+
+/* 已完成 */
+.pet-map-unit.done{
+  background:linear-gradient(145deg,#effff6,#e8faef);
+  border-color:#62c98d;
+}
+
+/* 進行中 */
+.pet-map-unit.partial{
+  background:linear-gradient(145deg,#fffdf5,#fff5dc);
+  border-color:#efbd55;
+}
+
+/* 卡片圖示 */
+.pet-unit-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  margin-bottom:8px;
+  background:#eef8f3;
+  font-size:29px;
+}
+
+.pet-map-unit.done .pet-unit-icon{
+  background:#d9f7e5;
+}
+
+.pet-map-unit.partial .pet-unit-icon{
+  background:#fff0bf;
+}
+
+.pet-map-unit > small{
+  color:#668178;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.07em;
+}
+
+.pet-map-unit h4{
+  margin:5px 0 8px;
+  font-size:20px;
+  color:#183f33;
+}
+
+.pet-map-unit p{
+  margin:0 0 14px;
+  min-height:48px;
+  color:#62776e;
+  line-height:1.55;
+  font-size:14px;
+}
+
+/* 題數與狀態 */
+.pet-unit-meta,
+.pet-unit-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:#6b7d75;
+}
+
+.pet-unit-meta{
+  margin-top:auto;
+}
+
+/* 進度條 */
+.pet-unit-progress{
+  height:10px;
+  margin-top:9px;
+  border-radius:999px;
+  background:#e6efeb;
+  overflow:hidden;
+}
+
+.pet-unit-progress i{
+  display:block;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#57c98f,#16805f);
+  transition:width .3s ease;
+}
+
+/* 金幣獎勵 */
+.pet-unit-bottom{
+  margin-top:9px;
+  padding-top:8px;
+  border-top:1px solid rgba(116,145,132,.15);
+}
+
+.pet-unit-bottom b{
+  color:#a66d20;
+  font-size:12px;
+}
+
+/* 毛孩答題頁 */
+#petAdventureQuiz{
+  padding-top:4px;
+}
+
+#petAdventureQuiz .quizTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+#petAdventureQuiz .quizTop .back{
+  border:0;
+  background:transparent;
+  color:#0a6a50;
+  font-weight:900;
+  cursor:pointer;
+  padding:8px 0;
+}
+
+#petAdventureQuiz .bar{
+  height:12px;
+  margin:10px 0 16px;
+  border-radius:999px;
+  background:#e6efeb;
+  overflow:hidden;
+}
+
+#petAdventureQuiz .bar i{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#58c994,#147b5e);
+  border-radius:inherit;
+}
+
+#petAdventureQuiz .enemy{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 15px;
+  margin:10px 0 14px;
+  border:1px solid #d7e5df;
+  border-radius:18px;
+  background:#f7fcf9;
+}
+
+#petAdventureQuiz .enemy > span{
+  font-size:42px;
+}
+
+#petAdventureQuiz .enemy small,
+#petAdventureQuiz .enemy b{
+  display:block;
+}
+
+#petAdventureQuiz .tag{
+  display:inline-flex;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#eef8f3;
+  color:#397160;
+  font-size:12px;
+  font-weight:900;
+}
+
+#petAdventureQuiz #petQuestion{
+  font-size:clamp(22px,3vw,31px);
+  line-height:1.55;
+  margin:16px 0;
+}
+
+#petAdventureQuiz .options{
+  display:grid;
+  gap:10px;
+}
+
+#petAdventureQuiz .option{
+  appearance:none;
+  border:1.5px solid #d6e3dd;
+  border-radius:15px;
+  background:#fff;
+  padding:14px 15px;
+  text-align:left;
+  color:#29473d;
+  font:inherit;
+  cursor:pointer;
+  min-height:54px;
+}
+
+#petAdventureQuiz .option:hover{
+  border-color:#83c9ae;
+  background:#fbfffd;
+}
+
+#petAdventureQuiz .option.selected{
+  border-color:#e2aa3c;
+  background:#fff8e7;
+}
+
+#petAdventureQuiz .option.good{
+  border-color:#48ad79;
+  background:#effff5;
+}
+
+#petAdventureQuiz .option.bad{
+  border-color:#d97878;
+  background:#fff1f1;
+}
+
+#petAdventureQuiz .answer-actions{
+  margin-top:14px;
+}
+
+#petAdventureQuiz .feedback{
+  margin-top:14px;
+  padding:14px;
+  border-radius:15px;
+  line-height:1.65;
+}
+
+#petAdventureQuiz .feedback.good{
+  background:#effff5;
+  border:1px solid #b7e6ca;
+}
+
+#petAdventureQuiz .feedback.bad{
+  background:#fff3f1;
+  border:1px solid #ecc4bd;
+}
+
+#petAdventureQuiz #petNextBtn{
+  margin-top:14px;
+}
+
+/* 完成畫面 */
+#petAdventureResult{
+  text-align:center;
+  padding:28px 10px;
+}
+
+#petAdventureResult .resultIcon{
+  font-size:58px;
+}
+
+#petAdventureResult h2{
+  font-size:27px;
+  margin:7px 0;
+}
+
+#petAdventureResult .score{
+  display:flex;
+  justify-content:center;
+  align-items:end;
+  gap:5px;
+  margin:12px 0;
+}
+
+#petAdventureResult .score b{
+  font-size:66px;
+  color:#0b7658;
+}
+
+#petAdventureResult .score span{
+  font-size:20px;
+  margin-bottom:12px;
+}
+
+#petAdventureResult .reward{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:18px auto;
+  max-width:700px;
+}
+
+#petAdventureResult .reward > div{
+  padding:14px;
+  border:1px solid #d8e5df;
+  border-radius:16px;
+  background:#fff;
+}
+
+/* 手機 */
+@media(max-width:800px){
+
+  #petGuardianPage{
+    width:calc(100% - 16px);
+    margin:8px auto 20px;
+    padding:14px;
+    border-radius:20px;
+  }
+
+  #petGuardianPage .pet-adventure-title{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .pet-main-summary{
+    justify-content:flex-start;
+  }
+
+  .pet-map-units{
+    grid-template-columns:1fr;
+  }
+
+  .pet-map-unit{
+    min-height:0;
+  }
+
+  .pet-map-unit p{
+    min-height:0;
+  }
+
+  #petAdventureResult .reward{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
 <body>
 <div class="login-page" id="loginPage">
