@@ -219,7 +219,7 @@
       <div class="pet-home-title">
         <div><small>RESPONSIBLE PET CARE</small><h2>🐾 毛孩之家</h2>
         <p>把「毛孩守護者」學到的責任飼養觀念，實際用在每天的照顧任務。</p></div>
-        <a href="#" onclick="showPetGuardian();return false;">📚 去毛孩守護者答題</a>
+        <a href="pet-guardian.html">📚 去毛孩守護者答題</a>
       </div>
       <div id="petHomePanel"></div>`;
     const savePanel=base.querySelector('.save-panel');
@@ -393,4 +393,127 @@
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else install();
+})();
+
+
+/* =========================================================
+   守護基地 V4.1：我的基地 / 毛孩之家 雙頁籤
+   ========================================================= */
+(function installBasePetTabs(){
+  function findBase(){
+    return document.getElementById('basePage');
+  }
+
+  function ensureTabs(){
+    const base=findBase();
+    if(!base || document.getElementById('baseModeTabs')) return;
+
+    const petSection=document.getElementById('petHomeSection');
+    if(!petSection) return;
+
+    // 將原本基地內容包進「我的基地」容器。
+    const myBase=document.createElement('div');
+    myBase.id='myBaseContent';
+    myBase.className='base-mode-content';
+
+    const tabs=document.createElement('div');
+    tabs.id='baseModeTabs';
+    tabs.className='base-mode-tabs';
+    tabs.innerHTML=`
+      <button type="button" class="active" data-mode="my" onclick="switchBaseMode('my')">🌍 我的基地</button>
+      <button type="button" data-mode="pet" onclick="switchBaseMode('pet')">🐾 毛孩之家</button>`;
+
+    // 只搬移 petHomeSection 之前的基地內容，頁面導覽列本身不動。
+    const children=[...base.children];
+    const petIndex=children.indexOf(petSection);
+    const toMove=children.slice(0,petIndex).filter(el=>el.id!=='baseModeTabs');
+
+    base.insertBefore(tabs, base.firstChild);
+    base.insertBefore(myBase, petSection);
+    toMove.forEach(el=>{
+      if(el!==tabs && el!==myBase) myBase.appendChild(el);
+    });
+
+    petSection.classList.add('base-mode-content','hide');
+    petSection.dataset.baseMode='pet';
+    myBase.dataset.baseMode='my';
+
+    switchBaseMode('my');
+  }
+
+  window.switchBaseMode=function(mode){
+    const my=document.getElementById('myBaseContent');
+    const pet=document.getElementById('petHomeSection');
+    const tabs=document.getElementById('baseModeTabs');
+    if(!my || !pet || !tabs) return;
+
+    const showPet=mode==='pet';
+    my.classList.toggle('hide',showPet);
+    pet.classList.toggle('hide',!showPet);
+
+    tabs.querySelectorAll('button').forEach(btn=>{
+      btn.classList.toggle('active',btn.dataset.mode===mode);
+      btn.setAttribute('aria-pressed',String(btn.dataset.mode===mode));
+    });
+
+    try{ sessionStorage.setItem('baseMode',mode); }catch(e){}
+
+    if(showPet && typeof renderPetHome==='function'){
+      renderPetHome();
+    }
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  };
+
+  function restoreMode(){
+    let mode='my';
+    try{
+      const saved=sessionStorage.getItem('baseMode');
+      if(saved==='pet') mode='pet';
+    }catch(e){}
+    switchBaseMode(mode);
+  }
+
+  function patchShowBase(){
+    if(typeof window.showBase!=='function'){
+      setTimeout(patchShowBase,100);
+      return;
+    }
+    if(window.showBase.__baseTabsPatched) return;
+    const old=window.showBase;
+    const wrapped=function(){
+      const r=old.apply(this,arguments);
+      setTimeout(()=>{
+        ensureTabs();
+        restoreMode();
+      },0);
+      return r;
+    };
+    wrapped.__baseTabsPatched=true;
+    window.showBase=wrapped;
+  }
+
+  function install(){
+    ensureTabs();
+    patchShowBase();
+
+    // 從其他地方直接前往毛孩之家時，自動切換頁籤。
+    const oldGo=window.goPetBase;
+    window.goPetBase=function(){
+      if(document.getElementById('basePage') && typeof window.showBase==='function'){
+        window.showBase();
+        setTimeout(()=>{
+          ensureTabs();
+          switchBaseMode('pet');
+        },60);
+        return;
+      }
+      if(typeof oldGo==='function') return oldGo.apply(this,arguments);
+    };
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(install,250),{once:true});
+  }else{
+    setTimeout(install,250);
+  }
 })();
