@@ -18,6 +18,90 @@
 <link href="style.css?v=10207" rel="stylesheet"/>
 <link href="pet-system-addon.css?v=41" rel="stylesheet"/>
 <style>
+  <style>
+/* 守護基地頁籤 */
+.base-mode-tabs{
+  display:flex;
+  gap:8px;
+  width:min(1480px,calc(100% - 28px));
+  margin:16px auto 14px;
+  padding:6px;
+
+  border:1px solid #d5e5dd;
+  border-radius:18px;
+
+  background:#eef6f2;
+
+  box-shadow:0 6px 18px rgba(43,82,67,.06);
+}
+
+.base-mode-tabs button{
+  flex:1;
+  min-height:50px;
+
+  border:1px solid transparent;
+  border-radius:13px;
+
+  background:#f7faf8;
+  color:#74867f;
+
+  font-weight:900;
+  font-size:16px;
+
+  cursor:pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    box-shadow .2s ease,
+    transform .15s ease;
+}
+
+/* 未選取 */
+.base-mode-tabs button:hover{
+  background:#ffffff;
+  color:#39715f;
+}
+
+/* ★ 目前選取的頁籤 */
+.base-mode-tabs button.active{
+  background:linear-gradient(135deg,#178263,#0b6b50);
+  color:#ffffff;
+
+  border-color:#0b6b50;
+
+  box-shadow:
+    0 5px 14px rgba(11,107,80,.25);
+
+  transform:translateY(-1px);
+}
+
+/* 我的基地選取 */
+.base-mode-tabs button[data-mode="my"].active{
+  background:linear-gradient(135deg,#248f70,#0b6b50);
+}
+
+/* 毛孩之家選取 */
+.base-mode-tabs button[data-mode="pet"].active{
+  background:linear-gradient(135deg,#d99137,#b96d25);
+  border-color:#b96d25;
+
+  box-shadow:
+    0 5px 14px rgba(185,109,37,.25);
+}
+
+@media(max-width:700px){
+  .base-mode-tabs{
+    width:calc(100% - 20px);
+    margin:10px auto 12px;
+  }
+
+  .base-mode-tabs button{
+    min-height:46px;
+    font-size:15px;
+  }
+}
+</style>
 /* ===== 毛孩守護者：完整卡片版面修正 ===== */
 
 #petGuardianPage{
