@@ -139,6 +139,7 @@ button{font:inherit}
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js?v=710"></script>
 <script>
@@ -193,34 +194,69 @@ function renderUnits(){
 
 async function loadBank(){
   try{
-    if(window.ECO_FIREBASE_CONFIG&&typeof firebase!=='undefined'){
-      if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
-      const db=firebase.firestore();
-      const snap=await db.collection('customQuestions').where('active','==',true).limit(500).get();
-      snap.docs.forEach(d=>{
-        const x=d.data()||{};
-        const sid=String(x.stageId||'');
-        const u=Number(x.unit)||1;
-        if(BANK[sid] && BANK[sid][u]){
-          BANK[sid][u].push({
-            id:d.id,
-            level:x.level||'',
-            q:x.q||'',
-            opts:Array.isArray(x.opts)?x.opts.slice(0,4):[],
-            ans:Number(x.ans)||0,
-            exp:x.exp||''
-          });
-        }
-      });
+    if(!window.ECO_FIREBASE_CONFIG || typeof firebase==='undefined'){
+      throw new Error('Firebase 尚未載入');
     }
-  }catch(e){
-    console.warn('毛孩題庫讀取失敗',e);
-  }
 
-  const total1=[1,2,3].reduce((n,u)=>n+BANK.pet1[u].length,0);
-  const total2=[1,2,3].reduce((n,u)=>n+BANK.pet2[u].length,0);
-  cloudState.textContent=`✅ 題庫已載入：責任飼主 ${total1} 題・動物福利 ${total2} 題`;
-  renderUnits();
+    if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
+
+    // 先恢復主網站已登入的 Google 帳號，再讀取受規則保護的題庫。
+    const auth=firebase.auth();
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+
+    const user=await new Promise(resolve=>{
+      let settled=false;
+      const timer=setTimeout(()=>{
+        if(!settled){settled=true;resolve(auth.currentUser||null);}
+      },3000);
+      const unsub=auth.onAuthStateChanged(u=>{
+        if(settled)return;
+        settled=true;
+        clearTimeout(timer);
+        unsub();
+        resolve(u||null);
+      });
+    });
+
+    if(!user){
+      cloudState.textContent='🔐 尚未登入。請先回「環保冒險王」使用 Google 登入，再進入毛孩守護者。';
+      renderUnits();
+      return;
+    }
+
+    cloudState.textContent='☁️ 已登入，正在讀取毛孩題庫…';
+    const db=firebase.firestore();
+    const snap=await db.collection('customQuestions')
+      .where('active','==',true)
+      .limit(500)
+      .get();
+
+    snap.docs.forEach(d=>{
+      const x=d.data()||{};
+      const sid=String(x.stageId||'').toLowerCase();
+      const u=Number(x.unit)||1;
+      if(BANK[sid] && BANK[sid][u]){
+        BANK[sid][u].push({
+          id:d.id,
+          level:x.level||'',
+          q:x.q||'',
+          opts:Array.isArray(x.opts)?x.opts.slice(0,4):[],
+          ans:Number(x.ans)||0,
+          exp:x.exp||''
+        });
+      }
+    });
+
+    const total1=[1,2,3].reduce((n,u)=>n+BANK.pet1[u].length,0);
+    const total2=[1,2,3].reduce((n,u)=>n+BANK.pet2[u].length,0);
+    cloudState.textContent=`✅ 題庫已載入：責任飼主 ${total1} 題・動物福利 ${total2} 題`;
+    renderUnits();
+
+  }catch(e){
+    console.error('毛孩題庫讀取失敗',e);
+    cloudState.textContent='⚠️ 毛孩題庫讀取失敗。請先回主網站確認 Google 已登入，再重新進入。';
+    renderUnits();
+  }
 }
 
 function startUnit(stage,unit){
