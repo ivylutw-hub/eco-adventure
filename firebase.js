@@ -159,7 +159,7 @@ async function loadActiveActivities(){
 async function loadCustomQuestions(){
  if(!cloudDb)return;
  try{
-  const snap=await cloudDb.collection('customQuestions').where('active','==',true).limit(300).get();
+  const snap=await cloudDb.collection('customQuestions').where('active','==',true).limit(2000).get();
   window.ECO_CUSTOM_QUESTIONS=snap.docs.map(d=>({docId:d.id,...d.data()}));
  }catch(err){console.error('載入後臺題目失敗',err);window.ECO_CUSTOM_QUESTIONS=[];}
 }
@@ -518,7 +518,7 @@ async function adminDeletePlayer(uid){
 }
 async function saveAdminQuestion(event){
  event.preventDefault();
- const stageId=adminQuestionStage.value,unit=Number(adminQuestionUnit.value),max=unitCount(stageId);
+ const stageId=adminQuestionStage.value,unit=Number(adminQuestionUnit.value),max=['pet1','pet2'].includes(stageId)?3:unitCount(stageId);;
  if(unit<1||unit>max){toast(`此 Stage 的單元範圍是 1～${max}`);return;}
  const data={stageId,unit,level:adminQuestionLevel.value,q:adminQuestionText.value.trim(),opts:[adminOption0.value.trim(),adminOption1.value.trim(),adminOption2.value.trim(),adminOption3.value.trim()],ans:Number(adminQuestionAnswer.value),exp:adminQuestionExplanation.value.trim(),active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
  try{await cloudDb.collection('customQuestions').add(data);event.target.reset();adminQuestionUnit.value=1;toast('題目已新增');await loadAdminQuestions();await loadCustomQuestions();}
@@ -532,7 +532,7 @@ async function adminImportQuestions(event){
   const text=await file.text();let rows;
   if(file.name.toLowerCase().endsWith('.json')){const parsed=JSON.parse(text);rows=Array.isArray(parsed)?parsed:parsed.questions;}
   else{const lines=text.replace(/^\ufeff/,'').split(/\r?\n/).filter(Boolean),heads=parseCsvLine(lines.shift()).map(x=>x.trim());rows=lines.map(line=>Object.fromEntries(parseCsvLine(line).map((v,i)=>[heads[i],v])));}
-  rows=(rows||[]).map(normalizeImportedQuestion).filter(q=>q.q&&q.opts.length===4&&['s1','s2','s3','s4'].includes(q.stageId));
+  rows=(rows||[]).map(normalizeImportedQuestion).filter(q=>q.q&&q.opts.length===4&&['s1','s2','s3','s4','pet1','pet2'].includes(q.stageId));
   if(!rows.length)throw new Error('沒有可匯入題目');if(!confirm(`確認匯入 ${rows.length} 題？`))return;
   for(let i=0;i<rows.length;i+=400){const batch=cloudDb.batch();rows.slice(i,i+400).forEach(q=>{const ref=cloudDb.collection('customQuestions').doc();batch.set(ref,{...q,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});});await batch.commit();}
   toast(`已匯入 ${rows.length} 題`);await loadAdminQuestions();await loadCustomQuestions();
@@ -544,8 +544,139 @@ function downloadQuestionImportTemplate(){
 }
 async function loadAdminQuestions(render=true){
  if(!cloudDb||!cloudIsAdmin)return;
- const snap=await cloudDb.collection('customQuestions').limit(300).get();adminQuestionsCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+ const snap=await cloudDb.collection('customQuestions').limit(2000).get();
+
+ adminQuestionsCache=snap.docs.map(d=>({
+  id:d.id,
+  ...d.data()
+ }));
+
  if(render)renderAdminQuestions();
+
+ renderPetQuestionStats();
+}
+
+function renderPetQuestionStats(){
+
+ const box=document.getElementById('petQuestionStats');
+
+ if(!box)return;
+
+ const keys=[
+  ['pet1',1,'責任飼主基礎・單元 1'],
+  ['pet1',2,'責任飼主基礎・單元 2'],
+  ['pet1',3,'責任飼主基礎・單元 3'],
+  ['pet2',1,'動物福利進階・單元 1'],
+  ['pet2',2,'動物福利進階・單元 2'],
+  ['pet2',3,'動物福利進階・單元 3']
+ ];
+
+ const counts=keys.map(([stageId,unit,label])=>{
+
+  const all=adminQuestionsCache.filter(q=>
+   q.stageId===stageId &&
+   Number(q.unit)===unit
+  );
+
+  const active=all.filter(q=>q.active!==false);
+
+  return {
+   stageId,
+   unit,
+   label,
+   total:all.length,
+   active:active.length
+  };
+
+ });
+
+ const total=counts.reduce((n,x)=>n+x.total,0);
+
+ const activeTotal=counts.reduce(
+  (n,x)=>n+x.active,
+  0
+ );
+
+ const complete=counts.every(x=>x.total===50);
+
+ const duplicate=counts.some(x=>x.total>50);
+
+ const status=complete
+  ? '<span class="pet-stat-status ok">✅ 300 題完整</span>'
+  : duplicate
+   ? '<span class="pet-stat-status warn">⚠️ 題數超過 300，請檢查是否重複匯入</span>'
+   : '<span class="pet-stat-status bad">⚠️ 尚未滿 300 題</span>';
+
+ box.innerHTML=`
+
+  <div class="pet-stat-head">
+
+   <div>
+    <b>🐾 毛孩守護者題庫統計</b>
+    <small>直接統計 Firestore 後台目前讀到的題目</small>
+   </div>
+
+   ${status}
+
+  </div>
+
+  <div class="pet-stat-total">
+
+   <strong>${total}</strong>
+   <span>總題數</span>
+
+   <strong>${activeTotal}</strong>
+   <span>啟用中</span>
+
+  </div>
+
+  <div class="pet-stat-grid">
+
+   ${counts.map(x=>{
+
+    const cls=
+     x.total===50
+      ? 'ok'
+      : x.total>50
+       ? 'warn'
+       : 'bad';
+
+    return `
+
+     <div class="pet-stat-unit ${cls}">
+
+      <small>
+       ${x.stageId.toUpperCase()} · UNIT ${x.unit}
+      </small>
+
+      <b>${x.label}</b>
+
+      <strong>
+       ${x.total} 題
+      </strong>
+
+      <span>
+
+       ${x.active} 題啟用
+
+       ${
+        x.total===50
+         ? ' · 完整'
+         : x.total>50
+          ? ' · 可能重複'
+          : ' · 缺 '+(50-x.total)+' 題'
+       }
+
+      </span>
+
+     </div>
+    `;
+
+   }).join('')}
+
+  </div>
+ `;
 }
 function renderAdminQuestions(){
  const list=document.getElementById('adminQuestionList');if(!list)return;
