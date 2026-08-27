@@ -2,6 +2,7 @@
 
 <html lang="zh-Hant">
 <head>
+<!-- PET_RANDOM_10_V53 -->
 <!-- PET_NATIVE_QUIZ_FIX_V51 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
@@ -949,13 +950,53 @@
     if(!st.wrongNotes||typeof st.wrongNotes!=='object')st.wrongNotes={};
     if(!st.coinAwarded||typeof st.coinAwarded!=='object')st.coinAwarded={};
     if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
+    if(!st.petQuizSets||typeof st.petQuizSets!=='object')st.petQuizSets={};
     ['pet1','pet2'].forEach(s=>{
       if(!Array.isArray(st.completed[s]))st.completed[s]=[];
       if(!st.unitProgress[s]||typeof st.unitProgress[s]!=='object')st.unitProgress[s]={};
       if(!st.unitScores[s]||typeof st.unitScores[s]!=='object')st.unitScores[s]={};
     });
   }
-  function qs(s,u){return (window.customQuestionsForUnit(s,u)||[]).slice().sort((a,b)=>String(a.id).localeCompare(String(b.id))).slice(0,10)}
+  function petPool(s,u){
+    return (window.customQuestionsForUnit(s,u)||[])
+      .slice()
+      .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+  }
+
+  function petShuffle(list){
+    const a=list.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function petQuizSetKey(s,u){return `${s}|${u}`}
+
+  function petQuizForStart(s,u,replay){
+    petEnsure();
+    const pool=petPool(s,u);
+    if(pool.length<=10)return pool;
+
+    const key=petQuizSetKey(s,u);
+
+    /* 未完成的單元回來時，沿用原本那批題目 */
+    if(!replay && Array.isArray(st.petQuizSets[key]) && st.petQuizSets[key].length){
+      const byId=new Map(pool.map(q=>[String(q.id),q]));
+      const saved=st.petQuizSets[key].map(id=>byId.get(String(id))).filter(Boolean);
+      if(saved.length===Math.min(10,pool.length))return saved;
+    }
+
+    /* 完成後重玩，或第一次進入：重新隨機抽10題 */
+    const picked=petShuffle(pool).slice(0,10);
+    if(!replay){
+      st.petQuizSets[key]=picked.map(q=>String(q.id));
+      save();
+    }
+    return picked;
+  }
+
   function done(s,u){petEnsure();return st.completed[s].includes(u-1)}
   function answered(s,u){petEnsure();return Math.max(0,Math.min(10,Number(st.unitProgress[s][u-1]||0)))}
   function savedScore(s,u){petEnsure();return Math.max(0,Number(st.unitScores[s][u-1]||0))}
@@ -965,9 +1006,9 @@
   function showPart(id){['petAdventureHome','petAdventureQuiz','petAdventureResult'].forEach(x=>document.getElementById(x)?.classList.add('hide'));document.getElementById(id)?.classList.remove('hide');document.body.classList.toggle('quiz-mode',id==='petAdventureQuiz');requestAnimationFrame(()=>scrollTo({top:0,left:0,behavior:'auto'}))}
 
   function petUnitCard(s,u){
-    const q=qs(s,u),n=q.length,a=answered(s,u),sc=savedScore(s,u),d=done(s,u),perfect=Boolean(st.coinAwarded[`${s}|${u-1}`]);
+    const pool=petPool(s,u),poolN=pool.length,n=Math.min(10,poolN),a=answered(s,u),sc=savedScore(s,u),d=done(s,u),perfect=Boolean(st.coinAwarded[`${s}|${u-1}`]);
     const pct=n?Math.round(Math.min(a,n)/n*100):0;
-    return `<button class="pet-map-unit ${d?'done':a?'partial':''}" onclick="startPetUnit('${s}',${u})"><div class="pet-unit-icon">${d?'✅':PET_STAGE[s].icon}</div><small>UNIT ${u}</small><h4>單元 ${u}</h4><p>${PET_STAGE[s].desc[u-1]}</p><div class="pet-unit-meta"><span>${n} 題</span><span>${d?(perfect?'滿分完成':'已完成'):a?`進行中：${a}/${n}`:'尚未開始'}</span></div><div class="pet-unit-progress"><i style="width:${pct}%"></i></div><div class="pet-unit-bottom"><span>目前 ${sc}/${n||10}</span><b>🪙 滿分 +${PET_STAGE[s].reward}</b></div></button>`;
+    return `<button class="pet-map-unit ${d?'done':a?'partial':''}" onclick="startPetUnit('${s}',${u})"><div class="pet-unit-icon">${d?'✅':PET_STAGE[s].icon}</div><small>UNIT ${u}</small><h4>單元 ${u}</h4><p>${PET_STAGE[s].desc[u-1]}</p><div class="pet-unit-meta"><span>題庫 ${poolN} 題・每次抽 ${n} 題</span><span>${d?(perfect?'滿分完成':'已完成'):a?`進行中：${a}/${n}`:'尚未開始'}</span></div><div class="pet-unit-progress"><i style="width:${pct}%"></i></div><div class="pet-unit-bottom"><span>目前 ${sc}/${n||10}</span><b>🪙 滿分 +${PET_STAGE[s].reward}</b></div></button>`;
   }
   function renderPetHome(){
     if(!ready())return;petEnsure();
@@ -1013,8 +1054,33 @@
   };
 
   window.startPetUnit=function(s,u){
-    if(!ready())return;petEnsure();ps=s;pu=u;pquiz=qs(s,u);if(!pquiz.length){toast('這個毛孩單元目前沒有題目');return}
-    preplay=done(s,u);pqi=preplay?0:Math.min(answered(s,u),pquiz.length-1);pscore=preplay?0:savedScore(s,u);showPart('petAdventureQuiz');petRenderQ();
+    if(!ready())return;
+    petEnsure();
+    ps=s;pu=u;
+    preplay=done(s,u);
+
+    const key=petQuizSetKey(s,u);
+    const hadSavedSet=Array.isArray(st.petQuizSets[key])&&st.petQuizSets[key].length>0;
+    const oldAnswered=answered(s,u);
+
+    pquiz=petQuizForStart(s,u,preplay);
+    if(!pquiz.length){toast('這個毛孩單元目前沒有題目');return}
+
+    /* 舊版本若做到一半卻沒有儲存抽題清單，避免分數套到不同題目 */
+    if(!preplay && oldAnswered>0 && !hadSavedSet){
+      st.unitProgress[s][u-1]=0;
+      st.unitScores[s][u-1]=0;
+      pqi=0;
+      pscore=0;
+      save();
+      toast('題庫已升級為隨機出題，本單元將從新的10題重新開始');
+    }else{
+      pqi=preplay?0:Math.min(answered(s,u),pquiz.length-1);
+      pscore=preplay?0:savedScore(s,u);
+    }
+
+    showPart('petAdventureQuiz');
+    petRenderQ();
   };
   function petMonster(q){const t=`${q.q||''} ${q.exp||''}`;if(/棄養|認養|飼主|責任/.test(t))return['🐕‍🦺','棄養迷霧獸','負責任飼養、認養前評估與終身照護'];if(/晶片|登記|走失/.test(t))return['🏷️','走失迷蹤怪','晶片、寵物登記與正確身分管理'];if(/醫療|獸醫|生病|健康|中暑/.test(t))return['🩺','疏忽病痛獸','觀察健康訊號並及時尋求獸醫協助'];if(/野放|外來種|生態|野生/.test(t))return['🌿','野放失衡怪','不任意野放，尊重原生生態與野生動物'];return['🐾','毛孩迷霧怪','理解動物需求、尊重生命並採取正確照護'];}
   function noteKey(q){return `${ps}|${q.id}`}
@@ -1034,7 +1100,7 @@
   function petNext(){if(!panswered)return;pqi++;if(pqi>=pquiz.length)petFinish();else petRenderQ()}
   window.petSubmit=petSubmit;
   window.petNext=petNext;
-  function petFinish(){petEnsure();const idx=pu-1,d=st.completed[ps],first=!d.includes(idx),perfect=pscore===pquiz.length,ck=`${ps}|${idx}`,firstPerfect=perfect&&!st.coinAwarded[ck],reward=PET_STAGE[ps].reward;if(first)d.push(idx);if(firstPerfect){st.coins=(Number(st.coins)||0)+reward;st.coinAwarded[ck]=true}st.unitProgress[ps][idx]=10;st.unitScores[ps][idx]=pscore;const pct=Math.round(pscore/pquiz.length*100);save();if(typeof header==='function')header();document.getElementById('petResultTitle').textContent=`${PET_STAGE[ps].name}・單元 ${pu} 完成！`;document.getElementById('petResultScore').textContent=pct;document.getElementById('petResultMsg').textContent=perfect?(firstPerfect?`本次 10 題全部答對，獲得 ${reward} 枚守護金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。'):(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');document.getElementById('petCoinReward').textContent=firstPerfect?`+${reward}`:(perfect?'已領取':'未獲得');const earned=pquiz.filter(q=>st.mainExpAwarded[`${ps}|${q.id}`]).length*10;document.getElementById('petExpReward').textContent=`本單元累計 ${earned} EXP`;document.getElementById('petStars').textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';preplay=false;showPart('petAdventureResult')}
+  function petFinish(){petEnsure();const idx=pu-1,d=st.completed[ps],first=!d.includes(idx),perfect=pscore===pquiz.length,ck=`${ps}|${idx}`,firstPerfect=perfect&&!st.coinAwarded[ck],reward=PET_STAGE[ps].reward;if(first)d.push(idx);if(firstPerfect){st.coins=(Number(st.coins)||0)+reward;st.coinAwarded[ck]=true}st.unitProgress[ps][idx]=10;st.unitScores[ps][idx]=pscore;delete st.petQuizSets[petQuizSetKey(ps,pu)];const pct=Math.round(pscore/pquiz.length*100);save();if(typeof header==='function')header();document.getElementById('petResultTitle').textContent=`${PET_STAGE[ps].name}・單元 ${pu} 完成！`;document.getElementById('petResultScore').textContent=pct;document.getElementById('petResultMsg').textContent=perfect?(firstPerfect?`本次 10 題全部答對，獲得 ${reward} 枚守護金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。'):(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');document.getElementById('petCoinReward').textContent=firstPerfect?`+${reward}`:(perfect?'已領取':'未獲得');const earned=pquiz.filter(q=>st.mainExpAwarded[`${ps}|${q.id}`]).length*10;document.getElementById('petExpReward').textContent=`本單元累計 ${earned} EXP`;document.getElementById('petStars').textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';preplay=false;showPart('petAdventureResult')}
 
   function patchNavigation(){
     const b=document.getElementById('petGuardianNavBtn');
