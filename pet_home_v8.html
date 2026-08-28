@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>毛孩之家 V8 互動遊戲</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4e8d6;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif}
+.page{padding:10px}
+
+/* ===== 守護基地上方快速切換 ===== */
+.base-quick-tabs{display:flex;gap:10px;width:min(1480px,calc(100% - 24px));margin:14px auto 12px;padding:7px;border:1px solid #d7e6dd;border-radius:18px;background:#eef6f1;box-shadow:0 6px 16px rgba(42,83,67,.08)}
+.base-quick-tabs button{flex:1;min-height:50px;border:1px solid transparent;border-radius:14px;background:#f8fbf9;color:#6b7c75;font-weight:1000;font-size:16px;cursor:pointer;transition:all .18s ease}
+.base-quick-tabs button:hover{background:#fff;color:#2f6f5d}
+.base-quick-tabs button.active[data-mode="my"]{background:linear-gradient(135deg,#2c9474,#0b6b50);color:#fff;box-shadow:0 6px 15px rgba(11,107,80,.24)}
+.base-quick-tabs button.active[data-mode="pet"]{background:linear-gradient(135deg,#da9735,#bb6f26);color:#fff;box-shadow:0 6px 15px rgba(187,111,38,.22)}
+.base-mode-view.is-hidden,.pet-home-section-v8.is-hidden{display:none!important}
+
+.pet-home-section-v8{width:min(1480px,calc(100% - 24px));margin:0 auto 24px;padding:0;background:transparent}
+.pet-v8-shell{overflow:hidden;border:2px solid #9f6530;border-radius:26px;background:#f8dfb3;box-shadow:0 15px 36px rgba(92,55,24,.16);color:#5b3a1f}
+.pet-v8-top{display:grid;grid-template-columns:auto 1fr auto 200px;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(#c9874a,#b9773a);border-bottom:3px solid #915a2e;color:#fff7e8}
+.pet-v8-title{font-size:26px;font-weight:1000;text-shadow:0 2px #7b4c25}
+.pet-v8-banner{padding:9px 16px;border:2px solid #ad7341;border-radius:18px;background:#fff1c9;color:#78491f;font-weight:900}
+.pet-v8-wallet{padding:8px 14px;border:2px solid #a86f3d;border-radius:18px;background:#fff3d1;color:#69411d;font-size:18px;font-weight:1000;text-align:center}
+.pet-v8-level{display:flex;flex-direction:column;gap:6px;font-weight:1000}
+.pet-v8-level div{height:13px;border-radius:999px;background:#855128;border:1px solid #6f431f;overflow:hidden}
+.pet-v8-level i{display:block;height:100%;background:linear-gradient(90deg,#ffd54c,#ff9f2c)}
+
+.pet-v8-room{position:relative;display:grid;grid-template-columns:250px 1fr 280px;min-height:620px;background:linear-gradient(180deg,#f8e7c5 0 76%,#d8a468 76%)}
+.pet-v8-room:before{content:"";position:absolute;inset:0;opacity:.28;background-image:linear-gradient(90deg,rgba(112,70,36,.08) 1px,transparent 1px),linear-gradient(rgba(112,70,36,.07) 1px,transparent 1px);background-size:72px 72px;pointer-events:none}
+.pet-v8-left,.pet-v8-right{position:relative;z-index:2;padding:18px 14px}
+.pet-v8-left{border-right:1px solid rgba(113,74,39,.16)}
+.pet-v8-right{border-left:1px solid rgba(113,74,39,.16);display:flex;flex-direction:column;gap:12px}
+.pet-v8-love,.pet-v8-missions,.pet-v8-side-box,.pet-v8-tip,.pet-v8-inventory,.pet-v8-shop{border:2px solid #ba834d;border-radius:18px;background:#fff8e8;box-shadow:0 5px 13px rgba(88,55,24,.07)}
+.pet-v8-love{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;padding:12px;margin-bottom:12px}
+.pet-v8-love span{grid-row:1/3;font-size:42px}
+.pet-v8-love small{font-weight:900}
+.pet-v8-love strong{font-size:28px;color:#d25563}
+.pet-v8-missions{overflow:hidden;margin-bottom:12px}
+.pet-v8-missions h3{margin:0;padding:10px 12px;background:#aa6d33;color:#fff8e4;font-size:16px}
+.pet-v8-mission-row{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #ecd7b2;font-size:13px}
+.pet-v8-mission-row .box{width:20px;height:20px;border:2px solid #a87847;border-radius:6px;background:#fff;display:grid;place-items:center;font-size:12px;font-weight:1000}
+.pet-v8-mission-row.done .box{background:#70bd52;border-color:#70bd52;color:#fff}
+.pet-v8-mission-row em{font-style:normal;color:#8a6a4b;font-weight:900}
+.pet-v8-reward{padding:11px 12px;font-weight:1000;color:#9b6020}
+.pet-v8-pet-list{display:flex;gap:8px}
+.pet-v8-switch{flex:1;border:2px solid #d0aa7a;border-radius:14px;background:#fff7e4;padding:6px;cursor:pointer;transition:all .18s ease}
+.pet-v8-switch:hover{transform:translateY(-2px)}
+.pet-v8-switch.active{border-color:#e49b26;background:#ffe7aa;box-shadow:0 0 0 3px rgba(255,191,43,.20)}
+.pet-v8-switch img{width:100%;height:76px;object-fit:contain;display:block}
+.pet-v8-switch small,.pet-v8-switch b,.pet-v8-switch em{display:block;text-align:center}
+.pet-v8-switch small{color:#7b5a38;font-weight:900}
+.pet-v8-switch b{color:#5f3920;margin-top:2px;font-size:14px}
+.pet-v8-switch em{font-style:normal;color:#a16c33;font-size:11px}
+
+.pet-v8-stage{position:relative;overflow:hidden;min-width:0}
+.pet-v8-window{position:absolute;left:30px;top:22px;width:255px;height:145px;border:12px solid #b57b42;border-radius:14px;background:radial-gradient(circle at 40px 30px,#fff6 0 18px,transparent 19px),radial-gradient(circle at 160px 45px,#fff7 0 16px,transparent 17px),linear-gradient(#98d8f7 0 64%,#7ebf57 64%);box-shadow:inset 0 0 0 5px #f7e4c4}
+.pet-v8-wall-items{position:absolute;left:330px;top:38px;display:flex;gap:14px}
+.pet-v8-wall-items span{width:54px;height:54px;border:6px solid #b57b42;border-radius:14px;background:#fff8e6;display:grid;place-items:center;font-size:24px}
+.pet-v8-cat-tree{position:absolute;right:36px;top:74px;width:118px;height:182px;border-radius:46px 46px 16px 16px;background:radial-gradient(circle at 62% 18%,#ead39c 0 12px,transparent 13px),linear-gradient(#bb8249,#a66c39);box-shadow:inset 0 -82px 0 #9b6535}
+.pet-v8-bed{position:absolute;left:56px;bottom:85px;width:172px;height:72px;border-radius:50%;background:#88ad54;box-shadow:inset 0 -20px 0 #789747,0 8px 0 rgba(98,62,33,.12)}
+.pet-v8-bed.upgraded{background:#f4c1d0;box-shadow:inset 0 -20px 0 #dfa5b7,0 8px 0 rgba(98,62,33,.12)}
+.pet-v8-bowl{position:absolute;right:158px;bottom:60px;font-size:48px}
+.pet-v8-water{position:absolute;right:102px;bottom:62px;font-size:42px}
+.pet-v8-toys{position:absolute;left:220px;bottom:58px;font-size:38px}
+.pet-v8-house{position:absolute;right:32px;bottom:108px;font-size:105px}
+
+.pet-v8-speech{position:absolute;right:54px;top:165px;z-index:7;max-width:220px;padding:12px 16px;border:3px solid #ad7744;border-radius:18px;background:#fff9e9;font-weight:1000;opacity:0;transform:translateY(8px);pointer-events:none}
+.pet-v8-speech:after{content:"";position:absolute;left:28px;bottom:-18px;border:9px solid transparent;border-top-color:#ad7744}
+.pet-v8-speech.show{animation:speechPop 2.7s ease}
+.pet-v8-emotion{position:absolute;left:50%;top:126px;transform:translateX(110px);z-index:8;width:54px;height:54px;border-radius:50%;background:#fff6d9;border:3px solid #d59d42;display:grid;place-items:center;font-size:26px;opacity:0}
+.pet-v8-emotion.show{animation:emotionPulse 1.2s ease}
+
+.pet-v8-animal-wrap{--pet-x:0px;position:absolute;left:50%;bottom:52px;transform:translateX(calc(-50% + var(--pet-x)));width:min(42vw,330px);height:365px;border:0;background:transparent;padding:0;cursor:pointer;z-index:5;transition:transform .9s ease}
+.pet-v8-animal{width:100%;height:100%;object-fit:contain;transform-origin:50% 86%;filter:drop-shadow(0 14px 10px rgba(95,59,27,.19))}
+.pet-v8-name-card{position:absolute;left:20px;bottom:20px;z-index:6;min-width:180px;padding:10px 12px;border:2px solid #bc8751;border-radius:15px;background:#fff8e9}
+.pet-v8-name-card .main{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.pet-v8-name-card b{font-size:18px}
+.pet-v8-name-card span{color:#cf5967;font-weight:1000;font-size:12px}
+.pet-v8-name-card small{display:block;margin:4px 0 8px;color:#6f4b2e}
+.pet-v8-name-card button{border:0;border-radius:10px;padding:6px 10px;background:#78b84d;color:#fff;font-weight:1000;cursor:pointer}
+
+.pet-v8-stats{position:absolute;top:206px;left:20px;width:260px;z-index:6;padding:10px;border:2px solid #bc8751;border-radius:16px;background:rgba(255,249,233,.95)}
+.pet-v8-stat{display:grid;grid-template-columns:24px 45px 1fr 28px;align-items:center;gap:6px;margin:7px 0;font-size:11px}
+.pet-v8-track{height:11px;border-radius:999px;background:#e3d2b6;overflow:hidden}
+.pet-v8-track i{display:block;height:100%;border-radius:inherit}
+.pet-v8-track .pink{background:#ef7487}.pet-v8-track .orange{background:#f2af3a}.pet-v8-track .green{background:#6ebe57}.pet-v8-track .blue{background:#63a6ff}
+
+.pet-v8-side-box,.pet-v8-inventory,.pet-v8-shop{padding:12px}
+.pet-v8-side-box b,.pet-v8-inventory>b,.pet-v8-shop>b{display:block;margin-bottom:10px;font-size:16px}
+.pet-v8-side-box .quick{width:100%;margin:7px 0;border:2px solid #b88754;border-radius:16px;padding:11px 10px;font-weight:1000;font-size:15px;cursor:pointer}
+.pet-v8-side-box .quick.pink{background:#f8b2bc}.pet-v8-side-box .quick.gold{background:#f4d87f}.pet-v8-side-box .quick.mint{background:#bde6d6}
+
+.pet-v8-shop-card,.pet-v8-inv-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px;border:1px solid #ead2ab;border-radius:12px;background:#fffdf7;margin:7px 0}
+.pet-v8-shop-card .icon,.pet-v8-inv-card span{font-size:24px}
+.pet-v8-shop-card .info b,.pet-v8-shop-card .info small,.pet-v8-shop-card .info em{display:block}
+.pet-v8-shop-card .info small{font-size:11px;color:#7e674d}
+.pet-v8-shop-card .info em,.pet-v8-inv-card em{font-size:11px;color:#a16c33;font-style:normal;font-weight:900}
+.pet-v8-shop-card button,.pet-v8-inv-card button{border:0;border-radius:10px;padding:7px 10px;background:#79b84c;color:#fff;font-weight:1000;cursor:pointer}
+.pet-v8-shop-card.owned{opacity:.8}
+.pet-v8-shop-card button:disabled,.pet-v8-inv-card button:disabled{background:#bcb7ab;cursor:not-allowed}
+.pet-v8-inv-card{grid-template-columns:auto 1fr auto auto}
+.pet-v8-inv-card.empty{opacity:.75}
+
+.pet-v8-actions{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:14px 20px;background:#f4d397;border-top:3px solid #aa7139}
+.pet-v8-actions button{border:2px solid #b77b3e;border-radius:16px;background:linear-gradient(#fff8df,#f4ca71);padding:10px 6px;cursor:pointer;box-shadow:0 4px 0 #9d6735;transition:.12s ease}
+.pet-v8-actions button:active{transform:translateY(3px);box-shadow:0 1px 0 #9d6735}
+.pet-v8-actions span{display:block;font-size:30px}
+.pet-v8-actions b{font-size:14px;color:#72451f}
+.pet-v8-float{position:absolute;z-index:20;font-size:24px;pointer-events:none;animation:floatPetIcon 1.2s ease-out forwards}
+
+/* 動畫 */
+.pet-v8-animal-wrap.anim-greet .pet-v8-animal{animation:greetForward .85s ease}
+.pet-v8-animal-wrap.anim-happy .pet-v8-animal{animation:happySpin 1.1s ease}
+.pet-v8-animal-wrap.anim-tail .pet-v8-animal{animation:tailWag 1s ease}
+.pet-v8-animal-wrap.anim-play .pet-v8-animal{animation:playHop 1s ease}
+.pet-v8-animal-wrap.anim-feed .pet-v8-animal{animation:feedNibble .85s ease}
+.pet-v8-animal-wrap.anim-clean .pet-v8-animal{animation:cleanShine .9s ease}
+.pet-v8-animal-wrap.anim-sleep .pet-v8-animal{animation:sleepRest 1.5s ease}
+.pet-v8-animal-wrap.anim-walk .pet-v8-animal{animation:walkForward .95s ease}
+.pet-v8-animal-wrap.anim-bounce .pet-v8-animal{animation:bouncePet .6s ease}
+.pet-v8-animal-wrap.anim-sad .pet-v8-animal{animation:sadDroop 1.2s ease}
+.pet-v8-animal-wrap.anim-roam-left .pet-v8-animal{animation:walkForward .95s ease}
+.pet-v8-animal-wrap.anim-roam-right .pet-v8-animal{animation:walkForward .95s ease}
+
+@keyframes greetForward{0%{transform:translateX(0) translateY(0) scale(1)}28%{transform:translateX(-14px) translateY(-18px) scale(1.03) rotate(-3deg)}55%{transform:translateX(12px) translateY(-8px) scale(1.09) rotate(3deg)}82%{transform:translateX(0) translateY(5px) scale(1.04)}100%{transform:translateX(0) translateY(0) scale(1)}}
+@keyframes happySpin{0%{transform:translateY(0) rotate(0) scale(1)}25%{transform:translateY(-12px) rotate(90deg) scale(1.03)}50%{transform:translateY(-20px) rotate(190deg) scale(1.08)}75%{transform:translateY(-10px) rotate(290deg) scale(1.04)}100%{transform:translateY(0) rotate(360deg) scale(1)}}
+@keyframes tailWag{0%,100%{transform:rotate(0) translateY(0)}15%{transform:rotate(-8deg) translateY(-4px)}30%{transform:rotate(8deg) translateY(-1px)}45%{transform:rotate(-8deg) translateY(-4px)}60%{transform:rotate(8deg) translateY(-1px)}75%{transform:rotate(-6deg) translateY(-3px)}}
+@keyframes playHop{0%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(-18px) rotate(-8deg)}45%{transform:translateY(-34px) rotate(8deg)}70%{transform:translateY(-12px) rotate(-4deg)}}
+@keyframes feedNibble{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(8px) scale(.96)}60%{transform:translateY(-4px) scale(1.04)}}
+@keyframes cleanShine{0%,100%{transform:scale(1);filter:drop-shadow(0 14px 10px rgba(95,59,27,.19))}50%{transform:scale(1.03);filter:drop-shadow(0 14px 10px rgba(95,59,27,.19)) brightness(1.18) saturate(.75)}}
+@keyframes sleepRest{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(6px) rotate(2deg)}50%{transform:translateY(12px) rotate(4deg)}75%{transform:translateY(6px) rotate(2deg)}}
+@keyframes walkForward{0%{transform:translateX(0) translateY(0)}20%{transform:translateX(-18px) translateY(-6px)}40%{transform:translateX(14px) translateY(-2px)}60%{transform:translateX(-8px) translateY(-8px)}80%{transform:translateX(8px) translateY(-2px)}100%{transform:translateX(0) translateY(0)}}
+@keyframes bouncePet{0%,100%{transform:translateY(0)}45%{transform:translateY(-18px) scale(1.03)}75%{transform:translateY(-6px)}}
+@keyframes sadDroop{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(12px) rotate(-3deg) scale(.98)}70%{transform:translateY(6px) rotate(2deg) scale(.99)}}
+@keyframes speechPop{0%{opacity:0;transform:translateY(8px)}10%,82%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-8px)}}
+@keyframes emotionPulse{0%{opacity:0;transform:translateX(110px) scale(.4)}30%{opacity:1;transform:translateX(110px) scale(1.12)}80%{opacity:1;transform:translateX(110px) scale(1)}100%{opacity:0;transform:translateX(110px) scale(.7)}}
+@keyframes floatPetIcon{0%{opacity:0;transform:translateY(0) scale(.5)}18%{opacity:1}100%{opacity:0;transform:translateY(-120px) translateX(20px) scale(1.2)}}
+
+@media(max-width:1180px){
+  .pet-v8-top{grid-template-columns:auto 1fr auto}
+  .pet-v8-level{grid-column:1/-1}
+  .pet-v8-room{grid-template-columns:220px 1fr}
+  .pet-v8-right{display:none}
+}
+@media(max-width:760px){
+  .base-quick-tabs{width:calc(100% - 14px);margin:10px auto}
+  .base-quick-tabs button{min-height:46px;font-size:15px}
+  .pet-home-section-v8{width:calc(100% - 12px)}
+  .pet-v8-top{grid-template-columns:1fr auto;gap:10px}
+  .pet-v8-banner{grid-column:1/-1;font-size:13px}
+  .pet-v8-level{grid-column:1/-1}
+  .pet-v8-room{display:block;min-height:790px}
+  .pet-v8-left{border-right:0;padding:10px}
+  .pet-v8-love,.pet-v8-missions{display:none}
+  .pet-v8-pet-list{position:relative;z-index:10}
+  .pet-v8-switch img{height:62px}
+  .pet-v8-stage{min-height:660px}
+  .pet-v8-window{left:14px;top:18px;width:190px;height:112px}
+  .pet-v8-wall-items{left:220px;top:28px;gap:8px}
+  .pet-v8-wall-items span{width:42px;height:42px;font-size:18px;border-width:5px}
+  .pet-v8-cat-tree{right:16px;top:72px;width:86px;height:145px}
+  .pet-v8-stats{top:145px;left:12px;width:220px}
+  .pet-v8-speech{right:10px;top:166px;max-width:170px;font-size:12px}
+  .pet-v8-animal-wrap{width:74vw;height:320px;bottom:95px}
+  .pet-v8-name-card{left:12px;right:12px;bottom:16px;min-width:0}
+  .pet-v8-bed{left:20px;bottom:110px;width:120px;height:52px}
+  .pet-v8-bowl{right:120px;bottom:116px;font-size:38px}
+  .pet-v8-water{right:76px;bottom:116px;font-size:34px}
+  .pet-v8-house{right:16px;bottom:152px;font-size:82px}
+  .pet-v8-toys{left:155px;bottom:120px;font-size:28px}
+  .pet-v8-actions{grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+  <section id="basePage">
+    <div style="width:min(1480px,calc(100% - 24px));margin:0 auto 12px;padding:16px;border:1px solid #ddd;border-radius:16px;background:#fff8ef;color:#6a492c;">
+      <b>示範區：</b>這裡代表「我的基地」原本內容。上方可快速切換到「毛孩之家」。
+    </div>
+  </section>
+</div>
+<script>
+let st=JSON.parse(localStorage.getItem('petHomeV8Demo')||'{"coins":1500}');
+function save(){localStorage.setItem('petHomeV8Demo',JSON.stringify(st));}
+function header(){}
+function toast(msg){console.log(msg);}
+function showBase(){}
+function renderBase(){}
+</script>
+<script>
+/* =========================================================
+   毛孩之家 V8：情緒互動、主動走動、個性反應、商店升級
+   ========================================================= */
+(function(){
+  const STORE='petGuardianV8';
+  const MAX=100;
+  const clamp=(n,min=0,max=MAX)=>Math.max(min,Math.min(max,Number(n)||0));
+  const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const today=()=>new Date().toISOString().slice(0,10);
+  const PETS={
+    dog:{
+      kind:'忠心夥伴', img:'pet-dog.png', defaultName:'旺旺',
+      greet:['汪汪！我一看到你就想跑過來！','今天一起玩吧，我超期待！','你回來了！我好開心！'],
+      lowHunger:['汪…我有點餓了，可以吃點東西嗎？','我想吃飯飯了！'],
+      lowMood:['我想跟你玩一下…','陪我一下，我會更開心喔！'],
+      pet:['被摸摸最幸福了！','我會一直陪著你！'],
+      play:['好好玩！我要轉圈圈！','再玩一次嘛！'],
+      trait:'熱情活潑'
+    },
+    cat:{
+      kind:'撒嬌夥伴', img:'pet-cat.png', defaultName:'咪咪',
+      greet:['喵～你終於來了。','哼，其實我有在等你。','你來陪我，我就勉強靠近你。'],
+      lowHunger:['喵，我的碗怎麼空了？','今天的飯飯呢？'],
+      lowMood:['有點無聊，你要不要陪我玩？','如果你摸摸我，我心情可能會比較好。'],
+      pet:['喵呼～這樣摸剛剛好。','好吧，我承認我喜歡。'],
+      play:['逗貓棒再來一次！','今天就陪你玩一下下。'],
+      trait:'傲嬌可愛'
+    },
+    rabbit:{
+      kind:'療癒夥伴', img:'pet-rabbit.png', defaultName:'小兔',
+      greet:['啾啾～我蹦蹦跳跳來找你！','你來了，我好安心！','今天也一起陪我玩吧！'],
+      lowHunger:['我想吃胡蘿蔔了～','肚子有點餓，可以吃點東西嗎？'],
+      lowMood:['我有點害羞，也有點想你。','陪陪我，我會比較安心。'],
+      pet:['輕輕摸我，我會很開心。','你對我真溫柔！'],
+      play:['蹦蹦跳跳最好玩了！','我今天特別開心！'],
+      trait:'害羞療癒'
+    }
+  };
+  const SHOP_ITEMS={
+    food:{label:'營養飼料', icon:'🥣', price:18, desc:'飽足 +18 / 心情 +2', type:'consumable'},
+    carrot:{label:'點心零食', icon:'🥕', price:12, desc:'飽足 +10 / 心情 +4', type:'consumable'},
+    toy:{label:'玩具球', icon:'🎾', price:120, desc:'玩耍效果提升', type:'upgrade'},
+    bed:{label:'柔軟小床', icon:'🛏️', price:180, desc:'睡覺恢復提升', type:'upgrade'},
+    ribbon:{label:'可愛配件', icon:'🎀', price:90, desc:'親密度成長提升', type:'upgrade'}
+  };
+
+  let roamTimer=null, needTimer=null, currentMode='my';
+
+  function state(){
+    if(typeof st==='undefined') return null;
+    if(!st[STORE] || typeof st[STORE]!=='object'){
+      st[STORE]={
+        petType:'dog',
+        petName:'旺旺',
+        names:{dog:'旺旺',cat:'咪咪',rabbit:'小兔'},
+        hunger:84, clean:85, happy:82, energy:88, trust:34,
+        totalCare:0,
+        owned:{toy:false,bed:false,ribbon:false},
+        inventory:{food:3,carrot:2},
+        game:{date:today(),feeds:0,interactions:0,quizDone:0,rewardClaimed:false,lastNeedAt:0},
+      };
+    }
+    const p=st[STORE];
+    if(!PETS[p.petType]) p.petType='dog';
+    if(!p.names || typeof p.names!=='object') p.names={dog:'旺旺',cat:'咪咪',rabbit:'小兔'};
+    if(!p.owned || typeof p.owned!=='object') p.owned={toy:false,bed:false,ribbon:false};
+    if(!p.inventory || typeof p.inventory!=='object') p.inventory={food:3,carrot:2};
+    ['hunger','clean','happy','energy','trust'].forEach(k=>p[k]=clamp(p[k]??80));
+    p.totalCare=Number(p.totalCare)||0;
+    p.petName=p.names[p.petType] || PETS[p.petType].defaultName;
+    if(!p.game || p.game.date!==today()){
+      p.game={date:today(),feeds:0,interactions:0,quizDone:0,rewardClaimed:false,lastNeedAt:0};
+    }
+    ['feeds','interactions','quizDone','lastNeedAt'].forEach(k=>p.game[k]=Number(p.game[k])||0);
+    p.game.rewardClaimed=Boolean(p.game.rewardClaimed);
+    return p;
+  }
+
+  function saveAll(){ if(typeof save==='function') save(); if(typeof header==='function') header(); }
+  function coins(){ return Number(st.coins)||0; }
+  function addCoins(n){ st.coins=(Number(st.coins)||0)+n; }
+  function useCoins(n){ if(coins()<n) return false; st.coins=coins()-n; return true; }
+  function toastMsg(msg){ if(typeof toast==='function') toast(msg); else console.log(msg); }
+  const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  function level(p){ return Math.max(1,Math.floor((p.totalCare||0)/8)+1); }
+  function xpPct(p){ return Math.min(100,Math.round(((p.totalCare||0)%8)/8*100)); }
+  function relation(p){ return clamp(Math.round(p.trust*0.6 + p.happy*0.4)); }
+  function missionState(p){ return {feed:p.game.feeds>=3, interact:p.game.interactions>=3, quiz:p.game.quizDone>=1}; }
+  function missionCount(p){ return Object.values(missionState(p)).filter(Boolean).length; }
+
+  function maybeReward(p){
+    const m=missionState(p);
+    if(m.feed&&m.interact&&m.quiz&&!p.game.rewardClaimed){
+      p.game.rewardClaimed=true;
+      addCoins(50);
+      toastMsg('🎁 每日任務完成！獲得 50 枚守護金幣');
+    }
+  }
+
+  function dom(){
+    return {
+      panel:document.getElementById('petHomePanel'),
+      stage:document.getElementById('petGameStage'),
+      wrap:document.getElementById('petGameAnimalWrap'),
+      animal:document.getElementById('petGameAnimal'),
+      speech:document.getElementById('petSpeech'),
+      emotion:document.getElementById('petEmotionBadge'),
+      shop:document.getElementById('petShopList'),
+      inv:document.getElementById('petInventoryList')
+    };
+  }
+
+  function setSpeech(text, emoji='💬'){
+    const d=dom();
+    if(d.speech){
+      d.speech.textContent=text;
+      d.speech.classList.remove('show');
+      void d.speech.offsetWidth;
+      d.speech.classList.add('show');
+    }
+    if(d.emotion){
+      d.emotion.textContent=emoji;
+      d.emotion.classList.remove('show');
+      void d.emotion.offsetWidth;
+      d.emotion.classList.add('show');
+    }
+  }
+
+  function floatEffects(kind='heart'){
+    const {stage}=dom(); if(!stage) return;
+    const pool = kind==='clean' ? ['🫧','✨','🫧','✨'] :
+                 kind==='food'  ? ['🥕','🥣','💛','✨'] :
+                 kind==='walk'  ? ['🐾','🍃','💚','✨'] :
+                 kind==='sad'   ? ['💭','🥺','💧','💭'] :
+                                  ['💗','✨','💖','💞'];
+    for(let i=0;i<6;i++){
+      const el=document.createElement('span');
+      el.className='pet-v8-float';
+      el.textContent=pool[i%pool.length];
+      el.style.left=(44+Math.random()*18)+'%';
+      el.style.top=(40+Math.random()*18)+'%';
+      el.style.animationDelay=(i*0.05)+'s';
+      stage.appendChild(el);
+      setTimeout(()=>el.remove(),1300);
+    }
+  }
+
+  function animatePet(name){
+    const {wrap}=dom(); if(!wrap) return;
+    wrap.classList.remove('anim-greet','anim-happy','anim-tail','anim-play','anim-feed','anim-clean','anim-sleep','anim-walk','anim-bounce','anim-sad','anim-roam-left','anim-roam-right');
+    void wrap.offsetWidth;
+    wrap.classList.add(name);
+  }
+
+  function applyPetPosition(pos=0){
+    const {wrap}=dom();
+    if(!wrap) return;
+    wrap.style.setProperty('--pet-x', pos+'px');
+  }
+
+  function petNeedCheck(force=false){
+    const p=state(); if(!p) return;
+    const now=Date.now();
+    if(!force && now - p.game.lastNeedAt < 12000) return;
+    if(currentMode!=='pet') return;
+
+    const meta=PETS[p.petType];
+    if(p.hunger<=35){
+      p.game.lastNeedAt=now;
+      setSpeech(rand(meta.lowHunger), '🥺');
+      animatePet('anim-sad');
+      floatEffects('sad');
+    }else if(p.happy<=38){
+      p.game.lastNeedAt=now;
+      setSpeech(rand(meta.lowMood), '😿');
+      animatePet('anim-sad');
+      floatEffects('sad');
+    }else if(force){
+      setSpeech(rand(meta.greet), '💖');
+      animatePet('anim-greet');
+      floatEffects('heart');
+    }
+    saveAll();
+  }
+
+  function startRoam(){
+    stopRoam();
+    roamTimer=setInterval(()=>{
+      if(currentMode!=='pet') return;
+      const p=state(); if(!p) return;
+      const {wrap}=dom(); if(!wrap) return;
+
+      const mood = p.happy + p.energy + p.trust;
+      let dir = Math.random()>0.5 ? 1 : -1;
+      let distance = mood>220 ? 56 : mood>180 ? 40 : 24;
+      const target = dir*distance;
+      applyPetPosition(target);
+      animatePet(dir>0 ? 'anim-roam-right' : 'anim-roam-left');
+
+      setTimeout(()=>{
+        applyPetPosition(0);
+        animatePet('anim-bounce');
+      }, 1800);
+    }, 5000);
+  }
+  function stopRoam(){ if(roamTimer){ clearInterval(roamTimer); roamTimer=null; } }
+
+  function startNeedLoop(){
+    stopNeedLoop();
+    needTimer=setInterval(()=>petNeedCheck(false), 7000);
+  }
+  function stopNeedLoop(){ if(needTimer){ clearInterval(needTimer); needTimer=null; } }
+
+  function refreshUI(message, animation='anim-bounce', effect='heart', emoji='💗'){
+    const p=state(); if(!p) return;
+    maybeReward(p);
+    saveAll();
+    renderPetHome();
+    requestAnimationFrame(()=>{
+      animatePet(animation);
+      floatEffects(effect);
+      setSpeech(message, emoji);
+    });
+  }
+
+  function interact(action){
+    const p=state(); if(!p) return;
+    const meta=PETS[p.petType];
+    const extraTrust = p.owned.ribbon ? 2 : 0;
+    const extraPlay = p.owned.toy ? 5 : 0;
+    const extraSleep = p.owned.bed ? 8 : 0;
+
+    const rules={
+      pet:{happy:+6,trust:+5+extraTrust,energy:+1,hunger:0,clean:0,care:+1,interact:+1,anim:'anim-tail',effect:'heart',emoji:'💗',text:rand(meta.pet)},
+      feed:{happy:+2,trust:+2+extraTrust,energy:+2,hunger:+16,clean:-1,care:+1,feeds:+1,anim:'anim-feed',effect:'food',emoji:'🥣',text:'吃飽飽了！我現在心情很好！',cost:1},
+      play:{happy:+12+extraPlay,trust:+4+extraTrust,energy:-7,hunger:-4,clean:-2,care:+1,interact:+1,anim:'anim-happy',effect:'heart',emoji:'🎉',text:rand(meta.play)},
+      clean:{happy:+2,trust:+3+extraTrust,energy:-1,hunger:0,clean:+18,care:+1,interact:+1,anim:'anim-clean',effect:'clean',emoji:'🫧',text:'洗香香之後整個舒服多了！'},
+      sleep:{happy:+2,trust:+1,energy:+20+extraSleep,hunger:-3,clean:0,care:+1,anim:'anim-sleep',effect:'heart',emoji:'🌙',text:'我睡了一覺，精神飽滿！'},
+      walk:{happy:+10,trust:+5+extraTrust,energy:-6,hunger:-5,clean:-3,care:+1,interact:+1,anim:'anim-walk',effect:'walk',emoji:'🐾',text:'看到主人就忍不住往前跑了！'}
+    };
+    const r=rules[action]; if(!r) return;
+
+    if(r.cost && !useCoins(r.cost)){
+      toastMsg('守護金幣不足，先去答題賺金幣吧！');
+      return;
+    }
+    p.happy = clamp(p.happy + (r.happy||0));
+    p.trust = clamp(p.trust + (r.trust||0));
+    p.energy= clamp(p.energy + (r.energy||0));
+    p.hunger= clamp(p.hunger + (r.hunger||0));
+    p.clean = clamp(p.clean + (r.clean||0));
+    p.totalCare += Number(r.care||0);
+    p.game.feeds += Number(r.feeds||0);
+    p.game.interactions += Number(r.interact||0);
+
+    refreshUI(r.text, r.anim, r.effect, r.emoji);
+  }
+
+  function useInventory(type){
+    const p=state(); if(!p) return;
+    const n=Number(p.inventory[type]||0);
+    if(n<=0){ toastMsg('這個物品目前沒有庫存喔！'); return; }
+    p.inventory[type]=n-1;
+
+    if(type==='food'){
+      p.hunger=clamp(p.hunger+18); p.happy=clamp(p.happy+2); p.game.feeds+=1;
+      refreshUI('吃了營養飼料，肚子暖暖的！', 'anim-feed', 'food', '🥣');
+    }else if(type==='carrot'){
+      p.hunger=clamp(p.hunger+10); p.happy=clamp(p.happy+4); p.game.feeds+=1;
+      refreshUI('點心真好吃，我超喜歡！', 'anim-feed', 'food', '🥕');
+    }
+  }
+
+  function buyItem(key){
+    const p=state(); if(!p) return;
+    const item=SHOP_ITEMS[key]; if(!item) return;
+
+    if(item.type==='upgrade'){
+      if(p.owned[key]){ toastMsg('這個升級已經擁有了！'); return; }
+      if(!useCoins(item.price)){ toastMsg('守護金幣不足喔！'); return; }
+      p.owned[key]=true;
+      saveAll(); renderPetHome();
+      setTimeout(()=>{
+        setSpeech(`已購買「${item.label}」！毛孩好像更喜歡這個家了。`, '✨');
+        animatePet('anim-greet');
+        floatEffects('heart');
+      },60);
+      return;
+    }
+
+    if(!useCoins(item.price)){ toastMsg('守護金幣不足喔！'); return; }
+    p.inventory[key]=Number(p.inventory[key]||0)+1;
+    saveAll(); renderPetHome();
+    setTimeout(()=>{
+      setSpeech(`已購買 ${item.label}，可以到背包使用！`, item.icon);
+      floatEffects('heart');
+    },60);
+  }
+
+  function onPetClick(){
+    const p=state(); if(!p) return;
+    const meta=PETS[p.petType];
+    p.happy=clamp(p.happy+2);
+    p.trust=clamp(p.trust+1);
+    p.game.interactions+=1;
+    refreshUI(rand(meta.greet), 'anim-greet', 'heart', '😍');
+  }
+
+  function renamePet(){
+    const p=state(); if(!p) return;
+    const name=prompt('幫毛孩取名字：', p.petName);
+    if(name===null) return;
+    const finalName=(name.trim() || p.petName).slice(0,10);
+    p.petName=finalName;
+    p.names[p.petType]=finalName;
+    saveAll(); renderPetHome();
+    setTimeout(()=>setSpeech(`你好呀！我是 ${finalName} ～`, '✨'), 100);
+  }
+
+  function switchPet(type){
+    const p=state(); if(!p||!PETS[type]) return;
+    p.petType=type;
+    p.petName=p.names[type] || PETS[type].defaultName;
+    saveAll(); renderPetHome();
+    setTimeout(()=>{
+      animatePet('anim-greet');
+      setSpeech(`嗨！我是 ${p.petName}，個性是「${PETS[type].trait}」喔！`, '💖');
+    },60);
+  }
+
+  function registerQuizDone(){
+    const p=state(); if(!p) return;
+    p.game.quizDone=Math.max(1,p.game.quizDone);
+    maybeReward(p);
+    saveAll(); renderPetHome();
+  }
+
+  function bar(icon,label,val,cls){
+    return `<div class="pet-v8-stat"><span>${icon}</span><b>${label}</b><div class="pet-v8-track"><i class="${cls}" style="width:${val}%"></i></div><strong>${val}</strong></div>`;
+  }
+  function petChoice(type,p){
+    const meta=PETS[type], active=p.petType===type;
+    const nm=p.names?.[type] || meta.defaultName;
+    return `<button class="pet-v8-switch ${active?'active':''}" type="button" onclick="petGameSwitch('${type}')">
+      <img src="${meta.img}" alt="${meta.name}">
+      <small>${meta.name}</small><b>${esc(nm)}</b><em>${meta.trait}</em>
+    </button>`;
+  }
+  function missionRow(done,label,count){
+    return `<div class="pet-v8-mission-row ${done?'done':''}"><span class="box">${done?'✓':''}</span><b>${label}</b><em>${count}</em></div>`;
+  }
+  function shopCard(key,p){
+    const it=SHOP_ITEMS[key];
+    const owned = it.type==='upgrade' && p.owned[key];
+    const qty = it.type==='consumable' ? `現有 ${Number(p.inventory[key]||0)} 個` : (owned ? '已擁有' : `價格 ${it.price}`);
+    return `<div class="pet-v8-shop-card ${owned?'owned':''}">
+      <div class="icon">${it.icon}</div>
+      <div class="info"><b>${it.label}</b><small>${it.desc}</small><em>${qty}</em></div>
+      <button type="button" ${owned?'disabled':''} onclick="petGameBuy('${key}')">${owned?'已擁有':'購買'}</button>
+    </div>`;
+  }
+  function invCard(key,p){
+    const count=Number(p.inventory[key]||0);
+    const it=SHOP_ITEMS[key];
+    return `<div class="pet-v8-inv-card ${count<=0?'empty':''}">
+      <span>${it.icon}</span><b>${it.label}</b><em>x ${count}</em>
+      <button type="button" ${count<=0?'disabled':''} onclick="petGameUseItem('${key}')">使用</button>
+    </div>`;
+  }
+
+  function renderPetHome(){
+    const host=document.getElementById('petHomePanel');
+    if(!host) return;
+    const p=state(); if(!p) return;
+    const meta=PETS[p.petType];
+    const ms=missionState(p);
+
+    host.innerHTML=`
+      <div class="pet-v8-shell">
+        <div class="pet-v8-top">
+          <div class="pet-v8-title">🏠 毛孩之家</div>
+          <div class="pet-v8-banner">會迎接你、會撒嬌、會提醒需求的可愛互動毛孩！</div>
+          <div class="pet-v8-wallet">🐾 <b>${coins()}</b></div>
+          <div class="pet-v8-level"><span>Lv.${level(p)}</span><div><i style="width:${xpPct(p)}%"></i></div></div>
+        </div>
+
+        <div class="pet-v8-room">
+          <aside class="pet-v8-left">
+            <div class="pet-v8-love"><span>💗</span><small>親密度</small><strong>${relation(p)}</strong></div>
+            <div class="pet-v8-missions">
+              <h3>每日任務 <small>${missionCount(p)}/3</small></h3>
+              ${missionRow(ms.feed,'餵食毛孩 3 次',`${Math.min(3,p.game.feeds)}/3`)}
+              ${missionRow(ms.interact,'和毛孩互動 3 次',`${Math.min(3,p.game.interactions)}/3`)}
+              ${missionRow(ms.quiz,'完成 1 次毛孩問答',`${Math.min(1,p.game.quizDone)}/1`)}
+              <div class="pet-v8-reward">完成獎勵：🐾 +50</div>
+            </div>
+            <div class="pet-v8-pet-list">
+              ${petChoice('dog',p)}
+              ${petChoice('cat',p)}
+              ${petChoice('rabbit',p)}
+            </div>
+          </aside>
+
+          <main class="pet-v8-stage" id="petGameStage">
+            <div class="pet-v8-window"></div>
+            <div class="pet-v8-wall-items"><span>🐾</span><span>🌱</span><span>💛</span></div>
+            <div class="pet-v8-cat-tree"></div>
+            <div class="pet-v8-bed ${p.owned.bed?'upgraded':''}"></div>
+            <div class="pet-v8-bowl">🥣</div>
+            <div class="pet-v8-water">💧</div>
+            <div class="pet-v8-toys">${p.owned.toy?'🧸　🎾　🪀':'🧸　⚽'}</div>
+            <div class="pet-v8-house">${p.owned.ribbon?'🏠🎀':'🏠'}</div>
+
+            <div class="pet-v8-speech" id="petSpeech">我是 ${esc(p.petName)}，今天也很想跟你互動！</div>
+            <div class="pet-v8-emotion" id="petEmotionBadge">💖</div>
+
+            <button class="pet-v8-animal-wrap" id="petGameAnimalWrap" type="button" onclick="petGameClick()">
+              <img class="pet-v8-animal" id="petGameAnimal" src="${meta.img}" alt="${meta.name}">
+            </button>
+
+            <div class="pet-v8-name-card">
+              <div class="main"><b>${esc(p.petName)}</b><span>${meta.kind}・${meta.trait}</span></div>
+              <small>牠會主動走動、迎接你，也會用情緒提醒需求喔！</small>
+              <button type="button" onclick="renamePet()">✏️ 改名</button>
+            </div>
+
+            <div class="pet-v8-stats">
+              ${bar('💗','心情',p.happy,'pink')}
+              ${bar('🥣','飽足',p.hunger,'orange')}
+              ${bar('🫧','清潔',p.clean,'green')}
+              ${bar('⚡','活力',p.energy,'blue')}
+            </div>
+          </main>
+
+          <aside class="pet-v8-right">
+            <div class="pet-v8-side-box">
+              <b>快速互動</b>
+              <button class="quick pink" type="button" onclick="petGameInteract('pet')">💗 一鍵抱抱</button>
+              <button class="quick gold" type="button" onclick="petGameInteract('feed')">🥣 一鍵餵食</button>
+              <button class="quick mint" type="button" onclick="petGameInteract('play')">🎾 一鍵玩耍</button>
+            </div>
+
+            <div class="pet-v8-inventory">
+              <b>背包</b>
+              <div id="petInventoryList">${invCard('food',p)}${invCard('carrot',p)}</div>
+            </div>
+
+            <div class="pet-v8-shop">
+              <b>毛孩小商店</b>
+              <div id="petShopList">
+                ${shopCard('food',p)}
+                ${shopCard('carrot',p)}
+                ${shopCard('toy',p)}
+                ${shopCard('bed',p)}
+                ${shopCard('ribbon',p)}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="pet-v8-actions">
+          <button type="button" onclick="petGameInteract('feed')"><span>🥣</span><b>餵食</b></button>
+          <button type="button" onclick="petGameInteract('play')"><span>🎾</span><b>玩耍</b></button>
+          <button type="button" onclick="petGameInteract('pet')"><span>🤲</span><b>摸摸</b></button>
+          <button type="button" onclick="petGameInteract('clean')"><span>🫧</span><b>清潔</b></button>
+          <button type="button" onclick="petGameInteract('sleep')"><span>🌙</span><b>睡覺</b></button>
+          <button type="button" onclick="petGameInteract('walk')"><span>🐾</span><b>散步</b></button>
+        </div>
+      </div>
+    `;
+    if(currentMode==='pet'){
+      setTimeout(()=>{ startRoam(); startNeedLoop(); },50);
+    }
+  }
+
+  function ensureBaseTabs(){
+    const base=document.getElementById('basePage');
+    if(!base) return null;
+
+    let petSection=document.getElementById('petHomeSection');
+    if(!petSection){
+      petSection=document.createElement('section');
+      petSection.id='petHomeSection';
+      petSection.className='pet-home-section-v8';
+      petSection.innerHTML='<div id="petHomePanel"></div>';
+      base.appendChild(petSection);
+    }else if(!petSection.querySelector('#petHomePanel')){
+      petSection.innerHTML='<div id="petHomePanel"></div>';
+    }
+
+    let tabs=document.getElementById('baseQuickTabs');
+    if(!tabs){
+      tabs=document.createElement('div');
+      tabs.id='baseQuickTabs';
+      tabs.className='base-quick-tabs';
+      tabs.innerHTML='<button type="button" data-mode="my" class="active">🌍 我的基地</button><button type="button" data-mode="pet">🐾 毛孩之家</button>';
+      base.insertBefore(tabs, base.firstChild);
+      tabs.querySelector('[data-mode="my"]').onclick=()=>switchBaseMode('my');
+      tabs.querySelector('[data-mode="pet"]').onclick=()=>switchBaseMode('pet');
+    }
+
+    let my=document.getElementById('myBaseView');
+    if(!my){
+      my=document.createElement('section');
+      my.id='myBaseView';
+      my.className='base-mode-view';
+      base.insertBefore(my, petSection);
+      const movable=[...base.children].filter(el=>el!==tabs && el!==my && el!==petSection);
+      movable.forEach(el=>my.appendChild(el));
+    }
+
+    renderPetHome();
+    return {base,tabs,my,petSection};
+  }
+
+  function switchBaseMode(mode='my'){
+    const refs=ensureBaseTabs(); if(!refs) return;
+    currentMode=mode;
+    const {tabs,my,petSection}=refs;
+    const isPet=mode==='pet';
+    my.classList.toggle('is-hidden', isPet);
+    petSection.classList.toggle('is-hidden', !isPet);
+    tabs.querySelectorAll('button').forEach(btn=>btn.classList.toggle('active', btn.dataset.mode===mode));
+    try{ sessionStorage.setItem('baseMode', mode); }catch(e){}
+    if(isPet){
+      renderPetHome();
+      setTimeout(()=>{
+        petNeedCheck(true);
+      },100);
+    }else{
+      stopRoam(); stopNeedLoop();
+    }
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  }
+
+  function restoreMode(){
+    let mode='my';
+    try{
+      const m=sessionStorage.getItem('baseMode');
+      if(m==='pet') mode='pet';
+    }catch(e){}
+    switchBaseMode(mode);
+  }
+
+  function patchFn(name, after){
+    const old=window[name];
+    if(typeof old!=='function' || old.__petV8Patched) return;
+    const wrapped=function(){
+      const r=old.apply(this, arguments);
+      setTimeout(after, 0);
+      return r;
+    };
+    wrapped.__petV8Patched=true;
+    window[name]=wrapped;
+  }
+
+  function install(){
+    ensureBaseTabs();
+    patchFn('showBase', ()=>{ ensureBaseTabs(); restoreMode(); });
+    patchFn('renderBase', ()=>{ ensureBaseTabs(); if(currentMode==='pet') renderPetHome(); });
+    restoreMode();
+  }
+
+  window.renderPetHome=renderPetHome;
+  window.petGameInteract=interact;
+  window.petGameClick=onPetClick;
+  window.petGameSwitch=switchPet;
+  window.petGameRegisterQuizDone=registerQuizDone;
+  window.petGameBuy=buyItem;
+  window.petGameUseItem=useInventory;
+  window.renamePet=renamePet;
+  window.switchBaseMode=switchBaseMode;
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', ()=>setTimeout(install, 250), {once:true});
+  }else{
+    setTimeout(install, 250);
+  }
+})();
+</script>
+</body>
+</html>
