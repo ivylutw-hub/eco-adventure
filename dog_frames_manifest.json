@@ -1,0 +1,52 @@
+{
+  "idle": [
+    "dog_frames/dog_idle_01.png",
+    "dog_frames/dog_idle_02.png",
+    "dog_frames/dog_idle_03.png",
+    "dog_frames/dog_idle_04.png",
+    "dog_frames/dog_idle_05.png"
+  ],
+  "walk": [
+    "dog_frames/dog_walk_01.png",
+    "dog_frames/dog_walk_02.png",
+    "dog_frames/dog_walk_03.png",
+    "dog_frames/dog_walk_04.png",
+    "dog_frames/dog_walk_05.png",
+    "dog_frames/dog_walk_06.png",
+    "dog_frames/dog_walk_07.png",
+    "dog_frames/dog_walk_08.png"
+  ],
+  "run": [
+    "dog_frames/dog_run_01.png",
+    "dog_frames/dog_run_02.png",
+    "dog_frames/dog_run_03.png",
+    "dog_frames/dog_run_04.png",
+    "dog_frames/dog_run_05.png",
+    "dog_frames/dog_run_06.png",
+    "dog_frames/dog_run_07.png",
+    "dog_frames/dog_run_08.png"
+  ],
+  "eat": [
+    "dog_frames/dog_eat_01.png",
+    "dog_frames/dog_eat_02.png",
+    "dog_frames/dog_eat_03.png",
+    "dog_frames/dog_eat_04.png",
+    "dog_frames/dog_eat_05.png",
+    "dog_frames/dog_eat_06.png"
+  ],
+  "sleep": [
+    "dog_frames/dog_sleep_01.png",
+    "dog_frames/dog_sleep_02.png",
+    "dog_frames/dog_sleep_03.png",
+    "dog_frames/dog_sleep_04.png",
+    "dog_frames/dog_sleep_05.png"
+  ],
+  "play": [
+    "dog_frames/dog_play_01.png",
+    "dog_frames/dog_play_02.png",
+    "dog_frames/dog_play_03.png",
+    "dog_frames/dog_play_04.png",
+    "dog_frames/dog_play_05.png",
+    "dog_frames/dog_play_06.png"
+  ]
+}
