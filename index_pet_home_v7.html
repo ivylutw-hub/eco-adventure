@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant">
+<head>
+<!-- PET_HOME_V7 -->
+<!-- PET_QUESTION_STATS_V54 -->
+<!-- PET_RANDOM_10_V53 -->
+<!-- PET_NATIVE_QUIZ_FIX_V51 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#0b6b50" name="theme-color"/>
+<meta content="適合國小中高年級的環境教育闖關遊戲：四大冒險關卡、2,844題固定題庫與每週排行榜、玩家成長、守護基地與金門特色生物。" name="description"/>
+<meta content="環保冒險王" name="author"/>
+<meta content="website" property="og:type"/>
+<meta content="環保冒險王｜Earth Guardian Adventure" property="og:title"/>
+<meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
+<meta content="social-preview.svg" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<title>環保冒險王 V10.2.7｜難度冒險地圖</title>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="manifest.webmanifest" rel="manifest"/>
+<link href="style.css?v=10207" rel="stylesheet"/>
+<link href="pet-system-addon-v7.css?v=70" rel="stylesheet"/>
+<style id="petGuardianCriticalStyles">
+
+/* ===== 毛孩守護者 V4.2：完整冒險卡片版面 ===== */
+#petGuardianPage{
+  width:min(1480px,calc(100% - 36px));
+  margin:16px auto 30px;
+  padding:20px;
+  border:1px solid #e2d6b9;
+  border-radius:24px;
+  background:linear-gradient(145deg,#fffdf7,#fbfff9);
+  box-shadow:0 12px 30px rgba(47,83,70,.08);
+}
+#petGuardianPage .pet-adventure-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  padding:3px 2px 18px;
+  border-bottom:1px solid #e8dfca;
+}
+#petGuardianPage .pet-adventure-title small{
+  color:#59766c;
+  font-size:12px;
+  letter-spacing:.08em;
+  font-weight:900;
+}
+#petGuardianPage .pet-adventure-title h2{
+  margin:5px 0 5px;
+  color:#075e49;
+  font-size:clamp(27px,3vw,38px);
+}
+#petGuardianPage .pet-adventure-title p{
+  margin:0;
+  color:#687a73;
+  line-height:1.55;
+}
+.pet-main-summary{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.pet-main-summary>*{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:42px;padding:9px 14px;
+  border:1px solid #d4e4dc;border-radius:14px;
+  background:#fff;color:#386557;font-weight:900;
+  box-shadow:0 4px 12px rgba(48,83,70,.05);
+}
+.pet-stage-block{margin-top:24px}
+.pet-stage-heading{
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+  margin-bottom:11px;padding:0 2px;
+}
+.pet-stage-heading h3{margin:0;font-size:22px;color:#274a3f}
+.pet-stage-heading small{font-size:12px;color:#7b8e87;font-weight:900;letter-spacing:.06em}
+.pet-map-units{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.pet-map-unit{
+  appearance:none;-webkit-appearance:none;
+  position:relative;display:flex;flex-direction:column;
+  min-height:230px;width:100%;
+  padding:18px;
+  border:1.5px solid #d5e5de;
+  border-radius:20px;
+  background:#fff;
+  color:#29473d;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+  box-shadow:0 7px 19px rgba(45,83,70,.07);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.pet-map-unit:hover{transform:translateY(-3px);border-color:#84cdb0;box-shadow:0 13px 26px rgba(45,83,70,.13)}
+.pet-map-unit:active{transform:scale(.99)}
+.pet-map-unit.done{background:linear-gradient(145deg,#effff6,#e8faef);border-color:#62c98d}
+.pet-map-unit.partial{background:linear-gradient(145deg,#fffdf5,#fff5dc);border-color:#efbd55}
+.pet-unit-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:grid;place-items:center;
+  margin-bottom:8px;
+  background:#eef8f3;
+  font-size:29px;
+}
+.pet-map-unit.done .pet-unit-icon{background:#d9f7e5}
+.pet-map-unit.partial .pet-unit-icon{background:#fff0bf}
+.pet-map-unit>small{color:#668178;font-size:11px;font-weight:900;letter-spacing:.07em}
+.pet-map-unit h4{margin:5px 0 8px;font-size:20px;color:#183f33}
+.pet-map-unit p{margin:0 0 14px;min-height:48px;color:#62776e;line-height:1.55;font-size:14px}
+.pet-unit-meta,.pet-unit-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#6b7d75}
+.pet-unit-meta{margin-top:auto}
+.pet-unit-progress{height:10px;margin-top:9px;border-radius:999px;background:#e6efeb;overflow:hidden}
+.pet-unit-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#57c98f,#16805f);transition:width .3s ease}
+.pet-unit-bottom{margin-top:9px;padding-top:8px;border-top:1px solid rgba(116,145,132,.15)}
+.pet-unit-bottom b{color:#a66d20;font-size:12px}
+.pet-loading-card{grid-column:1/-1;padding:28px;border:1px dashed #b9d6c9;border-radius:18px;background:#f8fffb;text-align:center;font-weight:900;color:#55766a}
+.pet-loading-card.error{background:#fff5f5;border-color:#e3b0b0;color:#a34b4b}
+
+/* 毛孩答題頁：沿用環保知識視覺 */
+#petAdventureQuiz{padding-top:4px}
+#petAdventureQuiz .quizTop{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#petAdventureQuiz .quizTop .back{border:0;background:transparent;color:#0a6a50;font-weight:900;cursor:pointer;padding:8px 0}
+#petAdventureQuiz .bar{height:12px;margin:10px 0 16px;border-radius:999px;background:#e6efeb;overflow:hidden}
+#petAdventureQuiz .bar i{display:block;height:100%;background:linear-gradient(90deg,#58c994,#147b5e);border-radius:inherit}
+#petAdventureQuiz .enemy{display:flex;align-items:center;gap:12px;padding:13px 15px;margin:10px 0 14px;border:1px solid #d7e5df;border-radius:18px;background:#f7fcf9}
+#petAdventureQuiz .enemy>span{font-size:42px}
+#petAdventureQuiz .enemy small,#petAdventureQuiz .enemy b{display:block}
+#petAdventureQuiz .tag{display:inline-flex;padding:5px 9px;border-radius:999px;background:#eef8f3;color:#397160;font-size:12px;font-weight:900}
+#petAdventureQuiz #petQuestion{font-size:clamp(22px,3vw,31px);line-height:1.55;margin:16px 0}
+#petAdventureQuiz .options{display:grid;gap:10px}
+#petAdventureQuiz .option{appearance:none;border:1.5px solid #d6e3dd;border-radius:15px;background:#fff;padding:14px 15px;text-align:left;color:#29473d;font:inherit;cursor:pointer;min-height:54px}
+#petAdventureQuiz .option:hover{border-color:#83c9ae;background:#fbfffd}
+#petAdventureQuiz .option.selected{border-color:#e2aa3c;background:#fff8e7}
+#petAdventureQuiz .option.good{border-color:#48ad79;background:#effff5}
+#petAdventureQuiz .option.bad{border-color:#d97878;background:#fff1f1}
+#petAdventureQuiz .answer-actions{margin-top:14px}
+#petAdventureQuiz .feedback{margin-top:14px;padding:14px;border-radius:15px;line-height:1.65}
+#petAdventureQuiz .feedback.good{background:#effff5;border:1px solid #b7e6ca}
+#petAdventureQuiz .feedback.bad{background:#fff3f1;border:1px solid #ecc4bd}
+#petAdventureQuiz #petNextBtn{margin-top:14px}
+
+#petAdventureResult{text-align:center;padding:28px 10px}
+#petAdventureResult .resultIcon{font-size:58px}
+#petAdventureResult h2{font-size:27px;margin:7px 0}
+#petAdventureResult .score{display:flex;justify-content:center;align-items:end;gap:5px;margin:12px 0}
+#petAdventureResult .score b{font-size:66px;color:#0b7658}
+#petAdventureResult .score span{font-size:20px;margin-bottom:12px}
+#petAdventureResult .reward{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px auto;max-width:700px}
+#petAdventureResult .reward>div{padding:14px;border:1px solid #d8e5df;border-radius:16px;background:#fff}
+#petAdventureResult .reward b,#petAdventureResult .reward small{display:block;margin-top:3px}
+
+/* 守護基地頁籤 */
+.base-mode-tabs{display:flex;gap:8px;width:min(1480px,calc(100% - 28px));margin:16px auto 14px;padding:6px;border:1px solid #d5e5dd;border-radius:18px;background:#f7fbf9;box-shadow:0 6px 18px rgba(43,82,67,.06)}
+.base-mode-tabs button{flex:1;min-height:48px;border:0;border-radius:13px;background:transparent;color:#557168;font-weight:900;font-size:16px;cursor:pointer}
+.base-mode-tabs button.active{background:#fff;color:#0b6b50;box-shadow:0 4px 14px rgba(35,84,66,.12)}
+.base-mode-content.hide{display:none!important}#myBaseContent{width:100%}#petHomeSection{margin-top:0}
+
+@media(max-width:800px){
+  #petGuardianPage{width:calc(100% - 16px);margin:8px auto 20px;padding:14px;border-radius:20px}
+  #petGuardianPage .pet-adventure-title{align-items:flex-start;flex-direction:column}
+  .pet-main-summary{justify-content:flex-start}
+  .pet-map-units{grid-template-columns:1fr}
+  .pet-map-unit{min-height:0}
+  .pet-map-unit p{min-height:0}
+  #petAdventureResult .reward{grid-template-columns:1fr}
+  .base-mode-tabs{width:calc(100% - 20px);margin:10px auto 12px}
+  .base-mode-tabs button{min-height:45px;font-size:15px}
+}
+
+</style>
+<style id="baseModeActiveStyles">
+
+/* ===== 守護基地頁籤：選取狀態顏色 ===== */
+.base-mode-tabs{
+  display:flex;
+  gap:8px;
+  width:min(1480px,calc(100% - 28px));
+  margin:16px auto 14px;
+  padding:6px;
+  border:1px solid #d5e5dd;
+  border-radius:18px;
+  background:#eef6f2;
+  box-shadow:0 6px 18px rgba(43,82,67,.06);
+}
+
+.base-mode-tabs button{
+  flex:1;
+  min-height:50px;
+  border:1px solid transparent;
+  border-radius:13px;
+  background:#f7faf8;
+  color:#74867f;
+  font-weight:900;
+  font-size:16px;
+  cursor:pointer;
+  transition:
+    background .2s ease,
+    color .2s ease,
+    box-shadow .2s ease,
+    transform .15s ease;
+}
+
+.base-mode-tabs button:hover{
+  background:#ffffff;
+  color:#39715f;
+}
+
+.base-mode-tabs button.active{
+  color:#ffffff;
+  transform:translateY(-1px);
+}
+
+.base-mode-tabs button[data-mode="my"].active{
+  background:linear-gradient(135deg,#248f70,#0b6b50);
+  border-color:#0b6b50;
+  box-shadow:0 5px 14px rgba(11,107,80,.25);
+}
+
+.base-mode-tabs button[data-mode="pet"].active{
+  background:linear-gradient(135deg,#d99137,#b96d25);
+  border-color:#b96d25;
+  box-shadow:0 5px 14px rgba(185,109,37,.25);
+}
+
+@media(max-width:700px){
+  .base-mode-tabs{
+    width:calc(100% - 20px);
+    margin:10px auto 12px;
+  }
+
+  .base-mode-tabs button{
+    min-height:46px;
+    font-size:15px;
+  }
+}
+
+</style>
+
+<style id="petQuestionStatsStyles">
+.pet-question-stats{
+  margin:0 0 18px;
+  padding:18px;
+  border:1px solid #d7e7df;
+  border-radius:18px;
+  background:linear-gradient(145deg,#f7fffb,#fffdf7);
+}
+.pet-stat-loading{font-weight:900;color:#577269}
+.pet-stat-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+.pet-stat-head b{display:block;font-size:19px;color:#184c3d}
+.pet-stat-head small{display:block;margin-top:4px;color:#71857d}
+.pet-stat-status{padding:7px 11px;border-radius:999px;font-weight:900;font-size:13px;white-space:nowrap}
+.pet-stat-status.ok{background:#e5f8ed;color:#167346}
+.pet-stat-status.warn{background:#fff2cf;color:#9a6312}
+.pet-stat-status.bad{background:#ffebeb;color:#a43f3f}
+.pet-stat-total{display:flex;align-items:baseline;gap:8px;margin-bottom:13px;padding:10px 12px;border-radius:13px;background:#fff}
+.pet-stat-total strong{font-size:24px;color:#0b7658;margin-left:8px}
+.pet-stat-total strong:first-child{margin-left:0}
+.pet-stat-total span{font-size:13px;color:#71857d}
+.pet-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pet-stat-unit{padding:13px;border:1px solid #dce8e2;border-radius:14px;background:#fff}
+.pet-stat-unit small,.pet-stat-unit b,.pet-stat-unit strong,.pet-stat-unit span{display:block}
+.pet-stat-unit small{font-size:10px;font-weight:900;color:#7b8d86;letter-spacing:.04em}
+.pet-stat-unit b{margin:4px 0 8px;color:#2c4c41}
+.pet-stat-unit strong{font-size:22px}
+.pet-stat-unit span{margin-top:4px;font-size:12px;color:#71857d}
+.pet-stat-unit.ok{border-color:#9bd5b5;background:#f2fff7}
+.pet-stat-unit.ok strong{color:#167346}
+.pet-stat-unit.warn{border-color:#e6c56e;background:#fffaf0}
+.pet-stat-unit.warn strong{color:#a06c16}
+.pet-stat-unit.bad{border-color:#e5aaaa;background:#fff6f6}
+.pet-stat-unit.bad strong{color:#aa4545}
+@media(max-width:800px){
+ .pet-stat-head{align-items:flex-start;flex-direction:column}
+ .pet-stat-grid{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+<div class="login-page" id="loginPage">
+<div class="login-card">
+<div aria-hidden="true" class="brand-mark"><span>🌍</span><i>🌿</i></div>
+<small class="eyebrow">EARTH GUARDIAN ADVENTURE</small>
+<h1>環保冒險王</h1>
+<p class="login-lead">答題、升級、修復基地，成為守護金門與地球的生態英雄。</p>
+<div class="feature-chips"><span>🗺️ 四大冒險</span><span>📚 2,844 題</span><span>🦦 金門守護者</span></div>
+<label>玩家名稱</label>
+<input id="nameInput" maxlength="12" placeholder="請輸入玩家名稱" value=""/>
+<label>選擇守護者頭像</label>
+<div class="avatar-grid login-avatars" id="loginAvatars"></div>
+<small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
+<button class="primary full google-login" id="googleLoginBtn" onclick="googleLogin()">🟢 使用 Google 開始冒險</button>
+<button class="trial-entry full" id="trialEntryBtn" type="button" onclick="openTrialMode()"><b>🌱 小小環保訓練營</b><small>免登入，立即開始</small></button>
+<p class="note" id="loginCloudStatus">使用同一個 Google 帳號，可在手機、平板與電腦接續進度。</p>
+</div>
+</div>
+
+<div class="trial-page hide" id="trialPage" aria-live="polite">
+  <header class="trial-header">
+    <button class="trial-back" type="button" onclick="exitTrialMode()">← 回登入頁</button>
+    <div><small>ANONYMOUS TRIAL</small><h1>🌱 小小環保訓練營</h1></div>
+    <button class="trial-how" type="button" onclick="showTrialHow()">❔ 怎麼玩</button>
+  </header>
+  <main class="trial-shell">
+    <section class="trial-card trial-welcome world-meadow" id="trialWelcome">
+      <div class="trial-world-scene" id="trialWorldScene" aria-hidden="true">
+        <span class="world-sky-icon world-sun">☀️</span><span class="world-sky-icon world-cloud">☁️</span>
+        <span class="world-animal" id="trialWorldAnimal">🦋</span><span class="world-landmark" id="trialWorldLandmark">🌱</span>
+      </div>
+      <div class="trial-teacher-row"><div class="trial-teacher" id="trialTeacher" aria-label="水獺老師">🦦</div><div class="trial-speech" id="trialTeacherSpeech">每位守護者都是從第一步開始，我陪你一起學！</div></div>
+      <small>左右滑動選擇挑戰世界</small>
+      <h2 id="trialWorldTitle">🌱 青青草原</h2>
+      <p id="trialWorldDesc">適合國小一～二年級，從生活環保常識開始。</p>
+      <div class="trial-difficulty-stars" id="trialDifficultyStars" aria-label="難度一顆星">★☆☆☆</div>
+      <div class="trial-slider-wrap">
+        <input id="trialDifficultySlider" class="trial-difficulty-slider" type="range" min="0" max="3" step="1" value="0" aria-label="選擇挑戰難度" oninput="setTrialDifficulty(this.value,true)">
+        <div class="trial-slider-labels" aria-hidden="true"><span>🌱<b>入門</b></span><span>🌳<b>初級</b></span><span>🌊<b>進階</b></span><span>🌍<b>挑戰</b></span></div>
+      </div>
+      <div class="trial-level-dots" id="trialLevelDots"><i class="active"></i><i></i><i></i><i></i></div>
+      <div class="trial-local-stats">
+        <span>今日挑戰 <b id="trialPlayCount">0</b> 次</span>
+        <span>本難度最佳 <b id="trialBestScore">0 / 5</b></span>
+      </div>
+      <button class="primary trial-main-btn" id="trialStartBtn" type="button" onclick="startTrialQuiz(5)">🚀 開始入門挑戰</button>
+      <button class="secondary trial-daily-btn" type="button" onclick="startDailyTrial()">⭐ 今日環保小挑戰（3 題）</button>
+      <p class="trial-privacy">🔒 不需登入，紀錄只保存在這台裝置。</p>
+    </section>
+    <section class="trial-card hide" id="trialQuiz">
+      <div class="trial-progress-row"><b id="trialProgressText">第 1 題 / 5 題</b><span id="trialTopic">生活環保</span></div>
+      <div class="trial-progress"><i id="trialProgressBar"></i></div>
+      <div class="trial-question-icon" id="trialQuestionIcon">🌍</div>
+      <h2 id="trialQuestionText"></h2>
+      <div class="trial-options" id="trialOptions"></div>
+      <div class="trial-feedback hide" id="trialFeedback"></div>
+      <button class="primary trial-next hide" id="trialNextBtn" type="button" onclick="nextTrialQuestion()">下一題 →</button>
+    </section>
+    <section class="trial-card trial-result hide" id="trialResult">
+      <div class="trial-medal">🏅</div><small>小小環保訓練營</small><h2>訓練完成！</h2>
+      <div class="trial-stars" id="trialStars">☆☆☆☆☆</div><strong id="trialScoreText">0 / 5</strong>
+      <p id="trialResultMessage"></p>
+      <div class="trial-promise"><b>🌍 今天的環保小承諾</b><p id="trialPromiseText"></p><button id="trialPromiseBtn" type="button" onclick="acceptTrialPromise()">我願意做到 ✓</button></div>
+      <div class="trial-result-actions"><button class="primary" type="button" onclick="startTrialQuiz(5)">🔄 再玩一次</button><button class="google-login" type="button" onclick="trialToGoogleLogin()">🟢 成為正式守護者</button></div>
+      <button class="text-button" type="button" onclick="showTrialWelcome()">回訓練營首頁</button>
+    </section>
+  </main>
+</div>
+<div class="modal hide" id="trialHowModal"><div class="modal-card trial-how-card"><button class="modal-close" onclick="closeTrialHow()">×</button><small>HOW TO PLAY</small><h2>🌱 怎麼玩</h2><p>先左右滑動選擇入門、初級、進階或挑戰難度，每回合會出現 5 題對應程度的環保題。</p><ol><li>點選你認為正確的答案。</li><li>每題都會立即看到簡短解析。</li><li>完成後可以再挑戰，不會扣分。</li></ol><p>匿名試玩不會使用排行榜、金幣、基地或雲端存檔。</p><button class="primary full" onclick="closeTrialHow()">我知道了</button></div></div>
+
+<div class="app hide" id="game">
+<header class="header-day" id="mainHeader">
+<div aria-hidden="true" class="header-nature-scene">
+<span class="header-sun">☀️</span><span class="header-moon">🌙</span>
+<span class="header-cloud header-cloud-a">☁️</span><span class="header-cloud header-cloud-b">☁️</span>
+<span class="header-leaf header-leaf-a">🍃</span><span class="header-leaf header-leaf-b">🍃</span>
+<span class="header-hills"></span><span class="header-tree header-tree-a">🌳</span><span class="header-tree header-tree-b">🌲</span>
+<span class="header-house">🏡</span>
+<span aria-label="可愛風力發電場" class="header-wind-farm">
+<span class="cute-turbine turbine-one"><i class="turbine-blades"><b></b><b></b><b></b></i><i class="turbine-pole"></i></span>
+<span class="cute-turbine turbine-two"><i class="turbine-blades"><b></b><b></b><b></b></i><i class="turbine-pole"></i></span>
+<span class="wind-farm-grass">🌱　🌼　🌱</span>
+</span>
+<span class="header-flower header-flower-a">🌼</span><span class="header-flower header-flower-b">🌷</span>
+<span class="header-stars">✦　★　✧　✦　★</span><span class="header-meteor">☄️</span>
+</div>
+<div class="header-copy">
+<small>EARTH GUARDIAN ADVENTURE</small>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.7</span></h1>
+<p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
+</div>
+<section class="home-nature-strip" aria-label="今日環境資訊">
+  <div class="nature-location"><span>📍</span><div><small>所在區域</small><b id="natureLocation">定位中</b></div></div>
+  <div class="home-nature-metric"><span>🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
+  <div class="home-nature-metric"><span>🌡️</span><small>溫度</small><b id="natureTemp">--°C</b></div>
+  <div class="home-nature-metric"><span>💧</span><small>濕度</small><b id="natureHumidity">--%</b></div>
+  <div class="home-nature-metric home-aqi-metric" id="homeAqiMetric" tabindex="0" aria-label="空氣品質讀取中"><span class="nature-aqi-flag" id="natureAqiFlag" data-level="unknown" aria-hidden="true"><i></i></span><a class="nature-aqi-link" href="https://airtw.moenv.gov.tw/" target="_blank" rel="noopener noreferrer" aria-label="前往環境部空氣品質監測網">AQI</a><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
+  <div class="nature-tip"><span>♻️</span><div><small>環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
+  <i class="home-live-badge" id="natureLiveBadge">LIVE</i>
+</section>
+<div class="header-actions">
+<button class="player player-button" onclick="showProfile()" title="開啟我的資料">
+<span class="player-avatar frame-none" id="playerAvatar">🦊</span>
+<div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
+</button>
+<button aria-label="切換音效" class="icon-action" id="soundToggle" onclick="toggleSound()" title="切換音效">🔊</button>
+<button class="logout" onclick="confirmLogout()">🚪 登出</button>
+</div>
+</header>
+<nav class="tabs">
+<button onclick="showMap()">📚 環保知識</button>
+<button id="petGuardianNavBtn" type="button" onclick="showPetGuardian()">🐾 毛孩守護者</button>
+<button onclick="showBase()">🌍 守護基地</button>
+<button onclick="showHall()">🏆 榮耀殿堂</button>
+<button onclick="showLeaderboard()">🥇 每週排行</button>
+<button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span class="nav-count" id="weaknessCount">0</span></button>
+<button onclick="showProfile()">👤 我的資料</button>
+<button onclick="showAchievements()">🏅 玩家成就</button>
+<button class="hide" id="adminNavBtn" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
+</nav>
+<div class="page-nav-actions hide" id="pageNavActions" aria-label="頁面導覽">
+  <button type="button" onclick="goPreviousPage()">← 回上一頁</button>
+  <button type="button" onclick="goHomePage()">⌂ 回首頁</button>
+</div>
+<main id="mapPage">
+<div class="title">
+<div><small>ENVIRONMENTAL KNOWLEDGE</small><h2>📚 環保知識</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
+</div>
+<div class="map" id="map"></div>
+</main>
+<main class="hide" id="stagePage">
+<button class="back" onclick="showMap()">← 回環保知識</button>
+<section class="stageHero">
+<div id="stageIcon"></div>
+<div><small id="stageCode"></small><h2 id="stageName"></h2><p id="stageDesc"></p></div>
+</section>
+<div class="mix" id="mix"></div>
+<div class="progressText"><b>探索進度</b><span id="stageProgress"></span></div><div class="bar"><i id="stageBar"></i></div>
+<h3>選擇單元</h3><div class="units" id="units"></div>
+</main>
+<main class="hide" id="quizPage">
+<div class="quizTop"><button class="back" onclick="quitQuiz()">← 暫停冒險</button><b id="quizCount"></b></div>
+<div class="bar"><i id="quizBar"></i></div>
+<div class="enemy"><span id="enemyIcon">👾</span><div><small>環境危機</small><b id="enemyName"></b></div></div>
+<span class="tag" id="levelTag"></span>
+<h2 id="question"></h2>
+<div class="options" id="options"></div>
+<div class="answer-actions" id="answerActions">
+<button class="primary" disabled="" id="submitAnswerBtn" onclick="submitSelectedAnswer()">確定送出</button>
+</div>
+<div class="feedback hide" id="feedback"></div>
+<button class="primary hide" id="nextBtn" type="button">下一題 →</button>
+</main>
+<main class="hide center" id="resultPage">
+<div class="resultIcon">🎉</div><small>UNIT COMPLETE</small><h2 id="resultTitle"></h2>
+<div class="score"><b id="score">0</b><span>分</span></div>
+<p id="resultMsg"></p>
+<div class="reward"><div>🪙<b id="coinReward">+1</b><small>單元獎勵</small></div><div>✨<b id="expReward">+0 EXP</b><small>守護經驗</small></div><div>⭐<b id="stars">★★★</b><small>本次表現</small></div></div>
+<button class="primary" id="backToStageBtn" onclick="backToStage(event)" type="button">回到關卡</button>
+</main>
+
+<main class="hide pet-guardian-main" id="petGuardianPage">
+  <section id="petAdventureHome">
+    <div class="title pet-adventure-title">
+      <div>
+        <small>PET GUARDIAN KNOWLEDGE</small>
+        <h2>🐾 毛孩守護者</h2>
+        <p>和「環保知識」使用同一套答題、存檔、金幣、EXP 與怪獸弱點圖鑑機制。</p>
+      </div>
+      <div class="pet-main-summary">
+        <b id="petMainCoins">🪙 0</b>
+        <span id="petMainDone">0 / 6 單元</span>
+      </div>
+    </div>
+
+    <section class="pet-stage-block">
+      <div class="pet-stage-heading">
+        <h3>🐕 責任飼主基礎</h3>
+        <small>PET STAGE 01</small>
+      </div>
+      <div class="pet-map-units" id="petMainUnits1"></div>
+    </section>
+
+    <section class="pet-stage-block">
+      <div class="pet-stage-heading">
+        <h3>🐾 動物福利進階</h3>
+        <small>PET STAGE 02</small>
+      </div>
+      <div class="pet-map-units" id="petMainUnits2"></div>
+    </section>
+  </section>
+
+  <section class="hide pet-adventure-quiz" id="petAdventureQuiz">
+    <div class="quizTop">
+      <button class="back" type="button" onclick="showPetGuardian()">← 暫停冒險</button>
+      <b id="petQuizCount"></b>
+    </div>
+    <div class="bar"><i id="petQuizBar"></i></div>
+    <div class="enemy">
+      <span id="petEnemyIcon">🐾</span>
+      <div><small>毛孩守護任務</small><b id="petEnemyName">責任飼養迷霧</b></div>
+    </div>
+    <span class="tag" id="petLevelTag"></span>
+    <h2 id="petQuestion"></h2>
+    <div class="options" id="petOptions"></div>
+    <div class="answer-actions" id="petAnswerActions">
+      <button class="primary" disabled id="petSubmitBtn" type="button" onclick="petSubmit()">確定送出</button>
+    </div>
+    <div class="feedback hide" id="petFeedback"></div>
+    <button class="primary hide" id="petNextBtn" type="button" onclick="petNext()">下一題 →</button>
+  </section>
+
+  <section class="hide center pet-adventure-result" id="petAdventureResult">
+    <div class="resultIcon">🐾</div>
+    <small>UNIT COMPLETE</small>
+    <h2 id="petResultTitle"></h2>
+    <div class="score"><b id="petResultScore">0</b><span>分</span></div>
+    <p id="petResultMsg"></p>
+    <div class="reward">
+      <div>🪙<b id="petCoinReward">未獲得</b><small>滿分獎勵</small></div>
+      <div>✨<b id="petExpReward">0 EXP</b><small>守護經驗</small></div>
+      <div>⭐<b id="petStars">★</b><small>本次表現</small></div>
+    </div>
+    <button class="primary" type="button" onclick="showPetGuardian()">回毛孩守護者</button>
+  </section>
+</main>
+
+<main class="hide" id="checkinPage">
+<div class="title"><div><small>MONTHLY CHECK-IN</small><h2>📅 每日簽到月曆</h2><p>每天登入留下守護足跡；月底全勤可獲得限定守護者。</p></div></div>
+<section class="checkin-card">
+<div class="checkin-head"><div><small>本月簽到</small><h3 id="checkinMonthTitle">每日簽到</h3></div><b id="checkinProgress">0／0 天</b></div>
+<div class="checkin-calendar" id="checkinCalendarGrid"></div>
+<div class="checkin-reward"><span>🐿️</span><div><b>月底限定守護者</b><p id="checkinRewardState">月底全勤可獲得限定「四季松鼠守護者」</p></div></div>
+</section>
+</main>
+<main class="hide base-dashboard-page" id="basePage">
+<section class="base-dashboard-grid">
+<div class="base-workspace-card">
+<div class="base-time-overlay">
+<div class="base-clock"><b id="baseLocalTime">--:--</b><small>本地時間</small></div>
+
+</div>
+
+<section class="my-base-control-panel" aria-label="我的基地控制區">
+<div class="my-base-panel-head">
+<div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
+<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
+</div>
+<div class="base-status-row">
+<span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
+<span>目前金幣：🪙 <b id="baseCoins">0</b></span>
+</div>
+</section>
+<div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
+<div class="base-build-toolbar">
+<div class="build-toolbar-title"><b>建設工具</b><button class="habitat-hint-button" type="button" aria-label="查看動物棲地需求" title="動物棲地提示" onclick="openHabitatGuide()">💡</button></div>
+<div class="base-path-actions toolbar-main-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
+<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
+<button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
+<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
+</div>
+<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
+<div class="shop" id="shop"></div>
+</div>
+</div>
+
+</section>
+<section class="save-panel">
+<div>
+<span class="save-dot" id="saveDot"></span>
+<b id="saveStatus">已自動存檔</b>
+<small id="saveTime">尚未建立存檔</small>
+</div>
+<div class="save-actions">
+<button onclick="manualSave()">💾 立即存檔</button>
+<button onclick="exportSave()">⬇️ 匯出存檔</button>
+<label class="import-btn">⬆️ 匯入存檔<input accept=".json,application/json" id="importFile" onchange="importSave(event)" type="file"/></label>
+</div>
+</section></main>
+
+<main class="hide" id="baseVillagePage">
+  <button class="back village-back-to-base" onclick="showBase()">← 回我的守護基地</button>
+  <div class="title village-title">
+    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
+    <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
+  </div>
+  <section class="village-controls">
+    <div class="village-tabs" role="tablist">
+      <button class="active" data-village-filter="completion" onclick="setVillageFilter('completion',this)">🏗️ 完成度</button>
+      <button data-village-filter="popular" onclick="setVillageFilter('popular',this)">❤️ 人氣</button>
+      <button data-village-filter="green" onclick="setVillageFilter('green',this)">🌳 綠化率</button>
+      <button data-village-filter="new" onclick="setVillageFilter('new',this)">🆕 最新</button>
+    </div>
+    <label class="village-search">🔎<input id="villageSearch" maxlength="20" oninput="renderBaseVillage()" placeholder="搜尋守護者名稱"/></label>
+  </section>
+  <section class="my-base-share-card">
+    <div><span class="share-icon">🌍</span><div><b>我的基地公開設定</b><small>公開後，其他玩家只能參觀，不能移動或修改你的基地。</small></div></div>
+    <select id="baseVisibilitySelect" onchange="updateBaseVisibility(this.value)">
+      <option value="public">🌍 公開基地</option>
+      <option value="private">🔒 不公開</option>
+    </select>
+    <input id="baseIntroInput" maxlength="40" placeholder="寫一句基地介紹（最多 40 字）" onchange="updateBaseIntro(this.value)"/>
+    <button class="primary" onclick="publishMyBase()">📸 更新基地快照</button>
+  </section>
+  <div class="village-status" id="villageStatus">正在準備基地村…</div>
+  <section class="base-village-grid" id="baseVillageGrid"></section>
+</main>
+<main class="hide" id="visitorBasePage">
+  <button class="back" onclick="showBaseVillage()">← 回守護基地村</button>
+  <section class="visitor-base-head">
+    <div class="visitor-owner"><span id="visitorAvatar">🌱</span><div><small>正在參觀</small><h2 id="visitorName">守護者基地</h2><p id="visitorIntro"></p></div></div>
+    <div class="visitor-actions"><button id="visitorLikeBtn" onclick="likeCurrentVisitorBase()">♡ 送愛心</button><button id="visitorFavoriteBtn" onclick="toggleVisitorFavorite()">☆ 收藏</button></div>
+  </section>
+  <div class="visitor-stats"><span>❤️ <b id="visitorLikes">0</b></span><span>🌳 綠化率 <b id="visitorGreen">0%</b></span><span>🏆 徽章 <b id="visitorBadges">0</b></span><span>⭐ Lv.<b id="visitorLevel">1</b></span></div>
+  <div class="base-scene-frame visitor-frame"><div class="base-scene" id="visitorBaseScene"></div></div>
+  <div class="visitor-zoom"><button onclick="adjustVisitorZoom(.1)">🔍 放大</button><button onclick="adjustVisitorZoom(-.1)">🔎 縮小</button><span>唯讀參觀模式</span></div>
+</main>
+
+<main class="hide" id="achievementPage">
+<div class="title"><div><small>GUARDIAN ACHIEVEMENTS</small><h2>🏅 玩家成就</h2><p>每一次答題、闖關與守護行動，都會留下成長足跡。</p></div></div>
+<section class="achievement-grid" id="achievementGrid"></section>
+</main>
+<main class="hide" id="adminPage">
+<div class="title admin-title">
+<div><small>ADMIN CONSOLE · V9.3.6</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
+<button class="secondary" onclick="loadAdminDashboard()">🔄 全部重新整理</button>
+</div>
+<nav aria-label="管理後臺功能" class="admin-tabs">
+<button class="active" data-admin-tab="dashboard" onclick="switchAdminTab('dashboard',this)">📊 儀表板</button>
+<button data-admin-tab="players" onclick="switchAdminTab('players',this)">👤 玩家管理</button>
+<button data-admin-tab="questions" onclick="switchAdminTab('questions',this)">📝 題庫管理</button>
+<button data-admin-tab="events" onclick="switchAdminTab('events',this)">🎁 活動管理</button>
+<button data-admin-tab="ranking" onclick="switchAdminTab('ranking',this)">🏆 排行榜管理</button>
+</nav>
+<section class="admin-panel" id="adminTabDashboard">
+<section class="admin-summary" id="adminSummary"></section>
+<div class="admin-info-card"><b>統計說明</b><span>今日登入依玩家的 lastLoginAt；活躍玩家為最近 7 天有同步；今日答題從 V9.2 起累計。</span></div>
+</section>
+<section class="admin-panel hide" id="adminTabPlayers">
+<div class="admin-toolbar">
+<label class="admin-search">🔍 <input id="adminPlayerSearch" oninput="renderAdminPlayers()" placeholder="搜尋玩家名稱、UID" type="search"/></label>
+<button class="secondary" onclick="loadAdminPlayers()">重新讀取</button>
+</div>
+<div class="admin-player-list" id="adminPlayerList"><div class="empty-ranking">正在載入玩家資料…</div></div>
+</section>
+<section class="admin-panel hide" id="adminTabQuestions">
+<div class="pet-question-stats" id="petQuestionStats">
+  <div class="pet-stat-loading">🐾 正在統計毛孩守護者題庫…</div>
+</div>
+
+<form class="admin-form" id="adminQuestionForm" onsubmit="saveAdminQuestion(event)">
+<h3>新增後臺題目</h3>
+<div class="admin-form-grid">
+<label>Stage<select id="adminQuestionStage" required=""><option value="s1">Stage 1</option><option value="s2">Stage 2</option><option value="s3">Stage 3</option><option value="s4">Stage 4</option><option value="pet1">毛孩守護者－責任飼主基礎</option><option value="pet2">毛孩守護者－動物福利進階</option></select></label>
+<label>單元<input id="adminQuestionUnit" min="1" required="" type="number" value="1"/></label>
+<label>難度<select id="adminQuestionLevel"><option>初級</option><option>中級</option><option>中高級</option><option>高級</option></select></label>
+<label class="wide">題目<textarea id="adminQuestionText" required="" rows="3"></textarea></label>
+<label>選項 A<input id="adminOption0" required=""/></label><label>選項 B<input id="adminOption1" required=""/></label>
+<label>選項 C<input id="adminOption2" required=""/></label><label>選項 D<input id="adminOption3" required=""/></label>
+<label>正確答案<select id="adminQuestionAnswer"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
+<label class="wide">解析<textarea id="adminQuestionExplanation" required="" rows="3"></textarea></label>
+</div>
+<button class="primary" type="submit">＋ 新增題目</button>
+</form>
+<div class="admin-import-card"><div><h3>📥 批次匯入題目</h3><p>支援 CSV 或 JSON。CSV 欄位：stageId,unit,level,q,A,B,C,D,ans,exp。</p></div><label class="import-btn">選擇檔案<input accept=".csv,.json,text/csv,application/json" id="adminQuestionImportFile" onchange="adminImportQuestions(event)" type="file"/></label><button class="secondary" onclick="downloadQuestionImportTemplate()" type="button">下載 CSV 範本</button></div>
+<div class="shop-head"><h3>後臺新增題目</h3><button class="secondary" onclick="loadAdminQuestions()">重新讀取</button></div>
+<div class="admin-card-list" id="adminQuestionList"></div>
+</section>
+<section class="admin-panel hide" id="adminTabEvents">
+<form class="admin-form" id="adminEventForm" onsubmit="saveAdminEvent(event)">
+<h3 id="adminEventFormTitle">建立活動</h3>
+<div class="admin-form-grid">
+<label>活動名稱<input id="adminEventName" placeholder="例如：暑假活動" required=""/></label>
+<label>活動類型<select id="adminEventType"><option value="doubleExp">雙倍 EXP</option><option value="loginCoins">每日登入送金幣</option><option value="notice">公告活動</option></select></label>
+<label>數值<input id="adminEventValue" min="0" type="number" value="2"/></label>
+<label>結束日期<input id="adminEventEnd" type="date"/></label>
+<label class="wide">活動說明<textarea id="adminEventDescription" rows="2"></textarea></label>
+<label class="admin-check wide"><input checked="" id="adminEventShowHome" type="checkbox"/> 在首頁「活動公告」欄顯示</label>
+</div>
+<button class="primary" id="adminEventSubmitBtn" type="submit">＋ 建立活動</button> <button class="secondary hide" id="adminEventCancelEdit" onclick="cancelAdminEventEdit()" type="button">取消修改</button>
+</form>
+<div class="admin-card-list" id="adminEventList"></div>
+</section>
+<section class="admin-panel hide" id="adminTabRanking">
+<div class="admin-ranking-actions">
+<button class="primary" onclick="adminRebuildRanking()">♻️ 由玩家資料重算本週排行</button>
+<button class="secondary" onclick="adminExportRanking()">📥 匯出 Excel（CSV）</button>
+<button class="danger" onclick="adminClearRanking()">🗑️ 清空本週排行榜</button>
+</div>
+<p class="note">清空與重算只作用於目前週期；清空前會再次確認。</p>
+<div class="admin-card-list" id="adminRankingList"></div>
+</section>
+</main>
+<main class="hide center" id="hallPage">
+<div class="hallIcon">🏆</div><h2>榮耀殿堂</h2><p>完成每一關全部單元，就能點亮專屬徽章。</p>
+<div class="hall" id="hall"></div>
+<div class="legend locked" id="legend">👑<h3>傳奇地球守護者</h3><p>集齊四枚榮耀徽章後解鎖</p></div>
+</main>
+<main class="hide" id="leaderboardPage">
+<div class="title leaderboard-title">
+<div><small id="rankingEyebrow">GUARDIAN RANKING</small><h2 id="rankingTitle">🥇 每週守護者排行榜</h2><p id="rankingDescription">不分班級，所有玩家共同競賽；依本週積分由高到低排名。</p></div>
+<button class="secondary" onclick="refreshLeaderboard(activeRankingMode)">🔄 更新排行</button>
+</div>
+<div class="ranking-tabs" role="tablist" aria-label="排行榜類型">
+<button id="weeklyRankingTab" class="active" type="button" onclick="switchRankingMode('weekly',this)">📅 每週排行榜</button>
+<button id="totalRankingTab" type="button" onclick="switchRankingMode('total',this)">🏆 總排行榜</button>
+</div>
+<section class="weekly-card">
+<div><small>本週週期</small><b id="weekLabel">—</b></div>
+<div><small id="myRankingPointsLabel">我的本週積分</small><b id="myWeeklyPoints">0</b></div>
+<div><small id="myRankingRankLabel">我的每週名次</small><b id="myWeeklyRank">—</b></div>
+</section>
+<div class="cloud-status" id="cloudStatus">☁️ 正在連線排行榜…</div>
+<div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
+<div class="leaderboard-list" id="leaderboardList"></div>
+<p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。點選玩家可查看公開的守護數據與分析。</p>
+</main>
+<div class="rank-profile-modal hide" id="rankProfileModal" role="dialog" aria-modal="true" aria-labelledby="rankProfileTitle" onclick="closeRankProfile(event)">
+  <section class="rank-profile-panel" onclick="event.stopPropagation()">
+    <button class="rank-profile-close" type="button" aria-label="關閉玩家資料" onclick="closeRankProfile()">✕</button>
+    <div id="rankProfileContent"></div>
+  </section>
+</div>
+<main class="hide" id="weaknessPage">
+<div class="title weakness-title">
+<div>
+<small>MONSTER WEAKNESS NOTES</small>
+<h2>👾 怪獸弱點圖鑑</h2>
+<p>曾經答錯的題目會化身成環保怪獸加入圖鑑。先再次挑戰，答錯後才會顯示解析。</p>
+</div>
+<div class="weakness-mascot">👾✍️</div>
+</div>
+<section class="weakness-summary">
+<button aria-label="查看待破解怪獸" class="weakness-summary-card" onclick="openWeaknessCategory('pending')" type="button">
+<span>🧩</span><small>待破解怪獸</small><b id="weaknessPending">0</b><em>點擊查看 →</em>
+</button>
+<button aria-label="查看已淨化怪獸" class="weakness-summary-card" onclick="openWeaknessCategory('mastered')" type="button">
+<span>✅</span><small>已淨化怪獸</small><b id="weaknessMastered">0</b><em>點擊查看 →</em>
+</button>
+<button aria-label="查看全部圖鑑" class="weakness-summary-card" onclick="openWeaknessCategory('all')" type="button">
+<span>📚</span><small>圖鑑收錄</small><b id="weaknessTotal">0</b><em>點擊查看 →</em>
+</button>
+</section>
+<div class="weakness-dashboard-tools">
+<label class="weakness-search">
+<span>🔍</span>
+<input id="weaknessSearch" oninput="renderWeaknessBook()" placeholder="搜尋怪獸、題目或環保主題" type="search"/>
+</label>
+<label class="weakness-unit-search">
+<span>🧭</span>
+<select id="weaknessUnitSearch" onchange="renderWeaknessBook()"><option value="">全部 Stage／單元</option></select>
+</label>
+<div class="weakness-progress-box">
+<div><span>圖鑑完成率</span><b id="weaknessProgressText">0 / 0（0%）</b></div>
+<div class="weakness-progress-track"><i id="weaknessProgressBar"></i></div>
+</div>
+</div>
+<div class="weakness-tools">
+<div class="filter-group">
+<button class="active" id="weakFilterAll" onclick="setWeaknessFilter('all')">全部</button>
+<button id="weakFilterPending" onclick="setWeaknessFilter('pending')">待破解</button>
+<button id="weakFilterMastered" onclick="setWeaknessFilter('mastered')">已淨化</button>
+</div>
+</div>
+<div class="weakness-list" id="weaknessList"></div>
+</main>
+<main class="hide" id="profilePage">
+<div class="title">
+<div><small>GUARDIAN PROFILE</small><h2>👤 我的守護者資料</h2><p>修改名稱與已解鎖頭像，查看等級、稱號及冒險紀錄。</p></div>
+</div>
+<section class="profile-hero">
+<div class="profile-avatar frame-none" id="profileAvatarPreview">🦊</div>
+<div class="profile-main">
+<label>玩家名稱</label>
+<div class="profile-name-row">
+<input id="profileNameInput" maxlength="12"/>
+<button class="primary" onclick="saveProfileName()">儲存名稱</button>
+</div>
+<h3 id="profileDisplayName">環保守護者</h3>
+<p id="profileTitleText">見習地球守護者</p>
+<div class="level-line"><b id="profileLevel">Lv.1</b><span id="profileExpText">0 / 100 EXP</span></div>
+<div class="bar profile-exp-bar"><i id="profileExpBar"></i></div>
+</div>
+</section>
+<section class="profile-summary" id="profileSummary"></section>
+<h3>選擇守護者頭像</h3>
+<p class="section-note">鎖定的守護者會在達到指定等級後自動解鎖。</p>
+<div class="avatar-grid" id="profileAvatars"></div>
+<h3>選擇頭像外框</h3>
+<div class="frame-grid" id="frameChoices"></div>
+<section class="kinmen-final">
+<div>🦦</div><div aria-label="金門鱟" class="horseshoe-icon" role="img"></div>
+<div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
+</section>
+</main>
+<section class="stats global-status-row" aria-label="玩家守護狀態">
+<div>🪙<span>守護金幣</span><b id="coins">0</b></div>
+<div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
+<div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
+<div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
+</section>
+<section class="global-footer-info checkin-player-row" aria-label="每日簽到與玩家資訊" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch;width:min(1480px,calc(100% - 28px));margin:0 auto 26px;">
+<section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
+<aside class="base-player-card">
+<div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
+<div class="base-player-identity"><span class="base-profile-avatar" id="baseProfileAvatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
+<div class="base-player-stats">
+<div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
+<div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
+<div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
+<div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
+</div>
+</aside>
+</section>
+</div>
+<div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
+<div class="modal-card habitat-guide-card" onclick="event.stopPropagation()">
+<button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button" onclick="closeHabitatGuide()">×</button>
+<div class="habitat-guide-head"><span>💡</span><div><small>ECO HABITAT GUIDE</small><h3 id="habitatGuideTitle">動物棲地提示</h3><p>布置適合的花、草、樹木與生態池，動物才會自然入住。</p></div></div>
+<div class="habitat-summary" id="habitatSummary"></div>
+<div class="habitat-requirements" id="habitatRequirements"></div>
+</div>
+</div>
+<div class="modal hide" id="resumeQuizModal" role="dialog" aria-modal="true" aria-labelledby="resumeQuizTitle">
+<div class="modal-card resume-quiz-card">
+<h3 id="resumeQuizTitle">📘 要繼續上次的答題進度嗎？</h3>
+<p id="resumeQuizText">偵測到尚未完成的冒險。</p>
+<div class="resume-quiz-actions">
+<button class="secondary" type="button" onclick="discardSavedQuiz()">回首頁重新選擇</button>
+<button class="primary" type="button" onclick="resumeSavedQuiz()">繼續答題</button>
+</div>
+</div>
+</div>
+<div class="modal hide" id="logoutModal">
+<div class="modal-card">
+<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLogout()">×</button>
+<h3>確定要登出嗎？</h3>
+<p>進度已同步至 Google 帳號；登出後可再次登入接續遊玩。</p>
+<div><button onclick="closeLogout()">取消</button><button class="danger" onclick="logout()">登出</button></div>
+</div>
+</div>
+<div class="modal hide" id="weaknessQuizModal">
+<div class="modal-card weakness-quiz-card">
+<button aria-label="關閉" class="modal-close" onclick="closeWeaknessQuiz()">×</button>
+<small>MONSTER WEAKNESS CHALLENGE</small>
+<h2>👾 弱點再次挑戰</h2>
+<div class="weakness-quiz-meta" id="weaknessQuizMeta"></div>
+<h3 id="weaknessQuizQuestion"></h3>
+<div class="options weakness-quiz-options" id="weaknessQuizOptions"></div>
+<div class="answer-actions" id="weaknessQuizActions">
+<button class="secondary" disabled="" id="weaknessResetBtn" onclick="resetWeaknessAnswer()">重新選擇</button>
+<button class="primary" disabled="" id="weaknessSubmitBtn" onclick="submitWeaknessAnswer()">確定送出</button>
+</div>
+<div class="feedback hide" id="weaknessQuizFeedback"></div>
+<button class="primary full hide" id="weaknessDoneBtn" onclick="closeWeaknessQuiz()">回到弱點筆記</button>
+</div>
+</div>
+<div aria-hidden="true" class="effect-layer" id="effectLayer"></div>
+<div class="modal hide" id="levelModal">
+<div class="modal-card level-card">
+<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLevelModal()">×</button>
+<div class="level-unlock-icon" id="levelUnlockIcon">✨</div>
+<small>GUARDIAN LEVEL UP</small>
+<h2 id="levelUnlockTitle">守護者升級！</h2>
+<p id="levelUnlockText"></p>
+<button class="primary full" onclick="closeLevelModal()">繼續冒險</button>
+</div>
+</div>
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js?v=10207"></script>
+<script src="questions.js?v=10207"></script>
+<script src="config.js?v=10207"></script>
+<script src="game.js?v=10207"></script>
+<script src="firebase.js?v=54"></script>
+<script src="pet-system-addon-v7.js?v=70"></script>
+
+<script>
+/* ===== V10.2.7：真正的「回上一頁」站內導覽 =====
+   記錄 SPA 內實際顯示過的 main 畫面，而不是固定回某一頁。
+   若沒有站內上一頁，才退回瀏覽器上一頁；再沒有才回冒險地圖。
+*/
+(function(){
+  const navStack = [];
+  let goingBack = false;
+
+  function currentAppPage(){
+    const pages = document.querySelectorAll('#game main[id]');
+    for(const el of pages){
+      if(!el.classList.contains('hide')) return el.id;
+    }
+    return null;
+  }
+
+  function installPageHistory(){
+    if(typeof window.page !== 'function'){
+      setTimeout(installPageHistory, 50);
+      return;
+    }
+    if(window.page.__realBackPatched) return;
+
+    const originalPage = window.page;
+
+    function trackedPage(id){
+      const current = currentAppPage();
+
+      if(!goingBack && current && current !== id){
+        const last = navStack[navStack.length - 1];
+        if(last !== current) navStack.push(current);
+
+        // 避免使用很久後堆疊無限增長
+        if(navStack.length > 50) navStack.shift();
+      }
+
+      return originalPage.apply(this, arguments);
+    }
+
+    trackedPage.__realBackPatched = true;
+    trackedPage.__originalPage = originalPage;
+    window.page = trackedPage;
+
+    // 覆蓋舊版固定返回邏輯
+    window.goPreviousPage = function(){
+      let previous = null;
+
+      while(navStack.length){
+        const candidate = navStack.pop();
+        if(candidate && document.getElementById(candidate)){
+          previous = candidate;
+          break;
+        }
+      }
+
+      if(previous){
+        goingBack = true;
+        try{
+          originalPage(previous);
+        }finally{
+          setTimeout(()=>{ goingBack = false; }, 0);
+        }
+        return;
+      }
+
+      // 若站內沒有歷史（例如直接用網址開這一頁），才用瀏覽器歷史。
+      if(window.history.length > 1){
+        window.history.back();
+      }else if(typeof window.showMap === 'function'){
+        window.showMap();
+      }else{
+        window.location.href = 'index.html';
+      }
+    };
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', installPageHistory, {once:true});
+  }else{
+    installPageHistory();
+  }
+})();
+</script>
+
+
+<script>
+/* 從「毛孩守護者」返回時，回到登入後的環保冒險王首頁，而不是停在登入頁。 */
+(function(){
+  let shouldReturnHome=false;
+  try{
+    shouldReturnHome=sessionStorage.getItem('ecoReturnToHome')==='1';
+    if(shouldReturnHome) sessionStorage.removeItem('ecoReturnToHome');
+  }catch(e){}
+  if(!shouldReturnHome)return;
+
+  let attempts=0;
+  const timer=setInterval(()=>{
+    attempts++;
+    const game=document.getElementById('game');
+    const login=document.getElementById('loginPage');
+
+    // 主程式已恢復登入狀態時，直接回冒險地圖。
+    if(game && !game.classList.contains('hide') && typeof window.showMap==='function'){
+      clearInterval(timer);
+      window.showMap();
+      window.scrollTo({top:0,left:0,behavior:'auto'});
+      return;
+    }
+
+    // 最多等待約 8 秒讓 Firebase 恢復登入。
+    if(attempts>=40){
+      clearInterval(timer);
+    }
+  },200);
+})();
+</script>
+
+
+
+
+<script>
+/* =========================================================
+   毛孩守護者 V3：直接嵌入主遊戲，同一份 st / save / wrongNotes
+   ========================================================= */
+(function installIntegratedPetGuardian(){
+  const PET_STAGE={
+    pet1:{name:'責任飼主基礎',full:'毛孩守護者・責任飼主基礎',icon:'🐕',reward:2,desc:['安全互動、晶片、醫療、飼養責任','日常照護、散步、飲水與健康觀察','肢體語言、外出安排與友善互動']},
+    pet2:{name:'動物福利進階',full:'毛孩守護者・動物福利進階',icon:'🐾',reward:4,desc:['動物福利、外來種、救援與情境判斷','特殊寵物、野生動物、棄養與照護責任','通報、安全、野放風險與完整情境判斷']}
+  };
+  let ps='',pu=0,pquiz=[],pqi=0,pscore=0,panswered=false,pselected=null,preplay=false;
+
+  function ready(){return typeof st!=='undefined'&&typeof save==='function'&&typeof window.customQuestionsForUnit==='function'}
+  function petEnsure(){
+    if(!st.completed||typeof st.completed!=='object')st.completed={};
+    if(!st.unitProgress||typeof st.unitProgress!=='object')st.unitProgress={};
+    if(!st.unitScores||typeof st.unitScores!=='object')st.unitScores={};
+    if(!st.wrongNotes||typeof st.wrongNotes!=='object')st.wrongNotes={};
+    if(!st.coinAwarded||typeof st.coinAwarded!=='object')st.coinAwarded={};
+    if(!st.mainExpAwarded||typeof st.mainExpAwarded!=='object')st.mainExpAwarded={};
+    if(!st.petQuizSets||typeof st.petQuizSets!=='object')st.petQuizSets={};
+    ['pet1','pet2'].forEach(s=>{
+      if(!Array.isArray(st.completed[s]))st.completed[s]=[];
+      if(!st.unitProgress[s]||typeof st.unitProgress[s]!=='object')st.unitProgress[s]={};
+      if(!st.unitScores[s]||typeof st.unitScores[s]!=='object')st.unitScores[s]={};
+    });
+  }
+  function petPool(s,u){
+    return (window.customQuestionsForUnit(s,u)||[])
+      .slice()
+      .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+  }
+
+  function petShuffle(list){
+    const a=list.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function petQuizSetKey(s,u){return `${s}|${u}`}
+
+  function petQuizForStart(s,u,replay){
+    petEnsure();
+    const pool=petPool(s,u);
+    if(pool.length<=10)return pool;
+
+    const key=petQuizSetKey(s,u);
+
+    /* 未完成的單元回來時，沿用原本那批題目 */
+    if(!replay && Array.isArray(st.petQuizSets[key]) && st.petQuizSets[key].length){
+      const byId=new Map(pool.map(q=>[String(q.id),q]));
+      const saved=st.petQuizSets[key].map(id=>byId.get(String(id))).filter(Boolean);
+      if(saved.length===Math.min(10,pool.length))return saved;
+    }
+
+    /* 完成後重玩，或第一次進入：重新隨機抽10題 */
+    const picked=petShuffle(pool).slice(0,10);
+    if(!replay){
+      st.petQuizSets[key]=picked.map(q=>String(q.id));
+      save();
+    }
+    return picked;
+  }
+
+  function done(s,u){petEnsure();return st.completed[s].includes(u-1)}
+  function answered(s,u){petEnsure();return Math.max(0,Math.min(10,Number(st.unitProgress[s][u-1]||0)))}
+  function savedScore(s,u){petEnsure();return Math.max(0,Number(st.unitScores[s][u-1]||0))}
+
+  function makePage(){ return document.getElementById('petGuardianPage'); }
+  function hideAllMain(){document.querySelectorAll('#game main[id]').forEach(x=>x.classList.add('hide'))}
+  function showPart(id){['petAdventureHome','petAdventureQuiz','petAdventureResult'].forEach(x=>document.getElementById(x)?.classList.add('hide'));document.getElementById(id)?.classList.remove('hide');document.body.classList.toggle('quiz-mode',id==='petAdventureQuiz');requestAnimationFrame(()=>scrollTo({top:0,left:0,behavior:'auto'}))}
+
+  function petUnitCard(s,u){
+    const pool=petPool(s,u),poolN=pool.length,n=Math.min(10,poolN),a=answered(s,u),sc=savedScore(s,u),d=done(s,u),perfect=Boolean(st.coinAwarded[`${s}|${u-1}`]);
+    const pct=n?Math.round(Math.min(a,n)/n*100):0;
+    return `<button class="pet-map-unit ${d?'done':a?'partial':''}" onclick="startPetUnit('${s}',${u})"><div class="pet-unit-icon">${d?'✅':PET_STAGE[s].icon}</div><small>UNIT ${u}</small><h4>單元 ${u}</h4><p>${PET_STAGE[s].desc[u-1]}</p><div class="pet-unit-meta"><span>題庫 ${poolN} 題・每次抽 ${n} 題</span><span>${d?(perfect?'滿分完成':'已完成'):a?`進行中：${a}/${n}`:'尚未開始'}</span></div><div class="pet-unit-progress"><i style="width:${pct}%"></i></div><div class="pet-unit-bottom"><span>目前 ${sc}/${n||10}</span><b>🪙 滿分 +${PET_STAGE[s].reward}</b></div></button>`;
+  }
+  function renderPetHome(){
+    if(!ready())return;petEnsure();
+    document.getElementById('petMainUnits1').innerHTML=[1,2,3].map(u=>petUnitCard('pet1',u)).join('');
+    document.getElementById('petMainUnits2').innerHTML=[1,2,3].map(u=>petUnitCard('pet2',u)).join('');
+    document.getElementById('petMainCoins').textContent=`🪙 ${Number(st.coins)||0}`;
+    document.getElementById('petMainDone').textContent=`${st.completed.pet1.length+st.completed.pet2.length} / 6 單元`;
+  }
+  window.showPetGuardian=function(){
+    if(typeof window.page==='function'){
+      window.page('petGuardianPage');
+    }else{
+      document.querySelectorAll('#game main[id]').forEach(x=>x.classList.add('hide'));
+      document.getElementById('petGuardianPage')?.classList.remove('hide');
+    }
+
+    showPart('petAdventureHome');
+
+    if(ready()){
+      petEnsure();
+      renderPetHome();
+      if(typeof header==='function')header();
+    }else{
+      const u1=document.getElementById('petMainUnits1');
+      const u2=document.getElementById('petMainUnits2');
+      if(u1)u1.innerHTML='<div class="pet-loading-card">☁️ 正在載入毛孩題庫與玩家進度…</div>';
+      if(u2)u2.innerHTML='';
+
+      let tries=0;
+      const timer=setInterval(()=>{
+        tries++;
+        if(ready()){
+          clearInterval(timer);
+          petEnsure();
+          renderPetHome();
+          if(typeof header==='function')header();
+        }else if(tries>=50){
+          clearInterval(timer);
+          if(u1)u1.innerHTML='<div class="pet-loading-card error">⚠️ 毛孩系統載入失敗，請重新整理頁面後再試。</div>';
+        }
+      },100);
+    }
+  };
+
+  window.startPetUnit=function(s,u){
+    if(!ready())return;
+    petEnsure();
+    ps=s;pu=u;
+    preplay=done(s,u);
+
+    const key=petQuizSetKey(s,u);
+    const hadSavedSet=Array.isArray(st.petQuizSets[key])&&st.petQuizSets[key].length>0;
+    const oldAnswered=answered(s,u);
+
+    pquiz=petQuizForStart(s,u,preplay);
+    if(!pquiz.length){toast('這個毛孩單元目前沒有題目');return}
+
+    /* 舊版本若做到一半卻沒有儲存抽題清單，避免分數套到不同題目 */
+    if(!preplay && oldAnswered>0 && !hadSavedSet){
+      st.unitProgress[s][u-1]=0;
+      st.unitScores[s][u-1]=0;
+      pqi=0;
+      pscore=0;
+      save();
+      toast('題庫已升級為隨機出題，本單元將從新的10題重新開始');
+    }else{
+      pqi=preplay?0:Math.min(answered(s,u),pquiz.length-1);
+      pscore=preplay?0:savedScore(s,u);
+    }
+
+    showPart('petAdventureQuiz');
+    petRenderQ();
+  };
+  function petMonster(q){const t=`${q.q||''} ${q.exp||''}`;if(/棄養|認養|飼主|責任/.test(t))return['🐕‍🦺','棄養迷霧獸','負責任飼養、認養前評估與終身照護'];if(/晶片|登記|走失/.test(t))return['🏷️','走失迷蹤怪','晶片、寵物登記與正確身分管理'];if(/醫療|獸醫|生病|健康|中暑/.test(t))return['🩺','疏忽病痛獸','觀察健康訊號並及時尋求獸醫協助'];if(/野放|外來種|生態|野生/.test(t))return['🌿','野放失衡怪','不任意野放，尊重原生生態與野生動物'];return['🐾','毛孩迷霧怪','理解動物需求、尊重生命並採取正確照護'];}
+  function noteKey(q){return `${ps}|${q.id}`}
+  function recordPetWrong(q){const k=noteKey(q),prev=st.wrongNotes[k]||{},m=petMonster(q);st.wrongNotes[k]={...prev,key:k,stageId:ps,stageName:PET_STAGE[ps].full,unit:pu,level:q.level||'毛孩守護',question:q.q,explanation:q.exp,options:q.opts,answer:q.ans,attempts:(prev.attempts||0)+1,firstWrongAt:prev.firstWrongAt||new Date().toISOString(),lastWrongAt:new Date().toISOString(),mastered:false,masteredAt:null,monsterEmoji:m[0],monsterName:m[1],monsterWeakness:m[2]}}
+  function masterPetWrong(q){const k=noteKey(q);if(st.wrongNotes[k]&&!st.wrongNotes[k].mastered){st.wrongNotes[k].mastered=true;st.wrongNotes[k].masteredAt=new Date().toISOString()}}
+  function petRenderQ(){panswered=false;pselected=null;const q=pquiz[pqi];document.getElementById('petQuizCount').textContent=`第 ${pqi+1} 題 / ${pquiz.length} 題`;document.getElementById('petQuizBar').style.width=`${pqi/pquiz.length*100}%`;document.getElementById('petEnemyIcon').textContent=PET_STAGE[ps].icon;document.getElementById('petEnemyName').textContent=PET_STAGE[ps].name;document.getElementById('petLevelTag').textContent=q.level||'毛孩守護';document.getElementById('petQuestion').textContent=q.q;const box=document.getElementById('petOptions');box.innerHTML='';q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='option';b.innerHTML=`<b>${String.fromCharCode(65+i)}.</b> ${o}`;b.onclick=()=>{if(panswered)return;pselected=i;[...box.children].forEach((x,j)=>x.classList.toggle('selected',j===i));document.getElementById('petSubmitBtn').disabled=false};box.appendChild(b)});document.getElementById('petFeedback').className='feedback hide';document.getElementById('petFeedback').innerHTML='';document.getElementById('petAnswerActions').classList.remove('hide');document.getElementById('petSubmitBtn').disabled=true;document.getElementById('petNextBtn').classList.add('hide')}
+  function petSubmit(){
+    if(panswered||pselected===null){toast('請先選擇一個答案');return}panswered=true;const q=pquiz[pqi],ok=pselected===q.ans;
+    if(typeof recordAnswerActivity==='function')recordAnswerActivity();else st.totalAnswered=(Number(st.totalAnswered)||0)+1;
+    let exp=0;if(ok){pscore++;st.totalCorrect=(Number(st.totalCorrect)||0)+1;masterPetWrong(q);const ek=`${ps}|${q.id}`;if(!st.mainExpAwarded[ek]){exp=10*(typeof activeExpMultiplier==='function'?activeExpMultiplier():1);if(typeof addExp==='function')addExp(exp);else st.exp=(Number(st.exp)||0)+exp;st.mainExpAwarded[ek]=true;if(typeof addWeeklyQuestionPoints==='function')addWeeklyQuestionPoints(exp)}}else recordPetWrong(q);
+    const box=document.getElementById('petOptions');[...box.children].forEach((b,j)=>{b.disabled=true;b.classList.remove('selected');if(ok&&j===pselected)b.classList.add('good');if(!ok&&j===pselected)b.classList.add('bad')});
+    const fb=document.getElementById('petFeedback');fb.className='feedback '+(ok?'good':'bad');fb.innerHTML=ok?`<b>✅ 答對了！</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="exp-gain">${exp?`✨ +${exp} EXP`:'本題經驗值已領取，不重複計分'}</div>`:`<b>🤔 這題已記進「怪獸弱點圖鑑」</b><br><span class="feedback-label">解析</span><br>${q.exp}<div class="feedback-note">不公布答案，也不立即重答；之後可到怪獸弱點圖鑑再次挑戰。</div><div class="exp-gain">本題不獲得經驗值</div>`;
+    if(!preplay){st.unitProgress[ps][pu-1]=Math.min(pquiz.length,pqi+1);st.unitScores[ps][pu-1]=pscore}
+    save();if(typeof header==='function')header();if(typeof updateWeaknessBadge==='function')updateWeaknessBadge();
+    document.getElementById('petAnswerActions').classList.add('hide');document.getElementById('petNextBtn').classList.remove('hide');
+  }
+  function petNext(){if(!panswered)return;pqi++;if(pqi>=pquiz.length)petFinish();else petRenderQ()}
+  window.petSubmit=petSubmit;
+  window.petNext=petNext;
+  function petFinish(){petEnsure();const idx=pu-1,d=st.completed[ps],first=!d.includes(idx),perfect=pscore===pquiz.length,ck=`${ps}|${idx}`,firstPerfect=perfect&&!st.coinAwarded[ck],reward=PET_STAGE[ps].reward;if(first)d.push(idx);if(firstPerfect){st.coins=(Number(st.coins)||0)+reward;st.coinAwarded[ck]=true}st.unitProgress[ps][idx]=10;st.unitScores[ps][idx]=pscore;delete st.petQuizSets[petQuizSetKey(ps,pu)];const pct=Math.round(pscore/pquiz.length*100);save();if(typeof header==='function')header();document.getElementById('petResultTitle').textContent=`${PET_STAGE[ps].name}・單元 ${pu} 完成！`;document.getElementById('petResultScore').textContent=pct;document.getElementById('petResultMsg').textContent=perfect?(firstPerfect?`本次 10 題全部答對，獲得 ${reward} 枚守護金幣！`:'本單元滿分獎勵已領取，不重複獲得金幣。'):(first?'首次完成單元，但本次未全對，因此不獲得金幣。':'本次未全對，因此不獲得金幣。');document.getElementById('petCoinReward').textContent=firstPerfect?`+${reward}`:(perfect?'已領取':'未獲得');const earned=pquiz.filter(q=>st.mainExpAwarded[`${ps}|${q.id}`]).length*10;document.getElementById('petExpReward').textContent=`本單元累計 ${earned} EXP`;document.getElementById('petStars').textContent=pct===100?'★★★★★':pct>=90?'★★★★':pct>=80?'★★★':pct>=60?'★★':'★';preplay=false;showPart('petAdventureResult')}
+
+  function patchNavigation(){
+    const b=document.getElementById('petGuardianNavBtn');
+    if(b){
+      b.onclick=showPetGuardian;
+      b.removeAttribute('data-href');
+    }
+    document.querySelectorAll('.tabs button').forEach(btn=>{
+      if(btn.textContent.includes('冒險地圖')){
+        btn.innerHTML=btn.innerHTML.replace('冒險地圖','環保知識');
+      }
+    });
+  }
+  function patchPage(){
+    if(typeof window.page!=='function'||window.page.__petNativeAware)return;
+    const old=window.page;
+
+    const wrapped=function(id){
+      const pet=document.getElementById('petGuardianPage');
+
+      if(id==='petGuardianPage'){
+        document.querySelectorAll('#game main[id]').forEach(el=>el.classList.add('hide'));
+        pet?.classList.remove('hide');
+        document.body.classList.remove('quiz-mode');
+        requestAnimationFrame(()=>scrollTo({top:0,left:0,behavior:'auto'}));
+        return;
+      }
+
+      pet?.classList.add('hide');
+      return old.apply(this,arguments);
+    };
+
+    wrapped.__petNativeAware=true;
+    window.page=wrapped;
+  }
+  function patchWeaknessLabels(){if(typeof window.renderWeaknessBook!=='function'||window.renderWeaknessBook.__petV3)return;const old=window.renderWeaknessBook;const w=function(){const r=old.apply(this,arguments);setTimeout(()=>{const sel=document.getElementById('weaknessUnitSearch');if(sel)[...sel.options].forEach(o=>{if(o.value.startsWith('pet1|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet1/i,'毛孩守護者｜責任飼主基礎');if(o.value.startsWith('pet2|'))o.textContent=o.textContent.replace(/STAGE\s+\d+\｜pet2/i,'毛孩守護者｜動物福利進階')})},0);return r};w.__petV3=true;window.renderWeaknessBook=w}
+  function install(){
+    patchNavigation();patchPage();
+    if(ready()){petEnsure();patchWeaknessLabels();}
+    else setTimeout(()=>{if(ready()){petEnsure();patchWeaknessLabels();}},500);
+    try{if(sessionStorage.getItem('openIntegratedPetGuardian')==='1'){sessionStorage.removeItem('openIntegratedPetGuardian');showPetGuardian()}}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
+
+
+</script>
+</body></html>
