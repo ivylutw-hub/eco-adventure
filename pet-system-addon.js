@@ -123,6 +123,7 @@
           <button onclick="dogHomeAction('pet')" type="button">💗<b>迎接主人</b></button>
           <button onclick="dogHomeAction('walk')" type="button">🐾<b>走一走</b></button>
           <button onclick="dogHomeAction('feed')" type="button">🥣<b>餵食</b></button>
+          <button onclick="dogHomeAction('clean')" type="button">🛁<b>清潔</b></button>
           <button onclick="dogHomeAction('sleep')" type="button">🌙<b>睡覺</b></button>
           <button onclick="dogHomeAction('play')" type="button">🎾<b>追球</b></button>
           <button onclick="dogHomeAction('idle')" type="button">😊<b>待機</b></button>
