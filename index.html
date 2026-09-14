@@ -12,10 +12,10 @@
 <meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
 <meta content="social-preview.svg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V10.2.8｜難度冒險地圖</title>
+<title>環保冒險王 V10.2.9｜難度冒險地圖</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10208" rel="stylesheet"/>
+<link href="style.css?v=10209" rel="stylesheet"/>
 </head>
 <body>
 <div class="login-page" id="loginPage">
@@ -105,7 +105,7 @@
 </div>
 <div class="header-copy">
 <small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.7</span></h1>
+<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.9</span></h1>
 <p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
 </div>
 <section class="home-nature-strip" aria-label="今日環境資訊">
@@ -134,7 +134,6 @@
 <button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span class="nav-count" id="weaknessCount">0</span></button>
 <button onclick="showProfile()">👤 我的資料</button>
 <button onclick="showAchievements()">🏅 玩家成就</button>
-<button class="lecture-focus-nav" onclick="showLectureFocus()">🌟 講義重點 50 題</button>
 <button class="hide" id="adminNavBtn" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
 </nav>
 <div class="page-nav-actions hide" id="pageNavActions" aria-label="頁面導覽">
@@ -146,11 +145,6 @@
 <div><small>OPEN WORLD MAP</small><h2>🗺️ 地球修復冒險地圖</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
 </div>
 <div class="map" id="map"></div>
-<section class="lecture-focus-entry-card" onclick="showLectureFocus()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')showLectureFocus()">
-  <div class="lecture-focus-entry-icon">📚</div>
-  <div><small>NEW · LECTURE FOCUS</small><h3>🌟 講義重點特訓｜50 題</h3><p>把這次講義整理出的 50 題集中練習，不必和四大冒險題庫混在一起。</p></div>
-  <b>開始 →</b>
-</section>
 </main>
 <main class="hide" id="stagePage">
 <button class="back" onclick="showMap()">← 回冒險地圖</button>
@@ -446,46 +440,6 @@
 <div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
 </section>
 </main>
-<main class="hide lecture-focus-page" id="lectureFocusPage">
-  <div class="lecture-focus-hero">
-    <div class="lecture-focus-badge">📚</div>
-    <div>
-      <small>LECTURE FOCUS · 50 QUESTIONS</small>
-      <h2>🌟 講義重點特訓</h2>
-      <p>這次新增的 50 題獨立整理在這裡，專門複習講義中的環境公約、污染、水足跡、氣候與淨零等重點。</p>
-    </div>
-    <div class="lecture-focus-count"><b id="lectureFocusDone">0</b><span>/ 50</span><small>已完成</small></div>
-  </div>
-  <section class="lecture-focus-card" id="lectureFocusWelcome">
-    <div class="lecture-focus-stats">
-      <div><span>📝</span><b>50 題</b><small>完整講義題庫</small></div>
-      <div><span>🌱</span><b>初～高級</b><small>依難度排列</small></div>
-      <div><span>🎯</span><b id="lectureFocusBest">—</b><small>目前最佳</small></div>
-    </div>
-    <div class="lecture-focus-topics">
-      <span>♻️ 標章與回收</span><span>💧 水足跡與水質</span><span>🌏 國際環境公約</span><span>☁️ 氣候與淨零</span><span>☣️ 污染與公害</span>
-    </div>
-    <button class="primary lecture-focus-start" type="button" onclick="startLectureFocusQuiz(false)">🚀 開始 50 題特訓</button>
-    <button class="secondary lecture-focus-reset" type="button" onclick="startLectureFocusQuiz(true)">🔄 重新挑戰 50 題</button>
-    <p class="lecture-focus-note">💡 這一區與四大冒險關卡分開計算，不會改變原本 Stage／單元進度。</p>
-  </section>
-  <section class="lecture-focus-quiz hide" id="lectureFocusQuiz">
-    <div class="lecture-focus-quiz-top"><button class="back" type="button" onclick="exitLectureFocusQuiz()">← 回講義重點</button><b id="lectureFocusProgress">第 1 / 50 題</b></div>
-    <div class="bar"><i id="lectureFocusBar"></i></div>
-    <div class="lecture-focus-meta"><span id="lectureFocusStage"></span><span id="lectureFocusLevel"></span></div>
-    <h3 id="lectureFocusQuestion"></h3>
-    <div class="lecture-focus-options" id="lectureFocusOptions"></div>
-    <div class="lecture-focus-feedback hide" id="lectureFocusFeedback"></div>
-    <button class="primary full hide" id="lectureFocusNext" type="button" onclick="nextLectureFocusQuestion()">下一題 →</button>
-  </section>
-  <section class="lecture-focus-result hide" id="lectureFocusResult">
-    <div class="lecture-focus-result-icon">🏆</div><small>LECTURE FOCUS COMPLETE</small>
-    <h2>講義重點特訓完成！</h2>
-    <div class="lecture-focus-score"><b id="lectureFocusScore">0</b><span>/ 50</span></div>
-    <p id="lectureFocusResultText"></p>
-    <div class="lecture-focus-result-actions"><button class="primary" type="button" onclick="startLectureFocusQuiz(true)">🔄 再挑戰一次</button><button class="secondary" type="button" onclick="exitLectureFocusQuiz()">回題庫首頁</button></div>
-  </section>
-</main>
 <section class="stats global-status-row" aria-label="玩家守護狀態">
 <div>🪙<span>守護金幣</span><b id="coins">0</b></div>
 <div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
@@ -563,11 +517,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=10208"></script>
-<script src="questions.js?v=10208"></script>
-<script src="config.js?v=10208"></script>
-<script src="game.js?v=10208"></script>
-<script src="firebase.js?v=10208"></script>
+<script src="firebase-config.js?v=10209"></script>
+<script src="questions.js?v=10209"></script>
+<script src="config.js?v=10209"></script>
+<script src="game.js?v=10209"></script>
+<script src="firebase.js?v=10209"></script>
 <script src="pet-admin-addon.js?v=1"></script>
-<script src="lecture-focus-addon.js?v=10208"></script>
+<script src="lecture-focus-addon-v10.2.9.js?v=10209"></script>
 </body></html>
