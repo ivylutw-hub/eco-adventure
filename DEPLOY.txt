@@ -1,0 +1,12 @@
+環保冒險王 V10.2.8 部署說明
+
+需要上傳到 GitHub Repository 根目錄：
+1. index.html（覆蓋原 index.html）
+2. lecture-focus-addon.js（新增檔案）
+3. CHANGELOG.md（覆蓋）
+4. README.md（覆蓋）
+5. VERSION.txt（新增／覆蓋）
+
+注意：本次已將 50 題內容直接包含在 lecture-focus-addon.js 中，因此不需要重新匯入 CSV，也不需要刪除目前 Firebase customQuestions 裡已經匯入的 50 題。
+
+登入後首頁會看到「🌟 講義重點特訓｜50 題」入口；主選單也有「🌟 講義重點 50 題」。
