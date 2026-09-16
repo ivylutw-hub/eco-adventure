@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>火災類型學習中心｜環保冒險王</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#fff4e8,#fffbe8);color:#382b22}
+header{padding:24px 16px;text-align:center;background:linear-gradient(135deg,#d94801,#f08c46);color:#fff;box-shadow:0 5px 18px #0002}
+header h1{margin:0 0 8px;font-size:clamp(30px,6vw,48px)}
+header p{margin:0;font-size:18px}
+nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:14px;background:#ffffffee;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px #0001}
+nav button{border:0;border-radius:999px;padding:10px 18px;font-size:17px;font-weight:800;background:#fff0e5;color:#c2410c;cursor:pointer}
+nav button.active{background:#d94801;color:#fff}
+main{max-width:1100px;margin:auto;padding:24px 16px}
+section{display:none}section.active{display:block}
+.section-title{text-align:center;font-size:32px;margin:10px 0 22px}
+.note{max-width:900px;margin:0 auto 22px;background:#fff;border-radius:18px;padding:14px 18px;box-shadow:0 3px 14px #0001;font-size:17px;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{background:#fff;border-radius:22px;padding:20px;box-shadow:0 5px 18px #0001;border:3px solid #f3d4bf}
+.card h3{margin:0 0 10px;font-size:28px}
+.icon{font-size:62px;text-align:center;margin:2px 0 10px}
+.badge{display:inline-block;padding:6px 12px;border-radius:999px;background:#fff0e5;color:#c2410c;font-weight:900;margin-bottom:10px}
+.card p{font-size:18px;line-height:1.75;margin:8px 0}
+.card .fact{background:#fff8f2;border-radius:14px;padding:12px;margin-top:12px}
+.warn{background:#fff0f0;border:2px solid #ef9a9a;border-radius:14px;padding:12px;font-weight:800}
+.match-wrap{max-width:1000px;margin:auto}
+.score{font-size:22px;font-weight:900;text-align:center;margin-bottom:14px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.match-col{background:#ffffffaa;border-radius:20px;padding:16px}
+.match-col h3{text-align:center;margin:4px 0 12px;font-size:23px}
+.match-card{width:100%;border:3px solid #f0d4c0;background:#fff;border-radius:16px;padding:16px;margin:9px 0;font-size:19px;font-weight:800;cursor:pointer;text-align:left;min-height:72px}
+.match-card.selected{border-color:#d94801;background:#fff0e5}
+.match-card.matched{border-color:#43a047;background:#e9f7eb;cursor:default}
+.match-card.wrong{animation:shake .25s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.actions{text-align:center;margin-top:16px}
+.action{border:0;border-radius:999px;padding:12px 22px;font-size:18px;font-weight:900;cursor:pointer;background:#d94801;color:white}
+.quiz{max-width:850px;margin:auto}
+.qcard{background:#fff;border-radius:20px;padding:22px;box-shadow:0 4px 16px #0001;margin-bottom:16px}
+.qcard h3{font-size:21px;line-height:1.6}
+.opt{display:block;width:100%;text-align:left;border:2px solid #ead9ce;background:#fff;border-radius:14px;padding:13px 15px;margin:8px 0;font-size:18px;cursor:pointer}
+.opt.correct{background:#e7f7e9;border-color:#43a047}.opt.incorrect{background:#ffeded;border-color:#d9534f}
+.result{font-size:26px;font-weight:900;text-align:center;padding:18px}
+footer{text-align:center;padding:30px 16px;color:#806b5c}
+@media(max-width:720px){.grid,.match-grid{grid-template-columns:1fr}.card h3{font-size:24px}.card p{font-size:17px}.match-card{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+<h1>🔥 火災類型學習中心</h1>
+<p>A～D 類火災｜圖鑑 → 對對碰 → 10 題挑戰</p>
+</header>
+<nav>
+<button class="active" onclick="show('guide',this)">📖 火災圖鑑</button>
+<button onclick="show('match',this)">🎮 對對碰</button>
+<button onclick="show('quiz',this)">🏆 10題挑戰</button>
+</nav>
+<main>
+<section id="guide" class="active">
+<h2 class="section-title">📖 A～D 類火災圖鑑</h2>
+<div class="note">以下內容依照你提供的競賽教材整理。A～D 類的名稱、可燃物與教材中的處理重點都保留，方便孩子背誦與辨識。</div>
+<div class="grid">
+<div class="card"><div class="icon">🪵🔥</div><span class="badge">A 類</span><h3>普通火災</h3><p>普通可燃物如木製品、紙纖維、棉、布、合成樹脂、橡膠、塑膠等發生之火災，通常建築物之火災即屬此類。</p><div class="fact">💧 可藉水或含水溶液的冷卻作用使燃燒物溫度降低，以達成滅火效果。</div></div>
+<div class="card"><div class="icon">🛢️🔥</div><span class="badge">B 類</span><h3>油類火災</h3><p>可燃物液體如石油，或可燃性氣體如乙烷、乙炔，或可燃性油脂如塗料等發生之火災。</p><div class="fact">🫧 最有效的是以掩蓋法隔離氧氣，使之窒息；另外如移開可燃物或降低溫度亦可以達到滅火效果。</div></div>
+<div class="card"><div class="icon">⚡🔥</div><span class="badge">C 類</span><h3>電氣火災</h3><p>涉及通電中之電氣設備，如電器、變壓器、電線、配電盤等引起之火災。</p><div class="fact">⚡ 有時可用不導電的滅火劑控制火勢，但如能截斷電源再視情況依 A 或 B 類火災處理，較為妥當。</div></div>
+<div class="card"><div class="icon">🔩🔥</div><span class="badge">D 類</span><h3>金屬火災</h3><p>活性金屬如鎂、鉀、鋰、鋯、鈦等或其他禁水性物質燃燒引起之火災。</p><div class="fact">⚠️ 這些物質燃燒時溫度甚高，只有分別控制這些可燃金屬的特定滅火劑才能有效滅火；通常均會標明專用於何種金屬。</div></div>
+</div>
+<div class="note" style="margin-top:18px"><div class="warn">⚠️ 安全提醒：實際發生火災時，應依現場安全狀況避難並通報消防單位；教材中的分類主要用於認識火災類型與滅火原理。</div></div>
+</section>
+
+<section id="match">
+<h2 class="section-title">🎮 火災類型對對碰</h2>
+<div class="note">玩法：左邊選火災類型，右邊選相對應的「可燃物／設備與處理重點」。全部配對成功就完成挑戰！</div>
+<div class="match-wrap">
+<div class="score" id="matchScore">已完成 0 / 4</div>
+<div class="match-grid">
+<div class="match-col"><h3>🔥 火災類型</h3><div id="fireCards"></div></div>
+<div class="match-col"><h3>🔎 重點線索</h3><div id="clueCards"></div></div>
+</div>
+<div class="actions"><button class="action" onclick="startMatch()">🔄 重新開始</button></div>
+</div>
+</section>
+
+<section id="quiz">
+<h2 class="section-title">🏆 10 題挑戰</h2>
+<div class="quiz" id="quizBox"></div>
+<div class="actions"><button class="action" onclick="startQuiz()">🔄 再挑戰一次</button></div>
+</section>
+</main>
+<footer>🌍 環保冒險王｜火災類型學習中心</footer>
+<script>
+const pairs=[
+{id:'A',name:'A 類｜普通火災',clue:'木製品、紙纖維、棉、布、塑膠等普通可燃物'},
+{id:'B',name:'B 類｜油類火災',clue:'石油、可燃性氣體、油脂、塗料等'},
+{id:'C',name:'C 類｜電氣火災',clue:'通電中的電器、變壓器、電線、配電盤等'},
+{id:'D',name:'D 類｜金屬火災',clue:'鎂、鉀、鋰、鋯、鈦等活性金屬或禁水性物質'}
+];
+function show(id,btn){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+let first=null,done=0;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function startMatch(){
+ first=null;done=0;document.getElementById('matchScore').textContent='已完成 0 / 4';
+ const d=document.getElementById('fireCards'),c=document.getElementById('clueCards');d.innerHTML='';c.innerHTML='';
+ shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.className='match-card';b.textContent=p.name;b.dataset.id=p.id;b.onclick=()=>pick(b,'fire');d.appendChild(b)});
+ shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.className='match-card';b.textContent=p.clue;b.dataset.id=p.id;b.onclick=()=>pick(b,'clue');c.appendChild(b)});
+}
+function pick(btn,type){
+ if(btn.classList.contains('matched'))return;
+ if(!first){first={btn,type,id:btn.dataset.id};btn.classList.add('selected');return}
+ if(first.type===type){first.btn.classList.remove('selected');first={btn,type,id:btn.dataset.id};btn.classList.add('selected');return}
+ if(first.id===btn.dataset.id){
+  first.btn.classList.remove('selected');first.btn.classList.add('matched');btn.classList.add('matched');done++;document.getElementById('matchScore').textContent=`已完成 ${done} / 4`;first=null;
+  if(done===4)setTimeout(()=>alert('🎉 全部配對成功！'),150);
+ }else{btn.classList.add('wrong');first.btn.classList.add('wrong');setTimeout(()=>{btn.classList.remove('wrong');first.btn.classList.remove('wrong','selected');first=null},300)}
+}
+const questions=[
+['A類火災主要是什麼類型？',['普通火災','油類火災','電氣火災','金屬火災'],0],
+['B類火災主要涉及哪一類可燃物？',['普通固體','油類等可燃物','只有金屬','只有紙張'],1],
+['C類火災與什麼有關？',['森林','通電中的電氣設備','食品','土壤'],1],
+['D類火災主要涉及什麼？',['紙張','油漆','活性金屬及禁水性物質','棉布'],2],
+['A類火災教材提到可利用什麼作用降溫？',['冷卻作用','加熱作用','增加氧氣','增加可燃物'],0],
+['B類火災最有效的教材重點是什麼？',['隔離氧氣','增加氧氣','加水攪拌','提高溫度'],0],
+['C類火災有時可使用什麼控制火勢？',['不導電的滅火劑','食用油','汽油','木材'],0],
+['D類火災的滅火劑有什麼特色？',['所有金屬共用一種','依金屬種類使用特定滅火劑','一定使用水','一定使用油'],1],
+['下列哪一項屬於C類火災教材列舉的設備？',['配電盤','紙箱','棉被','木桌'],0],
+['下列哪一項屬於D類火災教材列舉的金屬？',['鎂','紙','棉','橡膠'],0]
+];
+let qScore=0;
+function startQuiz(){qScore=0;const box=document.getElementById('quizBox');box.innerHTML='';questions.forEach((q,i)=>{const d=document.createElement('div');d.className='qcard';d.innerHTML=`<h3>${i+1}. ${q[0]}</h3>`;q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>answer(b,i,j,d);d.appendChild(b)});box.appendChild(d)});const r=document.createElement('div');r.id='quizResult';r.className='result';box.appendChild(r)}
+function answer(btn,i,j,card){if(card.dataset.done)return;card.dataset.done='1';const opts=card.querySelectorAll('.opt');opts[questions[i][2]].classList.add('correct');if(j===questions[i][2])qScore++;else btn.classList.add('incorrect');document.getElementById('quizResult').textContent=`目前得分：${qScore} / ${questions.length}`}
+startMatch();startQuiz();
+</script>
+</body></html>
