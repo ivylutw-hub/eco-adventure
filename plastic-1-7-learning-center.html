@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>♻️ 塑膠分類1～7 學習中心</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eef9f1,#eef6ff);color:#17382b;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:18px}.hero{background:#fff;border-radius:28px;padding:24px;text-align:center;box-shadow:0 8px 28px #0001}
+h1{margin:0;font-size:clamp(26px,5vw,42px)}.hero p{color:#60756d;margin:8px}
+.stats{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:14px}.pill{background:#edf7f1;border-radius:999px;padding:8px 13px;font-weight:800}
+.tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0}.tab{border:0;border-radius:15px;padding:12px 18px;background:#dfeee7;color:#245642;font-weight:800;cursor:pointer}.tab.active{background:#237653;color:white}
+.view{display:none}.view.active{display:block}.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}.action{border:0;border-radius:13px;padding:11px 16px;font-weight:800;cursor:pointer;background:#237653;color:white}.action.light{background:#e7f0ec;color:#245642}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:#fff;border-radius:20px;padding:17px;box-shadow:0 5px 18px #0000000d;border:2px solid transparent}.card:hover{border-color:#75ad92}
+.num{font-size:30px;font-weight:900;float:right}.code{font-size:20px;font-weight:900}.name{font-size:17px;font-weight:800;margin:4px 0}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:10px;font-size:13px;font-weight:800}.heat{margin:10px 0;padding:8px;background:#fff5df;border-radius:11px;font-weight:900}.memory{margin-top:10px;color:#557168}.card details{margin-top:10px;line-height:1.65}.quizbox{background:white;border-radius:22px;padding:22px;box-shadow:0 5px 20px #0001}.q{font-size:21px;font-weight:900;line-height:1.55}.opts{display:grid;gap:10px;margin-top:15px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:16px;font-weight:700;cursor:pointer}.opt.correct{border-color:#4b9c70;background:#e9f7ee}.opt.wrong{border-color:#d66b5b;background:#fff0ed}.result{min-height:28px;margin:12px 0;font-weight:900}.match{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matchcol{background:#fff;border-radius:22px;padding:16px}.matchitem{padding:13px;margin:8px 0;border:2px solid #dce9e3;border-radius:14px;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:#e5a13b;background:#fff7e7}.matchitem.done{opacity:.4;pointer-events:none;background:#eaf7ee}.barbg{height:10px;background:#dceae4;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0;transition:.3s}.note{margin-top:14px;background:#fff8df;border-radius:16px;padding:14px;line-height:1.7}
+@media(max-width:700px){.grid,.match{grid-template-columns:1fr}.wrap{padding:10px}}
+</style>
+</head>
+<body><div class="wrap">
+<section class="hero">
+<h1>♻️ 塑膠分類 1～7 學習中心</h1>
+<p>先認識塑膠材質 → 再玩對對碰 → 最後用 10 題挑戰檢查記憶！</p>
+<div class="stats"><span class="pill">📚 7 種分類</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 10 題挑戰</span><span class="pill">⭐ 學習積分 <b id="total">0</b></span></div>
+</section>
+<nav class="tabs">
+<button class="tab active" onclick="show('guide',this)">📖 1～7 塑膠圖鑑</button>
+<button class="tab" onclick="show('match',this)">🎮 塑膠對對碰</button>
+<button class="tab" onclick="show('quiz',this)">🏆 10題挑戰</button>
+</nav>
+
+<section id="guide" class="view active">
+<div class="grid" id="guideGrid"></div>
+<div class="note">🧠 <b>競賽快記：</b>1 PET＝寶特瓶；2 HDPE＝高密度；3 PVC＝含氯、別加熱；4 LDPE＝塑膠袋；5 PP＝耐熱、微波；6 PS＝保麗龍；7 Other＝其他材質。</div>
+</section>
+
+<section id="match" class="view">
+<div class="quizbox"><h2>🎮 塑膠分類對對碰</h2><p>先點左邊的塑膠編號／材質，再點右邊對應的用途或特性。答對 +2 分，答錯不扣分。</p>
+<div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 7</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div>
+<div class="barbg"><div class="bar" id="mBar"></div></div><div id="mMsg" class="result">準備好了嗎？</div></div>
+<div class="match"><div class="matchcol"><h3>🔢 塑膠分類</h3><div id="mNames"></div></div><div class="matchcol"><h3>🎯 特性／用途</h3><div id="mDescs"></div></div></div>
+<div class="controls"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
+</section>
+
+<section id="quiz" class="view">
+<div class="quizbox"><h2>🏆 塑膠分類 10 題挑戰</h2>
+<div class="stats"><span class="pill">第 <b id="qNo">1</b> / 10 題</span><span class="pill">得分 <b id="qScore">0</b></span></div>
+<div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div>
+<div class="controls"><button class="action" onclick="startQuiz()">🔄 重新挑戰</button></div></div>
+</section>
+</div>
+<script>
+const DATA=[{"id": 1, "code": "PET", "name": "聚乙烯對苯二甲酸酯", "heat": "60～85°C", "use": "硬度高、韌性佳、透明度高；寶特瓶、礦泉水瓶、碳酸飲料瓶", "recycle": "易回收。不耐高溫、酸鹼，勿重複使用或裝熱水。", "key": "寶特瓶", "memory": "1號 PET → 寶特瓶"}, {"id": 2, "code": "HDPE", "name": "高密度聚乙烯", "heat": "90～110°C", "use": "耐酸鹼、耐腐蝕、材質較硬；鮮奶瓶、洗髮精瓶、清潔劑瓶、塑膠袋", "recycle": "易回收。安全度高，適合裝清潔用品與化學藥劑。", "key": "鮮奶瓶／清潔用品", "memory": "2號 HDPE → 高密度、硬、耐酸鹼"}, {"id": 3, "code": "PVC", "name": "聚氯乙烯", "heat": "60～80°C", "use": "可塑性高、成本低，但含氯；水管、雨衣、保鮮膜、塑膠地板", "recycle": "難回收。燃燒會產生戴奧辛毒氣，嚴禁加熱或微波。", "key": "水管／雨衣", "memory": "3號 PVC → 含氯，別加熱"}, {"id": 4, "code": "LDPE", "name": "低密度聚乙烯", "heat": "70～90°C", "use": "延展性佳、耐酸鹼、質地較軟；塑膠袋、保鮮膜、牛奶紙盒內層淋膜", "recycle": "可回收。耐熱度較低，避免高溫接觸油脂。", "key": "塑膠袋／保鮮膜", "memory": "4號 LDPE → 低密度、軟、塑膠袋"}, {"id": 5, "code": "PP", "name": "聚丙烯", "heat": "100～140°C", "use": "耐高溫、耐酸鹼、耐碰撞、不含塑化劑；布丁盒、豆漿瓶、微波餐盒、可重複使用之水杯", "recycle": "易回收。唯一適合微波加熱的塑膠材質（高頻考點）。", "key": "微波餐盒", "memory": "5號 PP → 耐熱、微波"}, {"id": 6, "code": "PS", "name": "聚苯乙烯", "heat": "70～90°C", "use": "吸水性低、安定性高，分為發泡與未發泡；發泡保麗龍、未發泡餐多瓶、保麗龍碗", "recycle": "可回收。不耐酸鹼與有機溶劑，裝高溫或酸性樹脂類易釋出毒素。", "key": "保麗龍", "memory": "6號 PS → 保麗龍"}, {"id": 7, "code": "Other", "name": "其他類（如 PC、PLA、Tritan）", "heat": "依材質而異", "use": "1～6號以外的塑膠；美耐皿、運動水壺、嬰兒奶瓶、生物可分解塑膠（PLA）", "recycle": "分類較複雜。聚碳酸酯（PC）遇熱可能釋出雙酚A（BPA），現多改用 Tritan。", "key": "其他塑膠", "memory": "7號 Other → 其他，材質要看清楚"}];
+let points=0,mData=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0;
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function save(){document.getElementById('total').textContent=points}
+function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='match')newMatch();if(id==='quiz')startQuiz()}
+function renderGuide(){document.getElementById('guideGrid').innerHTML=DATA.map(x=>`<article class="card"><span class="num">${x.id}</span><div class="code">${x.code}</div><div class="name">${x.name}</div><span class="tag">♻️ ${x.key}</span><div class="heat">🌡️ 耐熱溫度：${x.heat}</div><p>${x.use}</p><details><summary>查看回收／注意事項</summary><p>${x.recycle}</p></details><div class="memory">🧠 ${x.memory}</div></article>`).join('')}
+function newMatch(){mData=shuffle(DATA);mSel=null;mDone=0;mScore=0;document.getElementById('mNames').innerHTML=shuffle(mData).map(x=>`<div class="matchitem" data-id="${x.id}" onclick="pickN(this,${x.id})">${x.id}號 ${x.code}<br><small>${x.name}</small></div>`).join('');document.getElementById('mDescs').innerHTML=shuffle(mData).map(x=>`<div class="matchitem" data-id="${x.id}" onclick="pickD(this,${x.id})">${x.heat}｜${x.key}<br><small>${x.memory}</small></div>`).join('');updM();document.getElementById('mMsg').textContent='先選左邊的塑膠，再找右邊對應的特性！'}
+function pickN(e,id){document.querySelectorAll('#mNames .matchitem').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='很好！現在找它的特性／用途。'}
+function pickD(e,id){if(mSel===null){document.getElementById('mMsg').textContent='請先選左邊的塑膠分類。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${id}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';if(mDone===7)document.getElementById('mMsg').textContent='🏆 7種塑膠全部配對完成！'}else document.getElementById('mMsg').textContent='💡 再想一下：看看編號與關鍵字！';updM()}
+function updM(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/7*100)+'%'}
+function startQuiz(){quiz=shuffle(DATA).slice(0,7);while(quiz.length<10)quiz.push(...shuffle(DATA).slice(0,10-quiz.length));quiz=quiz.slice(0,10);qi=0;qs=0;showQ()}
+function showQ(){if(qi>=10){document.getElementById('qArea').innerHTML=`<div class="q">🎊 挑戰完成！</div><p>本次得分：<b>${qs}</b> / 10</p><p>${qs>=9?'🏆 塑膠分類高手！':qs>=7?'🌟 很棒！再複習一次容易混淆的編號。':'🌱 回圖鑑再看一次，再來挑戰！'}</p>`;return}
+let x=quiz[qi];let wrong=shuffle(DATA.filter(y=>y.id!==x.id)).slice(0,3);let opts=shuffle([x,...wrong]);
+let type=qi%3;
+let question=type===0?`「${x.key}」最可能是第幾號塑膠？`:type===1?`哪一種塑膠的耐熱溫度是「${x.heat}」？`:`關於「${x.code}」的敘述，哪一項最符合圖鑑資料？`;
+let options=opts.map(o=>type===2?o.memory:`${o.id}號 ${o.code}`).map((o,i)=>`<button class="opt" data-id="${opts[i].id}" onclick="answerQ(this,${opts[i].id},${x.id})">${o}</button>`).join('');
+document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';document.getElementById('qArea').innerHTML=`<div class="q">${question}</div><div class="opts">${options}</div><div id="qResult" class="result"></div>`}
+function answerQ(btn,id,correct){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(id===correct){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').textContent='✅ 答對！'}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(+x.dataset.id===correct)x.classList.add('correct')});document.getElementById('qResult').textContent='💡 正確答案：'+DATA.find(y=>y.id===correct).code}qi++;setTimeout(showQ,800)}
+renderGuide();newMatch();startQuiz();
+</script></body></html>
