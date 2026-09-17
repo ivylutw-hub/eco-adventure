@@ -33,7 +33,7 @@ section{display:none}section.active{display:block}
 .match-card{width:100%;border:3px solid #f0d4c0;background:#fff;border-radius:16px;padding:16px;margin:9px 0;font-size:19px;font-weight:800;cursor:pointer;text-align:left;min-height:72px}
 .match-card.selected{border-color:#d94801;background:#fff0e5}
 .match-card.matched{border-color:#43a047;background:#e9f7eb;cursor:default}
-.match-card.wrong{animation:shake .25s}
+.match-card.wrong{animation:shake .25s;border-color:#d9534f;background:#ffeded}.match-card.selected{border-color:#d94801;background:#fff0e5}
 @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .actions{text-align:center;margin-top:16px}
 .action{border:0;border-radius:999px;padding:12px 22px;font-size:18px;font-weight:900;cursor:pointer;background:#d94801;color:white}
@@ -74,7 +74,7 @@ footer{text-align:center;padding:30px 16px;color:#806b5c}
 <h2 class="section-title">🎮 火災類型對對碰</h2>
 <div class="note">玩法：左邊選火災類型，右邊選相對應的「可燃物／設備與處理重點」。全部配對成功就完成挑戰！</div>
 <div class="match-wrap">
-<div class="score" id="matchScore">已完成 0 / 4</div>
+<div class="score" id="matchScore">已配對 0 / 4　｜　本回合 0 分</div><div class="result" id="matchMsg">先選左邊火災類型，再找右邊的重點線索。</div>
 <div class="match-grid">
 <div class="match-col"><h3>🔥 火災類型</h3><div id="fireCards"></div></div>
 <div class="match-col"><h3>🔎 重點線索</h3><div id="clueCards"></div></div>
@@ -98,23 +98,11 @@ const pairs=[
 {id:'D',name:'D 類｜金屬火災',clue:'鎂、鉀、鋰、鋯、鈦等活性金屬或禁水性物質'}
 ];
 function show(id,btn){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
-let first=null,done=0;
+let first=null,done=0,matchScore=0;
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function startMatch(){
- first=null;done=0;document.getElementById('matchScore').textContent='已完成 0 / 4';
- const d=document.getElementById('fireCards'),c=document.getElementById('clueCards');d.innerHTML='';c.innerHTML='';
- shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.className='match-card';b.textContent=p.name;b.dataset.id=p.id;b.onclick=()=>pick(b,'fire');d.appendChild(b)});
- shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.className='match-card';b.textContent=p.clue;b.dataset.id=p.id;b.onclick=()=>pick(b,'clue');c.appendChild(b)});
-}
-function pick(btn,type){
- if(btn.classList.contains('matched'))return;
- if(!first){first={btn,type,id:btn.dataset.id};btn.classList.add('selected');return}
- if(first.type===type){first.btn.classList.remove('selected');first={btn,type,id:btn.dataset.id};btn.classList.add('selected');return}
- if(first.id===btn.dataset.id){
-  first.btn.classList.remove('selected');first.btn.classList.add('matched');btn.classList.add('matched');done++;document.getElementById('matchScore').textContent=`已完成 ${done} / 4`;first=null;
-  if(done===4)setTimeout(()=>alert('🎉 全部配對成功！'),150);
- }else{btn.classList.add('wrong');first.btn.classList.add('wrong');setTimeout(()=>{btn.classList.remove('wrong');first.btn.classList.remove('wrong','selected');first=null},300)}
-}
+function startMatch(){first=null;done=0;matchScore=0;document.getElementById('matchScore').textContent='已配對 0 / 4　｜　本回合 0 分';document.getElementById('matchMsg').textContent='先選左邊火災類型，再找右邊的重點線索。';const d=document.getElementById('fireCards'),c=document.getElementById('clueCards');d.innerHTML='';c.innerHTML='';shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.type='button';b.className='match-card';b.textContent=p.name;b.dataset.id=p.id;b.onclick=()=>pick(b,'fire');d.appendChild(b)});shuffle(pairs).forEach(p=>{let b=document.createElement('button');b.type='button';b.className='match-card';b.textContent=p.clue;b.dataset.id=p.id;b.onclick=()=>pick(b,'clue');c.appendChild(b)})}
+function pick(btn,type){if(btn.classList.contains('matched'))return;if(!first){first={btn,type,id:btn.dataset.id};btn.classList.add('selected');document.getElementById('matchMsg').textContent='很好！現在找右邊相對應的重點線索。';return}if(first.type===type){first.btn.classList.remove('selected');first={btn,type,id:btn.dataset.id};btn.classList.add('selected');document.getElementById('matchMsg').textContent='已換選，請找另一側的配對。';return}if(first.id===btn.dataset.id){first.btn.classList.remove('selected');first.btn.classList.add('matched');btn.classList.add('matched');done++;matchScore+=2;first=null;document.getElementById('matchScore').textContent=`已配對 ${done} / 4　｜　本回合 ${matchScore} 分`;document.getElementById('matchMsg').textContent=`🎉 配對成功！ +2 分　已完成 ${done} / 4`;if(done===4)document.getElementById('matchMsg').textContent='🏆 全部配對成功！本回合 8 分！'}else{btn.classList.add('wrong');first.btn.classList.add('wrong');document.getElementById('matchMsg').textContent='❌ 配對不正確，再試一次！';const old=first.btn;setTimeout(()=>{btn.classList.remove('wrong');old.classList.remove('wrong','selected')},450)}}
+
 const questions=[
 ['A類火災主要是什麼類型？',['普通火災','油類火災','電氣火災','金屬火災'],0],
 ['B類火災主要涉及哪一類可燃物？',['普通固體','油類等可燃物','只有金屬','只有紙張'],1],
@@ -128,8 +116,11 @@ const questions=[
 ['下列哪一項屬於D類火災教材列舉的金屬？',['鎂','紙','棉','橡膠'],0]
 ];
 let qScore=0;
-function startQuiz(){qScore=0;const box=document.getElementById('quizBox');box.innerHTML='';questions.forEach((q,i)=>{const d=document.createElement('div');d.className='qcard';d.innerHTML=`<h3>${i+1}. ${q[0]}</h3>`;q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>answer(b,i,j,d);d.appendChild(b)});box.appendChild(d)});const r=document.createElement('div');r.id='quizResult';r.className='result';box.appendChild(r)}
-function answer(btn,i,j,card){if(card.dataset.done)return;card.dataset.done='1';const opts=card.querySelectorAll('.opt');opts[questions[i][2]].classList.add('correct');if(j===questions[i][2])qScore++;else btn.classList.add('incorrect');document.getElementById('quizResult').textContent=`目前得分：${qScore} / ${questions.length}`}
+function startQuiz(){qScore=0;const box=document.getElementById('quizBox');box.innerHTML='';questions.forEach((q,i)=>{const d=document.createElement('div');d.className='qcard';d.dataset.done='0';d.innerHTML=`<h3>${i+1}. ${q[0]}</h3>`;q[1].forEach((o,j)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=o;b.onclick=()=>selectAnswer(b,d);d.appendChild(b)});const r=document.createElement('div');r.className='result';r.textContent='請選擇答案，再按「確定送出」。';d.appendChild(r);const c=document.createElement('div');c.className='actions';const submit=document.createElement('button');submit.type='button';submit.className='action';submit.textContent='✅ 確定送出';submit.onclick=()=>confirmAnswer(d,i,submit);c.appendChild(submit);d.appendChild(c);box.appendChild(d)});updateQuizResult()}
+function selectAnswer(btn,card){if(card.dataset.done==='1')return;card.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');card.querySelector('.result').textContent='已選擇答案，請按「確定送出」。'}
+function confirmAnswer(card,i,submit){if(card.dataset.done==='1')return;const chosen=card.querySelector('.opt.selected');if(!chosen){card.querySelector('.result').textContent='⚠️ 請先選一個答案！';return}card.dataset.done='1';card.querySelectorAll('.opt').forEach(x=>x.disabled=true);submit.disabled=true;const correct=questions[i][2];const opts=card.querySelectorAll('.opt');opts[correct].classList.add('correct');if(Array.from(opts).indexOf(chosen)===correct){qScore++;chosen.classList.add('correct');card.querySelector('.result').textContent='🎉 答對！'}else{chosen.classList.add('incorrect');card.querySelector('.result').textContent='💡 正確答案已標示';}updateQuizResult()}
+function updateQuizResult(){const r=document.getElementById('quizResult');if(!r)return;const doneCards=document.querySelectorAll('.qcard[data-done="1"]').length;r.textContent=doneCards===questions.length?`🎊 全部完成！最終得分：${qScore} / ${questions.length}`:`目前已完成 ${doneCards} / ${questions.length} 題　｜　得分 ${qScore}`}
+
 startMatch();startQuiz();
 </script>
 </body></html>
