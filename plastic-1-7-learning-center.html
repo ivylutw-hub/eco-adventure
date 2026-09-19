@@ -17,7 +17,7 @@ h1{margin:0;font-size:clamp(26px,5vw,42px)}.hero p{color:#60756d;margin:8px}
 /* 飛機射擊遊戲 */
 .flightGame{position:relative;margin-top:16px;border:3px solid #234e70;border-radius:24px;overflow:hidden;background:linear-gradient(#071d45 0%,#0b3b69 48%,#6eb9d7 49%,#bfe8f0 100%);min-height:620px;touch-action:none;user-select:none;box-shadow:inset 0 0 70px #06142f99,0 10px 30px #0002}
 .flightGame:before{content:"✦   ·   ✦      ·    ✦        ✦   ·     ✦";position:absolute;inset:35px 0 auto;text-align:center;color:#fff8;font-size:28px;letter-spacing:16px;pointer-events:none}
-.gameTop{position:absolute;left:14px;right:14px;top:12px;z-index:8;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.gamePill{background:#142e55eF;color:#fff;border:2px solid #6ca5ce;border-radius:14px;padding:8px 13px;font-weight:900;box-shadow:0 4px 10px #0003}.gameHint{position:absolute;left:16px;right:16px;bottom:16px;z-index:8;background:#fffffff5;border:3px solid #4b9c70;border-radius:18px;padding:13px 17px;text-align:center;color:#17382b;font-weight:900;box-shadow:0 5px 18px #0003}.gameHint small{display:block;margin-top:5px;color:#577066;font-weight:700}.meteor{position:absolute;width:112px;height:92px;border:0;background:transparent;cursor:pointer;z-index:4;touch-action:manipulation;padding:0;transform:translate(-50%,-50%)}.meteorRock{position:absolute;inset:0;border-radius:43% 57% 48% 52%;background:radial-gradient(circle at 34% 30%,#a8b0bb 0 7%,transparent 8%),radial-gradient(circle at 68% 65%,#6d7782 0 8%,transparent 9%),radial-gradient(circle at 53% 28%,#7d8792 0 6%,transparent 7%),linear-gradient(145deg,#c1c7cf,#66717d);border:5px solid #424d58;box-shadow:inset -12px -14px 20px #27313a66,0 7px 12px #0005;transform:rotate(-5deg)}.meteorIcon{position:absolute;inset:10px 6px 30px;display:flex;align-items:center;justify-content:center;font-size:34px;filter:drop-shadow(0 2px 2px #0008)}.meteorText{position:absolute;left:5px;right:5px;bottom:6px;background:#fffef0;border:2px solid #4a5964;border-radius:10px;padding:4px 5px;font-size:13px;font-weight:900;color:#17382b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 4px #0004}.meteor:hover .meteorRock{filter:brightness(1.18);transform:rotate(-5deg) scale(1.05)}.meteor.hit .meteorRock{animation:meteorHit .35s forwards}.meteor.wrong .meteorRock{animation:meteorWrong .3s}.plane{position:absolute;left:50%;bottom:112px;z-index:6;transform:translateX(-50%);width:112px;height:92px;pointer-events:none;filter:drop-shadow(0 8px 6px #0005)}.planeBody{position:absolute;left:35px;top:4px;width:42px;height:78px;border-radius:55% 55% 35% 35%;background:linear-gradient(90deg,#f4f8ff,#9ee0d0,#f8ffff);border:4px solid #24647a}.planeBody:before{content:'♻';position:absolute;left:7px;top:25px;font-size:26px;color:#2b8c68}.wing{position:absolute;top:44px;width:57px;height:25px;background:linear-gradient(#9be1cf,#4e9db5);border:4px solid #24647a;border-radius:18px}.wing.left{left:0;transform:skewY(18deg)}.wing.right{right:0;transform:skewY(-18deg)}.nose{position:absolute;left:44px;top:-7px;width:24px;height:25px;border-radius:50% 50% 35% 35%;background:#8ce1e5;border:4px solid #24647a}.flame{position:absolute;left:43px;bottom:-11px;width:26px;height:25px;border-radius:50% 50% 65% 65%;background:linear-gradient(#ffe56b,#ff8d27,#ef4e2e);animation:flame .22s infinite alternate}.crosshair{position:absolute;z-index:7;width:44px;height:44px;border:3px solid #ffef69;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 2px #ff6b4a55,0 0 18px #ffe66d99}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#ffef69}.crosshair:before{left:50%;top:-9px;width:3px;height:58px;transform:translateX(-50%)}.crosshair:after{top:50%;left:-9px;width:58px;height:3px;transform:translateY(-50%)}.shotBullet{position:absolute;width:10px;height:24px;border-radius:50%;background:#fff28a;box-shadow:0 0 9px #ff9e27,0 0 18px #fff;z-index:7;pointer-events:none;transform:translate(-50%,-50%)}.shotTrail{position:absolute;width:4px;background:linear-gradient(transparent,#ffe66d,transparent);z-index:5;pointer-events:none;transform-origin:top center}.gameControls{position:absolute;left:50%;bottom:106px;z-index:9;transform:translateX(-50%);display:flex;gap:8px}.gameBtn{border:2px solid #fff;background:#163b60dd;color:#fff;border-radius:999px;padding:8px 14px;font-weight:900;cursor:pointer}.gameMsg{position:absolute;top:72px;left:50%;z-index:9;transform:translateX(-50%);background:#163b60ee;color:#fff;border:2px solid #8bd2dc;border-radius:999px;padding:8px 16px;font-weight:900;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap}.gameMsg.show{opacity:1}.gameOver{position:absolute;inset:0;background:#061b35cc;z-index:20;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.gameOverCard{max-width:480px;background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 35px #0006}.gameOverCard h3{font-size:30px;margin:0 0 10px}.answerReveal{margin-top:10px;background:#edf7f1;border-radius:14px;padding:10px;font-weight:800}@keyframes meteorHit{0%{transform:scale(1) rotate(-5deg);opacity:1}55%{transform:scale(1.25) rotate(18deg);filter:brightness(1.8)}100%{transform:scale(.1) rotate(90deg);opacity:0}}@keyframes meteorWrong{25%{transform:translateX(-7px) rotate(-9deg)}75%{transform:translateX(7px) rotate(0deg)}}@keyframes flame{to{transform:scaleY(1.25);filter:brightness(1.3)}}
+.gameTop{position:absolute;left:14px;right:14px;top:12px;z-index:8;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.gamePill{background:#142e55eF;color:#fff;border:2px solid #6ca5ce;border-radius:14px;padding:8px 13px;font-weight:900;box-shadow:0 4px 10px #0003}.gameHint{position:absolute;left:16px;right:16px;bottom:16px;z-index:8;background:#fffffff5;border:3px solid #4b9c70;border-radius:18px;padding:13px 17px;text-align:center;color:#17382b;font-weight:900;box-shadow:0 5px 18px #0003}.gameHint small{display:block;margin-top:5px;color:#577066;font-weight:700}.meteor{position:absolute;width:112px;height:92px;border:0;background:transparent;cursor:pointer;z-index:4;touch-action:manipulation;padding:0;transform:translate(-50%,-50%)}.meteorRock{position:absolute;inset:0;border-radius:43% 57% 48% 52%;background:radial-gradient(circle at 34% 30%,#a8b0bb 0 7%,transparent 8%),radial-gradient(circle at 68% 65%,#6d7782 0 8%,transparent 9%),radial-gradient(circle at 53% 28%,#7d8792 0 6%,transparent 7%),linear-gradient(145deg,#c1c7cf,#66717d);border:5px solid #424d58;box-shadow:inset -12px -14px 20px #27313a66,0 7px 12px #0005;transform:rotate(-5deg)}.meteorIcon{position:absolute;inset:10px 6px 30px;display:flex;align-items:center;justify-content:center;font-size:34px;filter:drop-shadow(0 2px 2px #0008)}.meteorText small{display:block;font-size:10px;color:#577066;margin-top:2px}.meteorText{position:absolute;left:5px;right:5px;bottom:6px;background:#fffef0;border:2px solid #4a5964;border-radius:10px;padding:4px 5px;font-size:13px;font-weight:900;color:#17382b;white-space:normal;overflow:hidden;text-overflow:ellipsis;line-height:1.25;box-shadow:0 2px 4px #0004}.meteor:hover .meteorRock{filter:brightness(1.12)}.meteor.hit .meteorRock{animation:meteorHit .35s forwards}.meteor.wrong .meteorRock{animation:meteorWrong .3s}.plane{position:absolute;left:50%;bottom:112px;z-index:6;transform:translateX(-50%);width:112px;height:92px;pointer-events:none;filter:drop-shadow(0 8px 6px #0005)}.planeBody{position:absolute;left:35px;top:4px;width:42px;height:78px;border-radius:55% 55% 35% 35%;background:linear-gradient(90deg,#f4f8ff,#9ee0d0,#f8ffff);border:4px solid #24647a}.planeBody:before{content:'♻';position:absolute;left:7px;top:25px;font-size:26px;color:#2b8c68}.wing{position:absolute;top:44px;width:57px;height:25px;background:linear-gradient(#9be1cf,#4e9db5);border:4px solid #24647a;border-radius:18px}.wing.left{left:0;transform:skewY(18deg)}.wing.right{right:0;transform:skewY(-18deg)}.nose{position:absolute;left:44px;top:-7px;width:24px;height:25px;border-radius:50% 50% 35% 35%;background:#8ce1e5;border:4px solid #24647a}.flame{position:absolute;left:43px;bottom:-11px;width:26px;height:25px;border-radius:50% 50% 65% 65%;background:linear-gradient(#ffe56b,#ff8d27,#ef4e2e);animation:flame .22s infinite alternate}.crosshair{position:absolute;z-index:7;width:44px;height:44px;border:3px solid #ffef69;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 2px #ff6b4a55,0 0 18px #ffe66d99}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#ffef69}.crosshair:before{left:50%;top:-9px;width:3px;height:58px;transform:translateX(-50%)}.crosshair:after{top:50%;left:-9px;width:58px;height:3px;transform:translateY(-50%)}.shotBullet{position:absolute;width:10px;height:24px;border-radius:50%;background:#fff28a;box-shadow:0 0 9px #ff9e27,0 0 18px #fff;z-index:7;pointer-events:none;transform:translate(-50%,-50%)}.shotTrail{position:absolute;width:4px;background:linear-gradient(transparent,#ffe66d,transparent);z-index:5;pointer-events:none;transform-origin:top center}.gameControls{position:absolute;left:50%;bottom:106px;z-index:9;transform:translateX(-50%);display:flex;gap:8px}.gameBtn{border:2px solid #fff;background:#163b60dd;color:#fff;border-radius:999px;padding:8px 14px;font-weight:900;cursor:pointer}.gameMsg{position:absolute;top:72px;left:50%;z-index:9;transform:translateX(-50%);background:#163b60ee;color:#fff;border:2px solid #8bd2dc;border-radius:999px;padding:8px 16px;font-weight:900;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap}.gameMsg.show{opacity:1}.gameOver{position:absolute;inset:0;background:#061b35cc;z-index:20;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.gameOverCard{max-width:480px;background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 35px #0006}.gameOverCard h3{font-size:30px;margin:0 0 10px}.answerReveal{margin-top:10px;background:#edf7f1;border-radius:14px;padding:10px;font-weight:800}@keyframes meteorHit{0%{transform:scale(1) rotate(-5deg);opacity:1}55%{transform:scale(1.25) rotate(18deg);filter:brightness(1.8)}100%{transform:scale(.1) rotate(90deg);opacity:0}}@keyframes meteorWrong{25%{transform:translateX(-7px) rotate(-9deg)}75%{transform:translateX(7px) rotate(0deg)}}@keyframes flame{to{transform:scaleY(1.25);filter:brightness(1.3)}}
 @media(max-width:700px){.grid,.match{grid-template-columns:1fr}.wrap{padding:10px}.flightGame{min-height:610px}.meteor{width:92px;height:78px}.meteorIcon{font-size:28px}.meteorText{font-size:11px}.plane{transform:translateX(-50%) scale(.85);transform-origin:bottom center}.gameHint{font-size:14px}.gameTop{font-size:13px}}
 
 </style>
@@ -73,45 +73,89 @@ function startQuiz(){
 }
 let lives=3,gameRunning=false,meteors=[],gameRAF=null,gameStartTime=0,shotLock=false;
 const targetPool={
-  1:[['🥤','透明飲料瓶'],['🧴','洗髮精瓶'],['🍱','微波餐盒'],['🛍️','塑膠袋'],['🧽','清潔用品']],
-  2:[['🧴','清潔劑瓶'],['🥤','飲料瓶'],['🍱','餐盒'],['🛍️','塑膠袋'],['🍼','特殊瓶具']],
-  3:[['🚰','水管'],['🧥','雨衣'],['🛍️','塑膠袋'],['🥤','飲料瓶'],['🍱','餐盒']],
-  4:[['🛍️','塑膠袋'],['🥤','飲料瓶'],['🧴','清潔劑瓶'],['🚰','水管'],['🍱','微波餐盒']],
-  5:[['🍱','微波餐盒'],['🛍️','塑膠袋'],['🚰','水管'],['🥤','飲料瓶'],['🧴','清潔劑瓶']],
-  6:[['📦','保麗龍包材'],['🍱','餐盒'],['🥤','飲料瓶'],['🛍️','塑膠袋'],['🧴','清潔用品瓶']],
-  7:[['🍼','特殊塑膠用品'],['🍱','餐盒'],['🥤','飲料瓶'],['🛍️','塑膠袋'],['🚰','水管']]
+  1:[['🥤','透明飲料瓶'],['🧴','洗髮精瓶'],['🍱','微波餐盒'],['🛍️','塑膠袋'],['📦','保麗龍包材']],
+  2:[['🧴','清潔劑瓶'],['🥤','透明飲料瓶'],['🍱','微波餐盒'],['🛍️','塑膠袋'],['📦','保麗龍包材']],
+  3:[['🚰','水管'],['🧥','雨衣'],['🛍️','塑膠袋'],['🍱','微波餐盒'],['📦','保麗龍包材']],
+  4:[['🛍️','塑膠袋'],['🥤','透明飲料瓶'],['🧴','清潔劑瓶'],['🚰','水管'],['🍱','微波餐盒']],
+  5:[['🍱','微波餐盒'],['🛍️','塑膠袋'],['🚰','水管'],['🥤','透明飲料瓶'],['🧴','清潔劑瓶']],
+  6:[['📦','保麗龍包材'],['🍱','微波餐盒'],['🥤','透明飲料瓶'],['🛍️','塑膠袋'],['🧴','清潔用品瓶']],
+  7:[['🍼','特殊塑膠用品'],['🍱','微波餐盒'],['🥤','透明飲料瓶'],['🛍️','塑膠袋'],['🚰','水管']]
 };
-const qClues={
-  1:'第 1 類',
-  2:'第 2 類',
-  3:'第 3 類',
-  4:'第 4 類',
-  5:'第 5 類',
-  6:'第 6 類',
-  7:'第 7 類'
-};
+
+// 三種題型，延續原本選擇題的出題邏輯；改成射擊後，答案以「隕石內容」呈現。
+function questionType(i){return i%4;}
+function questionData(x,i){
+  const type=questionType(i);
+  if(type===0){
+    return {
+      type,
+      text:`💡 本題提示：第 ${x.id} 類`,
+      hint:'請從上方生活用品中，找出屬於這一類的目標。',
+      mode:'category'
+    };
+  }
+  if(type===1){
+    return {
+      type,
+      text:`「${x.key}」最可能是第幾號塑膠？`,
+      hint:'請找出正確的分類編號。',
+      mode:'number'
+    };
+  }
+  if(type===2){
+    return {
+      type,
+      text:`哪一種塑膠的耐熱溫度是「${x.heat}」？`,
+      hint:'請從生活用品中判斷哪一個最符合。',
+      mode:'use'
+    };
+  }
+  return {
+    type,
+    text:`關於「${x.code}」的敘述，哪一項最符合圖鑑資料？`,
+    hint:'請射擊最符合這種材質特性的隕石。',
+    mode:'feature'
+  };
+}
+
+function makeOptions(x,q){
+  let others=shuffle(DATA.filter(o=>o.id!==x.id)).slice(0,3);
+  let all=[...others,x];
+  if(q.mode==='category'){
+    return shuffle(all.map(o=>({icon:(targetPool[o.id]||[['♻️','塑膠用品']])[0][0],label:o.key,sub:'生活用品',id:o.id})));
+  }
+  if(q.mode==='number'){
+    return shuffle(all.map(o=>({icon:'♻️',label:`第 ${o.id} 類`,sub:o.code,id:o.id})));
+  }
+  if(q.mode==='use'){
+    return shuffle(all.map(o=>({icon:(targetPool[o.id]||[['♻️','塑膠用品']])[0][0],label:o.key,sub:o.heat,id:o.id})));
+  }
+  return shuffle(all.map(o=>({icon:'🔎',label:o.use.split('；')[0],sub:o.heat,id:o.id})));
+}
+
 function showQ(){
   if(qi>=10){finishQuiz();return;}
   let x=quiz[qi]; lives=3; gameRunning=true; shotLock=false; meteors=[];
+  const q=questionData(x,qi);
+  // 正確答案一定在隕石中；四種題型輪流出現，隕石固定位置，不再自動移動。
+  const options=makeOptions(x,q);
   document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qLives').textContent=lives;document.getElementById('qBar').style.width=(qi/10*100)+'%';
   const area=document.getElementById('qArea');
-  area.innerHTML=`<div class="q">🔎 第 ${qi+1} 題：請依照下方提示，找出正確的塑膠用品。</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">💥 一次只能射擊一顆</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 本題提示：<strong>${qClues[x.id]}</strong><small>上方隕石是生活用品，請依照提示判斷哪一個屬於這一類，再手動瞄準射擊！</small></div><div id="gameObjects"></div></div>`;
-  buildMeteors(x.id);bindGameInput();
-  gameStartTime=performance.now(); cancelAnimationFrame(gameRAF); gameLoop(gameStartTime);
+  area.innerHTML=`<div class="q">🔎 第 ${qi+1} 題：${q.text}</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">🧊 隕石固定，方便閱讀</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 <strong>${q.hint}</strong><small>請仔細閱讀上方隕石內容，再手動瞄準射擊；答對才會揭曉分類。</small></div><div id="gameObjects"></div></div>`;
+  buildMeteors(options,x.id);bindGameInput();
 }
-function buildMeteors(correctId){
+
+function buildMeteors(options,correctId){
   const area=document.getElementById('gameObjects');
-  const pool=targetPool[correctId].slice();
-  const chosen=shuffle(pool).slice(0,4);
-  if(!chosen.some(z=>targetPool[correctId][0][1]===z[1])) chosen[0]=targetPool[correctId][0];
-  const spots=[{x:15,y:20},{x:38,y:17},{x:63,y:23},{x:86,y:18}];
-  chosen.forEach((item,i)=>{
-    const isCorrect=item[1]===targetPool[correctId][0][1];
-    const el=document.createElement('button');el.type='button';el.className='meteor';el.dataset.correct=isCorrect?'1':'0';el.dataset.item=item[1];el.style.left=spots[i].x+'%';el.style.top=spots[i].y+'%';
-    el.innerHTML=`<span class="meteorRock"></span><span class="meteorIcon">${item[0]}</span><span class="meteorText">${item[1]}</span>`;
-    area.appendChild(el);meteors.push({el,x:spots[i].x,y:spots[i].y,dx:(i%2?-.018:.014),dy:.008+Math.random()*.004});
+  const spots=[{x:14,y:21},{x:38,y:18},{x:63,y:22},{x:87,y:18}];
+  options.forEach((item,i)=>{
+    const isCorrect=item.id===correctId;
+    const el=document.createElement('button');el.type='button';el.className='meteor';el.dataset.correct=isCorrect?'1':'0';el.dataset.item=item.label;el.style.left=spots[i].x+'%';el.style.top=spots[i].y+'%';
+    el.innerHTML=`<span class="meteorRock"></span><span class="meteorIcon">${item.icon}</span><span class="meteorText">${item.label}<small>${item.sub}</small></span>`;
+    area.appendChild(el);
   });
 }
+
 function bindGameInput(){
   const game=document.getElementById('flightGame'),cross=document.getElementById('crosshair');
   const aim=e=>{const r=game.getBoundingClientRect();cross.style.left=(e.clientX-r.left)+'px';cross.style.top=(e.clientY-r.top)+'px'};
@@ -137,15 +181,9 @@ function resolveShot(target){
   }
 }
 function showAnswerAndNext(ans){
-  const area=document.getElementById('flightGame');const box=document.createElement('div');box.className='gameOver';box.innerHTML=`<div class="gameOverCard"><h3>🛬 本題結束</h3><p>正確答案是生活用品「${ans.key}」。</p><div class="answerReveal">${ans.memory}</div><div class="controls"><button class="action" onclick="qi++;showQ()">➡️ 下一題</button></div></div>`;area.appendChild(box);
+  const area=document.getElementById('flightGame');const box=document.createElement('div');box.className='gameOver';box.innerHTML=`<div class="gameOverCard"><h3>🛬 本題結束</h3><p>正確答案是：<b>${ans.id} 類 ${ans.code}</b></p><div class="answerReveal">${ans.memory}<br>${ans.use}</div><div class="controls"><button class="action" onclick="qi++;showQ()">➡️ 下一題</button></div></div>`;area.appendChild(box);
 }
 function msg(t){const e=document.getElementById('gameMsg');if(!e)return;e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),650)}
-function gameLoop(now){
-  if(!gameRunning)return;
-  const dt=Math.min(32,now-gameStartTime);gameStartTime=now;
-  meteors.forEach(m=>{if(m.el.classList.contains('hit'))return;m.x+=m.dx*dt;m.y+=m.dy*dt;if(m.x<9||m.x>91)m.dx*=-1;if(m.y>43)m.y=13;m.el.style.left=m.x+'%';m.el.style.top=m.y+'%'});
-  gameRAF=requestAnimationFrame(gameLoop);
-}
 function finishQuiz(){
   gameRunning=false;cancelAnimationFrame(gameRAF);document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="gameOver" style="position:relative;inset:auto;background:none;padding:30px 0"><div class="gameOverCard"><h3>🎊 射擊挑戰完成！</h3><p>本次得分：<b>${qs}</b> / 10</p><p>${qs>=9?'🏆 塑膠分類神射手！':qs>=7?'🌟 很棒！再複習一次容易混淆的材質。':'🌱 回圖鑑再看一次，再來挑戰！'}</p></div></div>`;
 }
