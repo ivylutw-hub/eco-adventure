@@ -12,7 +12,7 @@ h1{margin:0;font-size:clamp(26px,5vw,42px)}.hero p{color:#60756d;margin:8px}
 .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0}.tab{border:0;border-radius:15px;padding:12px 18px;background:#dfeee7;color:#245642;font-weight:800;cursor:pointer}.tab.active{background:#237653;color:white}
 .view{display:none}.view.active{display:block}.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}.action{border:0;border-radius:13px;padding:11px 16px;font-weight:800;cursor:pointer;background:#237653;color:white}.action.light{background:#e7f0ec;color:#245642}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:#fff;border-radius:20px;padding:17px;box-shadow:0 5px 18px #0000000d;border:2px solid transparent}.card:hover{border-color:#75ad92}
-.num{font-size:30px;font-weight:900;float:right}.code{font-size:20px;font-weight:900}.name{font-size:17px;font-weight:800;margin:4px 0}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:10px;font-size:13px;font-weight:800}.heat{margin:10px 0;padding:8px;background:#fff5df;border-radius:11px;font-weight:900}.memory{margin-top:10px;color:#557168}.card details{margin-top:10px;line-height:1.65}.quizbox{background:white;border-radius:22px;padding:22px;box-shadow:0 5px 20px #0001}.q{font-size:21px;font-weight:900;line-height:1.55}.opts{display:grid;gap:10px;margin-top:15px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:16px;font-weight:700;cursor:pointer}.opt.correct{border-color:#4b9c70;background:#e9f7ee}.opt.wrong{border-color:#d66b5b;background:#fff0ed}.opt.selected{border-color:#e5a13b;background:#fff7e7;box-shadow:0 0 0 3px #e5a13b33}.matchitem.wrong{border-color:#d66b5b;background:#fff0ed;animation:shake .25s}@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}.result{min-height:28px;margin:12px 0;font-weight:900}.match{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matchcol{background:#fff;border-radius:22px;padding:16px}.matchitem{padding:13px;margin:8px 0;border:2px solid #dce9e3;border-radius:14px;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:#e5a13b;background:#fff7e7}.matchitem.done{opacity:.4;pointer-events:none;background:#eaf7ee}.barbg{height:10px;background:#dceae4;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0;transition:.3s}.note{margin-top:14px;background:#fff8df;border-radius:16px;padding:14px;line-height:1.7}
+.num{font-size:30px;font-weight:900;float:right}.code{font-size:20px;font-weight:900}.name{font-size:17px;font-weight:800;margin:4px 0}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:10px;font-size:13px;font-weight:800}.heat{margin:10px 0;padding:8px;background:#fff5df;border-radius:11px;font-weight:900}.memory{margin-top:10px;color:#557168}.card details{margin-top:10px;line-height:1.65}.quizbox{background:white;border-radius:22px;padding:22px;box-shadow:0 5px 20px #0001}.q{font-size:21px;font-weight:900;line-height:1.55}.opts{display:grid;gap:10px;margin-top:15px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:16px;font-weight:700;cursor:pointer}.shootArea{margin-top:16px;background:linear-gradient(#dff4ff,#eef9ff);border:2px solid #b9dceb;border-radius:22px;padding:16px;overflow:hidden}.shootTargets{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.target{position:relative;min-height:150px;border:3px solid #b9cdd6;border-radius:22px;background:radial-gradient(circle at 50% 45%,#fff 0 16%,#ffd98a 17% 29%,#fff 30% 42%,#8ec5d8 43% 56%,#fff 57% 70%,#dbeaf0 71%);cursor:pointer;transition:.15s;box-shadow:0 6px 14px #0002;overflow:hidden}.target:hover{transform:translateY(-2px) scale(1.01)}.target .targetLabel{position:absolute;top:8px;left:10px;background:#17382b;color:#fff;border-radius:999px;padding:5px 10px;font-weight:900;z-index:2}.target .clue{position:absolute;left:10px;right:10px;bottom:10px;background:#fffffff0;border-radius:13px;padding:8px;font-size:14px;line-height:1.4;font-weight:800;text-align:left}.target.hit{animation:hit .35s;border-color:#4b9c70;background:#e9f7ee}.target.miss{animation:shake .25s;border-color:#d66b5b}.bullet{position:absolute;width:14px;height:14px;border-radius:50%;background:#e5a13b;box-shadow:0 0 0 5px #e5a13b33;pointer-events:none;animation:shoot .28s forwards;z-index:5}@keyframes hit{50%{transform:scale(1.04);filter:brightness(1.12)}100%{transform:scale(1)}}@keyframes shoot{from{transform:translate(var(--sx),var(--sy));opacity:1}to{transform:translate(var(--ex),var(--ey));opacity:0}}.shootHint{margin:10px 0;font-weight:800;color:#49685c}.shootStatus{min-height:34px;margin-top:12px;font-size:17px;font-weight:900}.nextShot{display:none}.opt.correct{border-color:#4b9c70;background:#e9f7ee}.opt.wrong{border-color:#d66b5b;background:#fff0ed}.opt.selected{border-color:#e5a13b;background:#fff7e7;box-shadow:0 0 0 3px #e5a13b33}.matchitem.wrong{border-color:#d66b5b;background:#fff0ed;animation:shake .25s}@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}.result{min-height:28px;margin:12px 0;font-weight:900}.match{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matchcol{background:#fff;border-radius:22px;padding:16px}.matchitem{padding:13px;margin:8px 0;border:2px solid #dce9e3;border-radius:14px;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:#e5a13b;background:#fff7e7}.matchitem.done{opacity:.4;pointer-events:none;background:#eaf7ee}.barbg{height:10px;background:#dceae4;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0;transition:.3s}.note{margin-top:14px;background:#fff8df;border-radius:16px;padding:14px;line-height:1.7}
 @media(max-width:700px){.grid,.match{grid-template-columns:1fr}.wrap{padding:10px}}
 </style>
 </head>
@@ -42,7 +42,7 @@ h1{margin:0;font-size:clamp(26px,5vw,42px)}.hero p{color:#60756d;margin:8px}
 </section>
 
 <section id="quiz" class="view">
-<div class="quizbox"><h2>🏆 塑膠分類 10 題挑戰</h2>
+<div class="quizbox"><h2>🎯 塑膠分類射擊挑戰</h2>
 <div class="stats"><span class="pill">第 <b id="qNo">1</b> / 10 題</span><span class="pill">得分 <b id="qScore">0</b></span></div>
 <div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div>
 <div class="controls"><button class="action" onclick="startQuiz()">🔄 重新挑戰</button></div></div>
@@ -59,10 +59,74 @@ function newMatch(){mData=shuffle(DATA);mSel=null;mDone=0;mScore=0;document.getE
 function pickN(e,id){if(e.classList.contains('done'))return;document.querySelectorAll('#mNames .matchitem').forEach(x=>x.classList.remove('sel'));e.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='很好！現在找它的特性／用途。';updM()}
 function pickD(e,id){if(e.classList.contains('done'))return;if(mSel===null){document.getElementById('mMsg').textContent='👉 請先選左邊的塑膠分類。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${id}"]`).forEach(x=>{x.classList.remove('sel');x.classList.add('done')});mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent=`🎉 配對成功！ +2 分　已配對 ${mDone} / 7`;if(mDone===7)document.getElementById('mMsg').textContent='🏆 7種塑膠全部配對完成！'}else{e.classList.add('wrong');document.getElementById('mMsg').textContent='❌ 配對不正確，再試一次！';setTimeout(()=>e.classList.remove('wrong'),450)}updM()}
 function updM(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/7*100)+'%'}
-function startQuiz(){quiz=shuffle(DATA).slice(0,7);while(quiz.length<10)quiz.push(...shuffle(DATA).slice(0,10-quiz.length));quiz=quiz.slice(0,10);qi=0;qs=0;showQ()}
-function showQ(){if(qi>=10){document.getElementById('qArea').innerHTML=`<div class="q">🎊 挑戰完成！</div><p>本次得分：<b>${qs}</b> / 10</p><p>${qs>=9?'🏆 塑膠分類高手！':qs>=7?'🌟 很棒！再複習一次容易混淆的編號。':'🌱 回圖鑑再看一次，再來挑戰！'}</p>`;return}let x=quiz[qi];let wrong=shuffle(DATA.filter(y=>y.id!==x.id)).slice(0,3);let opts=shuffle([x,...wrong]);let type=qi%3;let question=type===0?`「${x.key}」最可能是第幾號塑膠？`:type===1?`哪一種塑膠的耐熱溫度是「${x.heat}」？`:`關於「${x.code}」的敘述，哪一項最符合圖鑑資料？`;let options=opts.map(o=>type===2?o.memory:`${o.id}號 ${o.code}`).map((o,i)=>`<button type="button" class="opt" data-id="${opts[i].id}" onclick="selectQ(this)">${o}</button>`).join('');document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';document.getElementById('qArea').innerHTML=`<div class="q">${question}</div><div class="opts">${options}</div><div id="qResult" class="result">請先選擇答案，再按「確定送出」。</div><div class="controls"><button type="button" class="action" id="confirmQ" onclick="confirmQ(${x.id})">✅ 確定送出</button></div>`}
-function selectQ(btn){document.querySelectorAll('#qArea .opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');document.getElementById('qResult').textContent='已選擇答案，請按「確定送出」。'}
-function confirmQ(correct){let chosen=document.querySelector('#qArea .opt.selected');if(!chosen){document.getElementById('qResult').textContent='⚠️ 請先選一個答案！';return}document.querySelectorAll('#qArea .opt').forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;let id=Number(chosen.dataset.id);if(id===correct){chosen.classList.add('correct');qs++;points++;save();document.getElementById('qResult').textContent='🎉 答對！ +1 分'}else{chosen.classList.add('wrong');document.querySelector(`#qArea .opt[data-id="${correct}"]`)?.classList.add('correct');document.getElementById('qResult').textContent='💡 正確答案：'+DATA.find(y=>y.id===correct).code}qi++;document.getElementById('qScore').textContent=qs;document.getElementById('qArea').insertAdjacentHTML('beforeend',`<div class="controls"><button type="button" class="action" onclick="showQ()">➡️ 下一題</button></div>`)}
+function startQuiz(){
+  quiz=shuffle(DATA).slice(0,7);
+  while(quiz.length<10) quiz.push(...shuffle(DATA).slice(0,10-quiz.length));
+  quiz=quiz.slice(0,10); qi=0; qs=0; showQ();
+}
+function shotClue(x){
+  const targets={
+    1:`<div class="targetIcon">🥤</div><div class="targetName">透明飲料瓶</div><small>硬、透明、常見飲料容器</small>`,
+    2:`<div class="targetIcon">🧴</div><div class="targetName">清潔用品瓶</div><small>材質較硬、常見於日用品容器</small>`,
+    3:`<div class="targetIcon">🪣</div><div class="targetName">水管／雨衣</div><small>常見於管材與防水用品</small>`,
+    4:`<div class="targetIcon">🛍️</div><div class="targetName">塑膠袋</div><small>柔軟、可彎折、延展性佳</small>`,
+    5:`<div class="targetIcon">🍱</div><div class="targetName">微波餐盒</div><small>可承受較高溫度的容器</small>`,
+    6:`<div class="targetIcon">📦</div><div class="targetName">保麗龍製品</div><small>發泡後質輕、常見於包裝</small>`,
+    7:`<div class="targetIcon">🍼</div><div class="targetName">特殊塑膠用品</div><small>不屬於前六類的材質</small>`
+  };
+  return targets[x.id];
+}
+function questionFor(x,round){
+  const qs={
+    1:`🔎 情境：你拿到一個「透明、硬度佳」的飲料瓶。<br>它最可能屬於哪一種塑膠？<br><br><b>🎯 找到符合情境的目標後射擊！</b>`,
+    2:`🧴 情境：某種塑膠容器材質較硬，而且耐酸鹼，常用來裝清潔用品。<br><br><b>🎯 哪個目標符合這項特性？開火！</b>`,
+    3:`⚠️ 情境：這類塑膠含氯，常見於水管、雨衣，並不適合加熱。<br><br><b>🎯 找出符合描述的目標！</b>`,
+    4:`🛍️ 情境：這類塑膠質地較軟、延展性佳，常見於塑膠袋與保鮮膜。<br><br><b>🎯 瞄準符合描述的目標！</b>`,
+    5:`🍱 情境：你要找一種耐熱度較高、可用於微波餐盒的塑膠。<br><br><b>🎯 選出符合情境的目標並射擊！</b>`,
+    6:`📦 情境：某種塑膠發泡後很輕，常見於保麗龍製品。<br><br><b>🎯 哪個目標最符合？</b>`,
+    7:`🧪 情境：這個塑膠不屬於前六類，可能是 PC、PLA 或 Tritan 等其他材質。<br><br><b>🎯 找出「其他塑膠」目標！</b>`
+  };
+  return qs[x.id];
+}
+function showQ(){
+  if(qi>=10){
+    document.getElementById('qArea').innerHTML=`<div class="q">🎊 射擊挑戰完成！</div><p>本次得分：<b>${qs}</b> / 10</p><p>${qs>=9?'🏆 塑膠分類神射手！':qs>=7?'🌟 很棒！再複習一次容易混淆的材質。':'🌱 回圖鑑再看一次，再來挑戰！'}</p>`;
+    return;
+  }
+  let x=quiz[qi];
+  let wrong=shuffle(DATA.filter(y=>y.id!==x.id)).slice(0,3);
+  let targets=shuffle([x,...wrong]);
+  let targetHtml=targets.map((o,i)=>`<button type="button" class="target" data-id="${o.id}" onclick="shootTarget(this,${o.id})"><span class="targetLabel">🎯 靶 ${String.fromCharCode(65+i)}</span><div class="clue">${shotClue(o)}</div></button>`).join('');
+  document.getElementById('qNo').textContent=qi+1;
+  document.getElementById('qScore').textContent=qs;
+  document.getElementById('qBar').style.width=(qi/10*100)+'%';
+  document.getElementById('qArea').innerHTML=`<div class="q">${questionFor(x,qi+1)}</div><div class="shootHint">🎯 目標只呈現生活物品／情境，不顯示 1～7 編號、PET／HDPE／PVC／LDPE／PP／PS／Other；請根據題目線索判斷後射擊。</div><div class="shootArea"><div class="shootTargets">${targetHtml}</div></div><div id="qResult" class="shootStatus">準備好後，點擊一個目標射擊！</div>`;
+}
+function shootTarget(btn,correct){
+  if(document.querySelector('#qArea .target.hit') || document.querySelector('#qArea .target.miss.locked')) return;
+  const chosen=Number(btn.dataset.id);
+  document.querySelectorAll('#qArea .target').forEach(x=>x.disabled=true);
+  const bullet=document.createElement('span'); bullet.className='bullet';
+  const area=btn.parentElement.getBoundingClientRect(), r=btn.getBoundingClientRect();
+  bullet.style.setProperty('--sx',(area.width/2-7)+'px'); bullet.style.setProperty('--sy',(area.height+20)+'px');
+  bullet.style.setProperty('--ex',(r.left-area.left+r.width/2-7)+'px'); bullet.style.setProperty('--ey',(r.top-area.top+r.height/2-7)+'px');
+  btn.parentElement.parentElement.appendChild(bullet);
+  setTimeout(()=>{
+    bullet.remove();
+    if(chosen===correct){
+      btn.classList.add('hit'); qs++; points++; save();
+      document.getElementById('qResult').innerHTML=`🎉 命中！ +1 分<br><small>這個目標對應的是 <b>${DATA.find(y=>y.id===correct).id}號 ${DATA.find(y=>y.id===correct).code}</b>。</small>`;
+    }else{
+      btn.classList.add('miss','locked');
+      const ans=DATA.find(y=>y.id===correct);
+      const targetCorrect=document.querySelector(`#qArea .target[data-id="${correct}"]`);
+      targetCorrect.classList.add('hit');
+      document.getElementById('qResult').innerHTML=`💥 沒命中！<br><small>正確目標是 <b>${ans.id}號 ${ans.code}</b>：${ans.key}。</small>`;
+    }
+    document.getElementById('qScore').textContent=qs;
+    document.getElementById('qArea').insertAdjacentHTML('beforeend',`<div class="controls"><button type="button" class="action" onclick="qi++;showQ()">➡️ 下一題</button></div>`);
+  },280);
+}
 
 renderGuide();newMatch();startQuiz();
 </script></body></html>
