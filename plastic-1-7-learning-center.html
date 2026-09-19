@@ -82,66 +82,68 @@ const targetPool={
   7:[['🍼','特殊塑膠用品'],['🍱','微波餐盒'],['🥤','透明飲料瓶'],['🛍️','塑膠袋'],['🚰','水管']]
 };
 
-// 三種題型，延續原本選擇題的出題邏輯；改成射擊後，答案以「隕石內容」呈現。
-function questionType(i){return i%4;}
-function questionData(x,i){
-  const type=questionType(i);
-  if(type===0){
+// 射擊題：題目只出現在飛機機身；隕石只呈現「生活用品／用途／特性」線索，絕不顯示材質名稱、英文代碼或分類編號。
+function questionType(){
+  // 每題隨機選擇：①第幾類 ②材質名稱；兩種都顯示在飛機機身上。
+  return Math.random()<0.5 ? 'category' : 'material';
+}
+function questionData(x){
+  const type=questionType();
+  if(type==='category'){
     return {
       type,
-      text:`💡 本題提示：第 ${x.id} 類`,
-      hint:'請從上方生活用品中，找出屬於這一類的目標。',
+      text:`第 ${x.id} 類`,
+      hint:`請從上方隕石的生活用品與特性中，找出屬於第 ${x.id} 類的目標。`,
       mode:'category'
-    };
-  }
-  if(type===1){
-    return {
-      type,
-      text:`「${x.key}」最可能是第幾號塑膠？`,
-      hint:'請找出正確的分類編號。',
-      mode:'number'
-    };
-  }
-  if(type===2){
-    return {
-      type,
-      text:`哪一種塑膠的耐熱溫度是「${x.heat}」？`,
-      hint:'請從生活用品中判斷哪一個最符合。',
-      mode:'use'
     };
   }
   return {
     type,
-    text:`關於「${x.code}」的敘述，哪一項最符合圖鑑資料？`,
-    hint:'請射擊最符合這種材質特性的隕石。',
-    mode:'feature'
+    text:`${x.name}`,
+    hint:`請找出屬於這種材質的生活用品。`,
+    mode:'material'
   };
 }
 
+// 每個隕石只放「物品＋用途／特性」，不放材質名稱、英文縮寫或 1～7 編號。
+const METEOR_ITEMS={
+  1:[['🥤','寶特瓶','飲料瓶、礦泉水瓶、碳酸飲料瓶','透明度高、硬度高、韌性佳'],['🧴','洗髮精瓶','清潔用品瓶','耐酸鹼、材質較硬'],['🍱','微波餐盒','餐盒、可重複使用容器','耐高溫、適合微波'],['🛍️','塑膠袋','購物袋、保鮮膜','質地較軟、延展性佳']],
+  2:[['🥛','鮮奶瓶','鮮奶、飲品容器','材質較硬、耐酸鹼'],['🧴','清潔劑瓶','清潔用品、化學用品容器','耐腐蝕、耐酸鹼'],['🍱','微波餐盒','微波餐盒、豆漿瓶','耐高溫、耐碰撞'],['🛍️','塑膠袋','購物袋','柔軟、可延展']],
+  3:[['🚰','水管','給水管線','可塑性高、成本低'],['🧥','雨衣','雨衣等防水用品','可塑性高、常見於防水用品'],['🛍️','保鮮膜','食品包裝','可塑性高'],['🧱','塑膠地板','地板材料','耐用、可塑性高']],
+  4:[['🛍️','塑膠袋','購物袋、保鮮膜','質地較軟、延展性佳'],['🥛','牛奶紙盒內層','紙盒內部淋膜','柔軟、具延展性'],['🥤','寶特瓶','飲料瓶、礦泉水瓶','透明、硬度高'],['🚰','水管','給水管線','可塑性高、成本低']],
+  5:[['🍱','微波餐盒','微波餐盒、布丁盒','耐高溫、適合微波'],['🥤','豆漿瓶','飲品容器','耐高溫、耐酸鹼'],['🥤','可重複使用水杯','日常飲水容器','耐高溫、可重複使用'],['🛍️','塑膠袋','購物袋','質地較軟、延展性佳']],
+  6:[['📦','保麗龍','保麗龍包材','吸水性低、安定性高'],['🥣','保麗龍碗','餐飲容器','常見於發泡用品'],['🍱','免洗餐盒','外帶餐盒','常見於餐飲用品'],['🛍️','塑膠袋','購物袋','柔軟、可延展']],
+  7:[['🍼','嬰兒奶瓶','嬰幼兒用品','屬於其他塑膠材質'],['🏃','運動水壺','運動用品','材質依產品而異'],['🥣','美耐皿餐具','餐具用品','不屬於 1～6 類'],['🧪','特殊塑膠用品','PC、PLA、Tritan 等用品','材質依產品而異']]
+};
+
 function makeOptions(x,q){
-  let others=shuffle(DATA.filter(o=>o.id!==x.id)).slice(0,3);
-  let all=[...others,x];
-  if(q.mode==='category'){
-    return shuffle(all.map(o=>({icon:(targetPool[o.id]||[['♻️','塑膠用品']])[0][0],label:o.key,sub:'生活用品',id:o.id})));
-  }
-  if(q.mode==='number'){
-    return shuffle(all.map(o=>({icon:'♻️',label:`第 ${o.id} 類`,sub:o.code,id:o.id})));
-  }
-  if(q.mode==='use'){
-    return shuffle(all.map(o=>({icon:(targetPool[o.id]||[['♻️','塑膠用品']])[0][0],label:o.key,sub:o.heat,id:o.id})));
-  }
-  return shuffle(all.map(o=>({icon:'🔎',label:o.use.split('；')[0],sub:o.heat,id:o.id})));
+  // 從其他分類各取一個代表性用品，並確保正確分類的代表性用品一定存在。
+  const ids=shuffle(DATA.map(o=>o.id));
+  const chosen=[];
+  const addFromId=(id)=>{
+    const pool=METEOR_ITEMS[id]||[];
+    if(pool.length) chosen.push({id, item:pool[Math.floor(Math.random()*pool.length)]});
+  };
+  addFromId(x.id);
+  ids.filter(id=>id!==x.id).slice(0,3).forEach(addFromId);
+  return shuffle(chosen).map(({id,item})=>({
+    id,
+    icon:item[0],
+    label:item[1],
+    sub:item[2],
+    detail:item[3]
+  }));
 }
 
 function showQ(){
   if(qi>=10){finishQuiz();return;}
   let x=quiz[qi]; lives=3; gameRunning=true; shotLock=false; meteors=[];
-  const q=questionData(x,qi);
-  // 正確答案一定在隕石中；四種題型輪流出現，隕石固定位置，不再自動移動。
+  const q=questionData(x);
+  // 正確答案一定在隕石中；題目隨機顯示「第X類」或「材質名稱」，隕石固定位置。
   const options=makeOptions(x,q);
   document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qLives').textContent=lives;document.getElementById('qBar').style.width=(qi/10*100)+'%';
   const area=document.getElementById('qArea');
-  area.innerHTML=`<div class="q">🔎 第 ${qi+1} 題：${q.text}</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">🧊 隕石固定，方便閱讀</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 <strong>${q.hint}</strong><small>請仔細閱讀上方隕石內容，再手動瞄準射擊；答對才會揭曉分類。</small></div><div id="gameObjects"></div></div>`;
+  area.innerHTML=`<div class="q" style="display:none">第 ${qi+1} 題：${q.text}</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">🧊 隕石固定，方便閱讀</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"><span class="planeQuestion">本題提示<br><b>${q.text}</b></span></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 <strong>${q.hint}</strong><small>請仔細閱讀上方隕石內容，再手動瞄準射擊；答對後才會揭曉答案與分類。</small></div><div id="gameObjects"></div></div>`;
   buildMeteors(options,x.id);bindGameInput();
 }
 
@@ -151,7 +153,7 @@ function buildMeteors(options,correctId){
   options.forEach((item,i)=>{
     const isCorrect=item.id===correctId;
     const el=document.createElement('button');el.type='button';el.className='meteor';el.dataset.correct=isCorrect?'1':'0';el.dataset.item=item.label;el.style.left=spots[i].x+'%';el.style.top=spots[i].y+'%';
-    el.innerHTML=`<span class="meteorRock"></span><span class="meteorIcon">${item.icon}</span><span class="meteorText">${item.label}<small>${item.sub}</small></span>`;
+    el.innerHTML=`<span class="meteorRock"></span><span class="meteorIcon">${item.icon}</span><span class="meteorText">${item.label}<small>${item.sub}</small><small>${item.detail}</small></span>`;
     area.appendChild(el);
   });
 }
