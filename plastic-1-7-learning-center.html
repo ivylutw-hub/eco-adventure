@@ -69,7 +69,7 @@ function pickN(e,id){if(e.classList.contains('done'))return;document.querySelect
 function pickD(e,id){if(e.classList.contains('done'))return;if(mSel===null){document.getElementById('mMsg').textContent='👉 請先選左邊的塑膠分類。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${id}"]`).forEach(x=>{x.classList.remove('sel');x.classList.add('done')});mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent=`🎉 配對成功！ +2 分　已配對 ${mDone} / 7`;if(mDone===7)document.getElementById('mMsg').textContent='🏆 7種塑膠全部配對完成！'}else{e.classList.add('wrong');document.getElementById('mMsg').textContent='❌ 配對不正確，再試一次！';setTimeout(()=>e.classList.remove('wrong'),450)}updM()}
 function updM(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/7*100)+'%'}
 function startQuiz(){
-  quiz=shuffle(QBANK); qi=0; qs=0; selected=null; answered=false;
+  quiz=shuffle(QBANK).slice(0,10); qi=0; qs=0; selected=null; answered=false;
   document.getElementById('qScore').textContent=qs;
   showChoiceQ();
 }
@@ -78,22 +78,23 @@ let selected=null,answered=false;
 // 題目完全依照使用者提供的「塑膠材質編號 1～7」表格設計。
 // 選項只呈現生活用品／特性／用途，不把 PET、HDPE、PVC、LDPE、PP、PS、Other 直接放在選項裡。
 const QBANK=[
- {q:'某種塑膠的耐熱範圍約為 60～85°C，特性是硬度高、韌性佳、透明度高。下列哪一組用途最符合這些條件？',a:1,opts:['水管、雨衣、塑膠地板','寶特瓶、礦泉水瓶、碳酸飲料瓶','塑膠袋、保鮮膜、牛奶紙盒內層淋膜','保麗龍包材、保麗龍碗'],ex:'依圖片表格，60～85°C、硬度高、韌性佳、透明度高，對應第 1 類 PET；代表用途為寶特瓶、礦泉水瓶、碳酸飲料瓶。'},
- {q:'某種塑膠材質較硬，耐酸鹼、耐腐蝕，耐熱約 90～110°C。下列哪一組用途最符合？',a:2,opts:['微波餐盒、豆漿瓶、可重複使用水杯','發泡保麗龍、保麗龍碗','鮮奶瓶、洗髮精瓶、清潔劑瓶','水管、雨衣、塑膠地板'],ex:'依圖片表格，90～110°C、耐酸鹼、耐腐蝕、材質較硬，對應第 2 類 HDPE；代表用途包含鮮奶瓶、洗髮精瓶、清潔劑瓶。'},
- {q:'某種塑膠可塑性高、成本低，但含氯；圖片表格並提醒不要加熱或微波。下列哪一組用途符合這些特徵？',a:0,opts:['水管、雨衣、保鮮膜、塑膠地板','寶特瓶、礦泉水瓶、碳酸飲料瓶','布丁盒、豆漿瓶、微波餐盒','發泡保麗龍、保麗龍碗'],ex:'依圖片表格，可塑性高、成本低但含氯，且提醒嚴禁加熱或微波，對應第 3 類 PVC；代表用途包含水管、雨衣、保鮮膜、塑膠地板。'},
- {q:'某種塑膠耐熱約 70～90°C，質地較軟、延展性佳，而且耐酸鹼。下列哪一組用途最符合？',a:3,opts:['鮮奶瓶、洗髮精瓶、清潔劑瓶','美耐皿、運動水壺、嬰兒奶瓶','布丁盒、豆漿瓶、微波餐盒','塑膠袋、保鮮膜、牛奶紙盒內層淋膜'],ex:'依圖片表格，70～90°C、延展性佳、耐酸鹼、質地較軟，對應第 4 類 LDPE；代表用途包含塑膠袋、保鮮膜、牛奶紙盒內層淋膜。'},
- {q:'某種塑膠耐熱可達 100～140°C，並具有耐高溫、耐酸鹼、耐碰撞的特性。下列哪一組用途最符合？',a:0,opts:['布丁盒、豆漿瓶、微波餐盒、可重複使用水杯','寶特瓶、礦泉水瓶、碳酸飲料瓶','塑膠袋、保鮮膜、牛奶紙盒內層淋膜','發泡保麗龍、保麗龍碗'],ex:'依圖片表格，100～140°C、耐高溫、耐酸鹼、耐碰撞，對應第 5 類 PP；代表用途包含布丁盒、豆漿瓶、微波餐盒、可重複使用水杯。'},
- {q:'某種塑膠吸水性低、安定性高，可分為發泡與未發泡，耐熱約 70～90°C。下列哪一組用途最符合？',a:2,opts:['水管、雨衣、塑膠地板','鮮奶瓶、洗髮精瓶、清潔劑瓶','發泡保麗龍、保麗龍碗','塑膠袋、保鮮膜、牛奶紙盒內層淋膜'],ex:'依圖片表格，吸水性低、安定性高，分為發泡與未發泡，耐熱約 70～90°C，對應第 6 類 PS；用途包含發泡保麗龍與保麗龍碗。'},
- {q:'某類塑膠不屬於前面六類，耐熱程度要依材質而定。下列哪一組用途最符合這項分類？',a:1,opts:['寶特瓶、礦泉水瓶、碳酸飲料瓶','美耐皿、運動水壺、嬰兒奶瓶、生物可分解塑膠（PLA）','塑膠袋、保鮮膜、牛奶紙盒內層淋膜','布丁盒、豆漿瓶、微波餐盒'],ex:'依圖片表格，1～6 號以外的塑膠歸為第 7 類 Other，用途包含美耐皿、運動水壺、嬰兒奶瓶與生物可分解塑膠（PLA）。'},
- {q:'某種塑膠耐熱度較低，圖片表格提醒要避免高溫接觸油脂；它的質地較軟、延展性佳。下列哪一項用途最符合？',a:3,opts:['微波餐盒','保麗龍碗','礦泉水瓶','塑膠袋、保鮮膜'],ex:'依圖片表格，耐熱度較低、避免高溫接觸油脂，且質地較軟、延展性佳，對應第 4 類 LDPE；用途包含塑膠袋與保鮮膜。'},
- {q:'下列哪一組「耐熱範圍＋代表用途」與圖片表格完全相符？',a:2,opts:['PET：90～110°C；鮮奶瓶、洗髮精瓶','PVC：100～140°C；微波餐盒、豆漿瓶','PP：100～140°C；布丁盒、豆漿瓶、微波餐盒','PS：60～80°C；水管、雨衣、塑膠地板'],ex:'圖片表格中，PP 的耐熱範圍為 100～140°C，代表用途包括布丁盒、豆漿瓶、微波餐盒與可重複使用水杯；其他選項混用了不同類別的資料。'}
+ {q:'這種塑膠硬度高、韌性佳、透明度高，耐熱約 60～85°C，常用來製作寶特瓶、礦泉水瓶與碳酸飲料瓶。它的英文縮寫是？',a:0,opts:['PET','HDPE','PP','PS'],ex:'這些特性與用途對應圖片表格中的 PET。'},
+ {q:'這種塑膠材質較硬，耐酸鹼、耐腐蝕，耐熱約 90～110°C，常用來製作鮮奶瓶、洗髮精瓶與清潔劑瓶。它的英文縮寫是？',a:1,opts:['LDPE','HDPE','PVC','PET'],ex:'這些特性與用途對應圖片表格中的 HDPE。'},
+ {q:'這種塑膠可塑性高、成本低，但含氯；表格提醒不要加熱或微波，常用於水管、雨衣、保鮮膜與塑膠地板。它的英文縮寫是？',a:2,opts:['PS','PP','PVC','LDPE'],ex:'這些特性與用途對應圖片表格中的 PVC。'},
+ {q:'這種塑膠質地較軟、延展性佳，耐酸鹼，耐熱約 70～90°C，常用於塑膠袋、保鮮膜與牛奶紙盒內層淋膜。它的英文縮寫是？',a:0,opts:['LDPE','HDPE','PET','PS'],ex:'這些特性與用途對應圖片表格中的 LDPE。'},
+ {q:'這種塑膠耐高溫、耐酸鹼、耐碰撞，耐熱約 100～140°C，常用於布丁盒、豆漿瓶、微波餐盒與可重複使用水杯。它的英文縮寫是？',a:3,opts:['PET','PVC','PS','PP'],ex:'這些特性與用途對應圖片表格中的 PP。'},
+ {q:'這種塑膠吸水性低、安定性高，可分為發泡與未發泡，耐熱約 70～90°C，常見用途包括發泡保麗龍與保麗龍碗。它的英文縮寫是？',a:2,opts:['PP','LDPE','PS','PVC'],ex:'這些特性與用途對應圖片表格中的 PS。'},
+ {q:'這一類塑膠不屬於前面六類，耐熱程度依實際材質而異；常見用途包含美耐皿、運動水壺、嬰兒奶瓶，以及生物可分解塑膠 PLA。它的英文分類名稱是？',a:3,opts:['PET','HDPE','PS','OTHER'],ex:'依圖片表格，1～6 號以外的塑膠歸為第 7 類 Other。'},
+ {q:'硬度高、韌性佳、透明度高；日常生活中最常聯想到寶特瓶、礦泉水瓶與碳酸飲料瓶。下列哪個英文縮寫最符合？',a:1,opts:['PP','PET','PVC','LDPE'],ex:'「硬度高、韌性佳、透明度高」加上這組代表用途，對應 PET。'},
+ {q:'耐酸鹼、耐腐蝕、材質較硬；常見於鮮奶瓶、洗髮精瓶和清潔劑瓶。下列哪個英文縮寫最符合？',a:0,opts:['HDPE','PS','PET','PP'],ex:'「材質較硬、耐酸鹼、耐腐蝕」加上這組代表用途，對應 HDPE。'},
+ {q:'耐高溫、耐酸鹼、耐碰撞；常見於布丁盒、豆漿瓶和微波餐盒。下列哪個英文縮寫最符合？',a:2,opts:['HDPE','PET','PP','PS'],ex:'「耐高溫、耐酸鹼、耐碰撞」加上這組代表用途，對應 PP。'}
 ];
 function showChoiceQ(){
   if(qi>=QBANK.length){finishChoiceQuiz();return;}
-  const item=QBANK[qi]; selected=null; answered=false;
+  const item=quiz[qi]; selected=null; answered=false;
   document.getElementById('qNo').textContent=qi+1;
   document.getElementById('qScore').textContent=qs;
-  document.getElementById('qBar').style.width=(qi/QBANK.length*100)+'%';
+  document.getElementById('qBar').style.width=(qi/quiz.length*100)+'%';
   document.getElementById('qArea').innerHTML=`<div class="choiceQuiz">
     <div class="choiceQuestion">第 ${qi+1} 題｜${item.q}</div>
     <div class="choiceNoReveal">💡 先思考，再選答案。選擇後不會立即判題。</div>
@@ -112,7 +113,7 @@ function selectChoice(i){
 function submitChoice(){
   if(answered||selected===null)return;
   answered=true;
-  const item=QBANK[qi];
+  const item=quiz[qi];
   const buttons=document.querySelectorAll('.choiceBtn');
   buttons.forEach((b,i)=>{b.disabled=true;if(i===item.a)b.classList.add('correct');if(i===selected&&selected!==item.a)b.classList.add('wrong')});
   const ok=selected===item.a;
@@ -120,8 +121,8 @@ function submitChoice(){
   else document.getElementById('choiceFeedback').innerHTML='❌ 答錯了，再看一次重點。';
   document.getElementById('submitChoice').style.display='none';
   const area=document.querySelector('.choiceQuiz');
-  const explain=document.createElement('div');explain.className='choiceExplain';explain.innerHTML=`📌 <b>解析：</b>${item.ex}<br><br><button type="button" class="nextChoice" onclick="qi++;showChoiceQ()">${qi===QBANK.length-1?'🏆 查看結果':'➡️ 下一題'}</button>`;area.appendChild(explain);
-  document.getElementById('qBar').style.width=((qi+1)/QBANK.length*100)+'%';
+  const explain=document.createElement('div');explain.className='choiceExplain';explain.innerHTML=`📌 <b>解析：</b>${item.ex}<br><br><button type="button" class="nextChoice" onclick="qi++;showChoiceQ()">${qi===quiz.length-1?'🏆 查看結果':'➡️ 下一題'}</button>`;area.appendChild(explain);
+  document.getElementById('qBar').style.width=((qi+1)/quiz.length*100)+'%';
 }
 function finishChoiceQuiz(){
   document.getElementById('qBar').style.width='100%';
