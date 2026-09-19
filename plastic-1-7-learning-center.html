@@ -82,20 +82,20 @@ const targetPool={
   7:[['🍼','特殊塑膠用品'],['🍱','餐盒'],['🥤','飲料瓶'],['🛍️','塑膠袋'],['🚰','水管']]
 };
 const qClues={
-  1:'透明、硬度佳，常見於寶特瓶與飲料容器。',
-  2:'材質較硬、耐酸鹼，常用來裝清潔用品。',
-  3:'含氯，常見於水管、雨衣；不適合加熱。',
-  4:'質地較軟、延展性佳，常見於塑膠袋與保鮮膜。',
-  5:'耐熱度較高，可用於微波餐盒等用品。',
-  6:'發泡後很輕，常見於保麗龍製品。',
-  7:'不屬於前六類，可能是 PC、PLA、Tritan 等其他材質。'
+  1:'第 1 類',
+  2:'第 2 類',
+  3:'第 3 類',
+  4:'第 4 類',
+  5:'第 5 類',
+  6:'第 6 類',
+  7:'第 7 類'
 };
 function showQ(){
   if(qi>=10){finishQuiz();return;}
   let x=quiz[qi]; lives=3; gameRunning=true; shotLock=false; meteors=[];
   document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qLives').textContent=lives;document.getElementById('qBar').style.width=(qi/10*100)+'%';
   const area=document.getElementById('qArea');
-  area.innerHTML=`<div class="q">🔎 第 ${qi+1} 題：請依照下方提示，找出正確的塑膠用品。</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">💥 一次只能射擊一顆</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 題目提示：${qClues[x.id]}<small>瞄準上方的隕石，手動點擊／觸碰你認為正確的答案！</small></div><div id="gameObjects"></div></div>`;
+  area.innerHTML=`<div class="q">🔎 第 ${qi+1} 題：請依照下方提示，找出正確的塑膠用品。</div><div class="flightGame" id="flightGame"><div class="gameTop"><span class="gamePill">🎯 手動射擊：點擊／觸碰隕石</span><span class="gamePill">💥 一次只能射擊一顆</span></div><div class="gameMsg" id="gameMsg"></div><div class="crosshair" id="crosshair" style="left:50%;top:50%"></div><div class="plane"><div class="wing left"></div><div class="wing right"></div><div class="planeBody"></div><div class="nose"></div><div class="flame"></div></div><div class="gameHint">💡 本題提示：<strong>${qClues[x.id]}</strong><small>上方隕石是生活用品，請依照提示判斷哪一個屬於這一類，再手動瞄準射擊！</small></div><div id="gameObjects"></div></div>`;
   buildMeteors(x.id);bindGameInput();
   gameStartTime=performance.now(); cancelAnimationFrame(gameRAF); gameLoop(gameStartTime);
 }
