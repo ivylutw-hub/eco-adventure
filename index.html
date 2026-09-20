@@ -1,546 +1,304 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<meta content="#0b6b50" name="theme-color"/>
-<meta content="適合國小中高年級的環境教育闖關遊戲：四大冒險關卡、2,844題固定題庫與每週排行榜、玩家成長、守護基地與金門特色生物。" name="description"/>
-<meta content="環保冒險王" name="author"/>
-<meta content="website" property="og:type"/>
-<meta content="環保冒險王｜Earth Guardian Adventure" property="og:title"/>
-<meta content="答題、升級、修復基地，成為金門生態傳奇。" property="og:description"/>
-<meta content="social-preview.svg" property="og:image"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<title>環保冒險王 V10.2.11｜難度冒險地圖</title>
-<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="manifest.webmanifest" rel="manifest"/>
-<link href="style.css?v=10211" rel="stylesheet"/>
-<style id="learning-center-nav-style">
-.nav-button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:48px;
-  padding:0 14px;
-  text-decoration:none;
-  color:inherit;
-  font:inherit;
-  font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
-}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>環保知識競賽｜完整講義學習中心 V8</title>
+<style>
+:root{--g:#237653;--dg:#16382b;--bg:#eef8f3;--gold:#e7a536;--red:#c85c4b;--white:#fff;--blue:#4d78a8}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:14px}.hero{background:#fff;border-radius:26px;padding:22px;text-align:center;box-shadow:0 10px 30px #0001}.hero h1{margin:0;font-size:clamp(25px,5vw,42px)}.hero p{margin:8px;color:#5d756b}.stats{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.pill{padding:7px 12px;background:#eef8f3;border-radius:999px;font-weight:800}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:15px 0}.tab{border:0;border-radius:13px;padding:11px 14px;background:#dfeee7;color:#245642;font-weight:900;cursor:pointer}.tab.active{background:var(--g);color:#fff}
+.view{display:none}.view.active{display:block}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.filter{border:1px solid #cddfd6;background:#fff;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}.filter.active{background:#eaf7f0;border-color:#62a987;color:#176447}
+.panel{background:#fff;border-radius:22px;padding:20px;box-shadow:0 5px 20px #0001}.panel h2{margin-top:0}.note{background:#fff8df;border-radius:15px;padding:12px;line-height:1.65;margin-top:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#fff;border-radius:18px;padding:16px;border:2px solid #e1ece7;box-shadow:0 3px 13px #0000000b}.card h3{margin:5px 0 8px}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:9px;font-weight:800}.memory{margin-top:9px;color:#5c7068;font-weight:700;line-height:1.6}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.matchcol{background:#f8fcfa;border-radius:18px;padding:14px}.matchitem{padding:13px;margin:8px 0;border:2px solid #d7e7df;border-radius:13px;background:#fff;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:var(--gold);background:#fff7e7}.matchitem.done{opacity:.4;background:#e9f7ee;pointer-events:none}.barbg{height:10px;background:#dce9e3;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0}.msg{min-height:28px;margin:12px 0;font-weight:900}.actions{text-align:center;margin-top:13px}.action{border:0;border-radius:12px;padding:11px 16px;background:var(--g);color:#fff;font-weight:900;cursor:pointer}.action.secondary{background:#e7f0ec;color:#245642}
+.q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
+.plastic-card{background:linear-gradient(135deg,#f8fffb,#f2f7ff);border:2px solid #cfe5d9}.plastic-code{font-size:30px;font-weight:950;letter-spacing:1px;margin:4px 0}.plastic-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.plastic-meta span{background:#fff;border:1px solid #d8e7df;border-radius:999px;padding:4px 8px;font-size:13px;font-weight:800}.use{margin-top:7px;line-height:1.55}.small{font-size:13px;color:#6b7e76}.danger{color:#a14b3d}.good{color:#176447}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.grid,.match{grid-template-columns:1fr}.wrap{padding:9px}.panel{padding:15px}.q{font-size:19px}}
+
+.plastic-table-wrap{overflow-x:auto;margin:12px 0 16px;border-radius:14px}.plastic-table{width:100%;border-collapse:collapse;min-width:900px;background:#fff}.plastic-table th,.plastic-table td{border:1px solid #dbe4df;padding:10px 9px;vertical-align:top;line-height:1.55}.plastic-table th{background:#eef7f1;font-weight:800}.plastic-table td:nth-child(1),.plastic-table td:nth-child(2){text-align:center;white-space:nowrap}.plastic-table .other-row{background:#fff9e8}.plastic-table .other-row td:nth-child(2){font-size:1.08em;color:#9a6700}
+
+.topic-sections{margin-bottom:14px}.topic-section{margin:18px 0;padding:16px;border:2px solid #d9ebe2;border-radius:20px;background:#fbfffd}.topic-section h3{margin:0 0 10px;font-size:22px}.topic-section .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.topic-item{background:white;border:1px solid #dce9e3;border-radius:14px;padding:12px}.topic-item strong{display:block;font-size:17px;margin-bottom:5px}.topic-item .label{font-size:12px;color:#237653;font-weight:800}.topic-item p{margin:6px 0 0;line-height:1.55}.topic-section.plastic-focus{border-color:#e7a536}.topic-section.water-focus{border-color:#4d78a8}.topic-section.aqi-focus{border-color:#8a69a8}@media(max-width:700px){.topic-section .topic-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="login-page" id="loginPage">
-<div class="login-card">
-<div aria-hidden="true" class="brand-mark"><span>🌍</span><i>🌿</i></div>
-<small class="eyebrow">EARTH GUARDIAN ADVENTURE</small>
-<h1>環保冒險王</h1>
-<p class="login-lead">答題、升級、修復基地，成為守護金門與地球的生態英雄。</p>
-<div class="feature-chips"><span>🗺️ 四大冒險</span><span>📚 2,844 題</span><span>🦦 金門守護者</span></div>
-<label>玩家名稱</label>
-<input id="nameInput" maxlength="12" placeholder="請輸入玩家名稱" value=""/>
-<label>選擇守護者頭像</label>
-<div class="avatar-grid login-avatars" id="loginAvatars"></div>
-<small class="avatar-help">先選擇基本頭像，更多守護者會隨等級解鎖。</small>
-<button class="primary full google-login" id="googleLoginBtn" onclick="googleLogin()">🟢 使用 Google 開始冒險</button>
-<button class="trial-entry full" id="trialEntryBtn" type="button" onclick="openTrialMode()"><b>🌱 小小環保訓練營</b><small>免登入，立即開始</small></button>
-<p class="note" id="loginCloudStatus">使用同一個 Google 帳號，可在手機、平板與電腦接續進度。</p>
-</div>
-</div>
-
-<div class="trial-page hide" id="trialPage" aria-live="polite">
-  <header class="trial-header">
-    <button class="trial-back" type="button" onclick="exitTrialMode()">← 回登入頁</button>
-    <div><small>ANONYMOUS TRIAL</small><h1>🌱 小小環保訓練營</h1></div>
-    <button class="trial-how" type="button" onclick="showTrialHow()">❔ 怎麼玩</button>
-  </header>
-  <main class="trial-shell">
-    <section class="trial-card trial-welcome world-meadow" id="trialWelcome">
-      <div class="trial-world-scene" id="trialWorldScene" aria-hidden="true">
-        <span class="world-sky-icon world-sun">☀️</span><span class="world-sky-icon world-cloud">☁️</span>
-        <span class="world-animal" id="trialWorldAnimal">🦋</span><span class="world-landmark" id="trialWorldLandmark">🌱</span>
-      </div>
-      <div class="trial-teacher-row"><div class="trial-teacher" id="trialTeacher" aria-label="水獺老師">🦦</div><div class="trial-speech" id="trialTeacherSpeech">每位守護者都是從第一步開始，我陪你一起學！</div></div>
-      <small>左右滑動選擇挑戰世界</small>
-      <h2 id="trialWorldTitle">🌱 青青草原</h2>
-      <p id="trialWorldDesc">適合國小一～二年級，從生活環保常識開始。</p>
-      <div class="trial-difficulty-stars" id="trialDifficultyStars" aria-label="難度一顆星">★☆☆☆</div>
-      <div class="trial-slider-wrap">
-        <input id="trialDifficultySlider" class="trial-difficulty-slider" type="range" min="0" max="3" step="1" value="0" aria-label="選擇挑戰難度" oninput="setTrialDifficulty(this.value,true)">
-        <div class="trial-slider-labels" aria-hidden="true"><span>🌱<b>入門</b></span><span>🌳<b>初級</b></span><span>🌊<b>進階</b></span><span>🌍<b>挑戰</b></span></div>
-      </div>
-      <div class="trial-level-dots" id="trialLevelDots"><i class="active"></i><i></i><i></i><i></i></div>
-      <div class="trial-local-stats">
-        <span>今日挑戰 <b id="trialPlayCount">0</b> 次</span>
-        <span>本難度最佳 <b id="trialBestScore">0 / 5</b></span>
-      </div>
-      <button class="primary trial-main-btn" id="trialStartBtn" type="button" onclick="startTrialQuiz(5)">🚀 開始入門挑戰</button>
-      <button class="secondary trial-daily-btn" type="button" onclick="startDailyTrial()">⭐ 今日環保小挑戰（3 題）</button>
-      <p class="trial-privacy">🔒 不需登入，紀錄只保存在這台裝置。</p>
-    </section>
-    <section class="trial-card hide" id="trialQuiz">
-      <div class="trial-progress-row"><b id="trialProgressText">第 1 題 / 5 題</b><span id="trialTopic">生活環保</span></div>
-      <div class="trial-progress"><i id="trialProgressBar"></i></div>
-      <div class="trial-question-icon" id="trialQuestionIcon">🌍</div>
-      <h2 id="trialQuestionText"></h2>
-      <div class="trial-options" id="trialOptions"></div>
-      <div class="trial-feedback hide" id="trialFeedback"></div>
-      <button class="primary trial-next hide" id="trialNextBtn" type="button" onclick="nextTrialQuestion()">下一題 →</button>
-    </section>
-    <section class="trial-card trial-result hide" id="trialResult">
-      <div class="trial-medal">🏅</div><small>小小環保訓練營</small><h2>訓練完成！</h2>
-      <div class="trial-stars" id="trialStars">☆☆☆☆☆</div><strong id="trialScoreText">0 / 5</strong>
-      <p id="trialResultMessage"></p>
-      <div class="trial-promise"><b>🌍 今天的環保小承諾</b><p id="trialPromiseText"></p><button id="trialPromiseBtn" type="button" onclick="acceptTrialPromise()">我願意做到 ✓</button></div>
-      <div class="trial-result-actions"><button class="primary" type="button" onclick="startTrialQuiz(5)">🔄 再玩一次</button><button class="google-login" type="button" onclick="trialToGoogleLogin()">🟢 成為正式守護者</button></div>
-      <button class="text-button" type="button" onclick="showTrialWelcome()">回訓練營首頁</button>
-    </section>
-  </main>
-</div>
-<div class="modal hide" id="trialHowModal"><div class="modal-card trial-how-card"><button class="modal-close" onclick="closeTrialHow()">×</button><small>HOW TO PLAY</small><h2>🌱 怎麼玩</h2><p>先左右滑動選擇入門、初級、進階或挑戰難度，每回合會出現 5 題對應程度的環保題。</p><ol><li>點選你認為正確的答案。</li><li>每題都會立即看到簡短解析。</li><li>完成後可以再挑戰，不會扣分。</li></ol><p>匿名試玩不會使用排行榜、金幣、基地或雲端存檔。</p><button class="primary full" onclick="closeTrialHow()">我知道了</button></div></div>
-
-<div class="app hide" id="game">
-<header class="header-day" id="mainHeader">
-<div aria-hidden="true" class="header-nature-scene">
-<span class="header-sun">☀️</span><span class="header-moon">🌙</span>
-<span class="header-cloud header-cloud-a">☁️</span><span class="header-cloud header-cloud-b">☁️</span>
-<span class="header-leaf header-leaf-a">🍃</span><span class="header-leaf header-leaf-b">🍃</span>
-<span class="header-hills"></span><span class="header-tree header-tree-a">🌳</span><span class="header-tree header-tree-b">🌲</span>
-<span class="header-house">🏡</span>
-<span aria-label="可愛風力發電場" class="header-wind-farm">
-<span class="cute-turbine turbine-one"><i class="turbine-blades"><b></b><b></b><b></b></i><i class="turbine-pole"></i></span>
-<span class="cute-turbine turbine-two"><i class="turbine-blades"><b></b><b></b><b></b></i><i class="turbine-pole"></i></span>
-<span class="wind-farm-grass">🌱　🌼　🌱</span>
-</span>
-<span class="header-flower header-flower-a">🌼</span><span class="header-flower header-flower-b">🌷</span>
-<span class="header-stars">✦　★　✧　✦　★</span><span class="header-meteor">☄️</span>
-</div>
-<div class="header-copy">
-<small>EARTH GUARDIAN ADVENTURE</small>
-<h1><span class="mini-logo">🌍</span> 環保冒險王 <span>V10.2.11</span></h1>
-<p>探索四大環境世界・培養守護者・解鎖金門生態傳奇</p>
-</div>
-<section class="home-nature-strip" aria-label="今日環境資訊">
-  <div class="nature-location"><span>📍</span><div><small>所在區域</small><b id="natureLocation">定位中</b></div></div>
-  <div class="home-nature-metric"><span>🌤️</span><small>天氣</small><b id="natureWeather">讀取中</b></div>
-  <div class="home-nature-metric"><span>🌡️</span><small>溫度</small><b id="natureTemp">--°C</b></div>
-  <div class="home-nature-metric"><span>💧</span><small>濕度</small><b id="natureHumidity">--%</b></div>
-  <div class="home-nature-metric home-aqi-metric" id="homeAqiMetric" tabindex="0" aria-label="空氣品質讀取中"><span class="nature-aqi-flag" id="natureAqiFlag" data-level="unknown" aria-hidden="true"><i></i></span><a class="nature-aqi-link" href="https://airtw.moenv.gov.tw/" target="_blank" rel="noopener noreferrer" aria-label="前往環境部空氣品質監測網">AQI</a><b><i id="natureAqi">--</i> <em id="natureAqiLevel">讀取中</em></b></div>
-  <div class="nature-tip"><span>♻️</span><div><small>環保小提醒</small><b id="natureTip">完成一個環保任務，讓守護基地更有生命力！</b></div></div>
-  <i class="home-live-badge" id="natureLiveBadge">LIVE</i>
+<div class="wrap">
+<section class="hero">
+<h1>♻️ 環保知識競賽｜講義強化中心</h1>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。</p>
+<div class="stats"><span class="pill">📚 11大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
-<div class="header-actions">
-<button class="player player-button" onclick="showProfile()" title="開啟我的資料">
-<span class="player-avatar frame-none" id="playerAvatar">🦊</span>
-<div><b id="playerName">環保守護者</b><small id="playerTitle">見習地球守護者</small><small id="playerLevel">Lv.1</small></div>
-</button>
-<button aria-label="切換音效" class="icon-action" id="soundToggle" onclick="toggleSound()" title="切換音效">🔊</button>
-<button class="logout" onclick="confirmLogout()">🚪 登出</button>
-</div>
-</header>
 <nav class="tabs">
-<button onclick="showMap()">🗺️ 冒險地圖</button>
-<button onclick="showBase()">🌍 守護基地</button>
-<button onclick="showHall()">🏆 榮耀殿堂</button>
-<button onclick="showLeaderboard()">🥇 每週排行</button>
-<button onclick="showWeaknessBook()">👾 怪獸弱點圖鑑 <span class="nav-count" id="weaknessCount">0</span></button>
-<button onclick="showProfile()">👤 我的資料</button>
-<button onclick="showAchievements()">🏅 玩家成就</button>
-<a class="nav-button" href="international-environmental-agreements-center.html" aria-label="開啟國際環保公約學習中心">🌏 國際環保公約</a>
-<a class="nav-button" href="plastic-1-7-learning-center.html" aria-label="開啟塑膠分類1到7學習中心">♻️ 塑膠分類 1～7</a>
-<a class="nav-button" href="aqi-learning-center.html" aria-label="開啟AQI空氣品質學習中心">🌤️ AQI 空氣品質</a>
-<a class="nav-button" href="disease-learning-center.html" aria-label="開啟疾病學習中心">🩺 疾病</a>
-<a class="nav-button" href="fire-types-learning-center.html" aria-label="開啟火災類型學習中心">🔥 火災類型</a>
-<button class="hide" id="adminNavBtn" onclick="showAdminDashboard()">🛠️ 管理後臺</button>
+<button class="tab active" onclick="show('guide',this)">📖 重點圖鑑</button>
+<button class="tab" onclick="show('match',this)">🎮 對對碰</button>
+<button class="tab" onclick="show('quiz',this)">🏆 選擇題</button>
 </nav>
-<div class="page-nav-actions hide" id="pageNavActions" aria-label="頁面導覽">
-  <button type="button" onclick="goPreviousPage()">← 回上一頁</button>
-  <button type="button" onclick="goHomePage()">⌂ 回首頁</button>
+<section id="guide" class="view active">
+<div class="filters" id="filters"></div>
+<div class="panel" id="allTopicsPanel" style="margin-bottom:14px">
+<h2>📌 本次講義更新總覽</h2>
+<p>這一版不是只更新塑膠。以下內容都已依你的《環境知識競賽快速攻略本115微調》納入「重點圖鑑＋對對碰＋選擇題」：</p>
+<div class="grid">
+<article class="card"><span class="tag">🏷️ 標章與水足跡</span><h3>碳標籤／節能／省水／環保標章</h3><div class="memory">＋藍色、綠色、灰色水足跡，並加入各自的判斷情境。</div></article>
+<article class="card"><span class="tag">♻️ 塑膠 1～7</span><h3>PET～Other 完整比較</h3><div class="memory">＋英文縮寫、耐熱、特性、常用用途、注意事項；第7類 Other 另列 PC、PLA、Tritan。</div></article>
+<article class="card"><span class="tag">🌱 2050 淨零</span><h3>12 項關鍵戰略</h3><div class="memory">＋風光電、前瞻能源、儲能、CCUS、氫能、運輸、綠生活、碳匯、循環經濟、綠色金融、公正轉型等。</div></article>
+<article class="card"><span class="tag">📅 特定日期</span><h3>環境相關紀念日</h3><div class="memory">＋2/2、3/21、3/22、4/22、5/22、6/5、6/8、9/18、9月第三週末、10/13、10/16。</div></article>
+<article class="card"><span class="tag">⚖️ 氣候法</span><h3>《氣候變遷因應法》</h3><div class="memory">＋2050淨零、碳費、自主減量、基金、碳盤查、綠／藍／黃碳、調適、公正轉型、環境部。</div></article>
+<article class="card"><span class="tag">📊 數值與效應</span><h3>EER、BOD、COD、CTSI</h3><div class="memory">＋溫室效應、輻射冷卻、都市熱島、雨除等講義重點。</div></article>
+<article class="card"><span class="tag">🩺 疾病</span><h3>AIDS、烏腳病、痛痛病、水俣病</h3><div class="memory">＋病因、污染物、地點與傳播途徑辨識。</div></article>
+<article class="card"><span class="tag">🔥 火災</span><h3>A～D 類</h3><div class="memory">＋普通可燃物、油類／可燃液體、電氣、活性金屬與處理方式。</div></article>
+<article class="card"><span class="tag">🐢 外來種</span><h3>植物＋動物來源地</h3><div class="memory">＋講義列出的外來種與原產地配對題。</div></article>
+<article class="card"><span class="tag">🌤️ AQI</span><h3>0～500 六級</h3><div class="memory">＋數值、英文名稱、顏色與健康影響辨識。</div></article>
 </div>
-<main id="mapPage">
-<div class="title">
-<div><small>OPEN WORLD MAP</small><h2>🗺️ 地球修復冒險地圖</h2><p>四大關卡全部開放，可自由跳著闖關。地圖卡片會直接顯示每一關的進度。</p></div>
+<div class="note">💡 <b>使用方式：</b>先看「全部」可以確認所有主題；再點上方主題按鈕，就會看到該主題的完整資料。塑膠主題會另外展開 1～7 完整比較表。</div>
 </div>
-<div class="map" id="map"></div>
-</main>
-<main class="hide" id="stagePage">
-<button class="back" onclick="showMap()">← 回冒險地圖</button>
-<section class="stageHero">
-<div id="stageIcon"></div>
-<div><small id="stageCode"></small><h2 id="stageName"></h2><p id="stageDesc"></p></div>
+<div id="plasticQuick" class="panel" style="display:none;margin-bottom:14px">
+<h2>♻️ 塑膠 1～7｜完整對照表＋英文縮寫速記</h2>
+<p>這一區專門練「英文縮寫 → 特性 → 常用用途」。內容依你的競賽講義整理，不另外加入講義外的分類。</p>
+<div class="plastic-table-wrap">
+<table class="plastic-table"><thead><tr><th>編號</th><th>英文縮寫</th><th>耐熱</th><th>特性</th><th>常見用途</th><th>回收／注意事項</th></tr></thead><tbody>
+<tr><td>1</td><td><b>PET</b></td><td>60～85℃</td><td>硬度高、韌性佳、透明度高</td><td>寶特瓶、礦泉水瓶、碳酸飲料瓶</td><td>易回收；不耐高溫、酸鹼，勿裝熱水</td></tr>
+<tr><td>2</td><td><b>HDPE</b></td><td>90～110℃</td><td>耐酸鹼、耐腐蝕、較硬</td><td>鮮奶瓶、洗髮精瓶、清潔劑瓶、塑膠袋</td><td>易回收；安全度高</td></tr>
+<tr><td>3</td><td><b>PVC</b></td><td>60～80℃</td><td>可塑性高、含氯</td><td>水管、雨衣、保鮮膜、塑膠地板</td><td>難回收；燃燒會產生戴奧辛；勿加熱或微波</td></tr>
+<tr><td>4</td><td><b>LDPE</b></td><td>70～90℃</td><td>延展性佳、耐酸鹼、質地較軟</td><td>塑膠袋、保鮮膜、牛奶紙盒內層淋膜</td><td>可回收；耐熱較低</td></tr>
+<tr><td>5</td><td><b>PP</b></td><td>100～140℃</td><td>耐高溫、耐酸鹼、耐碰撞、不含塑化劑</td><td>布丁盒、豆漿瓶、微波餐盒、可重複使用水杯</td><td>易回收；講義列為唯一適合微波加熱</td></tr>
+<tr><td>6</td><td><b>PS</b></td><td>70～90℃</td><td>吸水性低、安定性高；分發泡與未發泡</td><td>發泡為保麗龍；未發泡可見於養樂多瓶等</td><td>不耐酸鹼與有機溶劑；高溫或酸性食物需注意</td></tr>
+<tr class="other-row"><td><b>7</b></td><td><b>Other</b></td><td>依材質而異</td><td>1～6 號以外；如 PC、PLA、Tritan；分類較複雜。PC 遇熱可能釋出 BPA，現多改用 Tritan</td><td>美耐皿、運動水壺、嬰兒奶瓶、PLA 生物可分解塑膠</td><td>依材質而異；部分 PC 需注意 BPA</td></tr>
+</tbody></table></div>
+<div class="grid" id="plasticGrid"></div>
+</div>
+<div class="grid" id="guideGrid"></div>
+<div class="note">🧠 <b>出題原則：</b>選擇題盡量不把答案的公約名稱、英文縮寫或分類名稱直接放進題幹；改用「內容、數字、情境、特徵」辨識。對對碰也會把兩側內容分開並隨機排列；選「塑膠1～7」時，左側會改成只顯示英文縮寫，專練縮寫→特性→用途。</div>
 </section>
-<div class="mix" id="mix"></div>
-<div class="progressText"><b>探索進度</b><span id="stageProgress"></span></div><div class="bar"><i id="stageBar"></i></div>
-<h3>選擇單元</h3><div class="units" id="units"></div>
-</main>
-<main class="hide" id="quizPage">
-<div class="quizTop"><button class="back" onclick="quitQuiz()">← 暫停冒險</button><b id="quizCount"></b></div>
-<div class="bar"><i id="quizBar"></i></div>
-<div class="enemy"><span id="enemyIcon">👾</span><div><small>環境危機</small><b id="enemyName"></b></div></div>
-<span class="tag" id="levelTag"></span>
-<h2 id="question"></h2>
-<div class="options" id="options"></div>
-<div class="answer-actions" id="answerActions">
-<button class="primary" disabled="" id="submitAnswerBtn" onclick="submitSelectedAnswer()">確定送出</button>
-</div>
-<div class="feedback hide" id="feedback"></div>
-<button class="primary hide" id="nextBtn" type="button">下一題 →</button>
-</main>
-<main class="hide center" id="resultPage">
-<div class="resultIcon">🎉</div><small>UNIT COMPLETE</small><h2 id="resultTitle"></h2>
-<div class="score"><b id="score">0</b><span>分</span></div>
-<p id="resultMsg"></p>
-<div class="reward"><div>🪙<b id="coinReward">+1</b><small>單元獎勵</small></div><div>✨<b id="expReward">+0 EXP</b><small>守護經驗</small></div><div>⭐<b id="stars">★★★</b><small>本次表現</small></div></div>
-<button class="primary" id="backToStageBtn" onclick="backToStage(event)" type="button">回到關卡</button>
-</main>
-<main class="hide" id="checkinPage">
-<div class="title"><div><small>MONTHLY CHECK-IN</small><h2>📅 每日簽到月曆</h2><p>每天登入留下守護足跡；月底全勤可獲得限定守護者。</p></div></div>
-<section class="checkin-card">
-<div class="checkin-head"><div><small>本月簽到</small><h3 id="checkinMonthTitle">每日簽到</h3></div><b id="checkinProgress">0／0 天</b></div>
-<div class="checkin-calendar" id="checkinCalendarGrid"></div>
-<div class="checkin-reward"><span>🐿️</span><div><b>月底限定守護者</b><p id="checkinRewardState">月底全勤可獲得限定「四季松鼠守護者」</p></div></div>
+<section id="match" class="view">
+<div class="panel"><h2>🎮 講義重點對對碰</h2><p>先選左邊，再找右邊對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
+<div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
-</main>
-<main class="hide base-dashboard-page" id="basePage">
-<section class="base-dashboard-grid">
-<div class="base-workspace-card">
-<div class="base-time-overlay">
-<div class="base-clock"><b id="baseLocalTime">--:--</b><small>本地時間</small></div>
+<section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
+</div>
+<script>
+const TOPICS={
+'國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI'};
+const GUIDE=[
+['國際公約','斯德哥爾摩公約','2001｜POPs','管制持久性有機污染物；講義列出 aldrin、DDT、PCBs、戴奧辛等項目。'],
+['國際公約','生物安全議定書','2000｜LMOs','針對現代生物技術與基因改造活生物體的潛在風險；進出口建立事先告知程序。'],
+['國際公約','鹿特丹公約','1998｜PIC','有害化學品與農藥出口前，進口國應獲得預先通報並同意。'],
+['國際公約','京都議定書','1997｜溫室氣體','講義列為管制已開發國家及歐盟的溫室氣體排放，並列出 2008～2012 年減量目標。'],
+['國際公約','氣候變化綱要公約','1992｜FCCC','抑制溫室氣體排放；強調各國責任，但因發展狀況不同而有不同責任。'],
+['國際公約','生物多樣性公約','1992｜CBD','保育生物多樣性、永續利用，以及公平合理分享基因資源使用利益。'],
+['國際公約','二十一世紀議程','1992｜Agenda 21','規劃永續發展工作藍圖，內容分為社會經濟、資源保育管理、各主要團體角色、實施方法等。'],
+['國際公約','里約宣言','1992｜永續發展','揭示永續發展理念，強化公民參與並兼顧未來世代。'],
+['國際公約','森林原則','1992｜森林','對全球森林永續經營形成初步共識，重視原住民權利與生物保育。'],
+['國際公約','巴塞爾公約','1989｜危險廢棄物','管制危險廢棄物越境移動及處置；越境移動時必須事前通報。'],
+['國際公約','海牙宣言','1989｜溫室效應','強調採取強硬手段防止地球溫室效應，並呼籲各國制定因應對策。'],
+['國際公約','赫爾辛基宣言','1989｜臭氧','講義內容包含管制破壞臭氧層物質及防止溫室效應惡化措施。'],
+['國際公約','那德威克宣言','1989｜森林與溫室效應','針對溫室效應氣體穩定化形成共識，並提出停止濫伐熱帶林。'],
+['國際公約','索非亞協定','1988｜NOx','抑制氮氧化物排放及越境移動；講義列出 1994 年排放量凍結於 1987 年水準。'],
+['國際公約','蒙特婁議定書','1987｜CFCs','管制 CFCs 排放並訂定 CFCs、海龍削減時程；講義列出 1996 年起全面禁用 CFCs（部分開發中國家除外）。'],
+['國際公約','維也納公約','1985｜臭氧層','促進國際協調，進行臭氧層及破壞臭氧層物質研究，並建立共通對策。'],
+['國際公約','赫爾辛基協定','1985｜SOx','硫氧化物排放及越境移動至少削減 30%；講義列出 1993 年前較 1980 年減少 30%。'],
+['國際公約','聯合國海洋法公約','1982｜UNCLOS','規範海洋環境保護，並依污染來源建立制約規定。'],
+['國際公約','長距離越境大氣污染公約','1979｜跨境空污','防止越境大氣污染，推展酸雨研究、監測與資訊交流。'],
+['國際公約','MARPOL','1978｜船舶污染','管制船舶及海洋設施排放的油污及有害物質；附件包含油、有害液體、污水、廢棄物等。'],
+['國際公約','CITES／華盛頓公約','1975｜野生動植物貿易','限制野生動植物國際貿易以保護瀕危物種，分附件Ⅰ、Ⅱ、Ⅲ管理。'],
+['國際公約','拉姆薩爾公約','1975｜濕地','重視水鳥、濕地及動植物保育與適當利用；加入時至少登記一處濕地。'],
+['國際公約','倫敦廢棄物投棄公約','1972｜海洋投棄','管制船舶、海洋設施造成的海洋污染及有害廢棄物投棄標準。'],
+['標章與水足跡','臺灣碳標籤','CO2＋腳印','圖示揭露產品碳足跡，意涵為減碳、愛地球與綠色消費。'],
+['標章與水足跡','節能標章','電源＋雙手＋火苗','倡導節約能源，講義以省油、省氣、省電說明。'],
+['標章與水足跡','省水標章','水滴＋三條水帶','強調愛水、親水、節水，提高用水效率；講義註記金色代表最高品質。'],
+['標章與水足跡','環保標章','綠色樹葉＋地球','象徵可回收、低污染、省資源。'],
+['標章與水足跡','藍色水足跡','地表／地下淡水','被利用的藍水資源量，例如居家洗澡、煮飯、飲用用水。'],
+['標章與水足跡','綠色水足跡','降雨＋土壤','被利用的綠水資源量，指降雨直接形成並儲存在未飽和土壤、供植物使用的水。'],
+['標章與水足跡','灰色水足跡','污染稀釋／淨化','將生產排放污染稀釋或淨化至符合水質標準所需的水資源量。'],
+['2050淨零','風電／光電','12戰略①','推動離岸風電與太陽光電，讓再生能源成為主要供電來源。'],
+['2050淨零','前瞻能源','12戰略②','開發地熱、氫能、海洋能及生質能等新能源。'],
+['2050淨零','電力系統與儲能','12戰略③','智慧電網搭配儲能系統，處理風光發電的間歇性問題。'],
+['2050淨零','節能','12戰略④','推動高耗能設備更新與智慧能源管理系統。'],
+['2050淨零','CCUS','12戰略⑤','把工廠排放的二氧化碳抓取後地下封存或轉化成化工原料。'],
+['2050淨零','氫能','12戰略⑥','導入煉鋼、石化等重工業，取代傳統焦炭與化石燃料。'],
+['2050淨零','無碳與電動化運輸','12戰略⑦','推動運具電動化；講義列 2040 年新售市區公車、汽機車 100% 電動化。'],
+['2050淨零','淨零綠生活','12戰略⑧','從食衣住行育樂購推動行為改變，如綠建築、自備餐具、在地飲食與低碳旅遊。'],
+['2050淨零','自然碳匯','12戰略⑨','森林綠碳、海洋藍碳、土壤黃碳，發揮自然吸碳與固碳能力。'],
+['2050淨零','循環經濟與零廢棄','12戰略⑩','將廢棄物轉化為再生資源，強調資源全循環。'],
+['2050淨零','綠色金融','12戰略⑪','引導銀行、保險等資金投入綠色產業與永續投資。'],
+['2050淨零','公正轉型','12戰略⑫','協助受衝擊勞工、傳統產業與偏鄉，不遺落任何人。'],
+['塑膠1-7','1 PET','60～85℃','聚乙烯對苯二甲酸酯；硬度高、韌性佳、透明度高；寶特瓶等。'],
+['塑膠1-7','2 HDPE','90～110℃','高密度聚乙烯；耐酸鹼、耐腐蝕、較硬；鮮奶瓶、清潔劑瓶等。'],
+['塑膠1-7','3 PVC','60～80℃','聚氯乙烯；含氯；水管、雨衣、保鮮膜、塑膠地板；講義提醒勿加熱或微波。'],
+['塑膠1-7','4 LDPE','70～90℃','低密度聚乙烯；延展性佳、質地較軟；塑膠袋、保鮮膜等。'],
+['塑膠1-7','5 PP','100～140℃','聚丙烯；耐高溫、耐酸鹼、耐碰撞；講義列為唯一適合微波加熱的塑膠材質。'],
+['塑膠1-7','6 PS','70～90℃','聚苯乙烯；發泡為保麗龍；講義提醒不耐酸鹼與有機溶劑。'],
+['塑膠1-7','7 Other','依材質而異','其他類，如 PC、PLA、Tritan；1～6 號以外，分類較複雜。'],
+['環境日','2月2日','世界溼地日','與拉姆薩爾濕地公約相關；1971 年 2 月 2 日於伊朗拉姆薩爾簽署。'],
+['環境日','3月21日','世界森林日','愛護森林、宣導森林重要性並鼓勵種樹植林。'],
+['環境日','3月22日','世界水資源日','聯合國選定每年 3 月 22 日為世界水資源日。'],
+['環境日','4月22日','世界地球日','強調保護環境；講義記載 1970 年由尼爾森與海斯發起。'],
+['環境日','5月22日','國際生物多樣性日','與生物多樣性公約相關，後改定 5 月 22 日。'],
+['環境日','6月5日','世界環境日','聯合國促進全球環境意識並增強政治關注與行動的重要途徑。'],
+['環境日','6月8日','世界海洋日','支持永續發展並鼓勵保護海洋、永續管理海洋資源。'],
+['環境日','9月18日','世界水質監測日','讓市民對當地水體進行基本監察，提高保護水資源的參與。'],
+['環境日','9月第三個週末','世界清潔日','從 1989 年雪梨港清潔日發展成全球性清潔活動。'],
+['環境日','10月13日','國際減災日','重視地震、風災、海嘯、水災等自然災害造成的損失。'],
+['環境日','10月16日','世界糧食日','與聯合國糧農組織 FAO 成立日相關。'],
+['氣候法','2050年','法定淨零目標','《氣候變遷因應法》正式將 2050 年溫室氣體淨零排放寫入法律。'],
+['氣候法','碳費','污染者付費','大型排放源依碳排放量繳交給政府的費用。'],
+['氣候法','自主減量計畫','優惠費率','提出有效自主減量方案並達標，可申請適用優惠費率。'],
+['氣候法','氣候變遷溫室氣體減量基金','碳費專款專用','用於產業減碳、地方政府補助、氣候調適及綠色技術研發。'],
+['氣候法','碳盤查','排放記帳','特定規模事業計算溫室氣體排放並登錄；講義以範疇一、範疇二舉例。'],
+['氣候法','綠碳','森林與陸域植物','森林與陸域植物生態系統吸收並儲存的碳。'],
+['氣候法','藍碳','沿海／海洋濕地','紅樹林、海草床、鹽沼等生態系統儲存的碳。'],
+['氣候法','黃碳','土壤與農地','土壤與農地生態系統中儲存的碳。'],
+['氣候法','氣候變遷調適','減少氣候衝擊傷害','面對極端暴雨、高溫熱浪、乾旱等已發生或可能發生衝擊而進行調整與防禦。'],
+['氣候法','公正轉型','不遺落任何人','協助受到負面衝擊的勞工、傳統產業與偏鄉。'],
+['氣候法','中央主管機關','環境部','講義列環境部為中央主管機關。'],
+['數值與效應','EER','越高越好','冷氣能源效率比 EER 值越高越好。'],
+['數值與效應','BOD','好氧微生物分解有機物所需氧量','生化需氧量。'],
+['數值與效應','COD','化學氧化所需氧量','化學需氧量，以化學方法測量水中有機物被強氧化劑氧化時消耗的氧相當量。'],
+['數值與效應','卡爾森指數 CTSI','透明度＋葉綠素a＋總磷','評估水庫水質優養程度。'],
+['數值與效應','溫室效應','溫室氣體保留熱量','大氣中的溫室氣體吸收並保留熱量，使大氣層變暖。'],
+['數值與效應','輻射冷卻效應','少雲時熱量散失較多','雲少時反射地表紅外線的機能下降，熱量較容易散失，使溫度下降。'],
+['數值與效應','熱島效應','都市較周邊農村熱','城市區域因人類活動使溫度明顯高於周邊農村。'],
+['數值與效應','雨除作用','降雨淨化空氣污染物','透過降雨方式淨化空氣中的污染物。'],
+['疾病','AIDS','性行為／血液／母子垂直','講義列三大傳播途徑。'],
+['疾病','烏腳病','砷／臺灣西南沿海','與工業廢水中的砷有關，1950年代末期臺灣西南沿海特有。'],
+['疾病','痛痛病','鎘／日本富山縣','1950 年發生於日本富山縣的鎘中毒事件，造成骨骼軟化及腎功能衰竭。'],
+['疾病','水俣病','汞／日本熊本縣','1956 年左右於熊本縣水俣市附近發生，與汞中毒有關。'],
+['火災','A類','普通可燃物','木製品、紙纖維、棉、布、合成樹脂、橡膠、塑膠等；可用水或含水溶液冷卻。'],
+['火災','B類','油類／可燃液體與氣體','石油、乙烷、乙炔、可燃性油脂等；有效方式為掩蓋隔離氧氣。'],
+['火災','C類','通電中電氣設備','電器、變壓器、電線、配電盤等；能截斷電源再依 A 或 B 類處理較妥當。'],
+['火災','D類','活性金屬','鎂、鉀、鋰、鋯、鈦等或禁水性物質；使用相應金屬專用滅火劑。'],
+['外來種','小花蔓澤蘭','南美洲','講義另稱「綠色癌症」。'],
+['外來種','銀膠菊','墨西哥和中南美洲','講義列為常被討論外來植物。'],
+['外來種','布袋蓮','南美洲','講義列為常被討論外來植物。'],
+['外來種','巴西龜','北美洲','講義列為常被討論外來動物。'],
+['外來種','福壽螺','南美洲','講義列為常被討論外來動物。'],
+['外來種','松材線蟲','日本及東南亞','講義列為常被討論外來動物。'],
+['外來種','紅火蟻','南美洲','講義列為常被討論外來動物。'],
+['外來種','小盾鱧／魚虎','東南亞','講義列為常被討論外來動物。'],
+['AQI','0～50','Good／良好／綠','空氣品質良好，污染程度低或無污染；一般民眾正常戶外活動。'],
+['AQI','51～100','Moderate／普通／黃','空氣品質普通；極敏感族群可能有輕微影響。'],
+['AQI','101～150','Unhealthy for Sensitive Groups／橘','敏感族群可能受影響；一般大眾影響不明顯。'],
+['AQI','151～200','Unhealthy／紅','所有人的健康開始受影響；敏感族群可能較嚴重。'],
+['AQI','201～300','Very Unhealthy／紫','健康警報，所有人都可能產生較嚴重健康影響。'],
+['AQI','301～500','Hazardous／褐紅','健康威脅達緊急程度，所有人都可能受到影響。']
+];
 
-</div>
+const PLASTIC_ENGLISH=[
+['1','PET','60～85℃','硬度高、韌性佳、透明度高','寶特瓶等'],
+['2','HDPE','90～110℃','耐酸鹼、耐腐蝕、較硬','鮮奶瓶、清潔劑瓶等'],
+['3','PVC','60～80℃','含氯；講義提醒勿加熱或微波','水管、雨衣、保鮮膜、塑膠地板'],
+['4','LDPE','70～90℃','延展性佳、質地較軟','塑膠袋、保鮮膜等'],
+['5','PP','100～140℃','耐高溫、耐酸鹼、耐碰撞；講義列為唯一適合微波加熱的塑膠材質','布丁杯、豆漿瓶、微波容器、可重複使用杯等'],
+['6','PS','70～90℃','發泡為保麗龍；講義提醒不耐酸鹼與有機溶劑','保麗龍等'],
+['7','Other','依材質而異','1～6 號以外的塑膠；例子包含 PC、PLA、Tritan。分類較複雜。PC 遇熱可能釋出雙酚 A（BPA），現多改用 Tritan。','美耐皿、運動水壺、嬰兒奶瓶、生物可分解塑膠（PLA）']
+];
 
-<section class="my-base-control-panel" aria-label="我的基地控制區">
-<div class="my-base-panel-head">
-<div class="my-base-panel-title"><span>🏡</span><div><b>我的基地</b><small>編輯、縮放與參觀其他守護者的基地</small></div></div>
-<button class="base-village-entry" onclick="showBaseVillage()" type="button"><span class="base-village-entry-icon">🌍</span><span>前往守護基地村</span><b aria-hidden="true">→</b></button>
-</div>
-<div class="base-status-row">
-<span class="base-zoom-readout">目前 <b id="baseZoomLabel">100%</b></span>
-<span>目前金幣：🪙 <b id="baseCoins">0</b></span>
-</div>
-</section>
-<div class="base-scene-frame"><div class="base-scene" id="baseScene"></div></div>
-<div class="base-build-toolbar">
-<div class="build-toolbar-title"><b>建設工具</b><button class="habitat-hint-button" type="button" aria-label="查看動物棲地需求" title="動物棲地提示" onclick="openHabitatGuide()">💡</button></div>
-<div class="base-path-actions toolbar-main-actions" id="baseTitleTools" aria-label="守護基地編輯工具">
-<button id="baseEditSwitch" onclick="toggleBaseEdit()" type="button">✋ <span>編輯基地</span><em class="hide">關</em></button>
-<button onclick="adjustBaseZoom(0.1)" type="button">🔍 <span>放大</span></button>
-<button onclick="adjustBaseZoom(-0.1)" type="button">🔎 <span>縮小</span></button>
-</div>
-<div class="base-save-box"><button onclick="manualSave()" type="button">✓ 儲存基地</button><small>已自動儲存 ✓</small></div>
-<div class="shop" id="shop"></div>
-</div>
-</div>
+const QUIZ=[
+['國際公約','某危險化學品準備出口到另一國，出口前必須讓進口國取得資訊並作出同意決定。這項制度最符合哪一項？',['鹿特丹公約','京都議定書','拉姆薩爾公約','MARPOL'],'鹿特丹公約'],
+['國際公約','某國際制度的重點是危險廢棄物跨境移動，並要求越境移動事前通報。最符合哪一項？',['巴塞爾公約','維也納公約','CITES','里約宣言'],'巴塞爾公約'],
+['國際公約','若題目出現「野生動植物國際貿易、附件ⅠⅡⅢ、許可證」，最直接對應哪一項？',['CITES／華盛頓公約','森林原則','CBD','拉姆薩爾公約'],'CITES／華盛頓公約'],
+['國際公約','某公約重點是濕地保育與合理利用，而且加入時至少登記一處濕地。是哪一項？',['拉姆薩爾公約','MARPOL','蒙特婁議定書','索非亞協定'],'拉姆薩爾公約'],
+['國際公約','若題目問「逐步削減 CFCs 與海龍」，應聯想到哪一項？',['蒙特婁議定書','京都議定書','海牙宣言','UNCLOS'],'蒙特婁議定書'],
+['國際公約','某國際合作架構主要協調臭氧層研究與資訊，並建立共同對策。是哪一項？',['維也納公約','MARPOL','巴塞爾公約','Agenda 21'],'維也納公約'],
+['國際公約','某制度要求管制船舶排放的油污、有害物質、污水與廢棄物。是哪一項？',['MARPOL','UNCLOS','倫敦廢棄物投棄公約','CBD'],'MARPOL'],
+['國際公約','若題目出現「氮氧化物 NOx、排放及越境移動、1994 年凍結」，最符合哪一項？',['索非亞協定','赫爾辛基協定','京都議定書','海牙宣言'],'索非亞協定'],
+['標章與水足跡','某標章以綠色心形、綠葉與 CO2 符號組成，用來揭露產品碳足跡。是哪一個？',['臺灣碳標籤','節能標章','省水標章','環保標章'],'臺灣碳標籤'],
+['標章與水足跡','某指標代表「被利用的藍水資源量」，居家例子包括洗澡、煮飯、飲用。這是？',['藍色水足跡','綠色水足跡','灰色水足跡','碳足跡'],'藍色水足跡'],
+['標章與水足跡','某水資源概念指降雨直接形成、儲存在未飽和土壤並供植物使用的水。這是？',['綠色水足跡','藍色水足跡','灰色水足跡','節能標章'],'綠色水足跡'],
+['標章與水足跡','某概念指把污染稀釋或淨化至符合水質標準所需的水量。這是？',['灰色水足跡','藍色水足跡','綠色水足跡','省水標章'],'灰色水足跡'],
+['2050淨零','某技術把工廠排放的二氧化碳抓取下來，再地下封存或轉化成化工原料。屬於哪一項戰略？',['CCUS','綠色金融','公正轉型','自然碳匯'],'CCUS'],
+['2050淨零','某政策強調資源全循環，把廢棄物轉化為再生資源。是哪一項？',['循環經濟與零廢棄','淨零綠生活','前瞻能源','節能'],'循環經濟與零廢棄'],
+['2050淨零','某政策特別協助受衝擊勞工、傳統產業與偏鄉，核心精神是「不遺落任何人」。是哪一項？',['公正轉型','綠色金融','自然碳匯','無碳與電動化運輸'],'公正轉型'],
+['2050淨零','森林、紅樹林／海草床、土壤分別可對應綠碳、藍碳與哪一種？',['黃碳','黑碳','灰碳','紫碳'],'黃碳'],
+['塑膠1-7','若要依講義選擇適合微波加熱的塑膠材質，應選哪一號？',['5 PP','3 PVC','6 PS','1 PET'],'5 PP'],
+['塑膠1-7','某塑膠標示 1，材質透明、硬度高，常見於寶特瓶。英文縮寫是？',['PET','HDPE','LDPE','PS'],'PET'],
+['塑膠1-7','某塑膠較軟、延展性佳，常見用途是塑膠袋與保鮮膜。是哪一號？',['4 LDPE','2 HDPE','5 PP','7 Other'],'4 LDPE'],
+['塑膠1-7','某塑膠含氯，講義提醒勿加熱或微波；常見於水管、雨衣與保鮮膜。是哪一號？',['3 PVC','6 PS','1 PET','5 PP'],'3 PVC'],
+['塑膠1-7','某材質分類是 1～6 號以外的塑膠，例子包含 PC、PLA、Tritan。是哪一號？',['7 Other','6 PS','2 HDPE','4 LDPE'],'7 Other'],
+['塑膠1-7','哪一個英文縮寫對應「標示 2、較硬、耐酸鹼，常見於鮮奶瓶與清潔劑瓶」？',['HDPE','PET','LDPE','PS'],'HDPE'],
+['塑膠1-7','哪一個英文縮寫對應「標示 4、質地較軟、延展性佳，常見於塑膠袋與保鮮膜」？',['LDPE','PVC','PP','HDPE'],'LDPE'],
+['塑膠1-7','哪一個英文縮寫對應「標示 5、耐高溫，講義列為唯一適合微波加熱的塑膠材質」？',['PP','PET','PS','PVC'],'PP'],
+['塑膠1-7','哪一個英文縮寫對應「標示 6、發泡時就是常見的保麗龍，且不耐酸鹼與有機溶劑」？',['PS','HDPE','LDPE','PET'],'PS'],
+['塑膠1-7','某容器標示 3，特徵是含氯，講義提醒不要加熱或微波。英文縮寫為？',['PVC','PP','PET','Other'],'PVC'],
+['塑膠1-7','某透明、硬度高的容器標示 1，常見用途是寶特瓶。英文縮寫為？',['PET','PS','HDPE','PVC'],'PET'],
+['塑膠1-7','下列哪一組「英文縮寫＋常見用途」符合講義？',['PP＋微波容器','PVC＋微波容器','PS＋寶特瓶','PET＋塑膠袋'],'PP＋微波容器'],
+['塑膠1-7','下列哪一組「英文縮寫＋特性」符合講義？',['HDPE＋耐酸鹼、較硬','LDPE＋質地硬且耐腐蝕','PS＋適合微波','PVC＋適合高溫加熱'],'HDPE＋耐酸鹼、較硬'],
+['塑膠1-7','下列哪一組完整符合講義對第 7 類 Other 的描述？',['1～6 號以外；PC、PLA、Tritan；用途依材質不同','只有寶特瓶；只能裝熱水','只包含 PVC；適合微波','只有保麗龍；耐熱最高'],'1～6 號以外；PC、PLA、Tritan；用途依材質不同'],
+['塑膠1-7','講義列出的第 7 類 Other，常見用途包含哪一組？',['美耐皿、運動水壺、嬰兒奶瓶、PLA','寶特瓶、礦泉水瓶、碳酸飲料瓶','水管、雨衣、塑膠地板','保麗龍、養樂多瓶'],'美耐皿、運動水壺、嬰兒奶瓶、PLA'],
+['塑膠1-7','若題目出現「PC、PLA、Tritan」，依講義應先判斷為哪一類？',['7 Other','1 PET','5 PP','6 PS'],'7 Other'],
+['塑膠1-7','關於第 7 類 Other，下列哪一項符合講義？',['耐熱程度依材質而異','一律耐熱 100～140℃','一律不可回收','一定含氯'],'耐熱程度依材質而異'],
+['環境日','哪一天是世界溼地日？',['2月2日','3月21日','4月22日','6月5日'],'2月2日'],
+['環境日','哪一天是世界水資源日？',['3月22日','3月21日','5月22日','6月8日'],'3月22日'],
+['環境日','哪一天是世界環境日？',['6月5日','4月22日','6月8日','10月16日'],'6月5日'],
+['環境日','哪一天是國際生物多樣性日？',['5月22日','6月5日','2月2日','9月18日'],'5月22日'],
+['氣候法','哪一個年份的溫室氣體淨零排放被《氣候變遷因應法》寫入法律？',['2050年','2030年','2035年','2040年'],'2050年'],
+['氣候法','排放者依碳排放量繳交給政府的費用，講義稱為？',['碳費','水費','能源費','碳盤查'],'碳費'],
+['氣候法','企業盤點自身溫室氣體排放量並辦理登錄，講義以「記帳」比喻。這是？',['碳盤查','公正轉型','氣候調適','自然碳匯'],'碳盤查'],
+['氣候法','紅樹林、海草床、鹽沼等沿海／海洋濕地生態系統儲存的碳，屬於？',['藍碳','綠碳','黃碳','黑碳'],'藍碳'],
+['數值與效應','冷氣的 EER 值，在講義的判斷原則是？',['越高越好','越低越好','接近0最好','沒有關係'],'越高越好'],
+['數值與效應','評估水庫水質優養程度的指標，會用透明度、葉綠素 a、總磷計算。是哪一個？',['卡爾森指數 CTSI','BOD','COD','EER'],'卡爾森指數 CTSI'],
+['數值與效應','城市區域因人類活動使溫度明顯高於周邊農村，稱為？',['熱島效應','雨除作用','輻射冷卻效應','溫室效應'],'熱島效應'],
+['數值與效應','透過降雨方式淨化空氣中的污染物，講義稱為？',['雨除作用','背風渦流','酸雨','輻射冷卻效應'],'雨除作用'],
+['疾病','與工業廢水中的砷有關、臺灣西南沿海特有的疾病是哪一項？',['烏腳病','痛痛病','水俣病','AIDS'],'烏腳病'],
+['疾病','與鎘中毒有關，發生於日本富山縣，會造成骨骼軟化及腎功能衰竭。是哪一項？',['痛痛病','水俣病','烏腳病','AIDS'],'痛痛病'],
+['疾病','與汞中毒有關，1956 年左右發生於日本熊本縣水俣市附近。是哪一項？',['水俣病','痛痛病','烏腳病','AIDS'],'水俣病'],
+['火災','木製品、紙纖維、棉、布、橡膠、塑膠等普通可燃物發生的火災，屬於？',['A類','B類','C類','D類'],'A類'],
+['火災','石油、乙烷、乙炔或可燃性油脂造成的火災，屬於？',['B類','A類','C類','D類'],'B類'],
+['火災','通電中的電器、變壓器、電線、配電盤引起的火災，屬於？',['C類','A類','B類','D類'],'C類'],
+['火災','鎂、鉀、鋰、鋯、鈦等活性金屬燃燒，屬於？',['D類','A類','B類','C類'],'D類'],
+['外來種','講義稱為「綠色癌症」的外來植物是？',['小花蔓澤蘭','布袋蓮','銀膠菊','馬纓丹'],'小花蔓澤蘭'],
+['外來種','依講義，哪一項的來源地列為南美洲？',['福壽螺','巴西龜','松材線蟲','藍孔雀'],'福壽螺'],
+['外來種','依講義，哪一項的來源地列為日本及東南亞？',['松材線蟲','紅火蟻','巴西龜','美國螯蝦'],'松材線蟲'],
+['AQI','AQI 0～50 對應哪一組？',['Good／良好／綠','Moderate／普通／黃','Unhealthy／紅','Hazardous／褐紅'],'Good／良好／綠'],
+['AQI','AQI 101～150 對應哪一組？',['Unhealthy for Sensitive Groups／橘','Good／綠','Very Unhealthy／紫','Moderate／黃'],'Unhealthy for Sensitive Groups／橘'],
+['AQI','AQI 201～300 對應哪一組？',['Very Unhealthy／紫','Unhealthy／紅','Hazardous／褐紅','Moderate／黃'],'Very Unhealthy／紫'],
+['AQI','AQI 301～500 時，講義的狀態是？',['Hazardous／危害／褐紅','Good／良好／綠','Unhealthy／紅','Moderate／黃'],'Hazardous／危害／褐紅']
+];
 
-</section>
-<section class="save-panel">
-<div>
-<span class="save-dot" id="saveDot"></span>
-<b id="saveStatus">已自動存檔</b>
-<small id="saveTime">尚未建立存檔</small>
-</div>
-<div class="save-actions">
-<button onclick="manualSave()">💾 立即存檔</button>
-<button onclick="exportSave()">⬇️ 匯出存檔</button>
-<label class="import-btn">⬆️ 匯入存檔<input accept=".json,application/json" id="importFile" onchange="importSave(event)" type="file"/></label>
-</div>
-</section></main>
+let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部';
+const cats=['全部',...Object.keys(TOPICS)];
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function save(){document.getElementById('points').textContent=points}
+function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
+function renderFilters(){document.getElementById('filters').innerHTML=cats.map(c=>`<button class="filter ${filter===c?'active':''}" onclick="setFilter('${c.replaceAll("'","\\'")}')">${c==='全部'?'全部':TOPICS[c]}</button>`).join('')}
+function setFilter(c){filter=c;renderFilters();renderGuide()}
+function renderTopicSections(){
+ const root=document.getElementById('topicSections');
+ if(!root) return;
+ const order=Object.keys(TOPICS);
+ root.innerHTML=order.map(topic=>{
+   const items=GUIDE.filter(x=>x[0]===topic);
+   if(!items.length) return '';
+   const cls=topic==='塑膠1-7'?' plastic-focus':topic==='標章與水足跡'?' water-focus':topic==='AQI'?' aqi-focus':'';
+   return `<section class="topic-section${cls}" id="topic-${topic}"><h3>${TOPICS[topic]}</h3><div class="topic-grid">${items.map(x=>`<article class="topic-item"><span class="label">${topic}</span><strong>${x[1]}</strong><p><b>${x[2]}</b></p><p>${x[3]}</p></article>`).join('')}</div></section>`;
+ }).join('');
+}
 
-<main class="hide" id="baseVillagePage">
-  <button class="back village-back-to-base" onclick="showBase()">← 回我的守護基地</button>
-  <div class="title village-title">
-    <div><small>GUARDIAN BASE VILLAGE</small><h2>🏘️ 守護基地村</h2><p>查看目前已開始建設的玩家基地，預設依基地完成度由高到低排列。</p></div>
-    <button class="secondary" onclick="refreshBaseVillage()">🔄 更新基地</button>
-  </div>
-  <section class="village-controls">
-    <div class="village-tabs" role="tablist">
-      <button class="active" data-village-filter="completion" onclick="setVillageFilter('completion',this)">🏗️ 完成度</button>
-      <button data-village-filter="popular" onclick="setVillageFilter('popular',this)">❤️ 人氣</button>
-      <button data-village-filter="green" onclick="setVillageFilter('green',this)">🌳 綠化率</button>
-      <button data-village-filter="new" onclick="setVillageFilter('new',this)">🆕 最新</button>
-    </div>
-    <label class="village-search">🔎<input id="villageSearch" maxlength="20" oninput="renderBaseVillage()" placeholder="搜尋守護者名稱"/></label>
-  </section>
-  <section class="my-base-share-card">
-    <div><span class="share-icon">🌍</span><div><b>我的基地公開設定</b><small>公開後，其他玩家只能參觀，不能移動或修改你的基地。</small></div></div>
-    <select id="baseVisibilitySelect" onchange="updateBaseVisibility(this.value)">
-      <option value="public">🌍 公開基地</option>
-      <option value="private">🔒 不公開</option>
-    </select>
-    <input id="baseIntroInput" maxlength="40" placeholder="寫一句基地介紹（最多 40 字）" onchange="updateBaseIntro(this.value)"/>
-    <button class="primary" onclick="publishMyBase()">📸 更新基地快照</button>
-  </section>
-  <div class="village-status" id="villageStatus">正在準備基地村…</div>
-  <section class="base-village-grid" id="baseVillageGrid"></section>
-</main>
-<main class="hide" id="visitorBasePage">
-  <button class="back" onclick="showBaseVillage()">← 回守護基地村</button>
-  <section class="visitor-base-head">
-    <div class="visitor-owner"><span id="visitorAvatar">🌱</span><div><small>正在參觀</small><h2 id="visitorName">守護者基地</h2><p id="visitorIntro"></p></div></div>
-    <div class="visitor-actions"><button id="visitorLikeBtn" onclick="likeCurrentVisitorBase()">♡ 送愛心</button><button id="visitorFavoriteBtn" onclick="toggleVisitorFavorite()">☆ 收藏</button></div>
-  </section>
-  <div class="visitor-stats"><span>❤️ <b id="visitorLikes">0</b></span><span>🌳 綠化率 <b id="visitorGreen">0%</b></span><span>🏆 徽章 <b id="visitorBadges">0</b></span><span>⭐ Lv.<b id="visitorLevel">1</b></span></div>
-  <div class="base-scene-frame visitor-frame"><div class="base-scene" id="visitorBaseScene"></div></div>
-  <div class="visitor-zoom"><button onclick="adjustVisitorZoom(.1)">🔍 放大</button><button onclick="adjustVisitorZoom(-.1)">🔎 縮小</button><span>唯讀參觀模式</span></div>
-</main>
-
-<main class="hide" id="achievementPage">
-<div class="title"><div><small>GUARDIAN ACHIEVEMENTS</small><h2>🏅 玩家成就</h2><p>每一次答題、闖關與守護行動，都會留下成長足跡。</p></div></div>
-<section class="achievement-grid" id="achievementGrid"></section>
-</main>
-<main class="hide" id="adminPage">
-<div class="title admin-title">
-<div><small>ADMIN CONSOLE · V9.3.6</small><h2>🛠️ 管理後臺</h2><p>管理玩家、題庫、活動與每週排行榜。所有寫入操作均受 Firestore 管理者規則保護。</p></div>
-<button class="secondary" onclick="loadAdminDashboard()">🔄 全部重新整理</button>
-</div>
-<nav aria-label="管理後臺功能" class="admin-tabs">
-<button class="active" data-admin-tab="dashboard" onclick="switchAdminTab('dashboard',this)">📊 儀表板</button>
-<button data-admin-tab="players" onclick="switchAdminTab('players',this)">👤 玩家管理</button>
-<button data-admin-tab="questions" onclick="switchAdminTab('questions',this)">📝 題庫管理</button>
-<button data-admin-tab="events" onclick="switchAdminTab('events',this)">🎁 活動管理</button>
-<button data-admin-tab="ranking" onclick="switchAdminTab('ranking',this)">🏆 排行榜管理</button>
-</nav>
-<section class="admin-panel" id="adminTabDashboard">
-<section class="admin-summary" id="adminSummary"></section>
-<div class="admin-info-card"><b>統計說明</b><span>今日登入依玩家的 lastLoginAt；活躍玩家為最近 7 天有同步；今日答題從 V9.2 起累計。</span></div>
-</section>
-<section class="admin-panel hide" id="adminTabPlayers">
-<div class="admin-toolbar">
-<label class="admin-search">🔍 <input id="adminPlayerSearch" oninput="renderAdminPlayers()" placeholder="搜尋玩家名稱、UID" type="search"/></label>
-<button class="secondary" onclick="loadAdminPlayers()">重新讀取</button>
-</div>
-<div class="admin-player-list" id="adminPlayerList"><div class="empty-ranking">正在載入玩家資料…</div></div>
-</section>
-<section class="admin-panel hide" id="adminTabQuestions">
-<form class="admin-form" id="adminQuestionForm" onsubmit="saveAdminQuestion(event)">
-<h3>新增後臺題目</h3>
-<div class="admin-form-grid">
-<label>Stage<select id="adminQuestionStage" required=""><option value="s1">Stage 1</option><option value="s2">Stage 2</option><option value="s3">Stage 3</option><option value="s4">Stage 4</option></select></label>
-<label>單元<input id="adminQuestionUnit" min="1" required="" type="number" value="1"/></label>
-<label>難度<select id="adminQuestionLevel"><option>初級</option><option>中級</option><option>中高級</option><option>高級</option></select></label>
-<label class="wide">題目<textarea id="adminQuestionText" required="" rows="3"></textarea></label>
-<label>選項 A<input id="adminOption0" required=""/></label><label>選項 B<input id="adminOption1" required=""/></label>
-<label>選項 C<input id="adminOption2" required=""/></label><label>選項 D<input id="adminOption3" required=""/></label>
-<label>正確答案<select id="adminQuestionAnswer"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
-<label class="wide">解析<textarea id="adminQuestionExplanation" required="" rows="3"></textarea></label>
-</div>
-<button class="primary" type="submit">＋ 新增題目</button>
-</form>
-<div class="admin-import-card"><div><h3>📥 批次匯入題目</h3><p>支援 CSV 或 JSON。CSV 欄位：stageId,unit,level,q,A,B,C,D,ans,exp。</p></div><label class="import-btn">選擇檔案<input accept=".csv,.json,text/csv,application/json" id="adminQuestionImportFile" onchange="adminImportQuestions(event)" type="file"/></label><button class="secondary" onclick="downloadQuestionImportTemplate()" type="button">下載 CSV 範本</button></div>
-<div class="shop-head"><h3>後臺新增題目</h3><button class="secondary" onclick="loadAdminQuestions()">重新讀取</button></div>
-<div class="admin-card-list" id="adminQuestionList"></div>
-</section>
-<section class="admin-panel hide" id="adminTabEvents">
-<form class="admin-form" id="adminEventForm" onsubmit="saveAdminEvent(event)">
-<h3 id="adminEventFormTitle">建立活動</h3>
-<div class="admin-form-grid">
-<label>活動名稱<input id="adminEventName" placeholder="例如：暑假活動" required=""/></label>
-<label>活動類型<select id="adminEventType"><option value="doubleExp">雙倍 EXP</option><option value="loginCoins">每日登入送金幣</option><option value="notice">公告活動</option></select></label>
-<label>數值<input id="adminEventValue" min="0" type="number" value="2"/></label>
-<label>結束日期<input id="adminEventEnd" type="date"/></label>
-<label class="wide">活動說明<textarea id="adminEventDescription" rows="2"></textarea></label>
-<label class="admin-check wide"><input checked="" id="adminEventShowHome" type="checkbox"/> 在首頁「活動公告」欄顯示</label>
-</div>
-<button class="primary" id="adminEventSubmitBtn" type="submit">＋ 建立活動</button> <button class="secondary hide" id="adminEventCancelEdit" onclick="cancelAdminEventEdit()" type="button">取消修改</button>
-</form>
-<div class="admin-card-list" id="adminEventList"></div>
-</section>
-<section class="admin-panel hide" id="adminTabRanking">
-<div class="admin-ranking-actions">
-<button class="primary" onclick="adminRebuildRanking()">♻️ 由玩家資料重算本週排行</button>
-<button class="secondary" onclick="adminExportRanking()">📥 匯出 Excel（CSV）</button>
-<button class="danger" onclick="adminClearRanking()">🗑️ 清空本週排行榜</button>
-</div>
-<p class="note">清空與重算只作用於目前週期；清空前會再次確認。</p>
-<div class="admin-card-list" id="adminRankingList"></div>
-</section>
-</main>
-<main class="hide center" id="hallPage">
-<div class="hallIcon">🏆</div><h2>榮耀殿堂</h2><p>完成每一關全部單元，就能點亮專屬徽章。</p>
-<div class="hall" id="hall"></div>
-<div class="legend locked" id="legend">👑<h3>傳奇地球守護者</h3><p>集齊四枚榮耀徽章後解鎖</p></div>
-</main>
-<main class="hide" id="leaderboardPage">
-<div class="title leaderboard-title">
-<div><small id="rankingEyebrow">GUARDIAN RANKING</small><h2 id="rankingTitle">🥇 每週守護者排行榜</h2><p id="rankingDescription">不分班級，所有玩家共同競賽；依本週積分由高到低排名。</p></div>
-<button class="secondary" onclick="refreshLeaderboard(activeRankingMode)">🔄 更新排行</button>
-</div>
-<div class="ranking-tabs" role="tablist" aria-label="排行榜類型">
-<button id="weeklyRankingTab" class="active" type="button" onclick="switchRankingMode('weekly',this)">📅 每週排行榜</button>
-<button id="totalRankingTab" type="button" onclick="switchRankingMode('total',this)">🏆 總排行榜</button>
-</div>
-<section class="weekly-card">
-<div><small>本週週期</small><b id="weekLabel">—</b></div>
-<div><small id="myRankingPointsLabel">我的本週積分</small><b id="myWeeklyPoints">0</b></div>
-<div><small id="myRankingRankLabel">我的每週名次</small><b id="myWeeklyRank">—</b></div>
-</section>
-<div class="cloud-status" id="cloudStatus">☁️ 正在連線排行榜…</div>
-<div class="leaderboard-rules"><b>排序規則</b><span>守護經驗值高者優先</span><span>經驗值相同時，最近更新者優先</span><span>排行榜頁面只讀取，不會在開啟時改寫資料</span></div>
-<div class="leaderboard-list" id="leaderboardList"></div>
-<p class="privacy-note">排行榜只顯示玩家自訂暱稱與守護者頭像，不顯示真實姓名、學校或班級。點選玩家可查看公開的守護數據與分析。</p>
-</main>
-<div class="rank-profile-modal hide" id="rankProfileModal" role="dialog" aria-modal="true" aria-labelledby="rankProfileTitle" onclick="closeRankProfile(event)">
-  <section class="rank-profile-panel" onclick="event.stopPropagation()">
-    <button class="rank-profile-close" type="button" aria-label="關閉玩家資料" onclick="closeRankProfile()">✕</button>
-    <div id="rankProfileContent"></div>
-  </section>
-</div>
-<main class="hide" id="weaknessPage">
-<div class="title weakness-title">
-<div>
-<small>MONSTER WEAKNESS NOTES</small>
-<h2>👾 怪獸弱點圖鑑</h2>
-<p>曾經答錯的題目會化身成環保怪獸加入圖鑑。先再次挑戰，答錯後才會顯示解析。</p>
-</div>
-<div class="weakness-mascot">👾✍️</div>
-</div>
-<section class="weakness-summary">
-<button aria-label="查看待破解怪獸" class="weakness-summary-card" onclick="openWeaknessCategory('pending')" type="button">
-<span>🧩</span><small>待破解怪獸</small><b id="weaknessPending">0</b><em>點擊查看 →</em>
-</button>
-<button aria-label="查看已淨化怪獸" class="weakness-summary-card" onclick="openWeaknessCategory('mastered')" type="button">
-<span>✅</span><small>已淨化怪獸</small><b id="weaknessMastered">0</b><em>點擊查看 →</em>
-</button>
-<button aria-label="查看全部圖鑑" class="weakness-summary-card" onclick="openWeaknessCategory('all')" type="button">
-<span>📚</span><small>圖鑑收錄</small><b id="weaknessTotal">0</b><em>點擊查看 →</em>
-</button>
-</section>
-<div class="weakness-dashboard-tools">
-<label class="weakness-search">
-<span>🔍</span>
-<input id="weaknessSearch" oninput="renderWeaknessBook()" placeholder="搜尋怪獸、題目或環保主題" type="search"/>
-</label>
-<label class="weakness-unit-search">
-<span>🧭</span>
-<select id="weaknessUnitSearch" onchange="renderWeaknessBook()"><option value="">全部 Stage／單元</option></select>
-</label>
-<div class="weakness-progress-box">
-<div><span>圖鑑完成率</span><b id="weaknessProgressText">0 / 0（0%）</b></div>
-<div class="weakness-progress-track"><i id="weaknessProgressBar"></i></div>
-</div>
-</div>
-<div class="weakness-tools">
-<div class="filter-group">
-<button class="active" id="weakFilterAll" onclick="setWeaknessFilter('all')">全部</button>
-<button id="weakFilterPending" onclick="setWeaknessFilter('pending')">待破解</button>
-<button id="weakFilterMastered" onclick="setWeaknessFilter('mastered')">已淨化</button>
-</div>
-</div>
-<div class="weakness-list" id="weaknessList"></div>
-</main>
-<main class="hide" id="profilePage">
-<div class="title">
-<div><small>GUARDIAN PROFILE</small><h2>👤 我的守護者資料</h2><p>修改名稱與已解鎖頭像，查看等級、稱號及冒險紀錄。</p></div>
-</div>
-<section class="profile-hero">
-<div class="profile-avatar frame-none" id="profileAvatarPreview">🦊</div>
-<div class="profile-main">
-<label>玩家名稱</label>
-<div class="profile-name-row">
-<input id="profileNameInput" maxlength="12"/>
-<button class="primary" onclick="saveProfileName()">儲存名稱</button>
-</div>
-<h3 id="profileDisplayName">環保守護者</h3>
-<p id="profileTitleText">見習地球守護者</p>
-<div class="level-line"><b id="profileLevel">Lv.1</b><span id="profileExpText">0 / 100 EXP</span></div>
-<div class="bar profile-exp-bar"><i id="profileExpBar"></i></div>
-</div>
-</section>
-<section class="profile-summary" id="profileSummary"></section>
-<h3>選擇守護者頭像</h3>
-<p class="section-note">鎖定的守護者會在達到指定等級後自動解鎖。</p>
-<div class="avatar-grid" id="profileAvatars"></div>
-<h3>選擇頭像外框</h3>
-<div class="frame-grid" id="frameChoices"></div>
-<section class="kinmen-final">
-<div>🦦</div><div aria-label="金門鱟" class="horseshoe-icon" role="img"></div>
-<div><b>金門終極守護者</b><p>Lv.45 解鎖金門歐亞水獺；Lv.50 解鎖金門鱟與「金門生態傳奇」稱號。</p></div>
-</section>
-</main>
-<section class="stats global-status-row" aria-label="玩家守護狀態">
-<div>🪙<span>守護金幣</span><b id="coins">0</b></div>
-<div>🏅<span>榮耀徽章</span><b><i id="badges">0</i>/4</b></div>
-<div>🔥<span>連續登入</span><b><i id="streak">1</i>天</b></div>
-<div>⭐<span>守護經驗</span><b><i id="expNow">0</i>/<i id="expNext">100</i></b></div>
-</section>
-<section class="global-footer-info checkin-player-row" aria-label="每日簽到與玩家資訊" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch;width:min(1480px,calc(100% - 28px));margin:0 auto 26px;">
-<section aria-label="本月每日簽到" class="checkin-stat"><div class="checkin-stat-head"><span>📅 每日簽到</span><b id="homeCheckinState">今天已簽到</b></div><div class="home-checkin-month" id="homeCheckinMonth"></div><div class="home-checkin-grid" id="homeCheckinGrid"></div><small class="home-checkin-reward" id="homeCheckinReward">月底全勤可獲得限定守護者</small></section>
-<aside class="base-player-card">
-<div class="base-player-card-title">玩家資訊卡 <small>全新版・清晰版</small></div>
-<div class="base-player-identity"><span class="base-profile-avatar" id="baseProfileAvatar">🦊</span><div><h3 id="baseProfileName">環保守護者</h3><p><b id="baseProfileLevel">Lv.1</b><em id="baseProfileTitle">見習地球守護者</em></p></div></div>
-<div class="base-player-stats">
-<div><span>🏅</span><small>成就進度</small><b id="baseProfileAchievements">0 / 15</b></div>
-<div><span>🔥</span><small>連續登入</small><b id="baseProfileStreak">1 天</b></div>
-<div><span>⭐</span><small>本週積分</small><b id="baseProfileWeekly">0</b></div>
-<div><span>🌳</span><small>基地完成度</small><b id="baseProfileCompletion">0%</b></div>
-</div>
-</aside>
-</section>
-</div>
-<div class="modal hide" id="habitatGuideModal" role="dialog" aria-modal="true" aria-labelledby="habitatGuideTitle" onclick="closeHabitatGuide(event)">
-<div class="modal-card habitat-guide-card" onclick="event.stopPropagation()">
-<button aria-label="關閉動物棲地提示" class="modal-close modal-close-left" type="button" onclick="closeHabitatGuide()">×</button>
-<div class="habitat-guide-head"><span>💡</span><div><small>ECO HABITAT GUIDE</small><h3 id="habitatGuideTitle">動物棲地提示</h3><p>布置適合的花、草、樹木與生態池，動物才會自然入住。</p></div></div>
-<div class="habitat-summary" id="habitatSummary"></div>
-<div class="habitat-requirements" id="habitatRequirements"></div>
-</div>
-</div>
-<div class="modal hide" id="resumeQuizModal" role="dialog" aria-modal="true" aria-labelledby="resumeQuizTitle">
-<div class="modal-card resume-quiz-card">
-<h3 id="resumeQuizTitle">📘 要繼續上次的答題進度嗎？</h3>
-<p id="resumeQuizText">偵測到尚未完成的冒險。</p>
-<div class="resume-quiz-actions">
-<button class="secondary" type="button" onclick="discardSavedQuiz()">回首頁重新選擇</button>
-<button class="primary" type="button" onclick="resumeSavedQuiz()">繼續答題</button>
-</div>
-</div>
-</div>
-<div class="modal hide" id="logoutModal">
-<div class="modal-card">
-<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLogout()">×</button>
-<h3>確定要登出嗎？</h3>
-<p>進度已同步至 Google 帳號；登出後可再次登入接續遊玩。</p>
-<div><button onclick="closeLogout()">取消</button><button class="danger" onclick="logout()">登出</button></div>
-</div>
-</div>
-<div class="modal hide" id="weaknessQuizModal">
-<div class="modal-card weakness-quiz-card">
-<button aria-label="關閉" class="modal-close" onclick="closeWeaknessQuiz()">×</button>
-<small>MONSTER WEAKNESS CHALLENGE</small>
-<h2>👾 弱點再次挑戰</h2>
-<div class="weakness-quiz-meta" id="weaknessQuizMeta"></div>
-<h3 id="weaknessQuizQuestion"></h3>
-<div class="options weakness-quiz-options" id="weaknessQuizOptions"></div>
-<div class="answer-actions" id="weaknessQuizActions">
-<button class="secondary" disabled="" id="weaknessResetBtn" onclick="resetWeaknessAnswer()">重新選擇</button>
-<button class="primary" disabled="" id="weaknessSubmitBtn" onclick="submitWeaknessAnswer()">確定送出</button>
-</div>
-<div class="feedback hide" id="weaknessQuizFeedback"></div>
-<button class="primary full hide" id="weaknessDoneBtn" onclick="closeWeaknessQuiz()">回到弱點筆記</button>
-</div>
-</div>
-<div aria-hidden="true" class="effect-layer" id="effectLayer"></div>
-<div class="modal hide" id="levelModal">
-<div class="modal-card level-card">
-<button aria-label="關閉" class="modal-close modal-close-left" type="button" onclick="closeLevelModal()">×</button>
-<div class="level-unlock-icon" id="levelUnlockIcon">✨</div>
-<small>GUARDIAN LEVEL UP</small>
-<h2 id="levelUnlockTitle">守護者升級！</h2>
-<p id="levelUnlockText"></p>
-<button class="primary full" onclick="closeLevelModal()">繼續冒險</button>
-</div>
-</div>
-<div aria-live="polite" class="toast" id="toast" role="status"></div>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=10211"></script>
-<script src="questions.js?v=10211"></script>
-<script src="config.js?v=10211"></script>
-<script src="game.js?v=10211"></script>
-<script src="firebase.js?v=10211"></script>
-<script src="lecture-focus-addon-v10.2.11.js?v=10211"></script>
-</body></html>
+function renderGuide(){
+renderTopicSections();
+let a=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);
+const pq=document.getElementById('plasticQuick');
+if(filter==='塑膠1-7'){
+ pq.style.display='block';
+ document.getElementById('plasticGrid').innerHTML=PLASTIC_ENGLISH.map(x=>`<article class="card plastic-card"><span class="tag">第 ${x[0]} 號</span><div class="plastic-code">${x[1]}</div><div class="plastic-meta"><span>耐熱：${x[2]}</span></div><div class="memory"><b>特性：</b>${x[3]}</div><div class="use"><b>常用：</b>${x[4]}</div></article>`).join('');
+}else{pq.style.display='none'}
+document.getElementById('guideGrid').innerHTML=shuffle(a).map(x=>`<article class="card"><span class="tag">${TOPICS[x[0]]}</span><h3>${x[1]}</h3><div class="small">${x[2]}</div><div class="memory">${x[3]}</div></article>`).join('')
+}
+function makePairs(){
+if(filter==='塑膠1-7'){
+ return shuffle(PLASTIC_ENGLISH).slice(0,7).map(x=>({id:'plastic|'+x[1],left:x[1],right:`第 ${x[0]} 號｜${x[3]}｜常用：${x[4]}`}));
+}
+let source=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);if(source.length<8)source=GUIDE;return shuffle(source).slice(0,8).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}))
+}
+function newMatch(){matchSet=makePairs();mSel=null;mDone=0;mScore=0;document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickLeft(this,'${esc(x.id)}')">${x.left}</div>`).join('');document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickRight(this,'${esc(x.id)}')">${x.right}</div>`).join('');document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';document.querySelector('#match .matchcol:last-child h3').textContent=filter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';updateMatch();document.getElementById('mMsg').textContent='先選左邊，再找右邊最符合的內容。'}
+function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','&quot;')}
+function pickLeft(el,id){document.querySelectorAll('#mLeft .matchitem').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='現在找右邊對應內容。'}
+function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent='請先選左邊。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';updateMatch();if(mDone===8)document.getElementById('mMsg').textContent='🏆 本回合完成！'}else{el.classList.remove('sel');document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。'}}
+function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/8*100)+'%'}
+function startQuiz(){quiz=shuffle(QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=QUIZ.length;showQ()}
+function showQ(){if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="answerQ(this,${JSON.stringify(o)},${JSON.stringify(answer)})">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`}
+function answerQ(btn,choice,answer){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(choice===answer){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！';}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}qi++;setTimeout(showQ,850)}
+renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
+</script>
+</body>
+</html>
