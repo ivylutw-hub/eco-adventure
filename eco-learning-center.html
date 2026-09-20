@@ -115,7 +115,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=10214"></script>
+<script src="firebase-config.js?v=10215"></script>
 <script>
 (function(){
   const gate=document.getElementById('learningAuthGate');
@@ -132,7 +132,14 @@
   }
   async function checkAuthorized(user){
     if(!user)return false;
-    const snap=await db.collection('players').doc(user.uid).get();
+    // 避免 Firestore 讀取因網路/規則問題無限等待。
+    const readPromise=db.collection('players').doc(user.uid).get();
+    const timeoutPromise=new Promise((_,reject)=>setTimeout(()=>{
+      const e=new Error('Firestore 讀取逾時（8 秒）');
+      e.code='learning/firestore-timeout';
+      reject(e);
+    },8000));
+    const snap=await Promise.race([readPromise,timeoutPromise]);
     return snap.exists;
   }
   async function init(){
@@ -143,14 +150,14 @@
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
       auth.onAuthStateChanged(async user=>{
         if(!user){btn.disabled=false;btn.textContent='使用 Google 帳號登入';message('請使用「環保冒險王」相同的 Google 帳號登入。');return}
-        if(checking)return;checking=true;btn.disabled=true;btn.textContent='正在確認授權…';
+        if(checking)return;checking=true;btn.disabled=true;btn.textContent='正在確認使用者資格…';
         try{
           const ok=await checkAuthorized(user);
           if(ok){enter(user);message('');}
           else{message('這個 Google 帳號尚未有「環保冒險王」玩家資料，無法進入學習中心。');await auth.signOut();btn.disabled=false;btn.textContent='使用 Google 帳號登入';}
         }catch(err){
           console.error('學習中心授權檢查失敗',err);
-          message('無法確認玩家授權：'+(err.code||err.message||'未知錯誤'));
+          message('無法確認玩家授權：'+(err.code||err.message||'未知錯誤')+'。請不要一直等待，截圖給我即可。');
           btn.disabled=false;btn.textContent='使用 Google 帳號登入';
         }finally{checking=false}
       });
@@ -417,11 +424,11 @@ function showQ(){
  selectedChoice=null;submitted=false;
  const item=quiz[qi],topic=item[0],question=item[1],opts=item[2];
  document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';
- document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this,${JSON.stringify(o)})">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
+ document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this)">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
 }
-function selectQ(btn,choice){
+function selectQ(btn){
  if(submitted)return;
- selectedChoice=choice;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
+ selectedChoice=btn.textContent;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
  document.getElementById('confirmQ').disabled=false;document.getElementById('qResult').textContent='已選擇答案，請確認後送出。';
 }
 function confirmQ(){
