@@ -433,10 +433,19 @@ function selectQ(btn){
 }
 function confirmQ(){
  if(selectedChoice===null||submitted)return;
- submitted=true;const answer=quiz[qi][3];const buttons=document.querySelectorAll('.opt');buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
- if(selectedChoice===answer){buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}
- else{buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('wrong');if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}
- qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
+ const answer=quiz[qi][3],buttons=document.querySelectorAll('.opt');
+ if(selectedChoice===answer){
+  submitted=true;buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
+  buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});
+  qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！';
+  qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
+ }else{
+  // 答錯時只提示錯誤，不公布答案，也不進入下一題；讓使用者重新選擇。
+  buttons.forEach(x=>x.classList.remove('selected'));
+  const wrongBtn=[...buttons].find(x=>x.textContent===selectedChoice);if(wrongBtn)wrongBtn.classList.add('wrong');
+  selectedChoice=null;submitted=false;document.getElementById('confirmQ').disabled=true;
+  document.getElementById('qResult').innerHTML='❌ 答題錯誤，請再想一想，再作答一次！';
+ }
 }
 renderTopicPicker();document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
 </script>
