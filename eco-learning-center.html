@@ -23,7 +23,7 @@
 @media(max-width:620px){.exam30{flex-direction:column;align-items:stretch}.exam30-btn{width:100%}}
 
 .topic-picker{margin-top:15px;text-align:center;border:2px solid #cfe6da}.topic-help{margin:6px 0 12px;color:#5d756b}.selected-topic{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#edf8f2;font-weight:900;color:#237653}.mode-tabs{margin-top:12px}.current-topic-panel{text-align:center;background:#f8fffb}.current-topic-panel b{color:#237653}.topic-filter{font-size:15px}.exam30-topic-card{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 8px;padding:17px 18px;text-align:left;border:3px solid #e7a536;border-radius:20px;background:linear-gradient(135deg,#fff8e3,#fffdf8);box-shadow:0 4px 14px #0000000a}.exam30-topic-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-topic-text{margin-top:5px;color:#6b6252;line-height:1.55}.exam30-topic-btn{white-space:nowrap;background:#e7a536;font-size:17px;padding:13px 20px}@media(max-width:620px){.exam30-topic-card{flex-direction:column;align-items:stretch}.exam30-topic-btn{width:100%}}
-</style>
+.topic-special-title{font-weight:900;color:#8a5b08;margin:10px 0 5px}.special-filters{margin-top:0}.exam30-filter{border-color:#e7a536;background:#fff9e8;color:#8a5b08;font-weight:950}.exam30-filter:hover{background:#fff0c9}.opt.selected{outline:3px solid #4d78a8;background:#edf5ff}.quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}.confirm-btn{background:#237653;color:#fff}.confirm-btn:disabled{opacity:.45;cursor:not-allowed}.next-btn{background:#e7a536;color:#fff}.</style>
 </head>
 <body>
 <div class="wrap">
@@ -36,14 +36,10 @@
 <div class="section-filter-title">🧭 第一步｜先選主題</div>
 <p class="topic-help">先選一個主題，再選「重點圖鑑／對對碰／選擇題」。三種練習都只針對你選的主題。</p>
 <div class="filters" id="topicPicker"></div>
-<div class="exam30-topic-card">
-  <div>
-    <div class="exam30-topic-title">🔥 考前特訓｜最容易考 30 題</div>
-    <div class="exam30-topic-text">從學習中心講義精選 30 題，獨立放在主題區，考前可以直接進入 30 題挑戰。</div>
-  </div>
-  <button class="action exam30-topic-btn" onclick="selectExam30()">立即挑戰 30 題</button>
+<div class="topic-special-title">🔥 考前特訓</div>
+<div class="filters special-filters">
+  <button class="filter exam30-filter" onclick="selectExam30()">🔥 最容易考 30 題</button>
 </div>
-<div class="selected-topic" id="selectedTopic">請先選擇主題</div>
 </section>
 <nav class="tabs mode-tabs" id="modeTabs" style="display:none">
 <button class="tab active" onclick="showMode('guide',this)">📖 重點圖鑑</button>
@@ -92,7 +88,7 @@
 <div class="panel"><h2>🎮 講義重點對對碰</h2><p>先選左邊，再找右邊對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
-<section id="quiz" class="view"><div class="panel current-topic-panel">🏆 目前主題：<b id="quizCurrentTopic"></b></div><div class="panel"><div class="exam30"><div><div class="exam30-title">🔥 環保知識競賽｜最容易考 30 題</div><div class="exam30-text">從本學習中心講義內容精選 30 題，集中練習高頻名詞、數字、分類與對應關係。</div></div><button class="action exam30-btn" onclick="startQuiz30()">立即挑戰 30 題</button></div><h2>🏆 選擇題挑戰</h2><div class="note">💡 你已選定「<b id="quizTopicHint"></b>」主題；下面的選擇題會只抽這個主題。若要考前總複習，直接點上方「最容易考 30 題」。</div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
+<section id="quiz" class="view"><div class="panel current-topic-panel">🏆 目前主題：<b id="quizCurrentTopic"></b></div><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="note">💡 你已選定「<b id="quizTopicHint"></b>」主題；下面的選擇題只抽這個主題。考前總複習請回到上方主題區，點選「🔥 最容易考 30 題」。</div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
 <script>
 const TOPICS={
@@ -278,15 +274,15 @@ const QUIZ=[
 const QUIZ30 = [['國際公約', '某危險化學品準備出口到另一國，出口前必須讓進口國取得資訊並作出同意決定。這項制度最符合哪一項？', ['鹿特丹公約', '京都議定書', '拉姆薩爾公約', 'MARPOL'], '鹿特丹公約'], ['國際公約', '某國際制度的重點是危險廢棄物跨境移動，並要求越境移動事前通報。最符合哪一項？', ['巴塞爾公約', '維也納公約', 'CITES', '里約宣言'], '巴塞爾公約'], ['國際公約', '若題目出現「野生動植物國際貿易、附件ⅠⅡⅢ、許可證」，最直接對應哪一項？', ['CITES／華盛頓公約', '森林原則', 'CBD', '拉姆薩爾公約'], 'CITES／華盛頓公約'], ['國際公約', '某公約重點是濕地保育與合理利用，而且加入時至少登記一處濕地。是哪一項？', ['拉姆薩爾公約', 'MARPOL', '蒙特婁議定書', '索非亞協定'], '拉姆薩爾公約'], ['國際公約', '若題目問「逐步削減 CFCs 與海龍」，應聯想到哪一項？', ['蒙特婁議定書', '京都議定書', '海牙宣言', 'UNCLOS'], '蒙特婁議定書'], ['標章與水足跡', '某標章以綠色心形、綠葉與 CO2 符號組成，用來揭露產品碳足跡。是哪一個？', ['臺灣碳標籤', '節能標章', '省水標章', '環保標章'], '臺灣碳標籤'], ['標章與水足跡', '某指標代表「被利用的藍水資源量」，居家例子包括洗澡、煮飯、飲用。這是？', ['藍色水足跡', '綠色水足跡', '灰色水足跡', '碳足跡'], '藍色水足跡'], ['標章與水足跡', '某水資源概念指降雨直接形成、儲存在未飽和土壤並供植物使用的水。這是？', ['綠色水足跡', '藍色水足跡', '灰色水足跡', '節能標章'], '綠色水足跡'], ['標章與水足跡', '某概念指把污染稀釋或淨化至符合水質標準所需的水量。這是？', ['灰色水足跡', '藍色水足跡', '綠色水足跡', '省水標章'], '灰色水足跡'], ['2050淨零', '某技術把工廠排放的二氧化碳抓取下來，再地下封存或轉化成化工原料。屬於哪一項戰略？', ['CCUS', '綠色金融', '公正轉型', '自然碳匯'], 'CCUS'], ['2050淨零', '某政策強調資源全循環，把廢棄物轉化為再生資源。是哪一項？', ['循環經濟與零廢棄', '淨零綠生活', '前瞻能源', '節能'], '循環經濟與零廢棄'], ['2050淨零', '某政策特別協助受衝擊勞工、傳統產業與偏鄉，核心精神是「不遺落任何人」。是哪一項？', ['公正轉型', '綠色金融', '自然碳匯', '無碳與電動化運輸'], '公正轉型'], ['2050淨零', '森林、紅樹林／海草床、土壤分別可對應綠碳、藍碳與哪一種？', ['黃碳', '黑碳', '灰碳', '紫碳'], '黃碳'], ['塑膠1-7', '若要依講義選擇適合微波加熱的塑膠材質，應選哪一號？', ['5 PP', '3 PVC', '6 PS', '1 PET'], '5 PP'], ['塑膠1-7', '某塑膠標示 1，材質透明、硬度高，常見於寶特瓶。英文縮寫是？', ['PET', 'HDPE', 'LDPE', 'PS'], 'PET'], ['塑膠1-7', '某塑膠較軟、延展性佳，常見用途是塑膠袋與保鮮膜。是哪一號？', ['4 LDPE', '2 HDPE', '5 PP', '7 Other'], '4 LDPE'], ['塑膠1-7', '某塑膠含氯，講義提醒勿加熱或微波；常見於水管、雨衣與保鮮膜。是哪一號？', ['3 PVC', '6 PS', '1 PET', '5 PP'], '3 PVC'], ['塑膠1-7', '某材質分類是 1～6 號以外的塑膠，例子包含 PC、PLA、Tritan。是哪一號？', ['7 Other', '6 PS', '2 HDPE', '4 LDPE'], '7 Other'], ['塑膠1-7', '哪一個英文縮寫對應「標示 6、發泡時就是常見的保麗龍，且不耐酸鹼與有機溶劑」？', ['PS', 'HDPE', 'LDPE', 'PET'], 'PS'], ['塑膠1-7', '某容器標示 3，特徵是含氯，講義提醒不要加熱或微波。英文縮寫為？', ['PVC', 'PP', 'PET', 'Other'], 'PVC'], ['塑膠1-7', '某透明、硬度高的容器標示 1，常見用途是寶特瓶。英文縮寫為？', ['PET', 'PS', 'HDPE', 'PVC'], 'PET'], ['塑膠1-7', '下列哪一組「英文縮寫＋常見用途」符合講義？', ['PP＋微波容器', 'PVC＋微波容器', 'PS＋寶特瓶', 'PET＋塑膠袋'], 'PP＋微波容器'], ['塑膠1-7', '講義列出的第 7 類 Other，常見用途包含哪一組？', ['美耐皿、運動水壺、嬰兒奶瓶、PLA', '寶特瓶、礦泉水瓶、碳酸飲料瓶', '水管、雨衣、塑膠地板', '保麗龍、養樂多瓶'], '美耐皿、運動水壺、嬰兒奶瓶、PLA'], ['塑膠1-7', '若題目出現「PC、PLA、Tritan」，依講義應先判斷為哪一類？', ['7 Other', '1 PET', '5 PP', '6 PS'], '7 Other'], ['塑膠1-7', '關於第 7 類 Other，下列哪一項符合講義？', ['耐熱程度依材質而異', '一律耐熱 100～140℃', '一律不可回收', '一定含氯'], '耐熱程度依材質而異'], ['環境日', '哪一天是世界溼地日？', ['2月2日', '3月21日', '4月22日', '6月5日'], '2月2日'], ['環境日', '哪一天是世界水資源日？', ['3月22日', '3月21日', '5月22日', '6月8日'], '3月22日'], ['環境日', '哪一天是世界環境日？', ['6月5日', '4月22日', '6月8日', '10月16日'], '6月5日'], ['氣候法', '企業盤點自身溫室氣體排放量並辦理登錄，講義以「記帳」比喻。這是？', ['碳盤查', '公正轉型', '氣候調適', '自然碳匯'], '碳盤查'], ['數值與效應', '評估水庫水質優養程度的指標，會用透明度、葉綠素 a、總磷計算。是哪一個？', ['卡爾森指數 CTSI', 'BOD', 'COD', 'EER'], '卡爾森指數 CTSI']];
 ;
 
-let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0;
+let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,selectedChoice=null,submitted=false;
 let selectedTopic='';
 let guideFilter='全部',matchFilter='全部',quizFilter='全部',matchTotal=8,quizTotal=10;
 const cats=Object.keys(TOPICS);
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function save(){document.getElementById('points').textContent=points}
 function renderTopicPicker(){document.getElementById('topicPicker').innerHTML=cats.map(c=>`<button class="filter topic-filter ${selectedTopic===c?'active':''}" onclick="selectTopic('${c.replaceAll("'","\\'")}')">${TOPICS[c]}</button>`).join('')}
-function selectTopic(c){selectedTopic=c;guideFilter=matchFilter=quizFilter=c;document.getElementById('selectedTopic').textContent='已選主題：'+TOPICS[c];document.getElementById('guideCurrentTopic').textContent=TOPICS[c];document.getElementById('matchCurrentTopic').textContent=TOPICS[c];document.getElementById('quizCurrentTopic').textContent=TOPICS[c];document.getElementById('quizTopicHint').textContent=TOPICS[c];document.getElementById('modeTabs').style.display='flex';renderTopicPicker();showMode('guide',document.querySelector('#modeTabs .tab'))}
-function selectExam30(){selectedTopic='__EXAM30__';document.getElementById('selectedTopic').textContent='已選：🔥 最容易考 30 題';document.getElementById('guideCurrentTopic').textContent='最容易考 30 題';document.getElementById('matchCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizTopicHint').textContent='最容易考 30 題';document.getElementById('modeTabs').style.display='flex';document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.remove('active'));document.querySelector('#modeTabs .tab:last-child').classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('quiz').classList.add('active');startQuiz30()}
+function selectTopic(c){selectedTopic=c;guideFilter=matchFilter=quizFilter=c;document.getElementById('guideCurrentTopic').textContent=TOPICS[c];document.getElementById('matchCurrentTopic').textContent=TOPICS[c];document.getElementById('quizCurrentTopic').textContent=TOPICS[c];document.getElementById('quizTopicHint').textContent=TOPICS[c];document.getElementById('modeTabs').style.display='flex';renderTopicPicker();showMode('guide',document.querySelector('#modeTabs .tab'))}
+function selectExam30(){selectedTopic='__EXAM30__';document.getElementById('guideCurrentTopic').textContent='最容易考 30 題';document.getElementById('matchCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizTopicHint').textContent='最容易考 30 題';document.getElementById('modeTabs').style.display='flex';document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.remove('active'));document.querySelector('#modeTabs .tab:last-child').classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('quiz').classList.add('active');startQuiz30()}
 function showMode(id,btn){if(!selectedTopic)return;document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
 function setGuideFilter(c){selectTopic(c)}
 function setMatchFilter(c){selectTopic(c)}
@@ -327,15 +323,32 @@ function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent=
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(matchTotal?mDone/matchTotal*100:0)+'%'}
 function startQuiz(){
  let source=quizFilter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===quizFilter);
- quiz=shuffle(source);quizTotal=Math.min(10,quiz.length);qi=0;qs=0;
- document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quiz.length;showQ();
+ quiz=shuffle(source);quizTotal=Math.min(10,quiz.length);qi=0;qs=0;showQ();
+ document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quiz.length;
 }
 function startQuiz30(){
- quiz=shuffle(QUIZ30);quizTotal=quiz.length;qi=0;qs=0;
- document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quizTotal;showQ(true);
+ quiz=shuffle(QUIZ30);quizTotal=quiz.length;qi=0;qs=0;showQ();
+ document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quizTotal;
 }
-function showQ(){if(qi>=quizTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${quizTotal}</p><div class="explain">已完成「${quizTotal===30?'環保知識競賽最容易考 30 題':TOPICS[quizFilter]}」。可以再挑戰一次或回到上方更換主題。</div>`;return}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="answerQ(this,${JSON.stringify(o)},${JSON.stringify(answer)})">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`}
-function answerQ(btn,choice,answer){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(choice===answer){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}qi++;setTimeout(showQ,850)}
+function showQ(){
+ if(qi>=quizTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${quizTotal}</p><div class="explain">已完成「${quizTotal===30?'環保知識競賽最容易考 30 題':TOPICS[quizFilter]}」。可以再挑戰一次或回到上方更換主題。</div>`;return}
+ selectedChoice=null;submitted=false;
+ const item=quiz[qi],topic=item[0],question=item[1],opts=item[2];
+ document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';
+ document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this,${JSON.stringify(o)})">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
+}
+function selectQ(btn,choice){
+ if(submitted)return;
+ selectedChoice=choice;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
+ document.getElementById('confirmQ').disabled=false;document.getElementById('qResult').textContent='已選擇答案，請確認後送出。';
+}
+function confirmQ(){
+ if(selectedChoice===null||submitted)return;
+ submitted=true;const answer=quiz[qi][3];const buttons=document.querySelectorAll('.opt');buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
+ if(selectedChoice===answer){buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}
+ else{buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('wrong');if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}
+ qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
+}
 renderTopicPicker();document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
 </script>
 </body>
