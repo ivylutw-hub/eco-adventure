@@ -9,7 +9,7 @@
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
 .wrap{max-width:1180px;margin:auto;padding:14px}.hero{background:#fff;border-radius:26px;padding:22px;text-align:center;box-shadow:0 10px 30px #0001}.hero h1{margin:0;font-size:clamp(25px,5vw,42px)}.hero p{margin:8px;color:#5d756b}.stats{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.pill{padding:7px 12px;background:#eef8f3;border-radius:999px;font-weight:800}
 .tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin:15px 0}.tab{border:0;border-radius:13px;padding:11px 14px;background:#dfeee7;color:#245642;font-weight:900;cursor:pointer}.tab.active{background:var(--g);color:#fff}
-.view{display:none}.view.active{display:block}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.filter{border:1px solid #cddfd6;background:#fff;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}.filter.active{background:#eaf7f0;border-color:#62a987;color:#176447}
+.view{display:none}.view.active{display:block}.filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.filter{border:1px solid #cddfd6;background:#fff;border-radius:999px;padding:8px 12px;font-weight:800;cursor:pointer}.filter.active{background:#eaf7f0;border-color:#62a987;color:#176447}.section-filter-title{font-weight:900;margin-bottom:7px}
 .panel{background:#fff;border-radius:22px;padding:20px;box-shadow:0 5px 20px #0001}.panel h2{margin-top:0}.note{background:#fff8df;border-radius:15px;padding:12px;line-height:1.65;margin-top:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#fff;border-radius:18px;padding:16px;border:2px solid #e1ece7;box-shadow:0 3px 13px #0000000b}.card h3{margin:5px 0 8px}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:9px;font-weight:800}.memory{margin-top:9px;color:#5c7068;font-weight:700;line-height:1.6}
 .match{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.matchcol{background:#f8fcfa;border-radius:18px;padding:14px}.matchitem{padding:13px;margin:8px 0;border:2px solid #d7e7df;border-radius:13px;background:#fff;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:var(--gold);background:#fff7e7}.matchitem.done{opacity:.4;background:#e9f7ee;pointer-events:none}.barbg{height:10px;background:#dce9e3;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0}.msg{min-height:28px;margin:12px 0;font-weight:900}.actions{text-align:center;margin-top:13px}.action{border:0;border-radius:12px;padding:11px 16px;background:var(--g);color:#fff;font-weight:900;cursor:pointer}.action.secondary{background:#e7f0ec;color:#245642}
 .q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
@@ -34,7 +34,7 @@
 <button class="tab" onclick="show('quiz',this)">🏆 選擇題</button>
 </nav>
 <section id="guide" class="view active">
-<div class="filters" id="filters"></div>
+<div class="panel" style="margin-bottom:14px"><div class="section-filter-title">📚 選擇重點圖鑑主題</div><div class="filters" id="guideFilters"></div></div>
 <div class="panel" id="allTopicsPanel" style="margin-bottom:14px">
 <h2>📌 本次講義更新總覽</h2>
 <p>這一版不是只更新塑膠。以下內容都已依你的《環境知識競賽快速攻略本115微調》納入「重點圖鑑＋對對碰＋選擇題」：</p>
@@ -71,10 +71,11 @@
 <div class="note">🧠 <b>出題原則：</b>選擇題盡量不把答案的公約名稱、英文縮寫或分類名稱直接放進題幹；改用「內容、數字、情境、特徵」辨識。對對碰也會把兩側內容分開並隨機排列；選「塑膠1～7」時，左側會改成只顯示英文縮寫，專練縮寫→特性→用途。</div>
 </section>
 <section id="match" class="view">
+<div class="panel" style="margin-bottom:14px"><div class="section-filter-title">🎮 選擇對對碰主題</div><div class="filters" id="matchFilters"></div></div>
 <div class="panel"><h2>🎮 講義重點對對碰</h2><p>先選左邊，再找右邊對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
-<section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
+<section id="quiz" class="view"><div class="panel" style="margin-bottom:14px"><div class="section-filter-title">🏆 選擇選擇題主題</div><div class="filters" id="quizFilters"></div></div><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
 <script>
 const TOPICS={
@@ -255,50 +256,59 @@ const QUIZ=[
 ['AQI','AQI 301～500 時，講義的狀態是？',['Hazardous／危害／褐紅','Good／良好／綠','Unhealthy／紅','Moderate／黃'],'Hazardous／危害／褐紅']
 ];
 
-let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部';
+let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0;
+let guideFilter='全部',matchFilter='全部',quizFilter='全部',matchTotal=8,quizTotal=10;
 const cats=['全部',...Object.keys(TOPICS)];
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function save(){document.getElementById('points').textContent=points}
-function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
-function renderFilters(){document.getElementById('filters').innerHTML=cats.map(c=>`<button class="filter ${filter===c?'active':''}" onclick="setFilter('${c.replaceAll("'","\\'")}')">${c==='全部'?'全部':TOPICS[c]}</button>`).join('')}
-function setFilter(c){filter=c;renderFilters();renderGuide()}
-function renderTopicSections(){
- const root=document.getElementById('topicSections');
- if(!root) return;
- const order=Object.keys(TOPICS);
- root.innerHTML=order.map(topic=>{
-   const items=GUIDE.filter(x=>x[0]===topic);
-   if(!items.length) return '';
-   const cls=topic==='塑膠1-7'?' plastic-focus':topic==='標章與水足跡'?' water-focus':topic==='AQI'?' aqi-focus':'';
-   return `<section class="topic-section${cls}" id="topic-${topic}"><h3>${TOPICS[topic]}</h3><div class="topic-grid">${items.map(x=>`<article class="topic-item"><span class="label">${topic}</span><strong>${x[1]}</strong><p><b>${x[2]}</b></p><p>${x[3]}</p></article>`).join('')}</div></section>`;
- }).join('');
-}
-
+function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match'){renderMatchFilters();newMatch()}if(id==='quiz'){renderQuizFilters();startQuiz()}}
+function makeFilterHTML(current,fn){return cats.map(c=>`<button class="filter ${current===c?'active':''}" onclick="${fn}('${c.replaceAll("'","\\'")}')">${c==='全部'?'全部':TOPICS[c]}</button>`).join('')}
+function renderGuideFilters(){document.getElementById('guideFilters').innerHTML=makeFilterHTML(guideFilter,'setGuideFilter')}
+function renderMatchFilters(){document.getElementById('matchFilters').innerHTML=makeFilterHTML(matchFilter,'setMatchFilter')}
+function renderQuizFilters(){document.getElementById('quizFilters').innerHTML=makeFilterHTML(quizFilter,'setQuizFilter')}
+function setGuideFilter(c){guideFilter=c;renderGuideFilters();renderGuide()}
+function setMatchFilter(c){matchFilter=c;renderMatchFilters();newMatch()}
+function setQuizFilter(c){quizFilter=c;renderQuizFilters();startQuiz()}
 function renderGuide(){
-renderTopicSections();
-let a=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);
-const pq=document.getElementById('plasticQuick');
-if(filter==='塑膠1-7'){
- pq.style.display='block';
- document.getElementById('plasticGrid').innerHTML=PLASTIC_ENGLISH.map(x=>`<article class="card plastic-card"><span class="tag">第 ${x[0]} 號</span><div class="plastic-code">${x[1]}</div><div class="plastic-meta"><span>耐熱：${x[2]}</span></div><div class="memory"><b>特性：</b>${x[3]}</div><div class="use"><b>常用：</b>${x[4]}</div></article>`).join('');
-}else{pq.style.display='none'}
-document.getElementById('guideGrid').innerHTML=shuffle(a).map(x=>`<article class="card"><span class="tag">${TOPICS[x[0]]}</span><h3>${x[1]}</h3><div class="small">${x[2]}</div><div class="memory">${x[3]}</div></article>`).join('')
+ renderGuideFilters();
+ let a=guideFilter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===guideFilter);
+ const overview=document.getElementById('allTopicsPanel');
+ overview.style.display=guideFilter==='全部'?'block':'none';
+ const pq=document.getElementById('plasticQuick');
+ if(guideFilter==='塑膠1-7'){
+   pq.style.display='block';
+   document.getElementById('plasticGrid').innerHTML=PLASTIC_ENGLISH.map(x=>`<article class="card plastic-card"><span class="tag">第 ${x[0]} 號</span><div class="plastic-code">${x[1]}</div><div class="plastic-meta"><span>耐熱：${x[2]}</span></div><div class="memory"><b>特性：</b>${x[3]}</div><div class="use"><b>常用：</b>${x[4]}</div></article>`).join('');
+ }else pq.style.display='none';
+ document.getElementById('guideGrid').innerHTML=shuffle(a).map(x=>`<article class="card"><span class="tag">${TOPICS[x[0]]}</span><h3>${x[1]}</h3><div class="small">${x[2]}</div><div class="memory">${x[3]}</div></article>`).join('');
 }
 function makePairs(){
-if(filter==='塑膠1-7'){
- return shuffle(PLASTIC_ENGLISH).slice(0,7).map(x=>({id:'plastic|'+x[1],left:x[1],right:`第 ${x[0]} 號｜${x[3]}｜常用：${x[4]}`}));
+ let source;
+ if(matchFilter==='塑膠1-7') return shuffle(PLASTIC_ENGLISH).slice(0,7).map(x=>({id:'plastic|'+x[1],left:x[1],right:`第 ${x[0]} 號｜${x[3]}｜常用：${x[4]}`}));
+ source=matchFilter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===matchFilter);
+ const take=Math.min(8,source.length); return shuffle(source).slice(0,take).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}));
 }
-let source=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);if(source.length<8)source=GUIDE;return shuffle(source).slice(0,8).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}))
+function newMatch(){
+ matchSet=makePairs();mSel=null;mDone=0;mScore=0;matchTotal=matchSet.length;
+ document.getElementById('mDone').textContent=0;document.getElementById('mScore').textContent=0;document.getElementById('mBar').style.width='0%';
+ document.querySelector('#match .stats .pill:first-child').innerHTML=`已配對 <b id="mDone">0</b> / ${matchTotal}`;
+ document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickLeft(this,'${esc(x.id)}')">${x.left}</div>`).join('');
+ document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickRight(this,'${esc(x.id)}')">${x.right}</div>`).join('');
+ document.querySelector('#match .matchcol:first-child h3').textContent=matchFilter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';
+ document.querySelector('#match .matchcol:last-child h3').textContent=matchFilter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';
+ document.getElementById('mMsg').textContent=matchTotal?'先選左邊，再找右邊最符合的內容。':'這個主題目前沒有可配對資料。';
 }
-function newMatch(){matchSet=makePairs();mSel=null;mDone=0;mScore=0;document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickLeft(this,'${esc(x.id)}')">${x.left}</div>`).join('');document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickRight(this,'${esc(x.id)}')">${x.right}</div>`).join('');document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';document.querySelector('#match .matchcol:last-child h3').textContent=filter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';updateMatch();document.getElementById('mMsg').textContent='先選左邊，再找右邊最符合的內容。'}
-function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','&quot;')}
+function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('\"','&quot;')}
 function pickLeft(el,id){document.querySelectorAll('#mLeft .matchitem').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='現在找右邊對應內容。'}
-function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent='請先選左邊。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';updateMatch();if(mDone===8)document.getElementById('mMsg').textContent='🏆 本回合完成！'}else{el.classList.remove('sel');document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。'}}
-function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/8*100)+'%'}
-function startQuiz(){quiz=shuffle(QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=QUIZ.length;showQ()}
-function showQ(){if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="answerQ(this,${JSON.stringify(o)},${JSON.stringify(answer)})">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`}
-function answerQ(btn,choice,answer){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(choice===answer){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！';}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}qi++;setTimeout(showQ,850)}
-renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
+function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent='請先選左邊。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';updateMatch();if(mDone===matchTotal)document.getElementById('mMsg').textContent='🏆 本回合完成！'}else{el.classList.remove('sel');document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。'}}
+function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(matchTotal?mDone/matchTotal*100:0)+'%'}
+function startQuiz(){
+ let source=quizFilter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===quizFilter);
+ quiz=shuffle(source);quizTotal=Math.min(10,quiz.length);qi=0;qs=0;
+ document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quiz.length;showQ();
+}
+function showQ(){if(qi>=quizTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${quizTotal}</p><div class="explain">已完成「${quizFilter==='全部'?'全部主題':TOPICS[quizFilter]}」本回合題目。可以再點其他主題繼續練習。</div>`;return}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="answerQ(this,${JSON.stringify(o)},${JSON.stringify(answer)})">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`}
+function answerQ(btn,choice,answer){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(choice===answer){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}qi++;setTimeout(showQ,850)}
+renderGuide();renderMatchFilters();renderQuizFilters();newMatch();startQuiz();
 </script>
 </body>
 </html>
