@@ -22,7 +22,7 @@
 .exam30{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;padding:16px 18px;border:3px solid #e7a536;border-radius:18px;background:linear-gradient(135deg,#fff9e8,#fffdf7)}.exam30-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-text{margin-top:5px;line-height:1.55;color:#6b6252}.exam30-btn{white-space:nowrap;background:#e7a536;color:#fff;font-size:17px;padding:13px 20px}.exam30-btn:hover{filter:brightness(.96)}
 @media(max-width:620px){.exam30{flex-direction:column;align-items:stretch}.exam30-btn{width:100%}}
 
-.topic-picker{margin-top:15px;text-align:center;border:2px solid #cfe6da}.topic-help{margin:6px 0 12px;color:#5d756b}.selected-topic{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#edf8f2;font-weight:900;color:#237653}.mode-tabs{margin-top:12px}.current-topic-panel{text-align:center;background:#f8fffb}.current-topic-panel b{color:#237653}.topic-filter{font-size:15px}
+.topic-picker{margin-top:15px;text-align:center;border:2px solid #cfe6da}.topic-help{margin:6px 0 12px;color:#5d756b}.selected-topic{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#edf8f2;font-weight:900;color:#237653}.mode-tabs{margin-top:12px}.current-topic-panel{text-align:center;background:#f8fffb}.current-topic-panel b{color:#237653}.topic-filter{font-size:15px}.exam30-topic-card{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 8px;padding:17px 18px;text-align:left;border:3px solid #e7a536;border-radius:20px;background:linear-gradient(135deg,#fff8e3,#fffdf8);box-shadow:0 4px 14px #0000000a}.exam30-topic-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-topic-text{margin-top:5px;color:#6b6252;line-height:1.55}.exam30-topic-btn{white-space:nowrap;background:#e7a536;font-size:17px;padding:13px 20px}@media(max-width:620px){.exam30-topic-card{flex-direction:column;align-items:stretch}.exam30-topic-btn{width:100%}}
 </style>
 </head>
 <body>
@@ -36,6 +36,13 @@
 <div class="section-filter-title">🧭 第一步｜先選主題</div>
 <p class="topic-help">先選一個主題，再選「重點圖鑑／對對碰／選擇題」。三種練習都只針對你選的主題。</p>
 <div class="filters" id="topicPicker"></div>
+<div class="exam30-topic-card">
+  <div>
+    <div class="exam30-topic-title">🔥 考前特訓｜最容易考 30 題</div>
+    <div class="exam30-topic-text">從學習中心講義精選 30 題，獨立放在主題區，考前可以直接進入 30 題挑戰。</div>
+  </div>
+  <button class="action exam30-topic-btn" onclick="selectExam30()">立即挑戰 30 題</button>
+</div>
 <div class="selected-topic" id="selectedTopic">請先選擇主題</div>
 </section>
 <nav class="tabs mode-tabs" id="modeTabs" style="display:none">
@@ -279,6 +286,7 @@ function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function save(){document.getElementById('points').textContent=points}
 function renderTopicPicker(){document.getElementById('topicPicker').innerHTML=cats.map(c=>`<button class="filter topic-filter ${selectedTopic===c?'active':''}" onclick="selectTopic('${c.replaceAll("'","\\'")}')">${TOPICS[c]}</button>`).join('')}
 function selectTopic(c){selectedTopic=c;guideFilter=matchFilter=quizFilter=c;document.getElementById('selectedTopic').textContent='已選主題：'+TOPICS[c];document.getElementById('guideCurrentTopic').textContent=TOPICS[c];document.getElementById('matchCurrentTopic').textContent=TOPICS[c];document.getElementById('quizCurrentTopic').textContent=TOPICS[c];document.getElementById('quizTopicHint').textContent=TOPICS[c];document.getElementById('modeTabs').style.display='flex';renderTopicPicker();showMode('guide',document.querySelector('#modeTabs .tab'))}
+function selectExam30(){selectedTopic='__EXAM30__';document.getElementById('selectedTopic').textContent='已選：🔥 最容易考 30 題';document.getElementById('guideCurrentTopic').textContent='最容易考 30 題';document.getElementById('matchCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizCurrentTopic').textContent='最容易考 30 題';document.getElementById('quizTopicHint').textContent='最容易考 30 題';document.getElementById('modeTabs').style.display='flex';document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.remove('active'));document.querySelector('#modeTabs .tab:last-child').classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('quiz').classList.add('active');startQuiz30()}
 function showMode(id,btn){if(!selectedTopic)return;document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('#modeTabs .tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
 function setGuideFilter(c){selectTopic(c)}
 function setMatchFilter(c){selectTopic(c)}
