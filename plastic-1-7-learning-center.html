@@ -23,7 +23,28 @@ h1{margin:0;font-size:clamp(26px,5vw,42px)}.hero p{color:#60756d;margin:8px}
 
 </style>
 </head>
-<body><div class="wrap">
+<body>
+<style id="eco-access-gate-style">#ecoAccessGate{position:fixed;inset:0;z-index:999999;background:linear-gradient(135deg,#eefaf5,#f7fbff);display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}#ecoAccessGate .card{width:min(440px,100%);background:#fff;border-radius:24px;padding:30px 24px;box-shadow:0 18px 60px rgba(0,0,0,.12);text-align:center}#ecoAccessGate h2{margin:8px 0 10px;color:#155b48}#ecoAccessGate p{color:#566;line-height:1.7;margin:8px 0 18px}#ecoAccessGate button{border:0;border-radius:14px;padding:13px 22px;background:#0b6b50;color:#fff;font-size:16px;font-weight:700;cursor:pointer}#ecoAccessGate .msg{margin-top:14px;font-size:14px;color:#9a4b2d}</style><div id="ecoAccessGate"><div class="card"><div style="font-size:42px">🌿</div><h2>環保學習中心</h2><p id="ecoAccessText">正在確認使用者資格……</p><button id="ecoAccessLogin" style="display:none">使用 Google 帳號登入</button><div class="msg" id="ecoAccessMsg"></div></div></div><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script><script>
+window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",authDomain:"eco-adventure-v7.firebaseapp.com",projectId:"eco-adventure-v7",storageBucket:"eco-adventure-v7.firebasestorage.app",messagingSenderId:"352564849902",appId:"1:352564849902:web:203ad20d9fa955690cd7ff"};
+(function(){
+ const gate=document.getElementById('ecoAccessGate'),text=document.getElementById('ecoAccessText'),btn=document.getElementById('ecoAccessLogin'),msg=document.getElementById('ecoAccessMsg');
+ const cfg=window.ECO_FIREBASE_CONFIG; firebase.initializeApp(cfg); const auth=firebase.auth(),db=firebase.firestore();
+ function deny(t){text.textContent='此頁面僅限已授權的既有使用者使用。';msg.textContent=t||'此 Google 帳號尚未被加入使用者名單。';btn.style.display='inline-block';btn.textContent='換一個 Google 帳號';}
+ async function check(u){
+   if(!u){text.textContent='請先使用已授權的 Google 帳號登入。';btn.style.display='inline-block';return;}
+   text.textContent='正在確認帳號授權……';btn.style.display='none';
+   try{
+     const ps=await db.collection('players').doc(u.uid).get();
+     if(!ps.exists){await auth.signOut();deny();return;}
+     const bs=await db.collection('blockedUsers').doc(u.uid).get();
+     if(bs.exists){const d=bs.data()||{};const until=d.untilAt&&d.untilAt.toDate?d.untilAt.toDate().getTime():Number(d.untilAt)||0;if(d.status==='deleted'||(d.status==='suspended'&&(!until||until>Date.now()))){await auth.signOut();deny(d.status==='deleted'?'此遊戲帳號已由管理者永久刪除。':'此帳號目前已停用。');return;}}
+     gate.remove();
+   }catch(e){console.error(e);await auth.signOut().catch(()=>{});text.textContent='目前無法確認使用者授權狀態。';msg.textContent='為保護網站資料，請稍後再試。';btn.style.display='inline-block';}
+ }
+ btn.onclick=()=>auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()).catch(e=>{msg.textContent='Google 登入失敗，請稍後再試。';console.error(e)});
+ auth.getRedirectResult().catch(e=>console.error(e)).finally(()=>auth.onAuthStateChanged(check));
+})();
+</script><div class="wrap">
 <section class="hero">
 <h1>♻️ 塑膠分類 1～7 學習中心</h1>
 <p>先認識塑膠材質 → 再玩對對碰 → 最後用 10 題挑戰檢查記憶！</p>
