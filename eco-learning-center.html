@@ -31,6 +31,8 @@ window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",aut
 (function(){
  const gate=document.getElementById('ecoAccessGate'),text=document.getElementById('ecoAccessText'),btn=document.getElementById('ecoAccessLogin'),msg=document.getElementById('ecoAccessMsg');
  const cfg=window.ECO_FIREBASE_CONFIG; firebase.initializeApp(cfg); const auth=firebase.auth(),db=firebase.firestore();
+ auth.languageCode='zh-TW';
+ function errText(e){const c=e&&e.code||'';if(c==='auth/unauthorized-domain')return '此網站網域尚未加入 Firebase「Authorized domains」。';if(c==='auth/operation-not-allowed')return 'Firebase 尚未啟用 Google 登入提供者。';if(c==='auth/network-request-failed')return '目前網路無法連線到 Google 登入服務。';if(c)return `Google 登入未完成（${c}）。`;return 'Google 登入未完成，請再試一次。';}
  function deny(t){text.textContent='此頁面僅限已授權的既有使用者使用。';msg.textContent=t||'此 Google 帳號尚未被加入使用者名單。';btn.style.display='inline-block';btn.textContent='換一個 Google 帳號';}
  async function check(u){
    if(!u){text.textContent='請先使用已授權的 Google 帳號登入。';btn.style.display='inline-block';return;}
@@ -41,15 +43,22 @@ window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",aut
      try{
        const bs=await db.collection('blockedUsers').doc(u.uid).get();
        if(bs.exists){const d=bs.data()||{};const until=d.untilAt&&d.untilAt.toDate?d.untilAt.toDate().getTime():Number(d.untilAt)||0;if(d.status==='deleted'||(d.status==='suspended'&&(!until||until>Date.now()))){await auth.signOut();deny(d.status==='deleted'?'此遊戲帳號已由管理者永久刪除。':'此帳號目前已停用。');return;}}
-     }catch(blockErr){
-       if(blockErr&&blockErr.code!=='permission-denied')throw blockErr;
-       console.warn('blockedUsers 尚未開放讀取權限；保留既有 players 使用者登入。',blockErr);
-     }
+     }catch(blockErr){if(blockErr&&blockErr.code!=='permission-denied')throw blockErr;console.warn('blockedUsers 尚未開放讀取權限；保留既有 players 使用者登入。',blockErr);}
      gate.remove();
-   }catch(e){console.error(e);await auth.signOut().catch(()=>{});text.textContent='目前無法確認使用者授權狀態。';msg.textContent='為保護網站資料，請稍後再試。';btn.style.display='inline-block';}
+   }catch(e){console.error('使用者授權檢查失敗',e);await auth.signOut().catch(()=>{});text.textContent='目前無法確認使用者授權狀態。';msg.textContent=e&&e.code==='permission-denied'?'目前 Firebase 權限不足，請檢查 Firestore Rules。':errText(e);btn.style.display='inline-block';}
  }
- btn.onclick=()=>auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()).catch(e=>{msg.textContent='Google 登入失敗，請稍後再試。';console.error(e)});
- auth.getRedirectResult().catch(e=>console.error(e)).finally(()=>auth.onAuthStateChanged(check));
+ async function login(){
+   btn.disabled=true;btn.textContent='正在開啟 Google 登入…';msg.textContent='';
+   const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
+   try{await auth.signInWithRedirect(provider);return;}catch(e){
+     console.error('Google 重新導向登入失敗',e);
+     try{await auth.signInWithPopup(provider);return;}catch(e2){console.error('Google 彈出式登入也失敗',e2);msg.textContent=errText(e2||e);}
+   }
+   btn.disabled=false;btn.textContent='使用 Google 帳號登入';
+ }
+ btn.onclick=login;
+ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.warn('登入持久化設定失敗',e));
+ auth.getRedirectResult().then(r=>{if(r&&r.user)console.log('Google 重新導向登入完成');}).catch(e=>{console.error('Google 重新導向登入結果失敗',e);msg.textContent=errText(e);}).finally(()=>auth.onAuthStateChanged(check));
 })();
 </script>
 <div class="wrap">
