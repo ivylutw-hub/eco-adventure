@@ -36,8 +36,13 @@ window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",aut
    try{
      const ps=await db.collection('players').doc(u.uid).get();
      if(!ps.exists){await auth.signOut();deny();return;}
-     const bs=await db.collection('blockedUsers').doc(u.uid).get();
-     if(bs.exists){const d=bs.data()||{};const until=d.untilAt&&d.untilAt.toDate?d.untilAt.toDate().getTime():Number(d.untilAt)||0;if(d.status==='deleted'||(d.status==='suspended'&&(!until||until>Date.now()))){await auth.signOut();deny(d.status==='deleted'?'此遊戲帳號已由管理者永久刪除。':'此帳號目前已停用。');return;}}
+     try{
+       const bs=await db.collection('blockedUsers').doc(u.uid).get();
+       if(bs.exists){const d=bs.data()||{};const until=d.untilAt&&d.untilAt.toDate?d.untilAt.toDate().getTime():Number(d.untilAt)||0;if(d.status==='deleted'||(d.status==='suspended'&&(!until||until>Date.now()))){await auth.signOut();deny(d.status==='deleted'?'此遊戲帳號已由管理者永久刪除。':'此帳號目前已停用。');return;}}
+     }catch(blockErr){
+       if(blockErr&&blockErr.code!=='permission-denied')throw blockErr;
+       console.warn('blockedUsers 尚未開放讀取權限；保留既有 players 使用者登入。',blockErr);
+     }
      gate.remove();
    }catch(e){console.error(e);await auth.signOut().catch(()=>{});text.textContent='目前無法確認使用者授權狀態。';msg.textContent='為保護網站資料，請稍後再試。';btn.style.display='inline-block';}
  }

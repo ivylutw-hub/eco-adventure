@@ -632,21 +632,18 @@ async function checkAccountAccess(){
  // 只有「已存在 players 文件」的既有使用者才可進入。
  // 新 Google 帳號即使成功完成 Google 驗證，也不會自動建立玩家帳號。
  try{
-  const blockedRef=cloudDb.collection('blockedUsers').doc(cloudUser.uid);
-  const playerRef=playerDoc();
-  const [blockedSnap,playerSnap]=await Promise.all([blockedRef.get(),playerRef.get()]);
-
-  if(blockedSnap.exists){
-   const data=blockedSnap.data()||{},until=timestampMillis(data.untilAt);
-   if(data.status==='deleted')return {allowed:false,message:'此遊戲帳號已由管理者永久刪除。'};
-   if(data.status==='suspended'&&(!until||until>Date.now())){
-    return {allowed:false,message:until?`此帳號已停用至 ${new Date(until).toLocaleDateString('zh-TW')}。`:'此帳號已停用，請聯絡管理者。'};
-   }
-  }
-
+  const playerSnap=await playerDoc().get();
   if(!playerSnap.exists){
    return {allowed:false,message:'此網站僅限已授權的既有使用者使用。此 Google 帳號尚未被授權。'};
   }
+  try{
+   const blockedSnap=await cloudDb.collection('blockedUsers').doc(cloudUser.uid).get();
+   if(blockedSnap.exists){
+    const data=blockedSnap.data()||{},until=timestampMillis(data.untilAt);
+    if(data.status==='deleted')return {allowed:false,message:'此遊戲帳號已由管理者永久刪除。'};
+    if(data.status==='suspended'&&(!until||until>Date.now()))return {allowed:false,message:until?`此帳號已停用至 ${new Date(until).toLocaleDateString('zh-TW')}。`:'此帳號已停用，請聯絡管理者。'};
+   }
+  }catch(blockErr){if(blockErr&&blockErr.code!=='permission-denied')throw blockErr;console.warn('blockedUsers 尚未開放讀取權限；保留既有 players 使用者登入。',blockErr);}
   return {allowed:true,playerData:playerSnap.data()||{}};
  }catch(err){
   console.error('使用者授權檢查失敗',err);
