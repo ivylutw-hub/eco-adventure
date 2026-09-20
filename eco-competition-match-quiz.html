@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>環保知識競賽｜講義版對對碰＋選擇題 V5</title>
+<title>環保知識競賽｜講義版對對碰＋選擇題 V6</title>
 <style>
 :root{--g:#237653;--dg:#16382b;--bg:#eef8f3;--gold:#e7a536;--red:#c85c4b;--white:#fff;--blue:#4d78a8}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
@@ -15,6 +15,8 @@
 .q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
 .plastic-card{background:linear-gradient(135deg,#f8fffb,#f2f7ff);border:2px solid #cfe5d9}.plastic-code{font-size:30px;font-weight:950;letter-spacing:1px;margin:4px 0}.plastic-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.plastic-meta span{background:#fff;border:1px solid #d8e7df;border-radius:999px;padding:4px 8px;font-size:13px;font-weight:800}.use{margin-top:7px;line-height:1.55}.small{font-size:13px;color:#6b7e76}.danger{color:#a14b3d}.good{color:#176447}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.grid,.match{grid-template-columns:1fr}.wrap{padding:9px}.panel{padding:15px}.q{font-size:19px}}
+
+.plastic-table-wrap{overflow-x:auto;margin:12px 0 16px;border-radius:14px}.plastic-table{width:100%;border-collapse:collapse;min-width:900px;background:#fff}.plastic-table th,.plastic-table td{border:1px solid #dbe4df;padding:10px 9px;vertical-align:top;line-height:1.55}.plastic-table th{background:#eef7f1;font-weight:800}.plastic-table td:nth-child(1),.plastic-table td:nth-child(2){text-align:center;white-space:nowrap}.plastic-table .other-row{background:#fff9e8}.plastic-table .other-row td:nth-child(2){font-size:1.08em;color:#9a6700}
 </style>
 </head>
 <body>
@@ -31,9 +33,36 @@
 </nav>
 <section id="guide" class="view active">
 <div class="filters" id="filters"></div>
+<div class="panel" id="allTopicsPanel" style="margin-bottom:14px">
+<h2>📌 本次講義更新總覽</h2>
+<p>這一版不是只更新塑膠。以下內容都已依你的《環境知識競賽快速攻略本115微調》納入「重點圖鑑＋對對碰＋選擇題」：</p>
+<div class="grid">
+<article class="card"><span class="tag">🏷️ 標章與水足跡</span><h3>碳標籤／節能／省水／環保標章</h3><div class="memory">＋藍色、綠色、灰色水足跡，並加入各自的判斷情境。</div></article>
+<article class="card"><span class="tag">♻️ 塑膠 1～7</span><h3>PET～Other 完整比較</h3><div class="memory">＋英文縮寫、耐熱、特性、常用用途、注意事項；第7類 Other 另列 PC、PLA、Tritan。</div></article>
+<article class="card"><span class="tag">🌱 2050 淨零</span><h3>12 項關鍵戰略</h3><div class="memory">＋風光電、前瞻能源、儲能、CCUS、氫能、運輸、綠生活、碳匯、循環經濟、綠色金融、公正轉型等。</div></article>
+<article class="card"><span class="tag">📅 特定日期</span><h3>環境相關紀念日</h3><div class="memory">＋2/2、3/21、3/22、4/22、5/22、6/5、6/8、9/18、9月第三週末、10/13、10/16。</div></article>
+<article class="card"><span class="tag">⚖️ 氣候法</span><h3>《氣候變遷因應法》</h3><div class="memory">＋2050淨零、碳費、自主減量、基金、碳盤查、綠／藍／黃碳、調適、公正轉型、環境部。</div></article>
+<article class="card"><span class="tag">📊 數值與效應</span><h3>EER、BOD、COD、CTSI</h3><div class="memory">＋溫室效應、輻射冷卻、都市熱島、雨除等講義重點。</div></article>
+<article class="card"><span class="tag">🩺 疾病</span><h3>AIDS、烏腳病、痛痛病、水俣病</h3><div class="memory">＋病因、污染物、地點與傳播途徑辨識。</div></article>
+<article class="card"><span class="tag">🔥 火災</span><h3>A～D 類</h3><div class="memory">＋普通可燃物、油類／可燃液體、電氣、活性金屬與處理方式。</div></article>
+<article class="card"><span class="tag">🐢 外來種</span><h3>植物＋動物來源地</h3><div class="memory">＋講義列出的外來種與原產地配對題。</div></article>
+<article class="card"><span class="tag">🌤️ AQI</span><h3>0～500 六級</h3><div class="memory">＋數值、英文名稱、顏色與健康影響辨識。</div></article>
+</div>
+<div class="note">💡 <b>使用方式：</b>先看「全部」可以確認所有主題；再點上方主題按鈕，就會看到該主題的完整資料。塑膠主題會另外展開 1～7 完整比較表。</div>
+</div>
 <div id="plasticQuick" class="panel" style="display:none;margin-bottom:14px">
-<h2>♻️ 塑膠 1～7｜英文縮寫速記</h2>
+<h2>♻️ 塑膠 1～7｜完整對照表＋英文縮寫速記</h2>
 <p>這一區專門練「英文縮寫 → 特性 → 常用用途」。內容依你的競賽講義整理，不另外加入講義外的分類。</p>
+<div class="plastic-table-wrap">
+<table class="plastic-table"><thead><tr><th>編號</th><th>英文縮寫</th><th>耐熱</th><th>特性</th><th>常見用途</th><th>回收／注意事項</th></tr></thead><tbody>
+<tr><td>1</td><td><b>PET</b></td><td>60～85℃</td><td>硬度高、韌性佳、透明度高</td><td>寶特瓶、礦泉水瓶、碳酸飲料瓶</td><td>易回收；不耐高溫、酸鹼，勿裝熱水</td></tr>
+<tr><td>2</td><td><b>HDPE</b></td><td>90～110℃</td><td>耐酸鹼、耐腐蝕、較硬</td><td>鮮奶瓶、洗髮精瓶、清潔劑瓶、塑膠袋</td><td>易回收；安全度高</td></tr>
+<tr><td>3</td><td><b>PVC</b></td><td>60～80℃</td><td>可塑性高、含氯</td><td>水管、雨衣、保鮮膜、塑膠地板</td><td>難回收；燃燒會產生戴奧辛；勿加熱或微波</td></tr>
+<tr><td>4</td><td><b>LDPE</b></td><td>70～90℃</td><td>延展性佳、耐酸鹼、質地較軟</td><td>塑膠袋、保鮮膜、牛奶紙盒內層淋膜</td><td>可回收；耐熱較低</td></tr>
+<tr><td>5</td><td><b>PP</b></td><td>100～140℃</td><td>耐高溫、耐酸鹼、耐碰撞、不含塑化劑</td><td>布丁盒、豆漿瓶、微波餐盒、可重複使用水杯</td><td>易回收；講義列為唯一適合微波加熱</td></tr>
+<tr><td>6</td><td><b>PS</b></td><td>70～90℃</td><td>吸水性低、安定性高；分發泡與未發泡</td><td>發泡為保麗龍；未發泡可見於養樂多瓶等</td><td>不耐酸鹼與有機溶劑；高溫或酸性食物需注意</td></tr>
+<tr class="other-row"><td><b>7</b></td><td><b>Other</b></td><td>依材質而異</td><td>1～6 號以外；如 PC、PLA、Tritan；分類較複雜。PC 遇熱可能釋出 BPA，現多改用 Tritan</td><td>美耐皿、運動水壺、嬰兒奶瓶、PLA 生物可分解塑膠</td><td>依材質而異；部分 PC 需注意 BPA</td></tr>
+</tbody></table></div>
 <div class="grid" id="plasticGrid"></div>
 </div>
 <div class="grid" id="guideGrid"></div>
@@ -159,7 +188,7 @@ const PLASTIC_ENGLISH=[
 ['4','LDPE','70～90℃','延展性佳、質地較軟','塑膠袋、保鮮膜等'],
 ['5','PP','100～140℃','耐高溫、耐酸鹼、耐碰撞；講義列為唯一適合微波加熱的塑膠材質','布丁杯、豆漿瓶、微波容器、可重複使用杯等'],
 ['6','PS','70～90℃','發泡為保麗龍；講義提醒不耐酸鹼與有機溶劑','保麗龍等'],
-['7','Other','依材質而異','其他類；例子包含 PC、PLA、Tritan，分類較複雜','依不同材質而異']
+['7','Other','依材質而異','1～6 號以外的塑膠；例子包含 PC、PLA、Tritan。分類較複雜。PC 遇熱可能釋出雙酚 A（BPA），現多改用 Tritan。','美耐皿、運動水壺、嬰兒奶瓶、生物可分解塑膠（PLA）']
 ];
 
 const QUIZ=[
@@ -192,6 +221,10 @@ const QUIZ=[
 ['塑膠1-7','某透明、硬度高的容器標示 1，常見用途是寶特瓶。英文縮寫為？',['PET','PS','HDPE','PVC'],'PET'],
 ['塑膠1-7','下列哪一組「英文縮寫＋常見用途」符合講義？',['PP＋微波容器','PVC＋微波容器','PS＋寶特瓶','PET＋塑膠袋'],'PP＋微波容器'],
 ['塑膠1-7','下列哪一組「英文縮寫＋特性」符合講義？',['HDPE＋耐酸鹼、較硬','LDPE＋質地硬且耐腐蝕','PS＋適合微波','PVC＋適合高溫加熱'],'HDPE＋耐酸鹼、較硬'],
+['塑膠1-7','下列哪一組完整符合講義對第 7 類 Other 的描述？',['1～6 號以外；PC、PLA、Tritan；用途依材質不同','只有寶特瓶；只能裝熱水','只包含 PVC；適合微波','只有保麗龍；耐熱最高'],'1～6 號以外；PC、PLA、Tritan；用途依材質不同'],
+['塑膠1-7','講義列出的第 7 類 Other，常見用途包含哪一組？',['美耐皿、運動水壺、嬰兒奶瓶、PLA','寶特瓶、礦泉水瓶、碳酸飲料瓶','水管、雨衣、塑膠地板','保麗龍、養樂多瓶'],'美耐皿、運動水壺、嬰兒奶瓶、PLA'],
+['塑膠1-7','若題目出現「PC、PLA、Tritan」，依講義應先判斷為哪一類？',['7 Other','1 PET','5 PP','6 PS'],'7 Other'],
+['塑膠1-7','關於第 7 類 Other，下列哪一項符合講義？',['耐熱程度依材質而異','一律耐熱 100～140℃','一律不可回收','一定含氯'],'耐熱程度依材質而異'],
 ['環境日','哪一天是世界溼地日？',['2月2日','3月21日','4月22日','6月5日'],'2月2日'],
 ['環境日','哪一天是世界水資源日？',['3月22日','3月21日','5月22日','6月8日'],'3月22日'],
 ['環境日','哪一天是世界環境日？',['6月5日','4月22日','6月8日','10月16日'],'6月5日'],
