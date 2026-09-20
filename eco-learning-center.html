@@ -24,43 +24,30 @@
 
 .topic-picker{margin-top:15px;text-align:center;border:2px solid #cfe6da}.topic-help{margin:6px 0 12px;color:#5d756b}.selected-topic{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#edf8f2;font-weight:900;color:#237653}.mode-tabs{margin-top:12px}.current-topic-panel{text-align:center;background:#f8fffb}.current-topic-panel b{color:#237653}.topic-filter{font-size:15px}.exam30-topic-card{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 8px;padding:17px 18px;text-align:left;border:3px solid #e7a536;border-radius:20px;background:linear-gradient(135deg,#fff8e3,#fffdf8);box-shadow:0 4px 14px #0000000a}.exam30-topic-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-topic-text{margin-top:5px;color:#6b6252;line-height:1.55}.exam30-topic-btn{white-space:nowrap;background:#e7a536;font-size:17px;padding:13px 20px}@media(max-width:620px){.exam30-topic-card{flex-direction:column;align-items:stretch}.exam30-topic-btn{width:100%}}
 .topic-special-title{font-weight:900;color:#8a5b08;margin:10px 0 5px}.special-filters{margin-top:0}.exam30-filter{border-color:#e7a536;background:#fff9e8;color:#8a5b08;font-weight:950}.exam30-filter:hover{background:#fff0c9}.opt.selected{outline:3px solid #4d78a8;background:#edf5ff}.quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}.confirm-btn{background:#237653;color:#fff}.confirm-btn:disabled{opacity:.45;cursor:not-allowed}.next-btn{background:#e7a536;color:#fff}.</style>
-</head>
+<style id="same-account-auth-style">
+#learningAuthGate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#eaf8f1,#eef5ff)}
+#learningAuthGate.hide{display:none}
+.learning-auth-card{width:min(92vw,620px);background:#fff;border-radius:28px;padding:34px 28px;text-align:center;box-shadow:0 15px 45px #16382b22}
+.learning-auth-icon{font-size:64px;margin-bottom:10px}.learning-auth-card h1{margin:0 0 12px;color:#176447;font-size:clamp(28px,6vw,42px)}
+.learning-auth-card p{color:#5d756b;font-size:18px;line-height:1.65;margin:8px 0 18px}
+#learningGoogleBtn{border:0;border-radius:16px;padding:15px 26px;background:#237653;color:#fff;font-size:19px;font-weight:900;cursor:pointer;width:min(100%,390px)}
+#learningGoogleBtn:disabled{opacity:.65;cursor:wait}
+#learningAuthMsg{margin-top:15px;color:#9a4d38;font-weight:800;line-height:1.55;word-break:break-word}
+#learningUserBar{display:none;position:sticky;top:0;z-index:9998;background:#fff;padding:8px 14px;border-bottom:1px solid #dce9e3;text-align:right;color:#45665a;font-size:14px}
+#learningUserBar button{margin-left:8px;border:0;border-radius:10px;padding:6px 10px;background:#e8f0ed;color:#245642;font-weight:800;cursor:pointer}
+</style></head>
 <body>
-<style id="eco-access-gate-style">#ecoAccessGate{position:fixed;inset:0;z-index:999999;background:linear-gradient(135deg,#eefaf5,#f7fbff);display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}#ecoAccessGate .card{width:min(440px,100%);background:#fff;border-radius:24px;padding:30px 24px;box-shadow:0 18px 60px rgba(0,0,0,.12);text-align:center}#ecoAccessGate h2{margin:8px 0 10px;color:#155b48}#ecoAccessGate p{color:#566;line-height:1.7;margin:8px 0 18px}#ecoAccessGate button{border:0;border-radius:14px;padding:13px 22px;background:#0b6b50;color:#fff;font-size:16px;font-weight:700;cursor:pointer}#ecoAccessGate .msg{margin-top:14px;font-size:14px;color:#9a4b2d}</style><div id="ecoAccessGate"><div class="card"><div style="font-size:42px">🌿</div><h2>環保學習中心</h2><p id="ecoAccessText">正在確認使用者資格……</p><button id="ecoAccessLogin" style="display:none">使用 Google 帳號登入</button><div class="msg" id="ecoAccessMsg"></div></div></div><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script><script>
-window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",authDomain:"eco-adventure-v7.firebaseapp.com",projectId:"eco-adventure-v7",storageBucket:"eco-adventure-v7.firebasestorage.app",messagingSenderId:"352564849902",appId:"1:352564849902:web:203ad20d9fa955690cd7ff"};
-(function(){
- const gate=document.getElementById('ecoAccessGate'),text=document.getElementById('ecoAccessText'),btn=document.getElementById('ecoAccessLogin'),msg=document.getElementById('ecoAccessMsg');
- const cfg=window.ECO_FIREBASE_CONFIG; firebase.initializeApp(cfg); const auth=firebase.auth(),db=firebase.firestore();
- auth.languageCode='zh-TW';
- function errText(e){const c=e&&e.code||'';if(c==='auth/unauthorized-domain')return '此網站網域尚未加入 Firebase「Authorized domains」。';if(c==='auth/operation-not-allowed')return 'Firebase 尚未啟用 Google 登入提供者。';if(c==='auth/network-request-failed')return '目前網路無法連線到 Google 登入服務。';if(c)return `Google 登入未完成（${c}）。`;return 'Google 登入未完成，請再試一次。';}
- function deny(t){text.textContent='此頁面僅限已授權的既有使用者使用。';msg.textContent=t||'此 Google 帳號尚未被加入使用者名單。';btn.style.display='inline-block';btn.textContent='換一個 Google 帳號';}
- async function check(u){
-   if(!u){text.textContent='請先使用已授權的 Google 帳號登入。';btn.style.display='inline-block';return;}
-   text.textContent='正在確認帳號授權……';btn.style.display='none';
-   try{
-     const ps=await db.collection('players').doc(u.uid).get();
-     if(!ps.exists){await auth.signOut();deny();return;}
-     try{
-       const bs=await db.collection('blockedUsers').doc(u.uid).get();
-       if(bs.exists){const d=bs.data()||{};const until=d.untilAt&&d.untilAt.toDate?d.untilAt.toDate().getTime():Number(d.untilAt)||0;if(d.status==='deleted'||(d.status==='suspended'&&(!until||until>Date.now()))){await auth.signOut();deny(d.status==='deleted'?'此遊戲帳號已由管理者永久刪除。':'此帳號目前已停用。');return;}}
-     }catch(blockErr){if(blockErr&&blockErr.code!=='permission-denied')throw blockErr;console.warn('blockedUsers 尚未開放讀取權限；保留既有 players 使用者登入。',blockErr);}
-     gate.remove();
-   }catch(e){console.error('使用者授權檢查失敗',e);await auth.signOut().catch(()=>{});text.textContent='目前無法確認使用者授權狀態。';msg.textContent=e&&e.code==='permission-denied'?'目前 Firebase 權限不足，請檢查 Firestore Rules。':errText(e);btn.style.display='inline-block';}
- }
- async function login(){
-   btn.disabled=true;btn.textContent='正在開啟 Google 登入…';msg.textContent='';
-   const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
-   try{await auth.signInWithRedirect(provider);return;}catch(e){
-     console.error('Google 重新導向登入失敗',e);
-     try{await auth.signInWithPopup(provider);return;}catch(e2){console.error('Google 彈出式登入也失敗',e2);msg.textContent=errText(e2||e);}
-   }
-   btn.disabled=false;btn.textContent='使用 Google 帳號登入';
- }
- btn.onclick=login;
- auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.warn('登入持久化設定失敗',e));
- auth.getRedirectResult().then(r=>{if(r&&r.user)console.log('Google 重新導向登入完成');}).catch(e=>{console.error('Google 重新導向登入結果失敗',e);msg.textContent=errText(e);}).finally(()=>auth.onAuthStateChanged(check));
-})();
-</script>
+<div id="learningAuthGate">
+  <div class="learning-auth-card">
+    <div class="learning-auth-icon">🌿</div>
+    <h1>環保學習中心</h1>
+    <p>請使用<strong>「環保冒險王」同一個 Google 帳號</strong>登入。<br>學習中心不建立另一套帳號，直接沿用遊戲的授權與玩家資料。</p>
+    <button id="learningGoogleBtn" type="button" onclick="learningGoogleLogin()">使用 Google 帳號登入</button>
+    <div id="learningAuthMsg">正在確認目前的 Google 登入狀態…</div>
+  </div>
+</div>
+<div id="learningUserBar"><span id="learningUserText"></span><button type="button" onclick="learningLogout()">登出學習中心</button></div>
+
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
@@ -125,6 +112,66 @@ window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyKf9tkoAiJze67VWfRS9npemczS_SM",aut
 </section>
 <section id="quiz" class="view"><div class="panel current-topic-panel">🏆 目前主題：<b id="quizCurrentTopic"></b></div><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="note">💡 你已選定「<b id="quizTopicHint"></b>」主題；下面的選擇題只抽這個主題。考前總複習請回到上方主題區，點選「🔥 最容易考 30 題」。</div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js?v=10214"></script>
+<script>
+(function(){
+  const gate=document.getElementById('learningAuthGate');
+  const btn=document.getElementById('learningGoogleBtn');
+  const msg=document.getElementById('learningAuthMsg');
+  const bar=document.getElementById('learningUserBar');
+  const userText=document.getElementById('learningUserText');
+  let auth=null,db=null,checking=false;
+  function message(t){if(msg)msg.textContent=t}
+  function configured(){const c=window.ECO_FIREBASE_CONFIG||{};return !!(c.apiKey&&c.projectId&&c.appId)}
+  function enter(user){
+    gate.classList.add('hide');bar.style.display='block';
+    userText.textContent='已登入：'+(user.displayName||user.email||'Google 使用者');
+  }
+  async function checkAuthorized(user){
+    if(!user)return false;
+    const snap=await db.collection('players').doc(user.uid).get();
+    return snap.exists;
+  }
+  async function init(){
+    if(!configured()){message('Firebase 設定尚未載入，請確認 firebase-config.js。');return}
+    try{
+      if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
+      auth=firebase.auth();db=firebase.firestore();
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      auth.onAuthStateChanged(async user=>{
+        if(!user){btn.disabled=false;btn.textContent='使用 Google 帳號登入';message('請使用「環保冒險王」相同的 Google 帳號登入。');return}
+        if(checking)return;checking=true;btn.disabled=true;btn.textContent='正在確認授權…';
+        try{
+          const ok=await checkAuthorized(user);
+          if(ok){enter(user);message('');}
+          else{message('這個 Google 帳號尚未有「環保冒險王」玩家資料，無法進入學習中心。');await auth.signOut();btn.disabled=false;btn.textContent='使用 Google 帳號登入';}
+        }catch(err){
+          console.error('學習中心授權檢查失敗',err);
+          message('無法確認玩家授權：'+(err.code||err.message||'未知錯誤'));
+          btn.disabled=false;btn.textContent='使用 Google 帳號登入';
+        }finally{checking=false}
+      });
+    }catch(err){console.error('學習中心 Firebase 初始化失敗',err);message('Firebase 初始化失敗：'+(err.code||err.message||'未知錯誤'));btn.disabled=false}
+  }
+  window.learningGoogleLogin=async function(){
+    if(!auth){await init();if(!auth)return}
+    btn.disabled=true;btn.textContent='正在開啟 Google 登入…';message('');
+    try{
+      const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
+      await auth.signInWithPopup(provider);
+    }catch(err){
+      console.error('學習中心 Google 登入失敗',err);
+      message('Google 登入未完成（'+(err.code||err.message||'未知錯誤')+'）。');
+      btn.disabled=false;btn.textContent='使用 Google 帳號登入';
+    }
+  };
+  window.learningLogout=async function(){if(auth)await auth.signOut();location.reload()};
+  init();
+})();
+</script>
 <script>
 const TOPICS={
 '國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI'};
