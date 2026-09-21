@@ -305,7 +305,7 @@ function renderGuide(){
      '6':'聚苯乙烯；發泡為保麗龍；講義提醒不耐酸鹼與有機溶劑。',
      '7':'其他類，如 PC、PLA、Tritan；1～6 號以外，分類較複雜。'
    };
-   document.getElementById('guideGrid').innerHTML=plasticFull.map(x=>`<article class="card plastic-card"><div class="guide-icon-row"><span class="plastic-mark">♻️<br><small>${x[0]}</small></span><div><span class="tag">第 ${x[0]} 號</span><h3>${x[1]}</h3><div class="small">${x[2]}</div></div></div><div class="plastic-meta"><span>🌡️ 耐熱：${x[3]}</span></div><div class="memory"><b>特性：</b>${x[4]}</div><div class="use"><b>常用：</b>${x[5]}</div><div class="memory summaryLine">📌 <b>塑膠 1～7：</b>${summary[x[0]]}</div><div class="memory"><b>⚠️ 回收／注意事項：</b>${x[6]}</div></article>`).join('');
+   document.getElementById('guideGrid').innerHTML=plasticFull.map(x=>`<article class="card plastic-card"><div class="guide-icon-row"><span class="plastic-mark">♻️<br><small>${x[0]}</small></span><div><span class="tag">第 ${x[0]} 號</span><h3>${x[1]}</h3><div class="small">${x[2]}</div></div></div><div class="plastic-meta"><span>🌡️ 耐熱：${x[3]}</span></div><div class="memory"><b>特性：</b>${x[4]}</div><div class="use"><b>常用：</b>${x[5]}</div><div class="memory"><b>⚠️ 回收／注意事項：</b>${x[6]}</div></article>`).join('');
    return;
  }
 
