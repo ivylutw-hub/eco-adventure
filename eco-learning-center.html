@@ -92,7 +92,7 @@
 </section>
 <section id="match" class="view">
 <div class="panel current-topic-panel">🎮 目前主題：<b id="matchCurrentTopic"></b></div>
-<div class="panel"><h2>🎮 講義重點對對碰</h2><p>先選左邊，再找右邊對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
+<div class="panel"><h2>🎮 講義重點對對碰</h2><p>左右任一邊都可以先點，再到另一邊找對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
 <section id="quiz" class="view"><div class="panel current-topic-panel">🏆 目前主題：<b id="quizCurrentTopic"></b></div><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="note">💡 你已選定「<b id="quizTopicHint"></b>」主題；下面的選擇題只抽這個主題。考前總複習請回到上方主題區，點選「🔥 最容易考 30 題」。</div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
@@ -353,18 +353,45 @@ function makePairs(){
  const take=Math.min(8,source.length); return shuffle(source).slice(0,take).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}));
 }
 function newMatch(){
- matchSet=makePairs();mSel=null;mDone=0;mScore=0;matchTotal=matchSet.length;
+ matchSet=makePairs();mSel=null;mSelSide=null;mDone=0;mScore=0;matchTotal=matchSet.length;
  document.getElementById('mDone').textContent=0;document.getElementById('mScore').textContent=0;document.getElementById('mBar').style.width='0%';
  document.querySelector('#match .stats .pill:first-child').innerHTML=`已配對 <b id="mDone">0</b> / ${matchTotal}`;
- document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickLeft(this,'${esc(x.id)}')">${x.left}</div>`).join('');
- document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickRight(this,'${esc(x.id)}')">${x.right}</div>`).join('');
+ document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickMatch(this,'left','${esc(x.id)}')">${x.left}</div>`).join('');
+ document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickMatch(this,'right','${esc(x.id)}')">${x.right}</div>`).join('');
  document.querySelector('#match .matchcol:first-child h3').textContent=matchFilter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';
  document.querySelector('#match .matchcol:last-child h3').textContent=matchFilter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';
- document.getElementById('mMsg').textContent=matchTotal?'先選左邊，再找右邊最符合的內容。':'這個主題目前沒有可配對資料。';
+ document.getElementById('mMsg').textContent=matchTotal?'左右任一邊都可以先選，再找另一邊最符合的內容。':'這個主題目前沒有可配對資料。';
 }
 function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('\"','&quot;')}
-function pickLeft(el,id){document.querySelectorAll('#mLeft .matchitem').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='現在找右邊對應內容。'}
-function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent='請先選左邊。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';updateMatch();if(mDone===matchTotal)document.getElementById('mMsg').textContent='🏆 本回合完成！'}else{el.classList.remove('sel');document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。'}}
+function pickMatch(el,side,id){
+  if(el.classList.contains('done'))return;
+  // 左右任一邊都可作為第一個選擇
+  if(mSel===null){
+    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
+    el.classList.add('sel');mSel=id;mSelSide=side;
+    document.getElementById('mMsg').textContent=side==='left'?'已選左邊，現在找右邊最符合的內容。':'已選右邊，現在找左邊最符合的內容。';
+    return;
+  }
+  // 同一邊再次點擊，就改選新的項目
+  if(side===mSelSide){
+    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
+    el.classList.add('sel');mSel=id;
+    document.getElementById('mMsg').textContent=side==='left'?'已改選左邊，現在找右邊最符合的內容。':'已改選右邊，現在找左邊最符合的內容。';
+    return;
+  }
+  // 從另一邊點選後直接判斷
+  if(id===mSel){
+    document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));
+    mDone++;mScore+=2;points+=2;save();mSel=null;mSelSide=null;
+    document.getElementById('mMsg').textContent='🎉 配對成功！';
+    updateMatch();
+    if(mDone===matchTotal)document.getElementById('mMsg').textContent='🏆 本回合完成！';
+  }else{
+    el.classList.add('wrong');
+    document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。';
+    setTimeout(()=>el.classList.remove('wrong'),450);
+  }
+}
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(matchTotal?mDone/matchTotal*100:0)+'%'}
 function startQuiz(){
  let source=quizFilter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===quizFilter);
