@@ -23,31 +23,16 @@
 @media(max-width:620px){.exam30{flex-direction:column;align-items:stretch}.exam30-btn{width:100%}}
 
 .topic-picker{margin-top:15px;text-align:center;border:2px solid #cfe6da}.topic-help{margin:6px 0 12px;color:#5d756b}.selected-topic{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:999px;background:#edf8f2;font-weight:900;color:#237653}.mode-tabs{margin-top:12px}.current-topic-panel{text-align:center;background:#f8fffb}.current-topic-panel b{color:#237653}.topic-filter{font-size:15px}.exam30-topic-card{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 8px;padding:17px 18px;text-align:left;border:3px solid #e7a536;border-radius:20px;background:linear-gradient(135deg,#fff8e3,#fffdf8);box-shadow:0 4px 14px #0000000a}.exam30-topic-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-topic-text{margin-top:5px;color:#6b6252;line-height:1.55}.exam30-topic-btn{white-space:nowrap;background:#e7a536;font-size:17px;padding:13px 20px}@media(max-width:620px){.exam30-topic-card{flex-direction:column;align-items:stretch}.exam30-topic-btn{width:100%}}
-.topic-special-title{font-weight:900;color:#8a5b08;margin:10px 0 5px}.special-filters{margin-top:0}.exam30-filter{border-color:#e7a536;background:#fff9e8;color:#8a5b08;font-weight:950}.exam30-filter:hover{background:#fff0c9}.opt.selected{outline:3px solid #4d78a8;background:#edf5ff}.quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}.confirm-btn{background:#237653;color:#fff}.confirm-btn:disabled{opacity:.45;cursor:not-allowed}.next-btn{background:#e7a536;color:#fff}.</style>
-<style id="same-account-auth-style">
-#learningAuthGate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#eaf8f1,#eef5ff)}
-#learningAuthGate.hide{display:none}
-.learning-auth-card{width:min(92vw,620px);background:#fff;border-radius:28px;padding:34px 28px;text-align:center;box-shadow:0 15px 45px #16382b22}
-.learning-auth-icon{font-size:64px;margin-bottom:10px}.learning-auth-card h1{margin:0 0 12px;color:#176447;font-size:clamp(28px,6vw,42px)}
-.learning-auth-card p{color:#5d756b;font-size:18px;line-height:1.65;margin:8px 0 18px}
-#learningGoogleBtn{border:0;border-radius:16px;padding:15px 26px;background:#237653;color:#fff;font-size:19px;font-weight:900;cursor:pointer;width:min(100%,390px)}
-#learningGoogleBtn:disabled{opacity:.65;cursor:wait}
-#learningAuthMsg{margin-top:15px;color:#9a4d38;font-weight:800;line-height:1.55;word-break:break-word}
-#learningUserBar{display:none;position:sticky;top:0;z-index:9998;background:#fff;padding:8px 14px;border-bottom:1px solid #dce9e3;text-align:right;color:#45665a;font-size:14px}
-#learningUserBar button{margin-left:8px;border:0;border-radius:10px;padding:6px 10px;background:#e8f0ed;color:#245642;font-weight:800;cursor:pointer}
-</style></head>
+.topic-special-title{font-weight:900;color:#8a5b08;margin:10px 0 5px}.special-filters{margin-top:0}.exam30-filter{border-color:#e7a536;background:#fff9e8;color:#8a5b08;font-weight:950}.exam30-filter:hover{background:#fff0c9}.opt.selected{outline:3px solid #4d78a8;background:#edf5ff}.quiz-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}.confirm-btn{background:#237653;color:#fff}.confirm-btn:disabled{opacity:.45;cursor:not-allowed}.next-btn{background:#e7a536;color:#fff}.
+.icon-badge{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:14px;background:#fff;border:2px solid #d9e9e1;font-size:28px;vertical-align:middle;margin-right:8px;box-shadow:0 2px 7px #0000000a}.topic-icon{font-size:28px;margin-right:7px;vertical-align:-3px}.plastic-mark{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;background:#f3fbf6;border:2px solid #b9ddc9;font-weight:950;font-size:17px;color:#176447}.aqi-flag-icon{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7f7f7);border:2px solid #d9d9d9;font-size:30px}.fire-icon{font-size:34px}.disease-icon{font-size:30px}.label-icon{font-size:30px}.agreement-icon{font-size:30px}
+.topic-item .topic-icon{display:inline-block}.guide-icon-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}.guide-icon-row .icon-badge{flex:0 0 auto}
+/* AQI 空汙旗：依環境部 AQI 六級顏色顯示 */
+.air-flag{position:relative;display:inline-block;width:48px;height:54px;flex:0 0 48px}.air-flag:before{content:"";position:absolute;left:5px;top:3px;width:4px;height:49px;border-radius:3px;background:#6d6d6d}.air-flag:after{content:"";position:absolute;left:9px;top:4px;width:35px;height:25px;clip-path:polygon(0 0,100% 8%,78% 52%,100% 92%,0 100%);border-radius:1px 5px 5px 1px;background:var(--flag-color)}
+.flag-green{--flag-color:#3aa657}.flag-yellow{--flag-color:#f2c94c}.flag-orange{--flag-color:#f28c28}.flag-red{--flag-color:#d64545}.flag-purple{--flag-color:#7b4aa8}.flag-maroon{--flag-color:#8b3f3f}
+.aqi-card .icon-badge{width:62px;height:62px;background:#fff;border-color:#ddd}.aqi-card .guide-icon-row{align-items:center}.date-badge{display:inline-flex;align-items:center;justify-content:center;min-width:88px;padding:7px 12px;border-radius:12px;background:#fff7df;border:2px solid #e7a536;color:#8a5b08;font-size:20px;font-weight:950;white-space:nowrap}.date-card h3{margin:4px 0 0}.agreement-year{font-size:13px;color:#237653;font-weight:900}
+</style>
+</head>
 <body>
-<div id="learningAuthGate">
-  <div class="learning-auth-card">
-    <div class="learning-auth-icon">🌿</div>
-    <h1>環保學習中心</h1>
-    <p>請使用<strong>「環保冒險王」同一個 Google 帳號</strong>登入。<br>學習中心不建立另一套帳號，直接沿用遊戲的授權與玩家資料。</p>
-    <button id="learningGoogleBtn" type="button" onclick="learningGoogleLogin()">使用 Google 帳號登入</button>
-    <div id="learningAuthMsg">正在確認目前的 Google 登入狀態…</div>
-  </div>
-</div>
-<div id="learningUserBar"><span id="learningUserText"></span><button type="button" onclick="learningLogout()">登出學習中心</button></div>
-
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
@@ -74,16 +59,16 @@
 <h2>📌 本次講義更新總覽</h2>
 <p>這一版不是只更新塑膠。以下內容都已依你的《環境知識競賽快速攻略本115微調》納入「重點圖鑑＋對對碰＋選擇題」：</p>
 <div class="grid">
-<article class="card"><span class="tag">🏷️ 標章與水足跡</span><h3>碳標籤／節能／省水／環保標章</h3><div class="memory">＋藍色、綠色、灰色水足跡，並加入各自的判斷情境。</div></article>
-<article class="card"><span class="tag">♻️ 塑膠 1～7</span><h3>PET～Other 完整比較</h3><div class="memory">＋英文縮寫、耐熱、特性、常用用途、注意事項；第7類 Other 另列 PC、PLA、Tritan。</div></article>
-<article class="card"><span class="tag">🌱 2050 淨零</span><h3>12 項關鍵戰略</h3><div class="memory">＋風光電、前瞻能源、儲能、CCUS、氫能、運輸、綠生活、碳匯、循環經濟、綠色金融、公正轉型等。</div></article>
-<article class="card"><span class="tag">📅 特定日期</span><h3>環境相關紀念日</h3><div class="memory">＋2/2、3/21、3/22、4/22、5/22、6/5、6/8、9/18、9月第三週末、10/13、10/16。</div></article>
-<article class="card"><span class="tag">⚖️ 氣候法</span><h3>《氣候變遷因應法》</h3><div class="memory">＋2050淨零、碳費、自主減量、基金、碳盤查、綠／藍／黃碳、調適、公正轉型、環境部。</div></article>
-<article class="card"><span class="tag">📊 數值與效應</span><h3>EER、BOD、COD、CTSI</h3><div class="memory">＋溫室效應、輻射冷卻、都市熱島、雨除等講義重點。</div></article>
-<article class="card"><span class="tag">🩺 疾病</span><h3>AIDS、烏腳病、痛痛病、水俣病</h3><div class="memory">＋病因、污染物、地點與傳播途徑辨識。</div></article>
-<article class="card"><span class="tag">🔥 火災</span><h3>A～D 類</h3><div class="memory">＋普通可燃物、油類／可燃液體、電氣、活性金屬與處理方式。</div></article>
-<article class="card"><span class="tag">🐢 外來種</span><h3>植物＋動物來源地</h3><div class="memory">＋講義列出的外來種與原產地配對題。</div></article>
-<article class="card"><span class="tag">🌤️ AQI</span><h3>0～500 六級</h3><div class="memory">＋數值、英文名稱、顏色與健康影響辨識。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🏷️</span>標章與水足跡</span><h3>碳標籤／節能／省水／環保標章</h3><div class="memory">＋藍色、綠色、灰色水足跡，並加入各自的判斷情境。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">♻️</span>塑膠 1～7</span><h3>PET～Other 完整比較</h3><div class="memory">＋英文縮寫、耐熱、特性、常用用途、注意事項；第7類 Other 另列 PC、PLA、Tritan。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🌱</span>2050 淨零</span><h3>12 項關鍵戰略</h3><div class="memory">＋風光電、前瞻能源、儲能、CCUS、氫能、運輸、綠生活、碳匯、循環經濟、綠色金融、公正轉型等。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">📅</span>特定日期</span><h3>環境相關紀念日</h3><div class="memory">＋2/2、3/21、3/22、4/22、5/22、6/5、6/8、9/18、9月第三週末、10/13、10/16。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">⚖️</span>氣候法</span><h3>《氣候變遷因應法》</h3><div class="memory">＋2050淨零、碳費、自主減量、基金、碳盤查、綠／藍／黃碳、調適、公正轉型、環境部。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">📊</span>數值與效應</span><h3>EER、BOD、COD、CTSI</h3><div class="memory">＋溫室效應、輻射冷卻、都市熱島、雨除等講義重點。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🩺</span>疾病</span><h3>AIDS、烏腳病、痛痛病、水俣病</h3><div class="memory">＋病因、污染物、地點與傳播途徑辨識。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🔥</span>火災</span><h3>A～D 類</h3><div class="memory">＋普通可燃物、油類／可燃液體、電氣、活性金屬與處理方式。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🐢</span>外來種</span><h3>植物＋動物來源地</h3><div class="memory">＋講義列出的外來種與原產地配對題。</div></article>
+<article class="card"><span class="tag"><span class="topic-icon">🌤️</span>AQI</span><h3>0～500 六級</h3><div class="memory">＋數值、英文名稱、顏色與健康影響辨識。</div></article>
 </div>
 <div class="note">💡 <b>使用方式：</b>先看「全部」可以確認所有主題；再點上方主題按鈕，就會看到該主題的完整資料。塑膠主題會另外展開 1～7 完整比較表。</div>
 </div>
@@ -112,73 +97,6 @@
 </section>
 <section id="quiz" class="view"><div class="panel current-topic-panel">🏆 目前主題：<b id="quizCurrentTopic"></b></div><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="note">💡 你已選定「<b id="quizTopicHint"></b>」主題；下面的選擇題只抽這個主題。考前總複習請回到上方主題區，點選「🔥 最容易考 30 題」。</div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js?v=10215"></script>
-<script>
-(function(){
-  const gate=document.getElementById('learningAuthGate');
-  const btn=document.getElementById('learningGoogleBtn');
-  const msg=document.getElementById('learningAuthMsg');
-  const bar=document.getElementById('learningUserBar');
-  const userText=document.getElementById('learningUserText');
-  let auth=null,db=null,checking=false;
-  function message(t){if(msg)msg.textContent=t}
-  function configured(){const c=window.ECO_FIREBASE_CONFIG||{};return !!(c.apiKey&&c.projectId&&c.appId)}
-  function enter(user){
-    gate.classList.add('hide');bar.style.display='block';
-    userText.textContent='已登入：'+(user.displayName||user.email||'Google 使用者');
-  }
-  async function checkAuthorized(user){
-    if(!user)return false;
-    // 避免 Firestore 讀取因網路/規則問題無限等待。
-    const readPromise=db.collection('players').doc(user.uid).get();
-    const timeoutPromise=new Promise((_,reject)=>setTimeout(()=>{
-      const e=new Error('Firestore 讀取逾時（8 秒）');
-      e.code='learning/firestore-timeout';
-      reject(e);
-    },8000));
-    const snap=await Promise.race([readPromise,timeoutPromise]);
-    return snap.exists;
-  }
-  async function init(){
-    if(!configured()){message('Firebase 設定尚未載入，請確認 firebase-config.js。');return}
-    try{
-      if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
-      auth=firebase.auth();db=firebase.firestore();
-      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      auth.onAuthStateChanged(async user=>{
-        if(!user){btn.disabled=false;btn.textContent='使用 Google 帳號登入';message('請使用「環保冒險王」相同的 Google 帳號登入。');return}
-        if(checking)return;checking=true;btn.disabled=true;btn.textContent='正在確認使用者資格…';
-        try{
-          const ok=await checkAuthorized(user);
-          if(ok){enter(user);message('');}
-          else{message('這個 Google 帳號尚未有「環保冒險王」玩家資料，無法進入學習中心。');await auth.signOut();btn.disabled=false;btn.textContent='使用 Google 帳號登入';}
-        }catch(err){
-          console.error('學習中心授權檢查失敗',err);
-          message('無法確認玩家授權：'+(err.code||err.message||'未知錯誤')+'。請不要一直等待，截圖給我即可。');
-          btn.disabled=false;btn.textContent='使用 Google 帳號登入';
-        }finally{checking=false}
-      });
-    }catch(err){console.error('學習中心 Firebase 初始化失敗',err);message('Firebase 初始化失敗：'+(err.code||err.message||'未知錯誤'));btn.disabled=false}
-  }
-  window.learningGoogleLogin=async function(){
-    if(!auth){await init();if(!auth)return}
-    btn.disabled=true;btn.textContent='正在開啟 Google 登入…';message('');
-    try{
-      const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
-      await auth.signInWithPopup(provider);
-    }catch(err){
-      console.error('學習中心 Google 登入失敗',err);
-      message('Google 登入未完成（'+(err.code||err.message||'未知錯誤')+'）。');
-      btn.disabled=false;btn.textContent='使用 Google 帳號登入';
-    }
-  };
-  window.learningLogout=async function(){if(auth)await auth.signOut();location.reload()};
-  init();
-})();
-</script>
 <script>
 const TOPICS={
 '國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI'};
@@ -386,9 +304,47 @@ function renderGuide(){
  const pq=document.getElementById('plasticQuick');
  if(guideFilter==='塑膠1-7'){
    pq.style.display='block';
-   document.getElementById('plasticGrid').innerHTML=PLASTIC_ENGLISH.map(x=>`<article class="card plastic-card"><span class="tag">第 ${x[0]} 號</span><div class="plastic-code">${x[1]}</div><div class="plastic-meta"><span>耐熱：${x[2]}</span></div><div class="memory"><b>特性：</b>${x[3]}</div><div class="use"><b>常用：</b>${x[4]}</div></article>`).join('');
+   document.getElementById('plasticGrid').innerHTML=PLASTIC_ENGLISH.map(x=>`<article class="card plastic-card"><div class="guide-icon-row"><span class="plastic-mark">♻️<br><small>${x[0]}</small></span><div><span class="tag">第 ${x[0]} 號</span><div class="plastic-code">${x[1]}</div></div></div><div class="plastic-meta"><span>耐熱：${x[2]}</span></div><div class="memory"><b>特性：</b>${x[3]}</div><div class="use"><b>常用：</b>${x[4]}</div></article>`).join('');
  }else pq.style.display='none';
- document.getElementById('guideGrid').innerHTML=shuffle(a).map(x=>`<article class="card"><span class="tag">${TOPICS[x[0]]}</span><h3>${x[1]}</h3><div class="small">${x[2]}</div><div class="memory">${x[3]}</div></article>`).join('');
+
+ // 指定主題依使用者要求固定排序，不再隨機打亂
+ if(selectedTopic==='國際公約'){
+   // GUIDE 的年份位於第 3 欄，例如「2001｜POPs」；由最近年度排到最遠年度
+   a.sort((x,y)=>parseInt(y[2],10)-parseInt(x[2],10));
+ }else if(selectedTopic==='火災'){
+   const order={A類:1,B類:2,C類:3,D類:4};
+   a.sort((x,y)=>(order[x[1]]||99)-(order[y[1]]||99));
+ }else if(selectedTopic==='環境日'){
+   const monthDay=x=>{const m=x[1].match(/^(\d+)月/); return m?parseInt(m[1],10)*100 + parseInt((x[1].match(/月(\d+)日/)||[,0])[1],10):9999};
+   a.sort((x,y)=>monthDay(x)-monthDay(y));
+ }else if(selectedTopic==='AQI'){
+   const order={'0～50':1,'51～100':2,'101～150':3,'151～200':4,'201～300':5,'301～500':6};
+   a.sort((x,y)=>(order[x[1]]||99)-(order[y[1]]||99));
+ }else{
+   a=shuffle(a);
+ }
+
+ const iconMap={'國際公約':'🌏','標章與水足跡':'🏷️','2050淨零':'🌱','塑膠1-7':'♻️','環境日':'📅','氣候法':'⚖️','數值與效應':'📊','疾病':'🩺','火災':'🔥','外來種':'🐢','AQI':'🌤️'};
+ const titleIcon=(x)=>{
+   const t=x[1]||'';
+   if(x[0]==='AQI'){
+     const flag={'0～50':'flag-green','51～100':'flag-yellow','101～150':'flag-orange','151～200':'flag-red','201～300':'flag-purple','301～500':'flag-maroon'}[t]||'flag-green';
+     return `<span class="air-flag ${flag}" aria-label="${t} 空汙旗"></span>`;
+   }
+   if(x[0]==='疾病'){if(t.includes('AIDS')) return '🧬'; if(t.includes('烏腳')) return '🦵'; if(t.includes('痛痛')) return '🦴'; if(t.includes('水俣')) return '☣️';}
+   if(x[0]==='火災'){if(t.includes('A類')) return '🪵'; if(t.includes('B類')) return '🛢️'; if(t.includes('C類')) return '⚡'; if(t.includes('D類')) return '🔩';}
+   if(x[0]==='標章與水足跡'){if(t.includes('碳')) return '🌿'; if(t.includes('節能')) return '⚡'; if(t.includes('省水')) return '💧'; if(t.includes('環保')) return '♻️';}
+   return iconMap[x[0]]||'🌍';
+ };
+
+ document.getElementById('guideGrid').innerHTML=a.map(x=>{
+   // 特定日期：卡片最上層直接醒目標註「XX日」，下面再放完整名稱
+   if(x[0]==='環境日'){
+     return `<article class="card date-card"><div class="guide-icon-row"><span class="date-badge">${x[1]}</span><div><span class="tag">📅 特定日期</span><h3>${x[2]}</h3></div></div><div class="memory">${x[3]}</div></article>`;
+   }
+   const cls=x[0]==='AQI'?'card aqi-card':'card';
+   return `<article class="${cls}"><div class="guide-icon-row"><span class="icon-badge">${titleIcon(x)}</span><div><span class="tag">${TOPICS[x[0]]}</span><h3>${x[1]}</h3></div></div><div class="small">${x[2]}</div><div class="memory">${x[3]}</div></article>`;
+ }).join('');
 }
 function makePairs(){
  let source;
@@ -424,28 +380,19 @@ function showQ(){
  selectedChoice=null;submitted=false;
  const item=quiz[qi],topic=item[0],question=item[1],opts=item[2];
  document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';
- document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this)">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
+ document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this,${JSON.stringify(o)})">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
 }
-function selectQ(btn){
+function selectQ(btn,choice){
  if(submitted)return;
- selectedChoice=btn.textContent;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
+ selectedChoice=choice;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
  document.getElementById('confirmQ').disabled=false;document.getElementById('qResult').textContent='已選擇答案，請確認後送出。';
 }
 function confirmQ(){
  if(selectedChoice===null||submitted)return;
- const answer=quiz[qi][3],buttons=document.querySelectorAll('.opt');
- if(selectedChoice===answer){
-  submitted=true;buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
-  buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});
-  qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！';
-  qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
- }else{
-  // 答錯時只提示錯誤，不公布答案，也不進入下一題；讓使用者重新選擇。
-  buttons.forEach(x=>x.classList.remove('selected'));
-  const wrongBtn=[...buttons].find(x=>x.textContent===selectedChoice);if(wrongBtn)wrongBtn.classList.add('wrong');
-  selectedChoice=null;submitted=false;document.getElementById('confirmQ').disabled=true;
-  document.getElementById('qResult').innerHTML='❌ 答題錯誤，請再想一想，再作答一次！';
- }
+ submitted=true;const answer=quiz[qi][3];const buttons=document.querySelectorAll('.opt');buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
+ if(selectedChoice===answer){buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}
+ else{buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('wrong');if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}
+ qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
 }
 renderTopicPicker();document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
 </script>
