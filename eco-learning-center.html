@@ -16,7 +16,17 @@
 .plastic-card{background:linear-gradient(135deg,#f8fffb,#f2f7ff);border:2px solid #cfe5d9}.plastic-code{font-size:30px;font-weight:950;letter-spacing:1px;margin:4px 0}.plastic-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.plastic-meta span{background:#fff;border:1px solid #d8e7df;border-radius:999px;padding:4px 8px;font-size:13px;font-weight:800}.use{margin-top:7px;line-height:1.55}.small{font-size:13px;color:#6b7e76}.danger{color:#a14b3d}.good{color:#176447}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.grid,.match{grid-template-columns:1fr}.wrap{padding:9px}.panel{padding:15px}.q{font-size:19px}}
 
-.topic-sections{margin-bottom:14px}.topic-section{margin:18px 0;padding:16px;border:2px solid #d9ebe2;border-radius:20px;background:#fbfffd}.topic-section h3{margin:0 0 10px;font-size:22px}.topic-section .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.topic-item{background:white;border:1px solid #dce9e3;border-radius:14px;padding:12px}.topic-item strong{display:block;font-size:17px;margin-bottom:5px}.topic-item .label{font-size:12px;color:#237653;font-weight:800}.topic-item p{margin:6px 0 0;line-height:1.55}.topic-section.plastic-focus{border-color:#e7a536}.topic-section.water-focus{border-color:#4d78a8}.topic-section.aqi-focus{border-color:#8a69a8}@media(max-width:700px){.topic-section .topic-grid{grid-template-columns:1fr}}
+.topic-sections{margin-bottom:14px}.topic-section{margin:18px 0;padding:16px;border:2px solid #d9ebe2;border-radius:20px;background:#fbfffd}.topic-section h3{margin:0 0 10px;font-size:22px}.topic-section .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.topic-item{background:white;border:1px solid #dce9e3;border-radius:14px;padding:12px}.topic-item strong{display:block;font-size:17px;margin-bottom:5px}.topic-item .label{font-size:12px;color:#237653;font-weight:800}.topic-item p{margin:6px 0 0;line-height:1.55}.topic-section.plastic-focus{border-color:#e7a536}.topic-section.water-focus{border-color:#4d78a8}.topic-section.aqi-focus{border-color:#8a69a8}
+/* 標章與水足跡：實際官方標章圖示 */
+.label-logo{width:86px;height:86px;object-fit:contain;background:#fff;border-radius:16px;border:1px solid #d9e7df;padding:7px;display:block;box-shadow:0 3px 10px #0000000d}
+.label-logo-wide{width:118px;height:82px;object-fit:contain;background:#fff;border-radius:16px;border:1px solid #d9e7df;padding:6px;display:block;box-shadow:0 3px 10px #0000000d}
+.water-footprint-icon{width:78px;height:78px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:42px;background:#fff;border:2px solid #dce9e3;box-shadow:0 3px 10px #0000000b}
+.water-footprint-icon.blue{background:#eef8ff;border-color:#9fd1ee}
+.water-footprint-icon.green{background:#eef9ef;border-color:#a8d8ad}
+.water-footprint-icon.gray{background:#f2f4f5;border-color:#c8ced2}
+.guide-icon-row{display:flex;gap:12px;align-items:center}
+
+@media(max-width:700px){.topic-section .topic-grid{grid-template-columns:1fr}}
 .exam30{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;padding:16px 18px;border:3px solid #e7a536;border-radius:18px;background:linear-gradient(135deg,#fff9e8,#fffdf7)}.exam30-title{font-size:22px;font-weight:950;color:#8a5b08}.exam30-text{margin-top:5px;line-height:1.55;color:#6b6252}.exam30-btn{white-space:nowrap;background:#e7a536;color:#fff;font-size:17px;padding:13px 20px}.exam30-btn:hover{filter:brightness(.96)}
 @media(max-width:620px){.exam30{flex-direction:column;align-items:stretch}.exam30-btn{width:100%}}
 
@@ -335,7 +345,15 @@ function renderGuide(){
    }
    if(x[0]==='疾病'){if(t.includes('AIDS')) return '🧬'; if(t.includes('烏腳')) return '🦵'; if(t.includes('痛痛')) return '🦴'; if(t.includes('水俣')) return '☣️';}
    if(x[0]==='火災'){if(t.includes('A類')) return '🪵'; if(t.includes('B類')) return '🛢️'; if(t.includes('C類')) return '⚡'; if(t.includes('D類')) return '🔩';}
-   if(x[0]==='標章與水足跡'){if(t.includes('碳')) return '🌿'; if(t.includes('節能')) return '⚡'; if(t.includes('省水')) return '💧'; if(t.includes('環保')) return '♻️';}
+   if(x[0]==='標章與水足跡'){
+     if(t.includes('臺灣碳標籤')) return '<img class="label-logo" alt="臺灣碳標籤官方圖示" src="https://serv.gcis.nat.gov.tw/biznetzero/Content/Files/userfiles/images/%E7%A2%B3%E6%A8%99%E7%B1%A4.jpg">';
+     if(t.includes('節能標章')) return '<img class="label-logo-wide" alt="節能標章官方圖示" src="https://serv.gcis.nat.gov.tw/biznetzero/Content/Files/userfiles/images/%E7%AF%80%E8%83%BD%E6%A8%99%E7%AB%A0-300x128.png">';
+     if(t.includes('省水標章')) return '<img class="label-logo-wide" alt="省水標章官方圖示" src="https://serv.gcis.nat.gov.tw/biznetzero/Content/Files/userfiles/images/%E7%9C%81%E6%B0%B4%E6%A8%99%E7%AB%A0NEW.jpg">';
+     if(t.includes('環保標章')) return '<img class="label-logo" alt="環保標章官方圖示" src="https://serv.gcis.nat.gov.tw/biznetzero/Content/Files/userfiles/images/%E7%92%B0%E4%BF%9D%E6%A8%99%E7%AB%A0.png">';
+     if(t.includes('藍色水足跡')) return '<span class="water-footprint-icon blue" aria-label="藍色水足跡">💧</span>';
+     if(t.includes('綠色水足跡')) return '<span class="water-footprint-icon green" aria-label="綠色水足跡">💧</span>';
+     if(t.includes('灰色水足跡')) return '<span class="water-footprint-icon gray" aria-label="灰色水足跡">💧</span>';
+   }
    return iconMap[x[0]]||'🌍';
  };
 
