@@ -466,32 +466,130 @@ function pickMatch(el,side,id){
 }
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(matchTotal?mDone/matchTotal*100:0)+'%'}
 function startQuiz(){
- let source=quizFilter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===quizFilter);
- quiz=shuffle(source);quizTotal=Math.min(10,quiz.length);qi=0;qs=0;showQ();
- document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quiz.length;
+  let source=quizFilter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===quizFilter);
+  quiz=shuffle(source);
+  quizTotal=Math.min(10,quiz.length);
+  qi=0;qs=0;selectedChoice=null;submitted=false;
+  document.getElementById('qTotal').textContent=quizTotal;
+  document.getElementById('bankSize').textContent=quiz.length;
+  document.getElementById('qScore').textContent=qs;
+  showQ();
 }
 function startQuiz30(){
- quiz=shuffle(QUIZ30);quizTotal=quiz.length;qi=0;qs=0;showQ();
- document.getElementById('qTotal').textContent=quizTotal;document.getElementById('bankSize').textContent=quizTotal;
+  quiz=shuffle(QUIZ30);
+  quizTotal=quiz.length;
+  qi=0;qs=0;selectedChoice=null;submitted=false;
+  document.getElementById('qTotal').textContent=quizTotal;
+  document.getElementById('bankSize').textContent=quizTotal;
+  document.getElementById('qScore').textContent=qs;
+  showQ();
 }
 function showQ(){
- if(qi>=quizTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${quizTotal}</p><div class="explain">已完成「${quizTotal===30?'環保知識競賽最容易考 30 題':TOPICS[quizFilter]}」。可以再挑戰一次或回到上方更換主題。</div>`;return}
- selectedChoice=null;submitted=false;
- const item=quiz[qi],topic=item[0],question=item[1],opts=item[2];
- document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';
- document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="selectQ(this,${JSON.stringify(o)})">${o}</button>`).join('')}</div><div class="quiz-actions"><button id="confirmQ" class="action confirm-btn" onclick="confirmQ()" disabled>✓ 確認送出</button></div><div id="qResult" class="result"></div>`;
+  const area=document.getElementById('qArea');
+  if(qi>=quizTotal){
+    document.getElementById('qBar').style.width='100%';
+    area.innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${quizTotal}</p><div class="explain">已完成「${quizTotal===30?'環保知識競賽最容易考 30 題':TOPICS[quizFilter]}」。可以再挑戰一次或回到上方更換主題。</div>`;
+    return;
+  }
+
+  selectedChoice=null;
+  submitted=false;
+  const item=quiz[qi];
+  const topic=item[0];
+  const question=item[1];
+  const opts=item[2];
+
+  document.getElementById('qNo').textContent=qi+1;
+  document.getElementById('qScore').textContent=qs;
+  document.getElementById('qBar').style.width=(qi/quizTotal*100)+'%';
+
+  area.innerHTML='';
+
+  const tag=document.createElement('span');
+  tag.className='tag';
+  tag.textContent=TOPICS[topic]||topic;
+  area.appendChild(tag);
+
+  const q=document.createElement('div');
+  q.className='q';
+  q.textContent=question;
+  area.appendChild(q);
+
+  const optsBox=document.createElement('div');
+  optsBox.className='opts';
+
+  shuffle(opts).forEach((choice)=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='opt';
+    btn.textContent=choice;
+    btn.addEventListener('click',()=>selectQ(btn,choice));
+    optsBox.appendChild(btn);
+  });
+  area.appendChild(optsBox);
+
+  const actions=document.createElement('div');
+  actions.className='quiz-actions';
+
+  const submit=document.createElement('button');
+  submit.type='button';
+  submit.id='quizSubmitBtn';
+  submit.className='action confirm-btn';
+  submit.textContent='✓ 確認送出';
+  submit.disabled=true;
+  submit.addEventListener('click',submitQuizAnswer);
+  actions.appendChild(submit);
+
+  const result=document.createElement('div');
+  result.id='qResult';
+  result.className='result';
+  actions.appendChild(result);
+
+  area.appendChild(actions);
 }
 function selectQ(btn,choice){
- if(submitted)return;
- selectedChoice=choice;document.querySelectorAll('.opt').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
- document.getElementById('confirmQ').disabled=false;document.getElementById('qResult').textContent='已選擇答案，請確認後送出。';
+  if(submitted)return;
+  selectedChoice=choice;
+  document.querySelectorAll('#qArea .opt').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  const submit=document.getElementById('quizSubmitBtn');
+  if(submit)submit.disabled=false;
+  const result=document.getElementById('qResult');
+  if(result)result.textContent='已選擇答案，請按「✓ 確認送出」後才會判題。';
 }
-function confirmQ(){
- if(selectedChoice===null||submitted)return;
- submitted=true;const answer=quiz[qi][3];const buttons=document.querySelectorAll('.opt');buttons.forEach(x=>x.disabled=true);document.getElementById('confirmQ').disabled=true;
- if(selectedChoice===answer){buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('correct')});qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！'}
- else{buttons.forEach(x=>{if(x.textContent===selectedChoice)x.classList.add('wrong');if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}
- qi++;const next=document.createElement('button');next.className='action next-btn';next.textContent=qi<quizTotal?'➡️ 下一題':'🏁 查看結果';next.onclick=showQ;document.querySelector('.quiz-actions').appendChild(next);
+function submitQuizAnswer(){
+  if(selectedChoice===null||submitted)return;
+  submitted=true;
+  const answer=quiz[qi][3];
+  const buttons=document.querySelectorAll('#qArea .opt');
+  buttons.forEach(x=>{
+    x.disabled=true;
+    if(x.textContent.trim()===answer) x.classList.add('correct');
+  });
+
+  const submit=document.getElementById('quizSubmitBtn');
+  if(submit){submit.disabled=true;submit.style.display='none';}
+
+  const result=document.getElementById('qResult');
+  if(selectedChoice===answer){
+    qs++;
+    points++;
+    save();
+    result.innerHTML='✅ 答對！ <b>+1 分</b>';
+  }else{
+    buttons.forEach(x=>{
+      if(x.textContent.trim()===selectedChoice) x.classList.add('wrong');
+    });
+    result.innerHTML=`❌ 答錯。正確答案：<b>${answer}</b>`;
+  }
+
+  const actions=document.querySelector('#qArea .quiz-actions');
+  const next=document.createElement('button');
+  next.type='button';
+  next.className='action next-btn';
+  next.textContent=(qi+1)<quizTotal?'➡️ 下一題':'🏁 查看結果';
+  next.addEventListener('click',()=>{qi++;showQ()});
+  actions.appendChild(next);
 }
 renderTopicPicker();document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
 </script>
