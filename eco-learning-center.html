@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>環保知識競賽｜講義強化中心 V9.5｜100題親子競賽入口優化</title>
+<title>環保知識競賽｜完整講義學習中心 V8.6｜標章圖示＋水足跡圖示強化版</title>
 <style>
 :root{--g:#237653;--dg:#16382b;--bg:#eef8f3;--gold:#e7a536;--red:#c85c4b;--white:#fff;--blue:#4d78a8}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
@@ -14,8 +14,7 @@
 .water-entry:hover{background:#dff3fa}
 .panel{background:#fff;border-radius:22px;padding:20px;box-shadow:0 5px 20px #0001}.panel h2{margin-top:0}.note{background:#fff8df;border-radius:15px;padding:12px;line-height:1.65;margin-top:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#fff;border-radius:18px;padding:16px;border:2px solid #e1ece7;box-shadow:0 3px 13px #0000000b}.card h3{margin:5px 0 8px}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:9px;font-weight:800}.memory{margin-top:9px;color:#5c7068;font-weight:700;line-height:1.6}
 .match{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.matchcol{background:#f8fcfa;border-radius:18px;padding:14px}.matchitem{padding:13px;margin:8px 0;border:2px solid #d7e7df;border-radius:13px;background:#fff;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:var(--gold);background:#fff7e7}.matchitem.done{opacity:.4;background:#e9f7ee;pointer-events:none}.barbg{height:10px;background:#dce9e3;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0}.msg{min-height:28px;margin:12px 0;font-weight:900}.actions{text-align:center;margin-top:13px}.action{border:0;border-radius:12px;padding:11px 16px;background:var(--g);color:#fff;font-weight:900;cursor:pointer}.action.secondary{background:#e7f0ec;color:#245642}
-.q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt.selected{outline:3px solid #2aa879;background:#e8f8f0;transform:translateY(-1px)}
-.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
+.q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
 .plastic-card{background:linear-gradient(135deg,#f8fffb,#f2f7ff);border:2px solid #cfe5d9}.plastic-code{font-size:30px;font-weight:950;letter-spacing:1px;margin:4px 0}.plastic-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.plastic-meta span{background:#fff;border:1px solid #d8e7df;border-radius:999px;padding:4px 8px;font-size:13px;font-weight:800}.use{margin-top:7px;line-height:1.55}.small{font-size:13px;color:#6b7e76}.danger{color:#a14b3d}.good{color:#176447}
 
 /* V8.6：標章實圖＋水足跡實圖＋AQI 空污旗 */
@@ -36,20 +35,20 @@
 .topic-sections{margin-bottom:14px}.topic-section{margin:18px 0;padding:16px;border:2px solid #d9ebe2;border-radius:20px;background:#fbfffd}.topic-section h3{margin:0 0 10px;font-size:22px}.topic-section .topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.topic-item{background:white;border:1px solid #dce9e3;border-radius:14px;padding:12px}.topic-item strong{display:block;font-size:17px;margin-bottom:5px}.topic-item .label{font-size:12px;color:#237653;font-weight:800}.topic-item p{margin:6px 0 0;line-height:1.55}.topic-section.plastic-focus{border-color:#e7a536}.topic-section.water-focus{border-color:#4d78a8}.topic-section.aqi-focus{border-color:#8a69a8}@media(max-width:700px){.topic-section .topic-grid{grid-template-columns:1fr}}
 
 .water-memory-flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:center;margin:12px 0 16px}.water-memory-card{background:#fff;border:2px solid #cfe3ee;border-radius:16px;padding:10px 7px;text-align:center;min-height:105px;display:flex;flex-direction:column;justify-content:center}.water-memory-card .bigicon{font-size:34px;line-height:1.1;margin-bottom:5px}.water-memory-card b{font-size:15px}.water-arrow{text-align:center;font-size:25px;font-weight:900;color:#4d78a8}.water-memory-note{background:#eef8fc;border-left:5px solid #4d9bc5;border-radius:10px;padding:10px 13px;margin:10px 0;font-weight:800}.water-four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}.water-four .wm{background:#fff;border:1px solid #d7e4ea;border-radius:14px;padding:12px;text-align:center}.water-four .wm .bigicon{font-size:32px}.water-four .wm b{display:block;font-size:17px;margin:4px 0}.water-four .wm span{font-size:13px;line-height:1.5}@media(max-width:700px){.water-memory-flow{grid-template-columns:1fr}.water-arrow{transform:rotate(90deg)}.water-four{grid-template-columns:repeat(2,minmax(0,1fr))}}
-<style>.back-btn{position:absolute;left:18px;top:18px;border:1px solid #cfe4db;border-radius:999px;padding:10px 16px;background:linear-gradient(135deg,#ffffff,#eef9f4);color:#176447;font-weight:950;cursor:pointer;box-shadow:0 5px 16px #23765318;transition:.2s;display:inline-flex;align-items:center;gap:6px}.back-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #23765324;background:#fff}.back-btn:active{transform:translateY(0)}.hero{position:relative}.mode-switch{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.duo-setup{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;background:#eef8f3;border-radius:14px;margin:10px 0}.duo-setup label{font-weight:800}.duo-setup input{border:1px solid #cbded5;border-radius:9px;padding:8px;width:110px}.duo-score{padding:11px 14px;border-radius:14px;background:linear-gradient(135deg,#fff8dc,#fffdf2);border:1px solid #f0d98b;font-weight:900;margin:10px 0;box-shadow:0 3px 10px #e7a53618}.opt.selected{outline:3px solid #2f8f68;background:#e8f7ef}.opt.wrong{opacity:.7}.opt.correct{outline:3px solid #2f8f68;background:#dff5e8}.match-mode{margin:12px 0}.match-duo-setup{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;background:linear-gradient(135deg,#eef9f4,#f8fbff);border:1px solid #d8e9e1;border-radius:16px;margin:10px 0}.match-duo-setup label{font-weight:800}.match-duo-setup input{border:1px solid #cbded5;border-radius:9px;padding:8px;width:110px}.match-turn{padding:10px 14px;border-radius:14px;background:#edf7f1;border-left:5px solid #55a879;font-weight:900;margin:10px 0}.family-mode-card{margin:16px 0;padding:18px;border-radius:20px;background:#fffaf0;border:2px solid #f0dfb5}.family-mode-card>b{font-size:20px;color:#7b5b20}.family-mode-sub{margin:6px 0 12px;color:#6d6048}.family-duo-btn{box-shadow:0 5px 14px rgba(73,130,95,.18)}.quiz-family-entry{margin:12px 0 16px;padding:13px 16px;border:1px solid #d7e9df;border-radius:18px;background:linear-gradient(90deg,#f0faf5,#fffaf0);display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 4px 14px #0000000a}.quiz-family-copy{min-width:0}.quiz-family-title{font-size:18px;font-weight:900;color:#176447}.quiz-family-sub{font-size:13px;color:#66776f;margin-top:3px;line-height:1.5}.quiz-family-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.family-entry-btn,.family-solo-btn{border:0;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer;white-space:nowrap}.family-entry-btn{background:linear-gradient(135deg,#237653,#55a879);color:#fff;box-shadow:0 4px 12px #23765333}.family-solo-btn{background:#fff;border:1px solid #cfe1d8;color:#245642}.family-entry-btn:hover,.family-solo-btn:hover{transform:translateY(-1px)}@media(max-width:700px){.quiz-family-entry{align-items:stretch;flex-direction:column}.quiz-family-actions{justify-content:stretch}.family-entry-btn,.family-solo-btn{flex:1}}</style></head>
+</style>
 </head>
 <body>
 <div class="wrap">
 <section class="hero">
-<button class="back-btn" type="button" onclick="goBack()" aria-label="回上一頁">← <span>回上一頁</span></button>
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
-<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V9.5 100題親子競賽入口優化</b></p>
-<div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 選擇題</span><span class="pill">👩‍👧 全題型親子競賽</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V8.8 對對碰雙向選擇＋選擇題修正版</b></p>
+<div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
 <nav class="tabs">
 <button class="tab active" onclick="show('guide',this)">📖 重點圖鑑</button>
 <button class="tab" onclick="show('match',this)">🎮 對對碰</button>
 <button class="tab" onclick="show('quiz',this)">🏆 選擇題</button>
+<button class="tab" onclick="show('extension',this)">📚 延伸100題</button>
 </nav>
 <section id="guide" class="view active">
 <div class="filters" id="filters"></div>
@@ -73,20 +72,12 @@
 <div class="note">🧠 <b>出題原則：</b>選擇題盡量不把答案的公約名稱、英文縮寫或分類名稱直接放進題幹；改用「內容、數字、情境、特徵」辨識。對對碰也會把兩側內容分開並隨機排列；選「塑膠1～7」時，左側會改成只顯示英文縮寫，專練縮寫→特性→用途。</div>
 </section>
 <section id="match" class="view">
-<div class="panel"><h2>🎮 講義重點對對碰</h2><p>左邊或右邊都可以先按，再找另一邊的對應內容；答錯後可以重新作答。</p>
-<div class="mode-switch match-mode"><button class="action" type="button" id="matchSoloBtn" onclick="setMatchMode('solo')">🧑 單人練習</button><button class="action secondary" type="button" id="matchDuoBtn" onclick="setMatchMode('duo')">👩‍👧 親子競賽</button></div>
-<div id="matchDuoSetup" class="match-duo-setup" style="display:none"><label>👧 女兒：<input id="mPlayerA" value="沄芯"></label><label>👩 家長：<input id="mPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startMatchDuo()">🏁 開始競賽</button></div>
-<div id="matchDuoScore" class="duo-score" style="display:none"></div>
-<div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
+<div class="panel"><h2>🎮 講義重點對對碰</h2><p>左邊或右邊都可以先按，再找另一邊的對應內容；答錯後可以重新作答。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
-<section id="quiz" class="view"><div class="panel"><h2>📚 講義延伸特訓｜100 題</h2><p>先選答案，再按「確定送出」；送出前可以自由更換答案。</p><div id="duoSetup" class="duo-setup" style="display:none"><label>👧 女兒：<input id="playerA" value="沄芯"></label><label>👩 家長：<input id="playerB" value="媽媽"></label><button class="action" type="button" onclick="startDuo()">🏁 開始競賽</button></div><div id="duoScore" class="duo-score" style="display:none"></div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">100</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div>
-<div class="quiz-family-entry" id="quizFamilyEntry">
-  <div class="quiz-family-copy"><div class="quiz-family-title">👩‍👧 親子一起挑戰 100 題</div><div class="quiz-family-sub">女兒與媽媽輪流回答同一題，答案可修改，按「確定送出」後才計分。</div></div>
-  <div class="quiz-family-actions"><button class="family-entry-btn" type="button" onclick="setQuizMode('duo')">🏆 開始親子競賽</button><button class="family-solo-btn" type="button" onclick="setQuizMode('solo')">🧑 單人練習</button></div>
+<section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
-<div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
-</div>
+<section id="extension" class="view"><div class="panel extension-panel"><div class="extension-head"><div><div class="extension-kicker">LECTURE EXTENSION TRAINING</div><h2>🌱 講義延伸特訓｜100 題</h2><p>這 100 題是依講義重點設計的延伸題，獨立於原本的「選擇題挑戰」。</p></div><button class="back-mini" type="button" onclick="showMainQuiz()">← 回到原選擇題</button></div><div class="extension-modes"><button class="ext-mode active" id="extSoloBtn" type="button" onclick="setExtMode('solo')">🧑 單人練習</button><button class="ext-mode family" id="extDuoBtn" type="button" onclick="setExtMode('duo')">👩‍👧 親子競賽</button></div><div id="extDuoSetup" class="ext-duo-setup" style="display:none"><label>👧 女兒 <input id="extPlayerA" value="沄芯"></label><label>👩 家長 <input id="extPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startExtDuo()">🏁 開始親子競賽</button></div><div id="extDuoScore" class="ext-duo-score" style="display:none"></div><div class="stats"><span class="pill">第 <b id="extNo">1</b> / <b id="extTotal">100</b> 題</span><span class="pill">得分 <b id="extScore">0</b></span><span class="pill">題庫 <b id="extBank">100</b> 題</span></div><div class="barbg"><div class="bar" id="extBar"></div></div><div id="extArea"></div><div class="actions"><button class="action secondary" type="button" onclick="startExtSolo()">🔄 重新開始100題</button></div></div></section>
 <script>
 const TOPICS={
 '國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI','水污染':'💧 水污染'};
@@ -282,58 +273,15 @@ const QUIZ=[
 ['AQI','AQI 101～150 對應哪一組？',['Unhealthy for Sensitive Groups／橘','Good／綠','Very Unhealthy／紫','Moderate／黃'],'Unhealthy for Sensitive Groups／橘'],
 ['AQI','AQI 201～300 對應哪一組？',['Very Unhealthy／紫','Unhealthy／紅','Hazardous／褐紅','Moderate／黃'],'Very Unhealthy／紫'],
 ['AQI','AQI 301～500 時，講義的狀態是？',['Hazardous／危害／褐紅','Good／良好／綠','Unhealthy／紅','Moderate／黃'],'Hazardous／危害／褐紅']
-,
-["國際公約", "有害廢棄物跨境移動與處置主要是哪一項公約？", ["巴塞爾公約", "MARPOL", "CITES", "拉姆薩爾公約"], "巴塞爾公約"],
-["國際公約", "濕地保育與合理利用最常對應哪一項？", ["拉姆薩爾公約", "蒙特婁議定書", "京都議定書", "MARPOL"], "拉姆薩爾公約"],
-["國際公約", "船舶油污、污水與廢棄物管制最符合哪一項？", ["MARPOL", "CITES", "CBD", "巴塞爾公約"], "MARPOL"],
-["國際公約", "野生動植物國際貿易主要由哪一項公約管制？", ["CITES／華盛頓公約", "拉姆薩爾公約", "維也納公約", "UNCLOS"], "CITES／華盛頓公約"],
-["國際公約", "逐步削減 CFCs 最直接對應哪一項？", ["蒙特婁議定書", "巴塞爾公約", "MARPOL", "里約宣言"], "蒙特婁議定書"],
-["國際公約", "臭氧層研究、資訊交流與共同對策最符合哪一項？", ["維也納公約", "CITES", "MARPOL", "倫敦廢棄物投棄公約"], "維也納公約"],
-["標章與水足跡", "產品上的 CO2 與腳印圖示主要揭露什麼？", ["碳足跡", "水足跡", "AQI", "BOD"], "碳足跡"],
-["標章與水足跡", "節能標章主要提醒消費者選擇哪類產品？", ["較省能源的產品", "較耗水的產品", "較高污染的產品", "較高碳排的產品"], "較省能源的產品"],
-["標章與水足跡", "省水標章最主要強調哪一件事？", ["提高用水效率", "增加用水量", "提高排水溫度", "增加地下水開採"], "提高用水效率"],
-["標章與水足跡", "環保標章核心概念較接近哪一組？", ["低污染、省資源、可回收", "高耗能、高污染", "增加一次性用品", "增加廢棄物"], "低污染、省資源、可回收"],
-["標章與水足跡", "綠色水足跡主要來自哪一類水？", ["降雨儲存在土壤中的水", "自來水管線用水", "海水", "污水處理後排放水"], "降雨儲存在土壤中的水"],
-["標章與水足跡", "灰色水足跡主要與哪一件事有關？", ["污染稀釋或淨化所需水量", "雨水直接供植物使用", "飲用水消耗量", "海水淡化量"], "污染稀釋或淨化所需水量"],
-["2050淨零", "2050淨零核心概念是什麼？", ["溫室氣體排放與移除達平衡", "完全停止所有工業", "只使用石油", "停止所有交通"], "溫室氣體排放與移除達平衡"],
-["2050淨零", "太陽光電主要利用哪一種自然能量？", ["太陽能", "潮汐能", "地熱能", "核能"], "太陽能"],
-["2050淨零", "森林吸收二氧化碳形成的碳匯屬於哪一類？", ["自然碳匯", "人工廢棄物", "水足跡", "AQI"], "自然碳匯"],
-["2050淨零", "CCUS 中的 C 指哪一種氣體？", ["二氧化碳", "氧氣", "氮氣", "臭氧"], "二氧化碳"],
-["塑膠1-7", "哪一種塑膠代號是 PP？", ["5", "3", "6", "7"], "5"],
-["塑膠1-7", "寶特瓶最常見的塑膠代號是？", ["1 PET", "3 PVC", "5 PP", "6 PS"], "1 PET"],
-["塑膠1-7", "哪一種塑膠代號是 PVC？", ["3", "1", "4", "7"], "3"],
-["塑膠1-7", "第 6 號 PS 常見的發泡材質是什麼？", ["保麗龍", "寶特瓶", "雨衣", "水管"], "保麗龍"],
-["環境日", "世界地球日是哪一天？", ["4月22日", "6月5日", "3月22日", "10月16日"], "4月22日"],
-["環境日", "世界環境日是哪一天？", ["6月5日", "4月22日", "3月21日", "9月18日"], "6月5日"],
-["環境日", "世界海洋日是哪一天？", ["6月8日", "5月22日", "2月2日", "10月13日"], "6月8日"],
-["環境日", "世界水資源日是哪一天？", ["3月22日", "4月22日", "6月5日", "9月18日"], "3月22日"],
-["氣候法", "氣候變遷因應法主要處理哪一項議題？", ["氣候變遷與溫室氣體減量", "塑膠分類", "水質監測日期", "野生動植物貿易"], "氣候變遷與溫室氣體減量"],
-["氣候法", "氣候法中的減量工作主要與哪一類氣體有關？", ["溫室氣體", "氮氣", "氧氣", "氦氣"], "溫室氣體"],
-["數值與效應", "BOD 升高通常代表分解有機物需要更多什麼？", ["氧氣", "氮氣", "鹽分", "光線"], "氧氣"],
-["數值與效應", "DO 是水中的哪一項指標？", ["溶氧", "化學需氧量", "懸浮固體", "總氮"], "溶氧"],
-["數值與效應", "SS 主要代表哪一類物質？", ["懸浮固體", "溶解氧", "有機氮", "臭氧"], "懸浮固體"],
-["數值與效應", "COD 中的 C 代表什麼？", ["Chemical／化學", "Carbon／碳", "Climate／氣候", "Clean／清潔"], "Chemical／化學"],
-["疾病", "病媒蚊孳生最需要避免哪種環境？", ["積水", "乾燥沙地", "高山岩壁", "乾淨草坪"], "積水"],
-["疾病", "登革熱主要透過哪一類昆蟲傳播？", ["病媒蚊", "蜱", "蒼蠅", "蜜蜂"], "病媒蚊"],
-["火災", "森林火災時風勢增強通常會造成什麼影響？", ["火勢可能更快延燒", "火勢一定立即熄滅", "溫度一定下降", "煙霧一定消失"], "火勢可能更快延燒"],
-["外來種", "外來種可能造成哪項環境問題？", ["與原生種競爭資源", "一定增加生物多樣性", "一定改善水質", "一定增加森林面積"], "與原生種競爭資源"],
-["AQI", "AQI 0～50 對應哪種旗幟顏色？", ["綠旗", "黃旗", "紅旗", "紫旗"], "綠旗"],
-["AQI", "AQI 151～200 對應哪種空污旗？", ["紅旗", "橘旗", "紫旗", "褐紅旗"], "紅旗"],
-["水污染", "水中 DO 降低時水生生物可能面臨什麼問題？", ["缺氧", "光合作用增加", "水溫一定下降", "鹽度一定降低"], "缺氧"],
-["水污染", "BOD 上升、耗氧上升時 DO 通常如何？", ["下降", "上升", "不變", "先變成 SS"], "下降"],
-["水污染", "氮、磷過多容易造成哪種水質問題？", ["優養化", "酸雨", "臭氧洞", "熱島效應"], "優養化"]
-,
-["水污染","水污染中的 SS 增加，通常表示水中哪一類物質增加？",["懸浮固體","溶解氧","二氧化碳","臭氧"],"懸浮固體"],
-["AQI","AQI 101～150 的旗幟顏色是哪一種？",["橘旗","綠旗","黃旗","紫旗"],"橘旗"]
 ];
 
-let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部',qSelected=null,qTotal=10,matchMode='solo',mDuoNames=['女兒','媽媽'],mDuoScores=[0,0],mDuoTurn=0,mDuoDone=0;
+let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部';
 const cats=['全部',...Object.keys(TOPICS)];
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function save(){document.getElementById('points').textContent=points}
-function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match'){if(matchMode==='solo')newMatch();else {document.getElementById('matchDuoSetup').style.display='flex';}}if(id==='quiz')startQuiz()}
+function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
 function renderFilters(){document.getElementById('filters').innerHTML=cats.map(c=>`<button class="filter ${filter===c?'active':''}" onclick="setFilter('${c.replaceAll("'","\\'")}')">${c==='全部'?'全部':TOPICS[c]}</button>`).join('')}
-function setFilter(c){filter=c;renderFilters();renderGuide();if(document.getElementById('quiz')?.classList.contains('active')){if(quizMode==='duo')setQuizMode('duo');else startQuiz()}}
+function setFilter(c){filter=c;renderFilters();renderGuide()}
 function renderTopicSections(){
  const root=document.getElementById('topicSections');
  if(!root) return;
@@ -425,7 +373,7 @@ if(filter==='塑膠1-7'){
 let source=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);if(source.length<8)source=GUIDE;return shuffle(source).slice(0,8).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}))
 }
 function newMatch(){
-  matchSet=makePairs(); mSel=null; mDone=0; mScore=0; if(matchMode==='solo'){mDuoDone=0;}
+  matchSet=makePairs(); mSel=null; mDone=0; mScore=0;
   document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.left}</div>`).join('');
   document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.right}</div>`).join('');
   document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';
@@ -462,79 +410,142 @@ function pickMatch(el,side){
     document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
   }
 }
-function setMatchMode(mode){
-  matchMode=mode;
-  document.getElementById('matchDuoSetup').style.display=mode==='duo'?'flex':'none';
-  document.getElementById('matchDuoScore').style.display=mode==='duo'?'block':'none';
-  if(mode==='solo'){
-    document.getElementById('mMsg').textContent='左邊或右邊都可以先按，再找另一邊的對應內容。';
-    newMatch();
-  }else{
-    document.getElementById('mLeft').innerHTML='';
-    document.getElementById('mRight').innerHTML='';
-    document.getElementById('mMsg').textContent='填好兩位玩家名稱後，按「開始競賽」。';
-    document.getElementById('matchDuoScore').innerHTML='';
-  }
-}
-function startMatchDuo(){
-  mDuoNames=[document.getElementById('mPlayerA').value.trim()||'女兒',document.getElementById('mPlayerB').value.trim()||'媽媽'];
-  matchSet=makePairs(); mDuoScores=[0,0]; mDuoTurn=0; mDuoDone=0; mSel=null; mDone=0; mScore=0;
-  renderMatchBoard();
-  updateMatchDuoScore();
-}
-function renderMatchBoard(){
-  document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.left}</div>`).join('');
-  document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.right}</div>`).join('');
-  document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';
-  document.querySelector('#match .matchcol:last-child h3').textContent=filter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';
-  document.querySelectorAll('#mLeft .matchitem').forEach(el=>el.addEventListener('click',()=>pickMatchDuo(el,'left')));
-  document.querySelectorAll('#mRight .matchitem').forEach(el=>el.addEventListener('click',()=>pickMatchDuo(el,'right')));
-  updateMatch();
-}
-function updateMatchDuoScore(){
-  document.getElementById('matchDuoScore').innerHTML=`👧 ${mDuoNames[0]}：${mDuoScores[0]} 分　｜　👩 ${mDuoNames[1]}：${mDuoScores[1]} 分　｜　🎯 現在輪到：${mDuoNames[mDuoTurn]}`;
-}
-function pickMatchDuo(el,side){
-  if(el.classList.contains('done')) return;
-  const id=el.dataset.id;
-  if(!mSel){
-    mSel={id,side}; document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
-    el.classList.add('sel');
-    document.getElementById('mMsg').textContent=`${mDuoNames[mDuoTurn]} 已選${side==='left'?'左邊':'右邊'}，請找對應內容。`;
-    return;
-  }
-  if(mSel.side===side){
-    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
-    el.classList.add('sel'); mSel={id,side};
-    document.getElementById('mMsg').textContent='已更換選項，請找另一側。';
-    return;
-  }
-  if(id===mSel.id){
-    document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>{x.classList.remove('sel');x.classList.add('done')});
-    mDuoScores[mDuoTurn]+=2; mDuoDone++; mDone=mDuoDone; mScore=mDuoScores[mDuoTurn]; points+=2; save(); mSel=null; updateMatch(); updateMatchDuoScore();
-    if(mDuoDone>=matchSet.length){
-      document.getElementById('mMsg').innerHTML=`🎊 親子對對碰完成！<br>👧 ${mDuoNames[0]}：${mDuoScores[0]} 分　｜　👩 ${mDuoNames[1]}：${mDuoScores[1]} 分`;
-      return;
-    }
-    mDuoTurn=mDuoTurn===0?1:0; updateMatchDuoScore();
-    document.getElementById('mMsg').textContent='🎉 配對成功！換下一位挑戰。';
-  }else{
-    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
-    mSel=null;
-    document.getElementById('mMsg').textContent='❌ 配對不符，這次不加分；換下一位。';
-    mDuoTurn=mDuoTurn===0?1:0; updateMatchDuoScore();
-  }
-}
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/8*100)+'%'}
-let quizMode='solo', duoNames=['女兒','媽媽'], duoScores=[0,0], duoTurn=0, duoQuiz=[], duoIndex=0;
-function goBack(){if(history.length>1){history.back();}else{const b=document.querySelector('.tab');if(b)show('guide',b);}}
-function setQuizMode(mode){quizMode=mode;document.getElementById('duoSetup').style.display=mode==='duo'?'flex':'none';document.getElementById('duoScore').style.display=mode==='duo'?'block':'none';if(mode==='solo')startQuiz();else document.getElementById('qArea').innerHTML='<div class="q">👩‍👧 親子競賽</div><div class="explain">填好兩位玩家名稱後按「開始競賽」。每一題兩人各答一次，完整進行本回合 100 題挑戰（若該主題題數不足則以現有題數為準），系統會分別累計兩人的分數。</div>';}
-function startQuiz(){const source=filter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===filter);quiz=shuffle(source).slice(0,Math.min(100,source.length));qi=0;qs=0;qTotal=quiz.length;document.getElementById('qTotal').textContent=qTotal;document.getElementById('bankSize').textContent=source.length;if(!qTotal){document.getElementById('qArea').innerHTML=`<div class="q">📚 ${TOPICS[filter]||filter}</div><div class="explain">目前這個主題還沒有設定選擇題。</div>`;return;}showQ();}
-function showQ(){if(qi>=qTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${qTotal}</p><div class="explain">完成！可以重新抽題或切換其他主題。</div>`;return;}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qTotal?qi/qTotal*100:0)+'%';qSelected=null;document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="small">📌 本回合主題：${TOPICS[topic]}</div><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="qConfirm" class="action" disabled>✅ 確定送出</button><div id="qResult" class="result"></div>`;const buttons=[...document.querySelectorAll('#qArea .opt')];const confirm=document.getElementById('qConfirm');buttons.forEach(btn=>btn.addEventListener('click',()=>{if(btn.disabled)return;buttons.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');qSelected=btn;confirm.disabled=false;}));confirm.addEventListener('click',()=>answerQ(qSelected,answer));}
-function answerQ(btn,answer){const result=document.getElementById('qResult'),confirm=document.getElementById('qConfirm');if(!btn||btn.disabled)return;const choice=btn.textContent.trim();if(choice===answer){document.querySelectorAll('#qArea .opt').forEach(x=>x.disabled=true);confirm.disabled=true;btn.classList.remove('selected');btn.classList.add('correct');qs++;points++;save();result.innerHTML='✅ 答對！';qi++;setTimeout(showQ,700);}else{btn.classList.remove('selected');btn.classList.add('wrong');result.innerHTML='❌ 答錯了！可以重新選擇其他答案，再按「確定送出」。';qSelected=null;confirm.disabled=true;}}
-function startDuo(){duoNames=[document.getElementById('playerA').value.trim()||'女兒',document.getElementById('playerB').value.trim()||'媽媽'];const source=filter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===filter);duoQuiz=shuffle(source).slice(0,Math.min(100,source.length));duoScores=[0,0];duoTurn=0;duoIndex=0;document.getElementById('qTotal').textContent=duoQuiz.length;document.getElementById('bankSize').textContent=source.length;updateDuoScore();showDuoQ();}
-function updateDuoScore(){document.getElementById('duoScore').innerHTML=`👧 ${duoNames[0]}：${duoScores[0]} 分　｜　👩 ${duoNames[1]}：${duoScores[1]} 分　｜　現在：${duoNames[duoTurn]}`;}
-function showDuoQ(){if(duoIndex>=duoQuiz.length){const result=duoScores[0]===duoScores[1]?'🤝 平手！':duoScores[0]>duoScores[1]?`🏆 ${duoNames[0]} 本回合得分較高！`:`🏆 ${duoNames[1]} 本回合得分較高！`;document.getElementById('qArea').innerHTML=`<div class="q">🎊 親子競賽完成</div><div class="explain">${result}<br>${duoNames[0]}：${duoScores[0]} 分　｜　${duoNames[1]}：${duoScores[1]} 分</div>`;return;}const item=duoQuiz[duoIndex],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=duoIndex+1;document.getElementById('qBar').style.width=(duoIndex/duoQuiz.length*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[item[0]]}</span><div class="small">📌 第 ${duoIndex+1} 題｜現在輪到：<b>${duoNames[duoTurn]}</b></div><div class="q">${item[1]}</div><div class="opts">${shuffle(opts).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="qConfirm" class="action" disabled>✅ 確定送出</button><div id="qResult" class="result"></div>`;const bs=[...document.querySelectorAll('#qArea .opt')],cf=document.getElementById('qConfirm');bs.forEach(btn=>btn.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');qSelected=btn;cf.disabled=false;}));cf.addEventListener('click',()=>{const ok=qSelected&&qSelected.textContent.trim()===answer;if(ok){duoScores[duoTurn]++;document.getElementById('qResult').textContent='✅ 答對！';}else document.getElementById('qResult').textContent='❌ 答錯！';bs.forEach(x=>x.disabled=true);cf.disabled=true;setTimeout(()=>{duoTurn=duoTurn===0?1:0;if(duoTurn===0)duoIndex++;updateDuoScore();showDuoQ();},700);});}
+function startQuiz(){quiz=shuffle(QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=QUIZ.length;showQ()}
+function showQ(){
+  if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}
+  const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];
+  document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';
+  document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map((o,i)=>`<button type="button" class="opt" data-choice-index="${i}">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`;
+  const buttons=[...document.querySelectorAll('#qArea .opt')];
+  buttons.forEach(btn=>btn.addEventListener('click',()=>answerQ(btn,btn.textContent,answer)));
+}
+function answerQ(btn,choice,answer){
+  const result=document.getElementById('qResult');
+  if(btn.disabled) return;
+  if(choice===answer){
+    document.querySelectorAll('#qArea .opt').forEach(x=>x.disabled=true);
+    btn.classList.add('correct'); qs++; points++; save(); result.innerHTML='✅ 答對！';
+    qi++; setTimeout(showQ,850);
+  }else{
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    result.innerHTML='❌ 答錯了，再試一次！';
+  }
+}
+
+const EXTENDED_QUIZ=[
+['國際公約','某危險化學品準備出口到另一國，出口前必須讓進口國取得資訊並作出同意決定。這項制度最符合哪一項？',['鹿特丹公約','京都議定書','拉姆薩爾公約','MARPOL'],'鹿特丹公約'],
+['國際公約','某國際制度的重點是危險廢棄物跨境移動，並要求越境移動事前通報。最符合哪一項？',['巴塞爾公約','維也納公約','CITES','里約宣言'],'巴塞爾公約'],
+['國際公約','若題目出現「野生動植物國際貿易、附件ⅠⅡⅢ、許可證」，最直接對應哪一項？',['CITES／華盛頓公約','森林原則','CBD','拉姆薩爾公約'],'CITES／華盛頓公約'],
+['國際公約','某公約重點是濕地保育與合理利用，而且加入時至少登記一處濕地。是哪一項？',['拉姆薩爾公約','MARPOL','蒙特婁議定書','索非亞協定'],'拉姆薩爾公約'],
+['國際公約','若題目問「逐步削減 CFCs 與海龍」，應聯想到哪一項？',['蒙特婁議定書','京都議定書','海牙宣言','UNCLOS'],'蒙特婁議定書'],
+['國際公約','某國際合作架構主要協調臭氧層研究與資訊，並建立共同對策。是哪一項？',['維也納公約','MARPOL','巴塞爾公約','Agenda 21'],'維也納公約'],
+['國際公約','某制度要求管制船舶排放的油污、有害物質、污水與廢棄物。是哪一項？',['MARPOL','UNCLOS','倫敦廢棄物投棄公約','CBD'],'MARPOL'],
+['國際公約','若題目出現「氮氧化物 NOx、排放及越境移動、1994 年凍結」，最符合哪一項？',['索非亞協定','赫爾辛基協定','京都議定書','海牙宣言'],'索非亞協定'],
+['標章與水足跡','某標章以綠色心形、綠葉與 CO2 符號組成，用來揭露產品碳足跡。是哪一個？',['臺灣碳標籤','節能標章','省水標章','環保標章'],'臺灣碳標籤'],
+['標章與水足跡','某指標代表「被利用的藍水資源量」，居家例子包括洗澡、煮飯、飲用。這是？',['藍色水足跡','綠色水足跡','灰色水足跡','碳足跡'],'藍色水足跡'],
+['標章與水足跡','某水資源概念指降雨直接形成、儲存在未飽和土壤並供植物使用的水。這是？',['綠色水足跡','藍色水足跡','灰色水足跡','節能標章'],'綠色水足跡'],
+['標章與水足跡','某概念指把污染稀釋或淨化至符合水質標準所需的水量。這是？',['灰色水足跡','藍色水足跡','綠色水足跡','省水標章'],'灰色水足跡'],
+['2050淨零','某技術把工廠排放的二氧化碳抓取下來，再地下封存或轉化成化工原料。屬於哪一項戰略？',['CCUS','綠色金融','公正轉型','自然碳匯'],'CCUS'],
+['2050淨零','某政策強調資源全循環，把廢棄物轉化為再生資源。是哪一項？',['循環經濟與零廢棄','淨零綠生活','前瞻能源','節能'],'循環經濟與零廢棄'],
+['2050淨零','某政策特別協助受衝擊勞工、傳統產業與偏鄉，核心精神是「不遺落任何人」。是哪一項？',['公正轉型','綠色金融','自然碳匯','無碳與電動化運輸'],'公正轉型'],
+['2050淨零','森林、紅樹林／海草床、土壤分別可對應綠碳、藍碳與哪一種？',['黃碳','黑碳','灰碳','紫碳'],'黃碳'],
+['塑膠1-7','若要依講義選擇適合微波加熱的塑膠材質，應選哪一號？',['5 PP','3 PVC','6 PS','1 PET'],'5 PP'],
+['塑膠1-7','某塑膠標示 1，材質透明、硬度高，常見於寶特瓶。英文縮寫是？',['PET','HDPE','LDPE','PS'],'PET'],
+['塑膠1-7','某塑膠較軟、延展性佳，常見用途是塑膠袋與保鮮膜。是哪一號？',['4 LDPE','2 HDPE','5 PP','7 Other'],'4 LDPE'],
+['塑膠1-7','某塑膠含氯，講義提醒勿加熱或微波；常見於水管、雨衣與保鮮膜。是哪一號？',['3 PVC','6 PS','1 PET','5 PP'],'3 PVC'],
+['塑膠1-7','某材質分類是 1～6 號以外的塑膠，例子包含 PC、PLA、Tritan。是哪一號？',['7 Other','6 PS','2 HDPE','4 LDPE'],'7 Other'],
+['塑膠1-7','哪一個英文縮寫對應「標示 2、較硬、耐酸鹼，常見於鮮奶瓶與清潔劑瓶」？',['HDPE','PET','LDPE','PS'],'HDPE'],
+['塑膠1-7','哪一個英文縮寫對應「標示 4、質地較軟、延展性佳，常見於塑膠袋與保鮮膜」？',['LDPE','PVC','PP','HDPE'],'LDPE'],
+['塑膠1-7','哪一個英文縮寫對應「標示 5、耐高溫，講義列為唯一適合微波加熱的塑膠材質」？',['PP','PET','PS','PVC'],'PP'],
+['塑膠1-7','哪一個英文縮寫對應「標示 6、發泡時就是常見的保麗龍，且不耐酸鹼與有機溶劑」？',['PS','HDPE','LDPE','PET'],'PS'],
+['塑膠1-7','某容器標示 3，特徵是含氯，講義提醒不要加熱或微波。英文縮寫為？',['PVC','PP','PET','Other'],'PVC'],
+['塑膠1-7','某透明、硬度高的容器標示 1，常見用途是寶特瓶。英文縮寫為？',['PET','PS','HDPE','PVC'],'PET'],
+['塑膠1-7','下列哪一組「英文縮寫＋常見用途」符合講義？',['PP＋微波容器','PVC＋微波容器','PS＋寶特瓶','PET＋塑膠袋'],'PP＋微波容器'],
+['塑膠1-7','下列哪一組「英文縮寫＋特性」符合講義？',['HDPE＋耐酸鹼、較硬','LDPE＋質地硬且耐腐蝕','PS＋適合微波','PVC＋適合高溫加熱'],'HDPE＋耐酸鹼、較硬'],
+['塑膠1-7','下列哪一組完整符合講義對第 7 類 Other 的描述？',['1～6 號以外；PC、PLA、Tritan；用途依材質不同','只有寶特瓶；只能裝熱水','只包含 PVC；適合微波','只有保麗龍；耐熱最高'],'1～6 號以外；PC、PLA、Tritan；用途依材質不同'],
+['塑膠1-7','講義列出的第 7 類 Other，常見用途包含哪一組？',['美耐皿、運動水壺、嬰兒奶瓶、PLA','寶特瓶、礦泉水瓶、碳酸飲料瓶','水管、雨衣、塑膠地板','保麗龍、養樂多瓶'],'美耐皿、運動水壺、嬰兒奶瓶、PLA'],
+['塑膠1-7','若題目出現「PC、PLA、Tritan」，依講義應先判斷為哪一類？',['7 Other','1 PET','5 PP','6 PS'],'7 Other'],
+['塑膠1-7','關於第 7 類 Other，下列哪一項符合講義？',['耐熱程度依材質而異','一律耐熱 100～140℃','一律不可回收','一定含氯'],'耐熱程度依材質而異'],
+['環境日','哪一天是世界溼地日？',['2月2日','3月21日','4月22日','6月5日'],'2月2日'],
+['環境日','哪一天是世界水資源日？',['3月22日','3月21日','5月22日','6月8日'],'3月22日'],
+['環境日','哪一天是世界環境日？',['6月5日','4月22日','6月8日','10月16日'],'6月5日'],
+['環境日','哪一天是國際生物多樣性日？',['5月22日','6月5日','2月2日','9月18日'],'5月22日'],
+['氣候法','哪一個年份的溫室氣體淨零排放被《氣候變遷因應法》寫入法律？',['2050年','2030年','2035年','2040年'],'2050年'],
+['氣候法','排放者依碳排放量繳交給政府的費用，講義稱為？',['碳費','水費','能源費','碳盤查'],'碳費'],
+['氣候法','企業盤點自身溫室氣體排放量並辦理登錄，講義以「記帳」比喻。這是？',['碳盤查','公正轉型','氣候調適','自然碳匯'],'碳盤查'],
+['氣候法','紅樹林、海草床、鹽沼等沿海／海洋濕地生態系統儲存的碳，屬於？',['藍碳','綠碳','黃碳','黑碳'],'藍碳'],
+['數值與效應','冷氣的 EER 值，在講義的判斷原則是？',['越高越好','越低越好','接近0最好','沒有關係'],'越高越好'],
+['數值與效應','評估水庫水質優養程度的指標，會用透明度、葉綠素 a、總磷計算。是哪一個？',['卡爾森指數 CTSI','BOD','COD','EER'],'卡爾森指數 CTSI'],
+['數值與效應','城市區域因人類活動使溫度明顯高於周邊農村，稱為？',['熱島效應','雨除作用','輻射冷卻效應','溫室效應'],'熱島效應'],
+['數值與效應','透過降雨方式淨化空氣中的污染物，講義稱為？',['雨除作用','背風渦流','酸雨','輻射冷卻效應'],'雨除作用'],
+['疾病','與工業廢水中的砷有關、臺灣西南沿海特有的疾病是哪一項？',['烏腳病','痛痛病','水俣病','AIDS'],'烏腳病'],
+['疾病','與鎘中毒有關，發生於日本富山縣，會造成骨骼軟化及腎功能衰竭。是哪一項？',['痛痛病','水俣病','烏腳病','AIDS'],'痛痛病'],
+['疾病','與汞中毒有關，1956 年左右發生於日本熊本縣水俣市附近。是哪一項？',['水俣病','痛痛病','烏腳病','AIDS'],'水俣病'],
+['火災','木製品、紙纖維、棉、布、橡膠、塑膠等普通可燃物發生的火災，屬於？',['A類','B類','C類','D類'],'A類'],
+['火災','石油、乙烷、乙炔或可燃性油脂造成的火災，屬於？',['B類','A類','C類','D類'],'B類'],
+['火災','通電中的電器、變壓器、電線、配電盤引起的火災，屬於？',['C類','A類','B類','D類'],'C類'],
+['火災','鎂、鉀、鋰、鋯、鈦等活性金屬燃燒，屬於？',['D類','A類','B類','C類'],'D類'],
+['外來種','講義稱為「綠色癌症」的外來植物是？',['小花蔓澤蘭','布袋蓮','銀膠菊','馬纓丹'],'小花蔓澤蘭'],
+['外來種','依講義，哪一項的來源地列為南美洲？',['福壽螺','巴西龜','松材線蟲','藍孔雀'],'福壽螺'],
+['外來種','依講義，哪一項的來源地列為日本及東南亞？',['松材線蟲','紅火蟻','巴西龜','美國螯蝦'],'松材線蟲'],
+['AQI','AQI 0～50 對應哪一組？',['Good／良好／綠','Moderate／普通／黃','Unhealthy／紅','Hazardous／褐紅'],'Good／良好／綠'],
+['AQI','AQI 101～150 對應哪一組？',['Unhealthy for Sensitive Groups／橘','Good／綠','Very Unhealthy／紫','Moderate／黃'],'Unhealthy for Sensitive Groups／橘'],
+['AQI','AQI 201～300 對應哪一組？',['Very Unhealthy／紫','Unhealthy／紅','Hazardous／褐紅','Moderate／黃'],'Very Unhealthy／紫'],
+['AQI','AQI 301～500 時，講義的狀態是？',['Hazardous／危害／褐紅','Good／良好／綠','Unhealthy／紅','Moderate／黃'],'Hazardous／危害／褐紅']
+,
+["國際公約", "有害廢棄物跨境移動與處置主要是哪一項公約？", ["巴塞爾公約", "MARPOL", "CITES", "拉姆薩爾公約"], "巴塞爾公約"],
+["國際公約", "濕地保育與合理利用最常對應哪一項？", ["拉姆薩爾公約", "蒙特婁議定書", "京都議定書", "MARPOL"], "拉姆薩爾公約"],
+["國際公約", "船舶油污、污水與廢棄物管制最符合哪一項？", ["MARPOL", "CITES", "CBD", "巴塞爾公約"], "MARPOL"],
+["國際公約", "野生動植物國際貿易主要由哪一項公約管制？", ["CITES／華盛頓公約", "拉姆薩爾公約", "維也納公約", "UNCLOS"], "CITES／華盛頓公約"],
+["國際公約", "逐步削減 CFCs 最直接對應哪一項？", ["蒙特婁議定書", "巴塞爾公約", "MARPOL", "里約宣言"], "蒙特婁議定書"],
+["國際公約", "臭氧層研究、資訊交流與共同對策最符合哪一項？", ["維也納公約", "CITES", "MARPOL", "倫敦廢棄物投棄公約"], "維也納公約"],
+["標章與水足跡", "產品上的 CO2 與腳印圖示主要揭露什麼？", ["碳足跡", "水足跡", "AQI", "BOD"], "碳足跡"],
+["標章與水足跡", "節能標章主要提醒消費者選擇哪類產品？", ["較省能源的產品", "較耗水的產品", "較高污染的產品", "較高碳排的產品"], "較省能源的產品"],
+["標章與水足跡", "省水標章最主要強調哪一件事？", ["提高用水效率", "增加用水量", "提高排水溫度", "增加地下水開採"], "提高用水效率"],
+["標章與水足跡", "環保標章核心概念較接近哪一組？", ["低污染、省資源、可回收", "高耗能、高污染", "增加一次性用品", "增加廢棄物"], "低污染、省資源、可回收"],
+["標章與水足跡", "綠色水足跡主要來自哪一類水？", ["降雨儲存在土壤中的水", "自來水管線用水", "海水", "污水處理後排放水"], "降雨儲存在土壤中的水"],
+["標章與水足跡", "灰色水足跡主要與哪一件事有關？", ["污染稀釋或淨化所需水量", "雨水直接供植物使用", "飲用水消耗量", "海水淡化量"], "污染稀釋或淨化所需水量"],
+["2050淨零", "2050淨零核心概念是什麼？", ["溫室氣體排放與移除達平衡", "完全停止所有工業", "只使用石油", "停止所有交通"], "溫室氣體排放與移除達平衡"],
+["2050淨零", "太陽光電主要利用哪一種自然能量？", ["太陽能", "潮汐能", "地熱能", "核能"], "太陽能"],
+["2050淨零", "森林吸收二氧化碳形成的碳匯屬於哪一類？", ["自然碳匯", "人工廢棄物", "水足跡", "AQI"], "自然碳匯"],
+["2050淨零", "CCUS 中的 C 指哪一種氣體？", ["二氧化碳", "氧氣", "氮氣", "臭氧"], "二氧化碳"],
+["塑膠1-7", "哪一種塑膠代號是 PP？", ["5", "3", "6", "7"], "5"],
+["塑膠1-7", "寶特瓶最常見的塑膠代號是？", ["1 PET", "3 PVC", "5 PP", "6 PS"], "1 PET"],
+["塑膠1-7", "哪一種塑膠代號是 PVC？", ["3", "1", "4", "7"], "3"],
+["塑膠1-7", "第 6 號 PS 常見的發泡材質是什麼？", ["保麗龍", "寶特瓶", "雨衣", "水管"], "保麗龍"],
+["環境日", "世界地球日是哪一天？", ["4月22日", "6月5日", "3月22日", "10月16日"], "4月22日"],
+["環境日", "世界環境日是哪一天？", ["6月5日", "4月22日", "3月21日", "9月18日"], "6月5日"],
+["環境日", "世界海洋日是哪一天？", ["6月8日", "5月22日", "2月2日", "10月13日"], "6月8日"],
+["環境日", "世界水資源日是哪一天？", ["3月22日", "4月22日", "6月5日", "9月18日"], "3月22日"],
+["氣候法", "氣候變遷因應法主要處理哪一項議題？", ["氣候變遷與溫室氣體減量", "塑膠分類", "水質監測日期", "野生動植物貿易"], "氣候變遷與溫室氣體減量"],
+["氣候法", "氣候法中的減量工作主要與哪一類氣體有關？", ["溫室氣體", "氮氣", "氧氣", "氦氣"], "溫室氣體"],
+["數值與效應", "BOD 升高通常代表分解有機物需要更多什麼？", ["氧氣", "氮氣", "鹽分", "光線"], "氧氣"],
+["數值與效應", "DO 是水中的哪一項指標？", ["溶氧", "化學需氧量", "懸浮固體", "總氮"], "溶氧"],
+["數值與效應", "SS 主要代表哪一類物質？", ["懸浮固體", "溶解氧", "有機氮", "臭氧"], "懸浮固體"],
+["數值與效應", "COD 中的 C 代表什麼？", ["Chemical／化學", "Carbon／碳", "Climate／氣候", "Clean／清潔"], "Chemical／化學"],
+["疾病", "病媒蚊孳生最需要避免哪種環境？", ["積水", "乾燥沙地", "高山岩壁", "乾淨草坪"], "積水"],
+["疾病", "登革熱主要透過哪一類昆蟲傳播？", ["病媒蚊", "蜱", "蒼蠅", "蜜蜂"], "病媒蚊"],
+["火災", "森林火災時風勢增強通常會造成什麼影響？", ["火勢可能更快延燒", "火勢一定立即熄滅", "溫度一定下降", "煙霧一定消失"], "火勢可能更快延燒"],
+["外來種", "外來種可能造成哪項環境問題？", ["與原生種競爭資源", "一定增加生物多樣性", "一定改善水質", "一定增加森林面積"], "與原生種競爭資源"],
+["AQI", "AQI 0～50 對應哪種旗幟顏色？", ["綠旗", "黃旗", "紅旗", "紫旗"], "綠旗"],
+["AQI", "AQI 151～200 對應哪種空污旗？", ["紅旗", "橘旗", "紫旗", "褐紅旗"], "紅旗"],
+["水污染", "水中 DO 降低時水生生物可能面臨什麼問題？", ["缺氧", "光合作用增加", "水溫一定下降", "鹽度一定降低"], "缺氧"],
+["水污染", "BOD 上升、耗氧上升時 DO 通常如何？", ["下降", "上升", "不變", "先變成 SS"], "下降"],
+["水污染", "氮、磷過多容易造成哪種水質問題？", ["優養化", "酸雨", "臭氧洞", "熱島效應"], "優養化"]
+,
+["水污染","水污染中的 SS 增加，通常表示水中哪一類物質增加？",["懸浮固體","溶解氧","二氧化碳","臭氧"],"懸浮固體"],
+["AQI","AQI 101～150 的旗幟顏色是哪一種？",["橘旗","綠旗","黃旗","紫旗"],"橘旗"]
+];;
+let extMode='solo',extQuiz=[],extIndex=0,extScore=0,extSelected=null,extDuoNames=['女兒','媽媽'],extDuoScores=[0,0],extDuoTurn=0;
+function showMainQuiz(){const b=[...document.querySelectorAll('.tab')].find(x=>x.textContent.includes('選擇題'));show('quiz',b||document.querySelector('.tab'));}
+function setExtMode(mode){extMode=mode;document.getElementById('extSoloBtn').classList.toggle('active',mode==='solo');document.getElementById('extDuoBtn').classList.toggle('active',mode==='duo');document.getElementById('extDuoSetup').style.display=mode==='duo'?'flex':'none';document.getElementById('extDuoScore').style.display=mode==='duo'?'block':'none';if(mode==='solo')startExtSolo();else{document.getElementById('extArea').innerHTML='<div class="q">👩‍👧 100題親子競賽</div><div class="explain">請輸入兩位玩家名稱，按「開始親子競賽」。每一題兩人都回答同一題，按「確定送出」後才計分。</div>';document.getElementById('extDuoScore').innerHTML='👧 女兒 0 分　｜　👩 家長 0 分';}}
+function startExtSolo(){extMode='solo';extQuiz=shuffle(EXTENDED_QUIZ).slice(0,100);extIndex=0;extScore=0;document.getElementById('extTotal').textContent=extQuiz.length;document.getElementById('extBank').textContent=EXTENDED_QUIZ.length;document.getElementById('extDuoSetup').style.display='none';document.getElementById('extDuoScore').style.display='none';document.getElementById('extSoloBtn').classList.add('active');document.getElementById('extDuoBtn').classList.remove('active');showExtSolo();}
+function showExtSolo(){if(extIndex>=extQuiz.length){document.getElementById('extBar').style.width='100%';document.getElementById('extArea').innerHTML=`<div class="q">🎊 100題完成！</div><div class="explain">本回合得分：<b>${extScore} / ${extQuiz.length}</b></div>`;return;}const item=extQuiz[extIndex];extSelected=null;document.getElementById('extNo').textContent=extIndex+1;document.getElementById('extScore').textContent=extScore;document.getElementById('extBar').style.width=(extIndex/extQuiz.length*100)+'%';document.getElementById('extArea').innerHTML=`<span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="extConfirm" class="action" disabled>✅ 確定送出</button><div id="extResult" class="result"></div>`;const bs=[...document.querySelectorAll('#extArea .opt')],cf=document.getElementById('extConfirm');bs.forEach(btn=>btn.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');extSelected=btn;cf.disabled=false;}));cf.addEventListener('click',()=>{if(!extSelected)return;const ok=extSelected.textContent.trim()===item[3];if(ok){extScore++;document.getElementById('extResult').innerHTML='✅ 答對！';extSelected.classList.add('correct');bs.forEach(x=>x.disabled=true);cf.disabled=true;extIndex++;setTimeout(showExtSolo,650);}else{document.getElementById('extResult').innerHTML='❌ 答錯了！可以重新選擇後再送出。';extSelected.classList.add('wrong');extSelected=null;cf.disabled=true;}});}
+function startExtDuo(){extDuoNames=[document.getElementById('extPlayerA').value.trim()||'女兒',document.getElementById('extPlayerB').value.trim()||'媽媽'];extQuiz=shuffle(EXTENDED_QUIZ).slice(0,100);extIndex=0;extDuoScores=[0,0];extDuoTurn=0;extMode='duo';document.getElementById('extTotal').textContent=extQuiz.length;document.getElementById('extBank').textContent=EXTENDED_QUIZ.length;updateExtDuoScore();showExtDuo();}
+function updateExtDuoScore(){document.getElementById('extDuoScore').innerHTML=`👧 ${extDuoNames[0]}：${extDuoScores[0]} 分　｜　👩 ${extDuoNames[1]}：${extDuoScores[1]} 分　｜　現在輪到：<b>${extDuoNames[extDuoTurn]}</b>`;}
+function showExtDuo(){if(extIndex>=extQuiz.length){const r=extDuoScores[0]===extDuoScores[1]?'🤝 平手！':extDuoScores[0]>extDuoScores[1]?`🏆 ${extDuoNames[0]} 得分較高！`:`🏆 ${extDuoNames[1]} 得分較高！`;document.getElementById('extArea').innerHTML=`<div class="q">🎊 親子競賽完成</div><div class="explain">${r}<br>${extDuoNames[0]}：${extDuoScores[0]} 分　｜　${extDuoNames[1]}：${extDuoScores[1]} 分</div>`;return;}const item=extQuiz[extIndex];extSelected=null;document.getElementById('extNo').textContent=extIndex+1;document.getElementById('extBar').style.width=(extIndex/extQuiz.length*100)+'%';updateExtDuoScore();document.getElementById('extArea').innerHTML=`<span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="small">📌 第 ${extIndex+1} 題｜現在輪到：<b>${extDuoNames[extDuoTurn]}</b></div><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="extConfirm" class="action" disabled>✅ 確定送出</button><div id="extResult" class="result"></div>`;const bs=[...document.querySelectorAll('#extArea .opt')],cf=document.getElementById('extConfirm');bs.forEach(btn=>btn.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');extSelected=btn;cf.disabled=false;}));cf.addEventListener('click',()=>{if(!extSelected)return;const ok=extSelected.textContent.trim()===item[3];document.getElementById('extResult').innerHTML=ok?'✅ 答對！':'❌ 答錯！';if(ok)extDuoScores[extDuoTurn]++;bs.forEach(x=>x.disabled=true);cf.disabled=true;setTimeout(()=>{extDuoTurn=extDuoTurn===0?1:0;if(extDuoTurn===0)extIndex++;showExtDuo();},650);});}
 renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
 </script>
 </body>
