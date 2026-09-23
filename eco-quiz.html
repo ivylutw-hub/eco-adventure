@@ -604,36 +604,48 @@ async function liveSignIn(){
  liveUser=u;return u;
 }
 async function liveGoogleLogin(){
- if(!liveInit())return null;
+ if(!liveInit())throw new Error('Firebase 初始化失敗');
  if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
- // 先接回 Google redirect 登入結果。
- try{
-   const redirectResult=await liveAuth.getRedirectResult();
-   if(redirectResult&&redirectResult.user){liveUser=redirectResult.user;return liveUser;}
- }catch(e){
-   console.error('Firebase redirect result:',e);
-   throw e;
- }
  const provider=new firebase.auth.GoogleAuthProvider();
  provider.setCustomParameters({prompt:'select_account'});
- // Android / iPhone / iPad 優先使用 redirect，避免行動瀏覽器擋住 popup。
- const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
- if(isMobile){
-   sessionStorage.setItem('ecoLivePending','1');
-   await liveAuth.signInWithRedirect(provider);
-   return null;
- }
+ // 直接由使用者點擊按鈕時，優先 Popup；若瀏覽器阻擋，再改用 Redirect。
  try{
    const r=await liveAuth.signInWithPopup(provider);
-   liveUser=r.user;
-   return liveUser;
+   if(r&&r.user){liveUser=r.user;return r.user;}
  }catch(e){
-   if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code)){
+   console.warn('Google popup login:',e);
+   const fallbackCodes=['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request','auth/popup-closed-by-user'];
+   if(!fallbackCodes.includes(e.code)) throw e;
+   try{
      sessionStorage.setItem('ecoLivePending','1');
      await liveAuth.signInWithRedirect(provider);
      return null;
+   }catch(re){
+     console.error('Google redirect login:',re);
+     throw re;
    }
-   throw e;
+ }
+ return null;
+}
+
+async function liveManualGoogleLogin(mode,action){
+ const panel=document.getElementById(mode==='main'?'mainLivePanel':'extLivePanel');
+ if(panel)panel.innerHTML='<b>🔐 正在開啟 Google 登入…</b><br><span class="small">請稍候，若瀏覽器跳出 Google 視窗，請選擇你的帳號。</span>';
+ try{
+   const u=await liveGoogleLogin();
+   if(u){
+     if(action==='create') await liveCreateRoom(mode); else await liveShowJoin(mode);
+     return;
+   }
+   // Redirect 模式會離開本頁；若瀏覽器沒有離開，顯示明確提示。
+   setTimeout(()=>{
+     const p=document.getElementById(mode==='main'?'mainLivePanel':'extLivePanel');
+     if(p) p.innerHTML='<b>🔐 Google 登入尚未完成</b><br>如果沒有跳出 Google 登入頁面，請確認 Chrome 沒有封鎖彈出視窗，並確認 Firebase 已將 GitHub Pages 網域加入「授權網域」。<br><button class="action" type="button" onclick="liveManualGoogleLogin(\''+mode+'\',\''+action+'\')">🔑 再次登入 Google</button>';
+   },1200);
+ }catch(e){
+   console.error(e);
+   const msg=liveEsc(e.code?e.code+'｜'+(e.message||''):e.message||'Google 登入失敗');
+   if(panel)panel.innerHTML='<div class="live-error">⚠️ Google 登入失敗<br><b>'+msg+'</b><br><span class="small">請確認 Firebase Authentication 已啟用 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span><br><button class="action" type="button" onclick="liveManualGoogleLogin(\''+mode+'\',\''+action+'\')">🔑 再次登入 Google</button></div>';
  }
 }
 
