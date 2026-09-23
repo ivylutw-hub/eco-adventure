@@ -606,22 +606,30 @@ async function liveSignIn(){
 async function liveGoogleLogin(){
  if(!liveInit())return null;
  if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
- // GitHub Pages / Android Chrome 對 popup 常會阻擋；改用 redirect 時，
- // 必須等重新導向回頁面後再取得 currentUser，不能立即判斷為 null。
+ // 先接回 Google redirect 登入結果。
  try{
    const redirectResult=await liveAuth.getRedirectResult();
    if(redirectResult&&redirectResult.user){liveUser=redirectResult.user;return liveUser;}
  }catch(e){
-   console.warn('Firebase redirect result:',e);
+   console.error('Firebase redirect result:',e);
+   throw e;
  }
  const provider=new firebase.auth.GoogleAuthProvider();
  provider.setCustomParameters({prompt:'select_account'});
+ // Android / iPhone / iPad 優先使用 redirect，避免行動瀏覽器擋住 popup。
+ const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+ if(isMobile){
+   sessionStorage.setItem('ecoLivePending','1');
+   await liveAuth.signInWithRedirect(provider);
+   return null;
+ }
  try{
    const r=await liveAuth.signInWithPopup(provider);
    liveUser=r.user;
    return liveUser;
  }catch(e){
    if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code)){
+     sessionStorage.setItem('ecoLivePending','1');
      await liveAuth.signInWithRedirect(provider);
      return null;
    }
@@ -640,6 +648,7 @@ async function liveWaitForAuth(timeoutMs=12000){
    const timer=setTimeout(()=>finish(null),timeoutMs);
  });
 }
+
 function liveRoomCode(){return Math.random().toString(36).slice(2,7).toUpperCase();}
 function livePanel(mode,html){const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel'];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML=html;}});}
 function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
@@ -653,7 +662,7 @@ async function openLiveMatch(mode,action){
    // redirect 登入會先離開本頁；回來後 currentUser 可能晚一點才恢復。
    if(!u)u=await liveWaitForAuth();
    if(!u){
-     livePanel(mode,'<b>🔐 需要 Google 登入</b><br>登入完成後，請再點一次「建立」或「加入」。<br><span class="small">若手機沒有跳出登入視窗，系統會改用 Google 導向登入。</span>');
+     livePanel(mode,'<b>🔐 Google 登入尚未完成</b><br>請先完成 Google 登入；如果沒有跳轉，請再按一次下面按鈕。<br><button class="action" type="button" onclick="openLiveMatch(\''+mode+'\',\''+action+'\')">🔑 重新登入 Google</button>');
      return;
    }
    liveUser=u;
