@@ -14,7 +14,8 @@
 .water-entry:hover{background:#dff3fa}
 .panel{background:#fff;border-radius:22px;padding:20px;box-shadow:0 5px 20px #0001}.panel h2{margin-top:0}.note{background:#fff8df;border-radius:15px;padding:12px;line-height:1.65;margin-top:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#fff;border-radius:18px;padding:16px;border:2px solid #e1ece7;box-shadow:0 3px 13px #0000000b}.card h3{margin:5px 0 8px}.tag{display:inline-block;background:#edf6f1;padding:5px 9px;border-radius:9px;font-weight:800}.memory{margin-top:9px;color:#5c7068;font-weight:700;line-height:1.6}
 .match{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.matchcol{background:#f8fcfa;border-radius:18px;padding:14px}.matchitem{padding:13px;margin:8px 0;border:2px solid #d7e7df;border-radius:13px;background:#fff;cursor:pointer;font-weight:800;line-height:1.5}.matchitem.sel{border-color:var(--gold);background:#fff7e7}.matchitem.done{opacity:.4;background:#e9f7ee;pointer-events:none}.barbg{height:10px;background:#dce9e3;border-radius:99px;overflow:hidden}.bar{height:100%;background:#55a879;width:0}.msg{min-height:28px;margin:12px 0;font-weight:900}.actions{text-align:center;margin-top:13px}.action{border:0;border-radius:12px;padding:11px 16px;background:var(--g);color:#fff;font-weight:900;cursor:pointer}.action.secondary{background:#e7f0ec;color:#245642}
-.q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
+.q{font-size:22px;font-weight:900;line-height:1.65;margin:12px 0}.opts{display:grid;gap:9px}.opt.selected{outline:3px solid #2aa879;background:#e8f8f0;transform:translateY(-1px)}
+.opt{border:2px solid #dce9e3;background:#fff;border-radius:13px;padding:13px;text-align:left;font-size:17px;font-weight:700;cursor:pointer;line-height:1.5}.opt.correct{border-color:#4a9a6e;background:#e9f7ee}.opt.wrong{border-color:#d66c5d;background:#fff0ed}.result{min-height:30px;margin:12px 0;font-weight:900;line-height:1.6}.explain{background:#edf7f1;border-radius:13px;padding:12px;line-height:1.65}
 .plastic-card{background:linear-gradient(135deg,#f8fffb,#f2f7ff);border:2px solid #cfe5d9}.plastic-code{font-size:30px;font-weight:950;letter-spacing:1px;margin:4px 0}.plastic-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.plastic-meta span{background:#fff;border:1px solid #d8e7df;border-radius:999px;padding:4px 8px;font-size:13px;font-weight:800}.use{margin-top:7px;line-height:1.55}.small{font-size:13px;color:#6b7e76}.danger{color:#a14b3d}.good{color:#176447}
 
 /* V8.6：標章實圖＋水足跡實圖＋AQI 空污旗 */
@@ -41,7 +42,7 @@
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
-<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V8.7 標章實圖＋水足跡實圖強化版</b></p>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V8.9 對對碰雙向選擇＋選擇題需確認送出</b></p>
 <div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
 <nav class="tabs">
@@ -71,7 +72,7 @@
 <div class="note">🧠 <b>出題原則：</b>選擇題盡量不把答案的公約名稱、英文縮寫或分類名稱直接放進題幹；改用「內容、數字、情境、特徵」辨識。對對碰也會把兩側內容分開並隨機排列；選「塑膠1～7」時，左側會改成只顯示英文縮寫，專練縮寫→特性→用途。</div>
 </section>
 <section id="match" class="view">
-<div class="panel"><h2>🎮 講義重點對對碰</h2><p>先選左邊，再找右邊對應內容。答錯不直接顯示答案，必須重新判斷。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
+<div class="panel"><h2>🎮 講義重點對對碰</h2><p>左邊或右邊都可以先按，再找另一邊的對應內容；答錯後可以重新作答。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
 <section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
@@ -273,13 +274,13 @@ const QUIZ=[
 ['AQI','AQI 301～500 時，講義的狀態是？',['Hazardous／危害／褐紅','Good／良好／綠','Unhealthy／紅','Moderate／黃'],'Hazardous／危害／褐紅']
 ];
 
-let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部';
+let points=0,matchSet=[],mSel=null,mDone=0,mScore=0,quiz=[],qi=0,qs=0,filter='全部',qSelected=null,qTotal=10;
 const cats=['全部',...Object.keys(TOPICS)];
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function save(){document.getElementById('points').textContent=points}
 function show(id,btn){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(id==='guide')renderGuide();if(id==='match')newMatch();if(id==='quiz')startQuiz()}
 function renderFilters(){document.getElementById('filters').innerHTML=cats.map(c=>`<button class="filter ${filter===c?'active':''}" onclick="setFilter('${c.replaceAll("'","\\'")}')">${c==='全部'?'全部':TOPICS[c]}</button>`).join('')}
-function setFilter(c){filter=c;renderFilters();renderGuide()}
+function setFilter(c){filter=c;renderFilters();renderGuide();if(document.getElementById('quiz')?.classList.contains('active'))startQuiz()}
 function renderTopicSections(){
  const root=document.getElementById('topicSections');
  if(!root) return;
@@ -370,14 +371,90 @@ if(filter==='塑膠1-7'){
 }
 let source=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);if(source.length<8)source=GUIDE;return shuffle(source).slice(0,8).map(x=>({id:x[0]+'|'+x[1],left:x[1],right:x[3]}))
 }
-function newMatch(){matchSet=makePairs();mSel=null;mDone=0;mScore=0;document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickLeft(this,'${esc(x.id)}')">${x.left}</div>`).join('');document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}" onclick="pickRight(this,'${esc(x.id)}')">${x.right}</div>`).join('');document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';document.querySelector('#match .matchcol:last-child h3').textContent=filter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';updateMatch();document.getElementById('mMsg').textContent='先選左邊，再找右邊最符合的內容。'}
-function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','&quot;')}
-function pickLeft(el,id){document.querySelectorAll('#mLeft .matchitem').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');mSel=id;document.getElementById('mMsg').textContent='現在找右邊對應內容。'}
-function pickRight(el,id){if(!mSel){document.getElementById('mMsg').textContent='請先選左邊。';return}if(id===mSel){document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>x.classList.add('done'));mDone++;mScore+=2;points+=2;save();mSel=null;document.getElementById('mMsg').textContent='🎉 配對成功！';updateMatch();if(mDone===8)document.getElementById('mMsg').textContent='🏆 本回合完成！'}else{el.classList.remove('sel');document.getElementById('mMsg').textContent='再想一下：不要只看名稱，要看核心內容。'}}
+function newMatch(){
+  matchSet=makePairs(); mSel=null; mDone=0; mScore=0;
+  document.getElementById('mLeft').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.left}</div>`).join('');
+  document.getElementById('mRight').innerHTML=shuffle(matchSet).map(x=>`<div class="matchitem" data-id="${esc(x.id)}">${x.right}</div>`).join('');
+  document.querySelector('#match .matchcol:first-child h3').textContent=filter==='塑膠1-7'?'左邊｜英文縮寫':'左邊｜名稱／項目';
+  document.querySelector('#match .matchcol:last-child h3').textContent=filter==='塑膠1-7'?'右邊｜特性＋常用用途':'右邊｜特性／核心內容';
+  document.querySelectorAll('#mLeft .matchitem').forEach(el=>el.addEventListener('click',()=>pickMatch(el,'left')));
+  document.querySelectorAll('#mRight .matchitem').forEach(el=>el.addEventListener('click',()=>pickMatch(el,'right')));
+  updateMatch(); document.getElementById('mMsg').textContent='左邊或右邊都可以先按，再找另一邊的對應內容。';
+}
+function esc(s){return s.replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('\"','&quot;')}
+function pickMatch(el,side){
+  if(el.classList.contains('done')) return;
+  const id=el.dataset.id;
+  if(!mSel){
+    mSel={id,side};
+    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
+    el.classList.add('sel');
+    document.getElementById('mMsg').textContent=side==='left'?'已選左邊，現在找右邊對應內容。':'已選右邊，現在找左邊對應名稱。';
+    return;
+  }
+  if(mSel.side===side){
+    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
+    el.classList.add('sel'); mSel={id,side};
+    document.getElementById('mMsg').textContent=side==='left'?'已換成新的左邊項目，請找右邊。':'已換成新的右邊內容，請找左邊。';
+    return;
+  }
+  if(id===mSel.id){
+    document.querySelectorAll(`.matchitem[data-id="${CSS.escape(id)}"]`).forEach(x=>{x.classList.remove('sel');x.classList.add('done')});
+    mDone++; mScore+=2; points+=2; save(); mSel=null; updateMatch();
+    document.getElementById('mMsg').textContent=mDone===8?'🏆 本回合完成！':'🎉 配對成功！繼續下一組。';
+  }else{
+    el.classList.remove('sel');
+    document.getElementById('mMsg').textContent='❌ 配對不符，再試一次。';
+    const chosen=mSel; mSel=null;
+    document.querySelectorAll('#mLeft .matchitem,#mRight .matchitem').forEach(x=>x.classList.remove('sel'));
+  }
+}
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/8*100)+'%'}
-function startQuiz(){quiz=shuffle(QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=QUIZ.length;showQ()}
-function showQ(){if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map(o=>`<button class="opt" onclick="answerQ(this,${JSON.stringify(o)},${JSON.stringify(answer)})">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`}
-function answerQ(btn,choice,answer){document.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(choice===answer){btn.classList.add('correct');qs++;points++;save();document.getElementById('qResult').innerHTML='✅ 答對！';}else{btn.classList.add('wrong');document.querySelectorAll('.opt').forEach(x=>{if(x.textContent===answer)x.classList.add('correct')});document.getElementById('qResult').innerHTML=`💡 正確答案：<b>${answer}</b>`}qi++;setTimeout(showQ,850)}
+function startQuiz(){
+  const source=filter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===filter);
+  quiz=shuffle(source).slice(0,10); qi=0; qs=0; qTotal=quiz.length;
+  document.getElementById('qTotal').textContent=qTotal;
+  document.getElementById('bankSize').textContent=source.length;
+  if(!qTotal){document.getElementById('qArea').innerHTML=`<div class="q">📚 ${TOPICS[filter]||filter}</div><div class="explain">目前這個主題還沒有設定選擇題，請先選其他主題。</div>`;document.getElementById('qBar').style.width='0%';return;}
+  showQ();
+}
+function showQ(){
+  if(qi>=qTotal){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / ${qTotal}</p><div class="explain">${qs>=Math.ceil(qTotal*0.9)?'你已經把這個主題的關鍵辨識點掌握得很好。':qs>=Math.ceil(qTotal*0.7)?'主要觀念掌握不錯，可以再針對錯題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}
+  const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];
+  document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qTotal?qi/qTotal*100:0)+'%';
+  qSelected=null;
+  document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="small">📌 本回合主題：${TOPICS[topic]}</div><div class="q">${question}</div><div class="opts">${shuffle(opts).map((o,i)=>`<button type="button" class="opt" data-choice-index="${i}">${o}</button>`).join('')}</div><button type="button" id="qConfirm" class="action" disabled>✅ 確定送出</button><div id="qResult" class="result"></div>`;
+  const buttons=[...document.querySelectorAll('#qArea .opt')];
+  const confirm=document.getElementById('qConfirm');
+  buttons.forEach(btn=>btn.addEventListener('click',()=>{
+    if(btn.disabled) return;
+    buttons.forEach(x=>x.classList.remove('selected'));
+    btn.classList.add('selected');
+    qSelected=btn;
+    confirm.disabled=false;
+  }));
+  confirm.addEventListener('click',()=>answerQ(qSelected,answer));
+}
+function answerQ(btn,answer){
+  const result=document.getElementById('qResult');
+  const confirm=document.getElementById('qConfirm');
+  if(!btn || btn.disabled) return;
+  const choice=btn.textContent.trim();
+  if(choice===answer){
+    document.querySelectorAll('#qArea .opt').forEach(x=>x.disabled=true);
+    confirm.disabled=true;
+    btn.classList.remove('selected');
+    btn.classList.add('correct'); qs++; points++; save(); result.innerHTML='✅ 答對！';
+    qi++; setTimeout(showQ,850);
+  }else{
+    btn.classList.remove('selected');
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    qSelected=null;
+    confirm.disabled=true;
+    result.innerHTML='❌ 答錯了，再試一次！請重新選擇答案，再按「確定送出」。';
+  }
+}
 renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
 </script>
 </body>
