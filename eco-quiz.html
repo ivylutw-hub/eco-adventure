@@ -621,24 +621,22 @@ async function liveGoogleLogin(){
  if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
  const provider=new firebase.auth.GoogleAuthProvider();
  provider.setCustomParameters({prompt:'select_account'});
- // 直接由使用者點擊按鈕時，優先 Popup；若瀏覽器阻擋，再改用 Redirect。
+ // GitHub Pages + firebaseapp.com 的 redirect 流程在新版 Chrome 可能因第三方儲存空間分割而失敗。
+ // 因此這裡刻意只使用「由使用者按鈕觸發」的 Popup，不再 fallback 到 signInWithRedirect。
  try{
    const r=await liveAuth.signInWithPopup(provider);
    if(r&&r.user){liveUser=r.user;return r.user;}
+   throw new Error('Google 登入沒有回傳使用者');
  }catch(e){
    console.warn('Google popup login:',e);
-   const fallbackCodes=['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request','auth/popup-closed-by-user'];
-   if(!fallbackCodes.includes(e.code)) throw e;
-   try{
-     sessionStorage.setItem('ecoLivePending','1');
-     await liveAuth.signInWithRedirect(provider);
-     return null;
-   }catch(re){
-     console.error('Google redirect login:',re);
-     throw re;
+   if(e && e.code==='auth/popup-blocked'){
+     throw new Error('Chrome 封鎖了 Google 登入視窗。請允許此網站的彈出式視窗後，再按一次「重新登入 Google」。');
    }
+   if(e && e.code==='auth/popup-closed-by-user'){
+     throw new Error('Google 登入視窗已關閉，請重新按「重新登入 Google」。');
+   }
+   throw e;
  }
- return null;
 }
 
 async function liveManualGoogleLogin(mode,action){
@@ -650,11 +648,8 @@ async function liveManualGoogleLogin(mode,action){
      if(action==='create') await liveCreateRoom(mode); else await liveShowJoin(mode);
      return;
    }
-   // Redirect 模式會離開本頁；若瀏覽器沒有離開，顯示明確提示。
-   setTimeout(()=>{
-     const p=document.getElementById(mode==='main'?'mainLivePanel':'extLivePanel');
-     if(p) p.innerHTML='<b>🔐 Google 登入尚未完成</b><br>如果沒有跳出 Google 登入頁面，請確認 Chrome 沒有封鎖彈出視窗，並確認 Firebase 已將 GitHub Pages 網域加入「授權網域」。<br><button class="action" type="button" onclick="liveManualGoogleLogin(\''+mode+'\',\''+action+'\')">🔑 再次登入 Google</button>';
-   },1200);
+   const p=document.getElementById(mode==='main'?'mainLivePanel':'extLivePanel');
+   if(p) p.innerHTML='<b>🔐 Google 登入尚未完成</b><br>請確認 Chrome 沒有封鎖彈出式視窗；如果剛才的 Google 視窗被關閉，請再按一次。<br><button class="action" type="button" onclick="liveManualGoogleLogin(\''+mode+'\',\''+action+'\')">🔑 重新登入 Google</button>';
  }catch(e){
    console.error(e);
    const msg=liveEsc(e.code?e.code+'｜'+(e.message||''):e.message||'Google 登入失敗');
