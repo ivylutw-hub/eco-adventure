@@ -95,9 +95,9 @@
 </div>
 </section>
 <section id="extension" class="view"><div class="panel extension-panel"><div class="extension-head"><div><div class="extension-kicker">LECTURE EXTENSION TRAINING</div><h2>🌱 講義延伸特訓｜100 題</h2><p>這 100 題是依講義重點設計的延伸題，獨立於原本的「選擇題挑戰」。</p></div><button class="back-mini" type="button" onclick="showMainQuiz()">← 回到原選擇題</button></div><div class="extension-modes"><button class="ext-mode active" id="extSoloBtn" type="button" onclick="setExtMode('solo')">🧑 單人練習</button><button class="ext-mode family" id="extDuoBtn" type="button" onclick="setExtMode('duo')">👩‍👧 親子競賽</button></div><div class="live-card"><h3>📱📱 100題雙裝置即時對戰</h3><div>兩位玩家各自登入帳號，使用同一房間代碼加入。每題各自選答案並按「確定送出」，雙方都提交後才揭曉結果。</div><div class="live-actions"><button class="action" type="button" onclick="openLiveMatch('ext','create')">🏠 建立100題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','join')">🔑 加入100題房間</button></div></div><div id="extLivePanel" class="live-status" style="display:none"></div><div id="extDuoSetup" class="ext-duo-setup" style="display:none"><label>👧 女兒 <input id="extPlayerA" value="沄芯"></label><label>👩 家長 <input id="extPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startExtDuo()">🏁 開始親子競賽</button></div><div id="extDuoScore" class="ext-duo-score" style="display:none"></div><div class="stats"><span class="pill">第 <b id="extNo">1</b> / <b id="extTotal">100</b> 題</span><span class="pill">得分 <b id="extScore">0</b></span><span class="pill">題庫 <b id="extBank">100</b> 題</span></div><div class="barbg"><div class="bar" id="extBar"></div></div><div id="extArea"></div><div class="actions"><button class="action secondary" type="button" onclick="startExtSolo()">🔄 重新開始100題</button></div></div></section>
-<script src="https://www.gstatic.com/firebasejs/10.2.11/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.2.11/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.2.11/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyfK9tkoAiJze67VWfRS9npemczS_SM",authDomain:"eco-adventure-v7.firebaseapp.com",projectId:"eco-adventure-v7",storageBucket:"eco-adventure-v7.firebasestorage.app",messagingSenderId:"352564849902",appId:"1:352564849902:web:203ad20d9fa955690cd7ff"};</script>
 <script>
 const TOPICS={
@@ -594,8 +594,21 @@ function showExtDuo(){if(extIndex>=extQuiz.length){const r=extDuoScores[0]===ext
 let liveAuth=null,liveDb=null,liveUser=null,liveUnsub=null,liveRoom=null,liveRole=null,liveMode=null,liveLocalQuiz=[],liveHostAnswers=[],liveLastDoc=null;
 function liveEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function liveInit(){
- if(liveAuth)return true;
- try{if(!firebase.apps.length)firebase.initializeApp(window.ECO_FIREBASE_CONFIG);liveAuth=firebase.auth();liveDb=firebase.firestore();return true}catch(e){console.error(e);return false;}
+ if(liveAuth&&liveDb)return true;
+ try{
+   if(typeof firebase==='undefined') throw new Error('Firebase SDK 未載入。請確認 GitHub Pages 可以連線到 www.gstatic.com。');
+   if(!window.ECO_FIREBASE_CONFIG) throw new Error('Firebase 設定未載入（ECO_FIREBASE_CONFIG）。');
+   if(!firebase.apps.length){ firebase.initializeApp(window.ECO_FIREBASE_CONFIG); }
+   liveAuth=firebase.auth();
+   liveDb=firebase.firestore();
+   if(!liveAuth||!liveDb) throw new Error('Firebase Authentication 或 Firestore 未載入。');
+   return true;
+ }catch(e){
+   console.error('liveInit failed:',e);
+   const msg=liveEsc(e&&e.message?e.message:String(e));
+   ['mainLivePanel','entryMainLivePanel','extLivePanel','entryExtLivePanel'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML='<div class="live-error">⚠️ Firebase 初始化失敗<br><b>'+msg+'</b><br><span class="small">請重新整理頁面；若仍失敗，請檢查 GitHub Pages 是否能載入 Firebase SDK。</span></div>';}});
+   return false;
+ }
 }
 async function liveSignIn(){
  if(!liveInit())throw new Error('Firebase 初始化失敗');
