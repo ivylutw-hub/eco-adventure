@@ -606,11 +606,39 @@ async function liveSignIn(){
 async function liveGoogleLogin(){
  if(!liveInit())return null;
  if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
- const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
- try{const r=await liveAuth.signInWithPopup(provider);liveUser=r.user;return liveUser;}catch(e){
-  if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(e.code)){await liveAuth.signInWithRedirect(provider);return null;}
-  throw e;
+ // GitHub Pages / Android Chrome 對 popup 常會阻擋；改用 redirect 時，
+ // 必須等重新導向回頁面後再取得 currentUser，不能立即判斷為 null。
+ try{
+   const redirectResult=await liveAuth.getRedirectResult();
+   if(redirectResult&&redirectResult.user){liveUser=redirectResult.user;return liveUser;}
+ }catch(e){
+   console.warn('Firebase redirect result:',e);
  }
+ const provider=new firebase.auth.GoogleAuthProvider();
+ provider.setCustomParameters({prompt:'select_account'});
+ try{
+   const r=await liveAuth.signInWithPopup(provider);
+   liveUser=r.user;
+   return liveUser;
+ }catch(e){
+   if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code)){
+     await liveAuth.signInWithRedirect(provider);
+     return null;
+   }
+   throw e;
+ }
+}
+
+// 手機使用 redirect 登入返回本頁後，等待 Firebase 完成登入狀態還原。
+async function liveWaitForAuth(timeoutMs=12000){
+ if(!liveInit())return null;
+ if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
+ return await new Promise(resolve=>{
+   let done=false;
+   const finish=u=>{if(done)return;done=true;clearTimeout(timer);un();liveUser=u||null;resolve(u||null);};
+   const un=liveAuth.onAuthStateChanged(u=>{if(u)finish(u);});
+   const timer=setTimeout(()=>finish(null),timeoutMs);
+ });
 }
 function liveRoomCode(){return Math.random().toString(36).slice(2,7).toUpperCase();}
 function livePanel(mode,html){const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel'];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML=html;}});}
@@ -620,8 +648,16 @@ function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:it
 function liveRoomRef(code){return liveDb.collection('liveMatches').doc(code);}
 async function openLiveMatch(mode,action){
  liveMode=mode;
- try{await liveGoogleLogin(); if(!liveAuth.currentUser){livePanel(mode,'<b>正在開啟 Google 登入…</b><br>登入完成後請再點一次「建立」或「加入」。');return;} liveUser=liveAuth.currentUser;
-  if(action==='create') await liveCreateRoom(mode); else await liveShowJoin(mode);
+ try{
+   let u=await liveGoogleLogin();
+   // redirect 登入會先離開本頁；回來後 currentUser 可能晚一點才恢復。
+   if(!u)u=await liveWaitForAuth();
+   if(!u){
+     livePanel(mode,'<b>🔐 需要 Google 登入</b><br>登入完成後，請再點一次「建立」或「加入」。<br><span class="small">若手機沒有跳出登入視窗，系統會改用 Google 導向登入。</span>');
+     return;
+   }
+   liveUser=u;
+   if(action==='create') await liveCreateRoom(mode); else await liveShowJoin(mode);
  }catch(e){console.error(e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'登入或連線失敗')}<br><span class="small">請確認 Firebase Authentication 已開啟 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span></div>`);}
 }
 async function liveShowJoin(mode){
