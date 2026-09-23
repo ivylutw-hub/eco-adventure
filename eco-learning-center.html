@@ -421,24 +421,40 @@ function showQ(){
   if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}
   const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];
   document.getElementById('qNo').textContent=qi+1;document.getElementById('qScore').textContent=qs;document.getElementById('qBar').style.width=(qi/10*100)+'%';
-  document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map((o,i)=>`<button type="button" class="opt" data-choice-index="${i}">${o}</button>`).join('')}</div><div id="qResult" class="result"></div>`;
+  document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[topic]}</span><div class="q">${question}</div><div class="opts">${shuffle(opts).map((o,i)=>`<button type="button" class="opt" data-choice-index="${i}">${o}</button>`).join('')}</div><button type="button" id="mainConfirm" class="action" disabled>✅ 確定送出</button><div id="qResult" class="result"></div>`;
+  let selected=null;
   const buttons=[...document.querySelectorAll('#qArea .opt')];
-  buttons.forEach(btn=>btn.addEventListener('click',()=>answerQ(btn,btn.textContent,answer)));
+  const confirm=document.getElementById('mainConfirm');
+  buttons.forEach(btn=>btn.addEventListener('click',()=>{
+    buttons.forEach(x=>x.classList.remove('selected'));
+    btn.classList.add('selected');
+    selected=btn;
+    confirm.disabled=false;
+    document.getElementById('qResult').innerHTML='';
+  }));
+  confirm.addEventListener('click',()=>{
+    if(!selected) return;
+    answerQ(selected,selected.textContent.trim(),answer,confirm,buttons);
+  });
 }
-function answerQ(btn,choice,answer){
+function answerQ(btn,choice,answer,confirm,buttons){
   const result=document.getElementById('qResult');
-  if(btn.disabled) return;
-  if(choice===answer){
-    document.querySelectorAll('#qArea .opt').forEach(x=>x.disabled=true);
-    btn.classList.add('correct'); qs++; points++; save(); result.innerHTML='✅ 答對！';
+  if(!btn || btn.disabled) return;
+  const ok=choice===answer;
+  btn.classList.remove('selected');
+  btn.classList.add(ok?'correct':'wrong');
+  if(ok){
+    buttons.forEach(x=>x.disabled=true);
+    confirm.disabled=true;
+    qs++; points++; save(); result.innerHTML='✅ 答對！';
     qi++; setTimeout(showQ,850);
   }else{
-    btn.classList.add('wrong');
+    result.innerHTML='❌ 答錯了，可以重新選擇後再按「確定送出」。';
     btn.disabled=true;
-    result.innerHTML='❌ 答錯了，再試一次！';
+    confirm.disabled=true;
+    selected=null;
   }
 }
-
 const EXTENDED_QUIZ=[
 ['國際公約','某危險化學品準備出口到另一國，出口前必須讓進口國取得資訊並作出同意決定。這項制度最符合哪一項？',['鹿特丹公約','京都議定書','拉姆薩爾公約','MARPOL'],'鹿特丹公約'],
 ['國際公約','某國際制度的重點是危險廢棄物跨境移動，並要求越境移動事前通報。最符合哪一項？',['巴塞爾公約','維也納公約','CITES','里約宣言'],'巴塞爾公約'],
