@@ -41,7 +41,7 @@
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
-<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V8.6 標章圖示＋水足跡圖示強化版</b></p>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V8.7 標章實圖＋水足跡實圖強化版</b></p>
 <div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
 <nav class="tabs">
@@ -51,24 +51,6 @@
 </nav>
 <section id="guide" class="view active">
 <div class="filters" id="filters"></div>
-<div class="panel" id="allTopicsPanel" style="margin-bottom:14px">
-<h2>📌 本次講義更新總覽</h2>
-<p>這一版不是只更新塑膠。以下內容都已依你的《環境知識競賽快速攻略本115微調》納入「重點圖鑑＋對對碰＋選擇題」：</p>
-<div class="grid">
-<article class="card"><span class="tag">🏷️ 標章與水足跡</span><h3>碳標籤／節能／省水／環保標章</h3><div class="memory">＋四種標章實圖、藍／綠／灰色水足跡實圖與各自判斷情境。</div></article>
-<article class="card"><span class="tag">♻️ 塑膠 1～7</span><h3>PET～Other 完整比較</h3><div class="memory">＋英文縮寫、耐熱、特性、常用用途、注意事項；第7類 Other 另列 PC、PLA、Tritan。</div></article>
-<article class="card"><span class="tag">🌱 2050 淨零</span><h3>12 項關鍵戰略</h3><div class="memory">＋風光電、前瞻能源、儲能、CCUS、氫能、運輸、綠生活、碳匯、循環經濟、綠色金融、公正轉型等。</div></article>
-<article class="card"><span class="tag">📅 特定日期</span><h3>環境相關紀念日</h3><div class="memory">＋2/2、3/21、3/22、4/22、5/22、6/5、6/8、9/18、9月第三週末、10/13、10/16。</div></article>
-<article class="card"><span class="tag">⚖️ 氣候法</span><h3>《氣候變遷因應法》</h3><div class="memory">＋2050淨零、碳費、自主減量、基金、碳盤查、綠／藍／黃碳、調適、公正轉型、環境部。</div></article>
-<article class="card"><span class="tag">💧 水污染</span><h3>BOD／COD／DO／SS＋TN／TP</h3><div class="memory">＋優養化、藻華、赤潮與「BOD ↑ → 耗氧 ↑ → DO ↓」完整圖解、對對碰及選擇題。</div></article>
-<article class="card"><span class="tag">📊 數值與效應</span><h3>EER、BOD、COD、CTSI</h3><div class="memory">＋溫室效應、輻射冷卻、都市熱島、雨除等講義重點。</div></article>
-<article class="card"><span class="tag">🩺 疾病</span><h3>AIDS、烏腳病、痛痛病、水俣病</h3><div class="memory">＋病因、污染物、地點與傳播途徑辨識。</div></article>
-<article class="card"><span class="tag">🔥 火災</span><h3>A～D 類</h3><div class="memory">＋普通可燃物、油類／可燃液體、電氣、活性金屬與處理方式。</div></article>
-<article class="card"><span class="tag">🐢 外來種</span><h3>植物＋動物來源地</h3><div class="memory">＋講義列出的外來種與原產地配對題。</div></article>
-<article class="card"><span class="tag">🌤️ AQI</span><h3>0～500 六級</h3><div class="memory">＋數值、英文名稱、顏色與健康影響辨識。</div></article><article class="card" style="border:2px solid #4d9bc5;background:#f4fcff"><span class="tag">💧 水污染</span><h3>BOD／COD／DO／SS／TN／TP</h3><div class="memory">＋優養化、藻華、赤潮，以及「BOD ↑ → 耗氧 ↑ → DO ↓」完整圖解、對對碰與選擇題。</div></article>
-</div>
-<div class="note">💧 <b>新增水污染專區：</b>請點上方「💧 水污染」，即可看到 BOD、COD、DO、SS、TN、TP、優養化、藻華、赤潮與完整因果圖；切換到「🎮 對對碰」或「🏆 選擇題」後，也會依水污染主題出題。<br><br>💡 <b>使用方式：</b>先看「全部」可以確認所有主題；再點上方主題按鈕，就會看到該主題的完整資料。塑膠主題會另外展開 1～7 完整比較表。</div>
-</div>
 <div id="plasticQuick" class="panel" style="display:none;margin-bottom:14px">
 <h2>♻️ 塑膠 1～7｜完整對照表＋英文縮寫速記</h2>
 <p>這一區專門練「英文縮寫 → 特性 → 常用用途」。內容依你的競賽講義整理，不另外加入講義外的分類。</p>
@@ -366,8 +348,6 @@ function renderGuide(){
   let a=filter==='全部'?GUIDE:GUIDE.filter(x=>x[0]===filter);
   a=sortGuideData(a);
   if(filter==='標章與水足跡') a=a.filter(x=>x[0]!=='標章與水足跡');
-  const overview=document.getElementById('allTopicsPanel');
-  if(overview) overview.style.display=(filter==='全部')?'block':'none';
   const baseWater=document.querySelector('.water-memory-panel');
   if(baseWater) baseWater.style.display=(filter==='水污染')?'block':'none';
   const pq=document.getElementById('plasticQuick');
