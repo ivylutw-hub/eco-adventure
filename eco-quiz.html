@@ -670,7 +670,11 @@ async function liveWaitForAuth(timeoutMs=12000){
 }
 
 function liveRoomCode(){return Math.random().toString(36).slice(2,7).toUpperCase();}
-function livePanel(mode,html){const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel'];ids.forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML=html;}});}
+function livePanel(mode,html){
+ const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel'];
+ ids.forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML=html;}});
+ // 兩個入口區塊會同步顯示同一個表單，因此可能存在兩個相同 ID；liveGetInputValue() 會優先讀取目前可見或已填寫的欄位。
+}
 function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
 function liveQuestions(mode){return mode==='main'?shuffle(QUIZ).slice(0,10):shuffle(EXTENDED_QUIZ).slice(0,100);}
 function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:item[2],index:0};}
@@ -698,18 +702,25 @@ async function liveCreateRoom(mode){
  const defaultName=liveUser.displayName||'玩家1';
  livePanel(mode,`<b>🏠 建立${mode==='ext'?'100題':''}對戰房間</b><div class="live-form"><input id="liveHostName" maxlength="12" value="${liveEsc(defaultName)}" placeholder="你的暱稱"><button class="action" onclick="liveCreateRoomNow('${mode}')">建立房間</button></div><div class="small">建立後把房間代碼傳給另一位玩家。</div>`);
 }
+function liveGetInputValue(id,fallback=''){
+ const els=[...document.querySelectorAll('#'+id)];
+ const visible=els.find(el=>{const style=getComputedStyle(el);return style.display!=='none' && style.visibility!=='hidden' && el.getClientRects().length>0;});
+ const filled=els.find(el=>String(el.value||'').trim()!=='');
+ return String((visible||filled)?.value||fallback);
+}
+
 async function liveCreateRoomNow(mode){
- const name=(document.getElementById('liveHostName').value||liveUser.displayName||'玩家1').trim().slice(0,12)||'玩家1';
+ const name=(liveGetInputValue('liveHostName',liveUser.displayName||'玩家1')).trim().slice(0,12)||'玩家1';
  const code=liveRoomCode();const quiz=liveQuestions(mode);const first=quiz[0];
  liveLocalQuiz=quiz;liveHostAnswers=quiz.map(x=>x[3]);sessionStorage.setItem('liveHost_'+code,JSON.stringify({quiz,mode}));
  const data={version:'V9.9',mode,status:'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),host:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0},guest:null,questionNo:0,question:liveQuestionPayload(first),result:null};
  await liveRoomRef(code).set(data);liveRoom=code;liveRole='host';liveListen(code,mode);liveRenderWaiting();
 }
 async function liveJoinRoom(mode){
- const rawCode=(document.getElementById('liveJoinCode').value||'');
+ const rawCode=liveGetInputValue('liveJoinCode','');
  const code=rawCode.normalize('NFKC').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,5);
- const name=(document.getElementById('liveJoinName').value||liveUser.displayName||'玩家2').trim().slice(0,12)||'玩家2';
- if(code.length!==5){livePanel(mode,`<div class="live-error">請輸入5碼英數房間代碼。<br><span class="small">目前讀到 ${liveEsc(code||'（空白）')}，請確認房間代碼共有5碼。</span></div>`);return;}
+ const name=(liveGetInputValue('liveJoinName',liveUser.displayName||'玩家2')).trim().slice(0,12)||'玩家2';
+ if(code.length!==5){livePanel(mode,`<div class="live-error">請輸入5碼英數房間代碼。<br><span class="small">目前讀到「${liveEsc(code||'（空白）')}」。請把第一台裝置顯示的5碼房間代碼完整貼上。</span></div>`);return;}
  const ref=liveRoomRef(code);const snap=await ref.get();if(!snap.exists){livePanel(mode,'<div class="live-error">找不到這個房間，請確認代碼。</div>');return;}
  const d=snap.data();if(d.mode!==mode){livePanel(mode,'<div class="live-error">這個房間的題型不同，請加入相同類型的房間。</div>');return;}if(d.guest&&d.guest.uid!==liveUser.uid){livePanel(mode,'<div class="live-error">這個房間已經有第二位玩家。</div>');return;}
  await ref.update({guest:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0}});liveRoom=code;liveRole='guest';liveListen(code,mode);liveRenderWaiting();
