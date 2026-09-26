@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>環保知識競賽｜講義強化中心 V9.9.1｜雙裝置帳號即時對戰</title>
+<title>環保知識競賽｜講義強化中心 V10.1｜30題主題／綜合雙裝置對戰</title>
 <style>
 :root{--g:#237653;--dg:#16382b;--bg:#eef8f3;--gold:#e7a536;--red:#c85c4b;--white:#fff;--blue:#4d78a8}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
@@ -43,14 +43,18 @@
 #live.live-in-match .live-entry-card > h3,
 #live.live-in-match .live-entry-card > p,
 #live.live-in-match .live-entry-card > .live-entry-actions { display:none; }
+#live.live-in-match.live-mode-main .live-entry-card:not(:nth-child(2)),
+#live.live-in-match.live-mode-ext .live-entry-card:not(:nth-child(3)),
+#live.live-in-match.live-mode-battle30 .live-entry-card:not(:nth-child(1)) { display:none; }
 #live.live-in-match.live-mode-main .live-entry-card:nth-child(2),
-#live.live-in-match.live-mode-ext .live-entry-card:nth-child(1) { display:none; }
-#live.live-in-match.live-mode-main .live-entry-card:nth-child(1),
-#live.live-in-match.live-mode-ext .live-entry-card:nth-child(2) { grid-column:1 / -1; }
+#live.live-in-match.live-mode-ext .live-entry-card:nth-child(3),
+#live.live-in-match.live-mode-battle30 .live-entry-card:nth-child(1) { grid-column:1 / -1; }
 #live.live-in-match .live-entry-grid { grid-template-columns:1fr; }
 #live.live-in-match .live-entry-panel > p,
 #live.live-in-match .live-entry-panel > .note { display:none; }
 #live.live-in-match .live-entry-panel { padding:14px; }
+
+.live-battle-result{margin-top:12px;padding:12px;border-radius:14px;background:#f7fbf8;border:1px solid #cfe4d8}.live-battle-result strong{font-size:18px}.live-correct-answer{margin-top:12px;padding:10px;border-radius:10px;background:#fff8df}.live-entry-card h3{margin-bottom:6px}
 </style>
 
 <style>
@@ -65,7 +69,7 @@
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
-<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V9.9.1＋🌱循環經濟 × 永續 × 淨零三區整合</b></p>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V10.0＋🌱循環經濟 × 永續 × 淨零三區整合＋30題對戰</b></p>
 <div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
 <nav class="tabs">
@@ -110,6 +114,7 @@
 <h2>📱📱 雙裝置即時對戰</h2>
 <p>不用另外記網址。從上方這個入口就可以直接開始；兩位玩家各自使用自己的手機、平板或電腦，並各自登入 Google 帳號。</p>
 <div class="live-entry-grid">
+<div class="live-entry-card"><h3>🌟 30題主題／綜合即時對戰 NEW</h3><p>可選「🌏 綜合全部主題」或指定一個主題。房主選好範圍後，系統依房主選擇的主題隨機抽30題；每題雙方都送出後，先顯示兩人的作答與答對／答錯，確認後才揭曉正確答案，最後進入下一題。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('battle30','create')">🏠 建立30題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('battle30','join')">🔑 加入30題房間</button></div><div id="battle30LivePanel" class="live-status" style="display:none"></div></div>
 <div class="live-entry-card"><h3>🏆 10題即時對戰</h3><p>適合快速挑戰一回合。每題先選答案，按「確定送出」後才提交，雙方都送出後才揭曉。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('main','create')">🏠 建立10題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('main','join')">🔑 加入10題房間</button></div><div id="entryMainLivePanel" class="live-status" style="display:none"></div></div>
 <div class="live-entry-card"><h3>🌱 100題即時對戰</h3><p>直接挑戰「講義延伸100題」。雙方答案各自保留，兩人都送出後才同時揭曉結果。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('ext','create')">🏠 建立100題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','join')">🔑 加入100題房間</button></div><div id="entryExtLivePanel" class="live-status" style="display:none"></div></div>
 </div>
@@ -799,38 +804,62 @@ async function liveWaitForAuth(timeoutMs=12000){
 
 function liveRoomCode(){return Math.random().toString(36).slice(2,7).toUpperCase();}
 function livePanel(mode,html){
- const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel'];
+ const ids=mode==='main'?['mainLivePanel','entryMainLivePanel']:mode==='ext'?['extLivePanel','entryExtLivePanel']:['battle30LivePanel'];
  ids.forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML=html;}});
  // 兩個入口區塊會同步顯示同一個表單，因此可能存在兩個相同 ID；liveGetInputValue() 會優先讀取目前可見或已填寫的欄位。
 }
-function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
-function liveQuestions(mode){return mode==='main'?shuffle(QUIZ).slice(0,10):shuffle(EXTENDED_QUIZ).slice(0,100);}
+function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:mode==='ext'?['extLivePanel','entryExtLivePanel']:['battle30LivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+function liveQuestions(mode,topic='全部'){
+ const base=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ const source=topic==='全部'?base:base.filter(x=>x[0]===topic);
+ const pool=source.length?source:base;
+ const count=mode==='battle30'?30:mode==='ext'?100:10;
+ let out=shuffle(pool).slice(0,Math.min(pool.length,count));
+ while(out.length<count){ out.push(...shuffle(pool).slice(0,Math.min(pool.length,count-out.length))); }
+ return out.slice(0,count);
+}
 function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:item[2],index:0};}
 function liveRoomRef(code){return liveDb.collection('liveMatches').doc(code);}
 async function openLiveMatch(mode,action){
  liveMode=mode;
  const liveSection=document.getElementById('live');
- if(liveSection){ liveSection.classList.add('live-in-match'); liveSection.classList.toggle('live-mode-main',mode==='main'); liveSection.classList.toggle('live-mode-ext',mode==='ext'); }
+ if(liveSection){ liveSection.classList.add('live-in-match'); liveSection.classList.toggle('live-mode-main',mode==='main'); liveSection.classList.toggle('live-mode-ext',mode==='ext'); liveSection.classList.toggle('live-mode-battle30',mode==='battle30'); }
  try{
    let u=await liveGoogleLogin();
-   // redirect 登入會先離開本頁；回來後 currentUser 可能晚一點才恢復。
    if(!u)u=await liveWaitForAuth();
    if(!u){
      livePanel(mode,'<b>🔐 Google 登入尚未完成</b><br>請先完成 Google 登入；如果沒有跳轉，請再按一次下面按鈕。<br><button class="action" type="button" onclick="openLiveMatch(\''+mode+'\',\''+action+'\')">🔑 重新登入 Google</button>');
      return;
    }
    liveUser=u;
-   if(action==='create') await liveCreateRoom(mode); else await liveShowJoin(mode);
+   if(action==='create'){ liveShowTopicChooser(mode); return; }
+   if(action==='join') await liveShowJoin(mode);
  }catch(e){console.error(e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'登入或連線失敗')}<br><span class="small">請確認 Firebase Authentication 已開啟 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span></div>`);}
 }
+function liveShowTopicChooser(mode){
+ const opts=['全部',...Object.keys(TOPICS)].map(t=>`<option value="${liveEsc(t)}">${liveEsc(t==='全部'?'🌏 綜合全部主題':TOPICS[t])}</option>`).join('');
+ const count=mode==='battle30'?30:mode==='ext'?100:10;
+ const title=mode==='battle30'?'🌟 建立30題即時對戰':mode==='ext'?'🌱 建立100題即時對戰':'🏆 建立10題即時對戰';
+ livePanel(mode,`<b>${title}</b><div class="live-form"><label>題目範圍　<select id="liveBattleTopic" style="padding:10px 12px;border:1px solid #c8dad4;border-radius:10px;font-size:16px">${opts}</select></label><input id="liveHostName" maxlength="12" value="${liveEsc(liveUser.displayName||'玩家1')}" placeholder="你的暱稱"><button class="action" onclick="liveCreateBattle('${mode}')">🏠 建立房間</button></div><div class="small">可選「🌏 綜合全部主題」或指定主題。系統會從所選題庫隨機產生 ${count} 題；每題雙方都送出後，<b>先顯示兩人的作答與答對／答錯</b>，接著顯示正確答案，最後由房主進入下一題。</div>`);
+}
+async function liveCreateBattle(mode){
+ const topic=liveGetInputValue('liveBattleTopic','全部')||'全部';
+ const name=(liveGetInputValue('liveHostName',liveUser.displayName||'玩家1')).trim().slice(0,12)||'玩家1';
+ const code=liveRoomCode(); const quiz=liveQuestions(mode,topic); const first=quiz[0];
+ liveLocalQuiz=quiz;liveHostAnswers=quiz.map(x=>x[3]);sessionStorage.setItem('liveHost_'+code,JSON.stringify({quiz,mode,topic}));
+ const data={version:'V10.0',mode,topic,status:'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),host:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0},guest:null,questionNo:0,question:liveQuestionPayload(first),result:null};
+ await liveRoomRef(code).set(data);liveRoom=code;liveRole='host';liveListen(code,mode);liveRenderWaiting();
+}
+async function liveCreateBattle30(){ return liveCreateBattle('battle30'); }
 async function liveShowJoin(mode){
- livePanel(mode,`<b>🔑 加入${mode==='ext'?'100題':''}對戰房間</b><div class="live-form"><input id="liveJoinCode" maxlength="5" placeholder="輸入5碼房間代碼" autocomplete="off" autocapitalize="characters" spellcheck="false"><input id="liveJoinName" maxlength="12" placeholder="你的暱稱"><button class="action" onclick="liveJoinRoom('${mode}')">加入房間</button></div><div class="small">例如：A7K2P。請把房主顯示的5碼代碼貼到上面的欄位，再按「加入房間」。</div>`);
+ const label=mode==='ext'?'100題':mode==='battle30'?'30題':'10題';
+ livePanel(mode,`<b>🔑 加入${label}對戰房間</b><div class="live-form"><input id="liveJoinCode" maxlength="5" placeholder="輸入5碼房間代碼" autocomplete="off" autocapitalize="characters" spellcheck="false"><input id="liveJoinName" maxlength="12" placeholder="你的暱稱"><button class="action" onclick="liveJoinRoom('${mode}')">加入房間</button></div><div class="small">請把房主顯示的5碼代碼貼到上面的欄位，再按「加入房間」。30題對戰的題目範圍會以房主設定為準。</div>`);
  const input=document.getElementById('liveJoinCode');
  if(input) input.addEventListener('input',()=>{input.value=input.value.normalize('NFKC').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,5);});
 }
 async function liveCreateRoom(mode){
  const defaultName=liveUser.displayName||'玩家1';
- livePanel(mode,`<b>🏠 建立${mode==='ext'?'100題':''}對戰房間</b><div class="live-form"><input id="liveHostName" maxlength="12" value="${liveEsc(defaultName)}" placeholder="你的暱稱"><button class="action" onclick="liveCreateRoomNow('${mode}')">建立房間</button></div><div class="small">建立後把房間代碼傳給另一位玩家。</div>`);
+ livePanel(mode,`<b>🏠 建立${mode==='ext'?'100題':'10題'}對戰房間</b><div class="live-form"><input id="liveHostName" maxlength="12" value="${liveEsc(defaultName)}" placeholder="你的暱稱"><button class="action" onclick="liveCreateRoomNow('${mode}')">建立房間</button></div><div class="small">建立後把房間代碼傳給另一位玩家。</div>`);
 }
 function liveGetInputValue(id,fallback=''){
  const els=[...document.querySelectorAll('#'+id)];
@@ -887,7 +916,7 @@ function liveRenderState(d,mode){
  if(!d)return;
  const me=d[liveRole], other=d[liveRole==='host'?'guest':'host'];
  if(!other){liveRenderWaiting();return;}
- if(d.status==='waiting'){livePanel(mode,`<div class="live-code">${liveRoom}</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(d.host.name)}</b><br>${d.host.ready?'🟢 已準備':'🟡 尚未準備'}</div><div class="live-player"><b>👤 ${liveEsc(d.guest.name)}</b><br>${d.guest.ready?'🟢 已準備':'🟡 尚未準備'}</div></div>${liveRole==='host'?'<button class="action" onclick="liveSetReady(true)">🚦 我已準備／開始</button>':'<button class="action" onclick="liveSetReady(true)">🚦 我已準備</button>'}<div class="small">房間：<b>${liveRoom}</b>　｜　${mode==='ext'?'100題模式':'10題模式'}</div>`);return;}
+ if(d.status==='waiting'){livePanel(mode,`<div class="live-code">${liveRoom}</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(d.host.name)}</b><br>${d.host.ready?'🟢 已準備':'🟡 尚未準備'}</div><div class="live-player"><b>👤 ${liveEsc(d.guest.name)}</b><br>${d.guest.ready?'🟢 已準備':'🟡 尚未準備'}</div></div>${liveRole==='host'?'<button class="action" onclick="liveSetReady(true)">🚦 我已準備／開始</button>':'<button class="action" onclick="liveSetReady(true)">🚦 我已準備</button>'}<div class="small">房間：<b>${liveRoom}</b>　｜　${mode==='battle30'?'30題模式':mode==='ext'?'100題模式':'10題模式'}${d.topic&&d.topic!=='全部'?'　｜　'+liveEsc(TOPICS[d.topic]||d.topic):'　｜　🌏 綜合'}</div>`);return;}
  if(d.status==='playing')liveRenderPlaying(d,mode);
  if(d.status==='finished')liveRenderFinished(d,mode);
 }
@@ -900,10 +929,24 @@ async function liveStartQuestion(d){
 }
 function liveRenderPlaying(d,mode){
  const q=d.question;const me=d[liveRole];const other=d[liveRole==='host'?'guest':'host'];
- let opts=(q.options||[]).map((o,i)=>`<button type="button" class="opt ${me.answer===o&&!me.submitted?'selected':''} ${d.result&&d.result.answer===o?'correct':''} ${d.result&&me.answer===o&&d.result.correctByUid&&d.result.correctByUid[liveUser.uid]===false?'wrong':''}" ${me.submitted?'disabled':''} onclick="livePick('${liveEsc(o).replace(/'/g,"&#39;")}')">${liveEsc(o)}</button>`).join('');
- let result=d.result?`<div class="result">${d.result.correctAnswer?`正確答案：<b>${liveEsc(d.result.correctAnswer)}</b><br>`:''}${d.result.correctByUid&&d.result.correctByUid[liveUser.uid]?'✅ 你答對了！':'❌ 你答錯了。'}</div>`:'';
- livePanel(mode,`<div class="small">第 ${d.questionNo+1} / ${mode==='ext'?100:10} 題　｜　你：${liveEsc(me.name)} ${me.submitted?'🟢 已送出':'🟡 作答中'}　｜　對手：${liveEsc(other.name)} ${other.submitted?'🟢 已送出':'🟡 尚未送出'}</div><div class="live-score">${liveEsc(me.name)}：${me.score||0} 分　｜　${liveEsc(other.name)}：${other.score||0} 分</div><div class="q">${liveEsc(q.text)}</div><div class="opts">${opts}</div><div class="live-answer-note">🔒 按「確定送出」前，<b>不會公布對錯</b>；兩位玩家都送出後才同時揭曉。</div><button type="button" class="action" ${me.submitted?'disabled':''} onclick="liveSubmit()">${me.submitted?'✅ 已確定送出':'✅ 確定送出'}</button>${result}${d.result&&liveRole==='host'?'<div class="actions"><button class="action" onclick="liveNextQuestion()">➡️ 下一題</button></div>':''}`);
+ const opts=(q.options||[]).map(o=>`<button type="button" class="opt ${me.answer===o&&!me.submitted?'selected':''} ${d.result&&d.result.revealAnswer&&d.result.correctAnswer===o?'correct':''} ${d.result&&d.result.revealAnswer&&me.answer===o&&d.result.correctByUid&&d.result.correctByUid[liveUser.uid]===false?'wrong':''}" ${me.submitted?'disabled':''} onclick="livePick('${liveEsc(o).replace(/'/g,'&#39;')}')">${liveEsc(o)}</button>`).join('');
+ let result='';
+ if(d.result){
+   const hostOk=!!d.result.correctByUid?.[d.host.uid], guestOk=!!d.result.correctByUid?.[d.guest.uid];
+   result=`<div class="result live-battle-result"><b>📊 本題雙方作答結果</b><div class="live-player-grid"><div class="live-player ${hostOk?'ready':''}">👤 ${liveEsc(d.host.name)}：<strong>${hostOk?'✅ 答對':'❌ 答錯'}</strong><br><span class="small">作答：${liveEsc(d.result.players?.[d.host.uid]?.answer||'未作答')}</span></div><div class="live-player ${guestOk?'ready':''}">👤 ${liveEsc(d.guest.name)}：<strong>${guestOk?'✅ 答對':'❌ 答錯'}</strong><br><span class="small">作答：${liveEsc(d.result.players?.[d.guest.uid]?.answer||'未作答')}</span></div></div>`;
+   if(d.result.revealAnswer){
+     result+=`<div class="live-correct-answer">🎯 正確答案：<b>${liveEsc(d.result.correctAnswer||'')}</b></div><div class="small">已先顯示兩位玩家的答對／答錯，再揭曉正確答案。</div>`;
+     if(liveRole==='host') result+=`<div class="actions"><button class="action" onclick="liveNextQuestion()">➡️ ${d.questionNo+1 >= (mode==='battle30'?30:mode==='ext'?100:10)?'完成本回合':'下一題'}</button></div>`;
+   }else{
+     result+=`<div class="live-answer-note">👀 先看兩位玩家答對／答錯；正確答案暫時不公布。</div>`;
+     if(liveRole==='host') result+=`<div class="actions"><button class="action" onclick="liveRevealAnswer()">🔎 顯示正確答案</button></div>`;
+     else result+=`<div class="small">⏳ 等待房主顯示正確答案。</div>`;
+   }
+   result+='</div>';
+ }
+ livePanel(mode,`<div class="small">第 ${d.questionNo+1} / ${mode==='battle30'?30:mode==='ext'?100:10} 題　｜　你：${liveEsc(me.name)} ${me.submitted?'🟢 已送出':'🟡 作答中'}　｜　對手：${liveEsc(other.name)} ${other.submitted?'🟢 已送出':'🟡 尚未送出'}</div><div class="live-score">${liveEsc(me.name)}：${me.score||0} 分　｜　${liveEsc(other.name)}：${other.score||0} 分</div><div class="q">${liveEsc(q.text)}</div><div class="opts">${opts}</div><div class="live-answer-note">🔒 按「確定送出」前，<b>不會公布對錯</b>；兩位玩家都送出後，先顯示兩人的答對／答錯，再由房主揭曉正確答案。</div><button type="button" class="action" ${me.submitted?'disabled':''} onclick="liveSubmit()">${me.submitted?'✅ 已確定送出':'✅ 確定送出'}</button>${result}`);
 }
+
 async function livePick(answer){const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(!d||d.status!=='playing'||d[liveRole].submitted)return;await liveRoomRef(liveRoom).update({[liveRole+'.answer']:answer});}
 async function liveSubmit(){
  const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(!d||d.status!=='playing')return;const me=d[liveRole];if(!me.answer){alert('請先選一個答案，再按確定送出。');return;}await liveRoomRef(liveRoom).update({[liveRole+'.submitted']:true});
@@ -911,12 +954,17 @@ async function liveSubmit(){
 async function liveResolveResult(d){
  if(liveRole!=='host'||d.result||!liveHostAnswers[d.questionNo])return;
  const correct=liveHostAnswers[d.questionNo],h=d.host.answer,g=d.guest.answer,hOk=h===correct,gOk=g===correct;
- await liveRoomRef(liveRoom).update({result:{correctAnswer:correct,answer:correct,correctByUid:{[d.host.uid]:hOk,[d.guest.uid]:gOk}},'host.score':(d.host.score||0)+(hOk?1:0),'guest.score':(d.guest.score||0)+(gOk?1:0)});
+ await liveRoomRef(liveRoom).update({result:{correctAnswer:correct,revealAnswer:false,correctByUid:{[d.host.uid]:hOk,[d.guest.uid]:gOk},players:{[d.host.uid]:{name:d.host.name,answer:h,correct:hOk},[d.guest.uid]:{name:d.guest.name,answer:g,correct:gOk}}},'host.score':(d.host.score||0)+(hOk?1:0),'guest.score':(d.guest.score||0)+(gOk?1:0)});
+}
+async function liveRevealAnswer(){
+ const snap=await liveRoomRef(liveRoom).get();const d=snap.data();
+ if(liveRole!=='host'||!d?.result||d.result.revealAnswer)return;
+ await liveRoomRef(liveRoom).update({'result.revealAnswer':true});
 }
 async function liveNextQuestion(){
  const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(liveRole!=='host'||!d.result)return;const stored=JSON.parse(sessionStorage.getItem('liveHost_'+liveRoom)||'null');if(!stored){livePanel(liveMode,'<div class="live-error">房主題庫資料已遺失，請重新建立房間。</div>');return;}const next=d.questionNo+1;if(next>=stored.quiz.length){await liveRoomRef(liveRoom).update({status:'finished'});return;}const q=stored.quiz[next];await liveRoomRef(liveRoom).update({status:'playing',questionNo:next,question:liveQuestionPayload(q),result:null,'host.submitted':false,'guest.submitted':false,'host.answer':null,'guest.answer':null});}
 function liveRenderFinished(d,mode){const a=d.host,b=d.guest;livePanel(mode,`<div class="q">🎊 對戰完成！</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(a.name)}</b><br>總分：<b>${a.score||0}</b></div><div class="live-player"><b>👤 ${liveEsc(b.name)}</b><br>總分：<b>${b.score||0}</b></div></div><div class="explain">本回合已完成。可以關閉房間或重新建立下一場比賽。</div><button class="action secondary" onclick="liveClose()">關閉對戰面板</button>`);}
-function liveClose(){if(liveUnsub)liveUnsub();liveUnsub=null;liveRoom=null;liveRole=null;liveMode=null;liveLastDoc=null;liveHide('main');liveHide('ext');const liveSection=document.getElementById('live');if(liveSection){liveSection.classList.remove('live-in-match','live-mode-main','live-mode-ext');}}
+function liveClose(){if(liveUnsub)liveUnsub();liveUnsub=null;liveRoom=null;liveRole=null;liveMode=null;liveLastDoc=null;liveHide('main');liveHide('ext');const liveSection=document.getElementById('live');if(liveSection){liveSection.classList.remove('live-in-match','live-mode-main','live-mode-ext','live-mode-battle30');}}
 
 renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
 </script>
