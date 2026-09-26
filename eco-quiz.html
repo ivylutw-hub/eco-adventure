@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>環保知識競賽｜講義強化中心｜雙裝置即時對戰</title>
+<title>環保知識競賽｜講義強化中心 V9.9.1｜雙裝置帳號即時對戰</title>
 <style>
 :root{--g:#237653;--dg:#16382b;--bg:#eef8f3;--gold:#e7a536;--red:#c85c4b;--white:#fff;--blue:#4d78a8}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf8f1,#eef5ff);color:var(--dg);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif}
@@ -51,13 +51,6 @@
 #live.live-in-match .live-entry-panel > p,
 #live.live-in-match .live-entry-panel > .note { display:none; }
 #live.live-in-match .live-entry-panel { padding:14px; }
-
-/* 循環經濟 × 永續 × 淨零專區 */
-.lecture-focus-card{margin:14px 0;padding:18px;border:2px solid #8bc6a7;border-radius:18px;background:linear-gradient(135deg,#f0fbf3,#f1f8ff);}
-.lecture-focus-card h3{margin:0 0 8px;font-size:20px;}
-.lecture-focus-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.focus-quiz-area{margin:12px 0;padding:14px;border:1px solid #d6e7df;border-radius:16px;background:#fff;}
-.live-dual-result{margin-top:12px;font-size:16px;line-height:1.8;}
 </style>
 
 <style>
@@ -72,7 +65,7 @@
 <div class="wrap">
 <section class="hero">
 <h1>♻️ 環保知識競賽｜講義強化中心</h1>
-<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V9.9.1 雙裝置帳號即時對戰＋所有選擇題確認送出</b></p>
+<p>依《環境知識競賽快速攻略本115微調》整理：先理解，再配對，再用選擇題檢查。<b style="color:#155d78">｜V9.9.1＋🌱循環經濟 × 永續 × 淨零三區整合</b></p>
 <div class="stats"><span class="pill">📚 12大主題＋英文縮寫特訓</span><span class="pill">🎮 對對碰</span><span class="pill">🏆 隨機選擇題</span><span class="pill">⭐ 積分 <b id="points">0</b></span></div>
 </section>
 <nav class="tabs">
@@ -86,6 +79,7 @@
 </nav>
 <section id="guide" class="view active">
 <div class="filters" id="filters"></div>
+<div class="panel" style="margin-bottom:14px;border-left:5px solid #5b8c5a;background:linear-gradient(135deg,#f2fbf1,#ffffff)"><div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><h3 style="margin:0 0 4px">🌱 循環經濟 × 永續 × 淨零｜重點圖鑑</h3><p style="margin:0">從循環經濟、無形文化資產、環境倫理、全民綠生活、綠色能源到2050淨零，依五年級簡明講義整理。</p></div><button class="action" type="button" onclick="setFilter('循環經濟×永續×淨零')">立即查看專區</button></div></div>
 <div id="plasticQuick" class="panel" style="display:none;margin-bottom:14px">
 <h2>♻️ 塑膠 1～7｜完整對照表＋英文縮寫速記</h2>
 <p>這一區專門練「英文縮寫 → 特性 → 常用用途」。內容依你的競賽講義整理，不另外加入講義外的分類。</p>
@@ -106,31 +100,59 @@
 <div class="note">🧠 <b>出題原則：</b>選擇題盡量不把答案的公約名稱、英文縮寫或分類名稱直接放進題幹；改用「內容、數字、情境、特徵」辨識。對對碰也會把兩側內容分開並隨機排列；選「塑膠1～7」時，左側會改成只顯示英文縮寫，專練縮寫→特性→用途。</div>
 </section>
 <section id="match" class="view">
-<div class="panel"><h2>🎮 講義重點對對碰</h2><p>左邊或右邊都可以先按，再找另一邊的對應內容；答錯後可以重新作答。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
+<div class="panel"><h2>🎮 講義重點對對碰</h2><div style="margin:10px 0;padding:10px 12px;border-radius:12px;background:#f2fbf1"><b>🌱 循環經濟 × 永續 × 淨零</b>：可從上方主題篩選後，專門練這一套講義內容。 <button class="action" type="button" onclick="setFilter('循環經濟×永續×淨零');show('match',document.querySelector('.tab:nth-child(2)'))">開始專題對對碰</button></div><p>左邊或右邊都可以先按，再找另一邊的對應內容；答錯後可以重新作答。</p><div class="stats"><span class="pill">已配對 <b id="mDone">0</b> / 8</span><span class="pill">本回合 <b id="mScore">0</b> 分</span></div><div class="barbg"><div class="bar" id="mBar"></div></div><div class="msg" id="mMsg">準備好了嗎？</div></div>
 <div class="match"><div class="matchcol"><h3>左邊｜名稱／項目</h3><div id="mLeft"></div></div><div class="matchcol"><h3>右邊｜特性／核心內容</h3><div id="mRight"></div></div></div><div class="actions"><button class="action" onclick="newMatch()">🔄 新回合</button></div>
 </section>
-<section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div class="quiz-mode-card"><b>🎮 選擇對戰方式</b><span>可以選擇單人練習、同一台裝置輪流對戰，或兩台裝置即時對戰。</span><div class="mode-switch"><button class="action" type="button" id="mainSoloBtn" onclick="setMainQuizMode('solo')">🧑 單人練習</button><button class="action secondary" type="button" id="mainDuoBtn" onclick="setMainQuizMode('duo')">👩‍👧 同一裝置親子對戰</button><button class="action secondary" type="button" onclick="openLiveMatch('main','create')">📱📱 建立雙裝置房間</button><button class="action secondary" type="button" onclick="openLiveMatch('main','join')">🔑 加入雙裝置房間</button></div></div><div id="mainDuoSetup" class="duo-setup" style="display:none"><label>👧 玩家1 <input id="mainPlayerA" value="女兒"></label><label>👩 玩家2 <input id="mainPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startMainDuo()">🏁 開始同一裝置對戰</button></div><div id="mainDuoScore" class="duo-score" style="display:none"></div><div id="mainLivePanel" class="live-status" style="display:none"></div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
+<section id="quiz" class="view"><div class="panel"><h2>🏆 選擇題挑戰</h2><div style="margin:10px 0;padding:10px 12px;border-radius:12px;background:#f2fbf1"><b>🌱 循環經濟 × 永續 × 淨零專題</b>：選擇上方主題「🌱 循環經濟 × 永續 × 淨零」，即可只練這份講義的題目。</div><div class="quiz-mode-card"><b>🎮 選擇對戰方式</b><span>可以選擇單人練習、同一台裝置輪流對戰，或兩台裝置即時對戰。</span><div class="mode-switch"><button class="action" type="button" id="mainSoloBtn" onclick="setMainQuizMode('solo')">🧑 單人練習</button><button class="action secondary" type="button" id="mainDuoBtn" onclick="setMainQuizMode('duo')">👩‍👧 同一裝置親子對戰</button><button class="action secondary" type="button" onclick="openLiveMatch('main','create')">📱📱 建立雙裝置房間</button><button class="action secondary" type="button" onclick="openLiveMatch('main','join')">🔑 加入雙裝置房間</button></div></div><div id="mainDuoSetup" class="duo-setup" style="display:none"><label>👧 玩家1 <input id="mainPlayerA" value="女兒"></label><label>👩 玩家2 <input id="mainPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startMainDuo()">🏁 開始同一裝置對戰</button></div><div id="mainDuoScore" class="duo-score" style="display:none"></div><div id="mainLivePanel" class="live-status" style="display:none"></div><div class="stats"><span class="pill">第 <b id="qNo">1</b> / <b id="qTotal">10</b> 題</span><span class="pill">得分 <b id="qScore">0</b></span><span class="pill">題庫 <b id="bankSize">0</b> 題</span></div><div class="barbg"><div class="bar" id="qBar"></div></div><div id="qArea"></div><div class="actions"><button class="action secondary" onclick="startQuiz()">🔄 重新抽題</button></div></div></section>
 </div>
 <section id="live" class="view">
 <div class="live-entry-panel">
 <h2>📱📱 雙裝置即時對戰</h2>
 <p>不用另外記網址。從上方這個入口就可以直接開始；兩位玩家各自使用自己的手機、平板或電腦，並各自登入 Google 帳號。</p>
 <div class="live-entry-grid">
-<div class="live-entry-card"><h3>🏆 30題環保知識即時對戰</h3><p>每次從環保知識題庫隨機抽出30題；每一回合題目組合可能不同。雙方都按「確定送出」後，才同時顯示雙方答對／答錯。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('main','create')">🏠 建立30題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('main','join')">🔑 加入30題房間</button></div><div id="entryMainLivePanel" class="live-status" style="display:none"></div></div>
-<div class="live-entry-card"><h3>🌱 30題講義重點即時對戰</h3><p>專門挑戰「循環經濟 × 永續 × 淨零」講義題庫。每次隨機抽30題，雙方都送出後同時顯示雙方答對／答錯。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('ext','create')">🏠 建立30題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','join')">🔑 加入30題房間</button></div><div id="entryExtLivePanel" class="live-status" style="display:none"></div></div>
+<div class="live-entry-card"><h3>🏆 10題即時對戰</h3><p>適合快速挑戰一回合。每題先選答案，按「確定送出」後才提交，雙方都送出後才揭曉。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('main','create')">🏠 建立10題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('main','join')">🔑 加入10題房間</button></div><div id="entryMainLivePanel" class="live-status" style="display:none"></div></div>
+<div class="live-entry-card"><h3>🌱 100題即時對戰</h3><p>直接挑戰「講義延伸100題」。雙方答案各自保留，兩人都送出後才同時揭曉結果。</p><div class="live-entry-actions"><button class="action" type="button" onclick="openLiveMatch('ext','create')">🏠 建立100題房間</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','join')">🔑 加入100題房間</button></div><div id="entryExtLivePanel" class="live-status" style="display:none"></div></div>
 </div>
 <div class="note">💡 <b>使用方式：</b>第一台裝置按「建立房間」，第二台裝置按「加入房間」，只要把房間代碼傳給對方即可，不需要另外記這個網頁網址。</div>
 </div>
 </section>
-<section id="extension" class="view"><div class="panel extension-panel"><div class="extension-head"><div><div class="extension-kicker">LECTURE EXTENSION TRAINING</div><h2>📚 講義學習中心</h2><p>先用講義重點理解，再進入專屬題庫練習。以下新增「循環經濟 × 永續 × 淨零」專區，題目只依這份講義整理。</p></div><button class="back-mini" type="button" onclick="showMainQuiz()">← 回到原選擇題</button></div><div class="lecture-focus-card"><div><div class="extension-kicker">LECTURE FOCUS QUIZ</div><h3>🌱 循環經濟 × 永續 × 淨零｜專屬題庫</h3><p>依你提供的五年級簡明複習講義整理。題目涵蓋循環經濟、無形文化資產、環境倫理、全民綠生活、綠色能源與2050淨零，並保留英文、縮寫與重要數字。每次對戰從專屬題庫<strong>隨機抽30題</strong>，所以每次挑戰的題目組合會不同。</p></div><div class="lecture-focus-actions"><button class="action" type="button" onclick="startFocusSolo()">🧑 開始30題單人練習</button><button class="action secondary" type="button" onclick="startFocusDuo()">👩‍👧 同一裝置30題</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','create')">📱📱 建立30題雙裝置</button><button class="action secondary" type="button" onclick="openLiveMatch('ext','join')">🔑 加入30題雙裝置</button></div></div><div id="focusArea" class="focus-quiz-area" style="display:none"></div><div class="extension-modes"><button class="ext-mode active" id="extSoloBtn" type="button" onclick="setExtMode('solo')">🧑 單人練習</button><button class="ext-mode family" id="extDuoBtn" type="button" onclick="setExtMode('duo')">👩‍👧 同一裝置親子對戰</button></div><div id="extDuoSetup" class="ext-duo-setup" style="display:none"><label>👧 玩家1 <input id="extPlayerA" value="女兒"></label><label>👩 玩家2 <input id="extPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startExtDuo()">🏁 開始100題同一裝置對戰</button></div><div id="extDuoScore" class="duo-score" style="display:none"></div><div id="extLivePanel" class="live-status" style="display:none"></div><div class="stats"><span class="pill">第 <b id="extNo">1</b> / <b id="extTotal">100</b> 題</span><span class="pill">得分 <b id="extScore">0</b></span><span class="pill">題庫 <b id="extBank">100</b> 題</span></div><div class="barbg"><div class="bar" id="extBar"></div></div><div id="extArea"></div><div class="actions"><button class="action secondary" type="button" onclick="startExtSolo()">🔄 重新開始100題</button></div></div></section>
+<section id="extension" class="view"><div class="panel extension-panel"><div class="extension-head"><div><div class="extension-kicker">LECTURE EXTENSION TRAINING</div><h2>🌱 講義延伸特訓｜100 題</h2><p>這 100 題是依講義重點設計的延伸題，獨立於原本的「選擇題挑戰」。</p></div><button class="back-mini" type="button" onclick="showMainQuiz()">← 回到原選擇題</button></div><div class="extension-modes"><button class="ext-mode active" id="extSoloBtn" type="button" onclick="setExtMode('solo')">🧑 單人練習</button><button class="ext-mode family" id="extDuoBtn" type="button" onclick="setExtMode('duo')">👩‍👧 同一裝置親子對戰</button><button class="ext-mode" type="button" onclick="openLiveMatch('ext','create')">📱📱 建立雙裝置房間</button><button class="ext-mode" type="button" onclick="openLiveMatch('ext','join')">🔑 加入雙裝置房間</button></div><div id="extDuoSetup" class="ext-duo-setup" style="display:none"><label>👧 玩家1 <input id="extPlayerA" value="女兒"></label><label>👩 玩家2 <input id="extPlayerB" value="媽媽"></label><button class="action" type="button" onclick="startExtDuo()">🏁 開始100題同一裝置對戰</button></div><div id="extDuoScore" class="duo-score" style="display:none"></div><div id="extLivePanel" class="live-status" style="display:none"></div><div class="stats"><span class="pill">第 <b id="extNo">1</b> / <b id="extTotal">100</b> 題</span><span class="pill">得分 <b id="extScore">0</b></span><span class="pill">題庫 <b id="extBank">100</b> 題</span></div><div class="barbg"><div class="bar" id="extBar"></div></div><div id="extArea"></div><div class="actions"><button class="action secondary" type="button" onclick="startExtSolo()">🔄 重新開始100題</button></div></div></section>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>window.ECO_FIREBASE_CONFIG={apiKey:"AIzaSyBYuyfK9tkoAiJze67VWfRS9npemczS_SM",authDomain:"eco-adventure-v7.firebaseapp.com",projectId:"eco-adventure-v7",storageBucket:"eco-adventure-v7.firebasestorage.app",messagingSenderId:"352564849902",appId:"1:352564849902:web:203ad20d9fa955690cd7ff"};</script>
 <script>
 const TOPICS={
-'國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI','水污染':'💧 水污染'};
+'國際公約':'🌏 國際公約','標章與水足跡':'🏷️ 標章與水足跡','2050淨零':'🌱 2050淨零','塑膠1-7':'♻️ 塑膠1～7','環境日':'📅 特定日期','氣候法':'⚖️ 氣候變遷因應法','數值與效應':'📊 數值與效應','疾病':'🩺 疾病','火災':'🔥 火災','外來種':'🐢 外來種','AQI':'🌤️ AQI','水污染':'💧 水污染','循環經濟×永續×淨零':'🌱 循環經濟 × 永續 × 淨零'};
 const GUIDE=[
+['循環經濟×永續×淨零','循環經濟','一句話：東西不要用一次就丟，要讓資源持續使用、回收與再製造。','從設計、製造、使用一路想到回收，減少資源浪費。'],
+['循環經濟×永續×淨零','線性經濟 vs. 循環經濟','線性：拿→做→用→丟；循環：設計→製造→使用→回收→再製造。','看到「用完就丟」想到線性；看到「回收、再利用、再製造」想到循環。'],
+['循環經濟×永續×淨零','快時尚 Fast Fashion','講義指出每年可能有約50個新品週期，甚至約每3天更換櫥窗。','快速推出新品容易增加不必要消費與紡織廢棄物。'],
+['循環經濟×永續×淨零','衣到衣閉環回收','舊衣→回收→纖維→新衣，讓材料重新回到紡織產業。','講義數字：成功回到紡織產業的閉環回收不到1%。'],
+['循環經濟×永續×淨零','Design for Circularity／循環設計','在產品設計時，就思考未來如何修理、使用、拆解與回收。','重點是「設計時就想好循環」。'],
+['循環經濟×永續×淨零','Mono-material／單一材質','盡量使用單一材質，讓產品比較容易拆解與回收。','看到「單一材質」就想到回收與拆解。'],
+['循環經濟×永續×淨零','紡織重要數字','97%：原生材料；73%：廢棄紡織品焚化或掩埋；<1%：衣到衣閉環回收；8～10%：紡織業全球溫室氣體排放占比。','這四個數字是競賽常見的記憶點。'],
+['循環經濟×永續×淨零','無形文化資產','不是一棟房子或一件古董，而是傳統的知識、技術、方法、習俗與實踐。','UNESCO於2003年通過《保護非物質文化遺產公約》。'],
+['循環經濟×永續×淨零','無形文化資產三大特性','集體性＋生態性＋永續性。','記住：共同傳承、順應自然、持續實踐。'],
+['循環經濟×永續×淨零','新港標旗魚','使用單點標槍、選擇性捕魚，較不破壞海底棲地。','重點：傳統智慧也能友善環境。'],
+['循環經濟×永續×淨零','Charfia／沙菲爾漁法','利用水流、地形與季節限制捕撈，讓海洋休養。','重點：順應自然並維持資源。'],
+['循環經濟×永續×淨零','環境倫理三大觀點','Anthropocentrism 人類中心；Biocentrism 生命中心；Ecocentrism 生態中心。','由「人類」→「所有生命」→「整個生態系」理解。'],
+['循環經濟×永續×淨零','Instrumental Value／工具性價值','自然因為對人類有用而具有價值。','關鍵字：對人類有用。'],
+['循環經濟×永續×淨零','Intrinsic Value／內在價值','生命本身就有價值，不必因為對人類有用才值得保護。','關鍵字：生命本身的價值。'],
+['循環經濟×永續×淨零','Planetary Boundaries／地球限度理論','講義整理9道地球限度的安全界線，並指出2023年有6／9超出安全界線。','記住：9道、6／9。'],
+['循環經濟×永續×淨零','全民綠生活','食、衣、住、行、育、樂、購都可以落實環保。','例如自備餐具、減少一次性用品與注意日常化學品安全。'],
+['循環經濟×永續×淨零','生活化學安全','鹽酸＋漂白水可能產生氯氣；G6PD缺乏症者避免萘丸相關產品；PVC保鮮膜不要微波；PTFE不乾燒、不刮傷。','這些是講義中的重要安全配對。'],
+['循環經濟×永續×淨零','綠色能源','講義列出離岸風電、太陽光電、地熱、海洋能、生質能等再生能源。','風電與太陽光電具有間歇性，因此需要儲能。'],
+['循環經濟×永續×淨零','Capacity Factor／CF 容量因子','實際發電量相對於一直滿載發電的比例。','講義數字：核能90%、燃煤85%、地熱73%、燃氣60%、離岸風42%、太陽光電15%。'],
+['循環經濟×永續×淨零','Green Hydrogen／綠氫','利用再生能源電力電解水製造氫。','講義2050氫能藍圖：58%進口、42%國內利用再生能源自產綠氫。'],
+['循環經濟×永續×淨零','2050 淨零排放','淨零不是完全沒有排放，而是排放與吸收／移除相互抵銷，使淨排放接近0。','臺灣以2050淨零排放為目標。'],
+['循環經濟×永續×淨零','四大轉型','能源轉型＋產業轉型＋生活轉型＋社會轉型。','社會轉型也包含公正轉型 Justice Transition。'],
+['循環經濟×永續×淨零','碳費與自主減量計畫','碳費：企業排放碳要付出相對應成本；自主減量計畫：企業提出減量規劃。','兩者都是淨零政策工具。'],
+['循環經濟×永續×淨零','自然碳匯','森林等自然系統吸收並儲存CO₂。','講義指出臺灣森林自然碳匯約2,000～2,200萬噸／年。'],
+['循環經濟×永續×淨零','CCUS','Carbon Capture, Utilization and Storage：捕捉、利用、封存二氧化碳。','看到CCUS就想到CO₂的捕捉、利用與封存。'],
+['循環經濟×永續×淨零','CBAM','Carbon Border Adjustment Mechanism：歐盟的碳邊境調整機制。','看到歐盟與碳邊境，就想到CBAM。'],
+['循環經濟×永續×淨零','永續發展的整體記憶圖','永續發展→循環經濟＋淨零；循環經濟→設計→製造→使用→回收。','把資源循環、生活、能源與政策連起來理解。'] ,
+
 ['國際公約','斯德哥爾摩公約','2001｜POPs','管制持久性有機污染物；講義列出 aldrin、DDT、PCBs、戴奧辛等項目。'],
 ['國際公約','生物安全議定書','2000｜LMOs','針對現代生物技術與基因改造活生物體的潛在風險；進出口建立事先告知程序。'],
 ['國際公約','鹿特丹公約','1998｜PIC','有害化學品與農藥出口前，進口國應獲得預先通報並同意。'],
@@ -265,49 +287,49 @@ const PLASTIC_ENGLISH=[
 
 // === 女兒版講義重點強化題：循環經濟 × 永續 × 淨零 ===
 const LECTURE_REINFORCEMENT_QUIZ = [
-['循環經濟','循環經濟最重要的想法是哪一個？',['東西用完就丟','讓產品繼續使用、回收與再製造','只買最新的產品','增加一次性用品'],'讓產品繼續使用、回收與再製造'],
-['循環經濟','哪一個順序最符合循環經濟的概念？',['拿→做→用→丟','設計→製造→使用→回收→再製造','購買→使用→焚燒→掩埋','製造→丟棄→再購買→丟棄'],'設計→製造→使用→回收→再製造'],
-['循環經濟','Design for Circularity（循環設計）是在什麼時候就思考產品未來如何修理、使用與回收？',['產品丟掉後','產品設計時','產品壞掉後','回收場才思考'],'產品設計時'],
-['循環經濟','Mono-material／單一材質的主要好處是什麼？',['讓產品更難拆','比較容易拆解與回收','一定讓產品變重','只能用一次'],'比較容易拆解與回收'],
-['循環經濟','舊衣服經回收變成纖維，再做成新衣服，這最符合哪個概念？',['衣到衣閉環回收','線性經濟','快時尚','一次性消費'],'衣到衣閉環回收'],
-['循環經濟','講義指出，全球能成功回到紡織產業進行「衣到衣」閉環回收的材料約多少？',['超過50%','約20%','不到1%','100%'],'不到1%'],
-['無形文化資產','UNESCO 在2003年通過的公約，與哪一項最有關？',['保護非物質文化遺產公約','京都議定書','巴塞爾公約','MARPOL'],'保護非物質文化遺產公約'],
-['無形文化資產','無形文化資產的「集體性」是什麼意思？',['只有一個人知道','社群共同擁有、共同傳承','只能寫在書上','只能保存物品'],'社群共同擁有、共同傳承'],
-['無形文化資產','傳統技術順應天氣、土地與海洋等環境發展，最符合哪個特性？',['集體性','生態性','永續性','商業性'],'生態性'],
-['無形文化資產','現在仍有人使用、實踐與傳承，代表無形文化資產具有哪個特性？',['永續性','集體性','危險性','一次性'],'永續性'],
-['無形文化資產','新港標旗魚使用單點標槍、選擇性捕魚，較不破壞海底棲地，最能說明哪個觀念？',['傳統智慧也能友善環境','大量捕魚','一次性消費','都市建設'],'傳統智慧也能友善環境'],
-['無形文化資產','Charfia／沙菲爾漁法利用水流、地形與季節限制捕撈，主要展現哪種精神？',['順應自然並讓海洋休養','全年大量捕撈','完全不考慮環境','只追求速度'],'順應自然並讓海洋休養'],
-['環境倫理','Anthropocentrism／人類中心主義認為什麼最重要？',['整個生態系','所有生命','人類','只有植物'],'人類'],
-['環境倫理','Biocentrism／生命中心主義強調什麼？',['只有人類有價值','所有生命都有價值','只有經濟有價值','只有森林有價值'],'所有生命都有價值'],
-['環境倫理','Ecocentrism／生態中心主義關心的範圍是什麼？',['只有人類','只有動物','整個生態系','只有經濟活動'],'整個生態系'],
-['環境倫理','「自然對人類有用，所以我們應該保護它」較接近哪一種價值？',['Instrumental Value／工具性價值','Intrinsic Value／內在價值','CF','CCUS'],'Instrumental Value／工具性價值'],
-['環境倫理','「生命本身就有價值，不必因為對人類有用才值得保護」較接近哪一個？',['Instrumental Value','Intrinsic Value／內在價值','Carbon Fee','Capacity Factor'],'Intrinsic Value／內在價值'],
-['環境倫理','講義把地球想成有幾道 Planetary Boundaries／地球限度的安全界線？',['5道','7道','9道','12道'],'9道'],
-['全民綠生活','下列哪一項最符合「全民綠生活」？',['自備餐具、節約用水','每天購買新衣','使用更多一次性用品','不關燈讓房間一直亮著'],'自備餐具、節約用水'],
-['全民綠生活','鹽酸與漂白水（次氯酸鈉）混合，可能產生什麼危險物質？',['氧氣','氯氣','氫氣','氮氣'],'氯氣'],
-['全民綠生活','如果是 G6PD 缺乏症（蠶豆症）者，講義提醒應避免哪一類產品？',['萘丸相關產品','紙張','玻璃杯','棉質衣服'],'萘丸相關產品'],
-['全民綠生活','PVC 保鮮膜最重要的使用提醒是什麼？',['可以直接微波','不要拿 PVC 保鮮膜微波加熱','一定要高溫加熱','越熱越安全'],'不要拿 PVC 保鮮膜微波加熱'],
-['全民綠生活','PTFE／鐵氟龍不沾鍋使用時應記住什麼？',['不乾燒、不刮傷','一定要乾燒','用金屬刀大力刮','加熱到冒煙才好用'],'不乾燒、不刮傷'],
-['全民綠生活','非農地友善除草可以採用哪一種方法？',['人工與機械除草','大量使用不明化學品','把雜草全部燒掉','任由垃圾覆蓋'],'人工與機械除草'],
-['綠色能源','下列哪一項屬於再生能源？',['離岸風電','燃煤','燃氣','柴油'],'離岸風電'],
-['綠色能源','Capacity Factor（CF）／容量因子是在比較什麼？',['實際發電量與滿載發電量的比例','電價高低','發電機重量','電池大小'],'實際發電量與滿載發電量的比例'],
-['綠色能源','依講義數字，哪一種發電方式的 CF 約為42%？',['離岸風電','太陽光電','地熱','核能'],'離岸風電'],
-['綠色能源','依講義數字，太陽光電的 CF 約為多少？',['90%','73%','42%','15%'],'15%'],
-['綠色能源','風電與太陽光電具有「間歇性」，因此通常需要搭配什麼？',['儲能','更多燃煤','更多一次性用品','更大的垃圾掩埋場'],'儲能'],
-['綠色能源','Green Hydrogen／綠氫是利用再生能源做什麼製造的？',['電解水製造氫','燃燒煤炭製造氫','把塑膠熔化成氫','把海水直接變成汽油'],'電解水製造氫'],
-['2050淨零','「淨零排放」最接近哪個意思？',['完全不能產生任何 CO₂','排放與吸收／移除互相抵銷，使淨排放接近0','只要少開燈就算淨零','只要種一棵樹就達成'],'排放與吸收／移除互相抵銷，使淨排放接近0'],
-['2050淨零','台灣把「2050 淨零排放」目標正式寫入哪一部法律？',['氣候變遷因應法','森林法','道路交通管理處罰條例','文化資產保存法'],'氣候變遷因應法'],
-['2050淨零','下列哪一組是講義的四大轉型？',['能源、產業、生活、社會','交通、教育、醫療、運動','農業、旅遊、娛樂、體育','住宅、學校、醫院、商店'],'能源、產業、生活、社會'],
-['2050淨零','Justice Transition／公正轉型最重要的精神是什麼？',['不遺落任何人','只幫助大型企業','只發展城市','只增加能源價格'],'不遺落任何人'],
-['2050淨零','碳費的基本概念是什麼？',['企業排放碳要付出相對應成本','企業排碳可以完全免費','政府把森林賣掉','只對家庭收費'],'企業排放碳要付出相對應成本'],
-['2050淨零','自然碳匯是指什麼？',['大自然吸收並儲存 CO₂','工廠製造更多 CO₂','把垃圾全部掩埋','增加燃煤發電'],'大自然吸收並儲存 CO₂'],
-['2050淨零','CCUS 的完整英文是什麼？',['Carbon Capture, Utilization and Storage','Climate Change Use and Safety','Carbon Control Under Solar','Circular Carbon Use System'],'Carbon Capture, Utilization and Storage'],
-['2050淨零','CBAM 是什麼？',['歐盟的碳邊境調整機制','台灣的省水標章','聯合國濕地公約','一種再生能源設備'],'歐盟的碳邊境調整機制'],
-['數字小抄','講義指出快時尚一年最多約有多少個新品週期？',['5個','20個','50個','100個'],'50個'],
-['數字小抄','講義指出約有多少紡織品使用原生材料？',['27%','50%','73%','97%'],'97%'],
-['數字小抄','講義指出約多少廢棄紡織品被焚化或掩埋？',['10%','30%','73%','97%'],'73%'],
-['數字小抄','原資料整理 CO₂ 濃度由約320 ppm 上升到多少以上？',['350 ppm','380 ppm','420 ppm以上','500 ppm'],'420 ppm以上'],
-['數字小抄','依講義，2023年9項 Planetary Boundaries 中有幾項超出安全負載界線？',['2/9','4/9','6/9','9/9'],'6/9']
+['循環經濟×永續×淨零','循環經濟最重要的想法是哪一個？',['東西用完就丟','讓產品繼續使用、回收與再製造','只買最新的產品','增加一次性用品'],'讓產品繼續使用、回收與再製造'],
+['循環經濟×永續×淨零','哪一個順序最符合循環經濟的概念？',['拿→做→用→丟','設計→製造→使用→回收→再製造','購買→使用→焚燒→掩埋','製造→丟棄→再購買→丟棄'],'設計→製造→使用→回收→再製造'],
+['循環經濟×永續×淨零','Design for Circularity（循環設計）是在什麼時候就思考產品未來如何修理、使用與回收？',['產品丟掉後','產品設計時','產品壞掉後','回收場才思考'],'產品設計時'],
+['循環經濟×永續×淨零','Mono-material／單一材質的主要好處是什麼？',['讓產品更難拆','比較容易拆解與回收','一定讓產品變重','只能用一次'],'比較容易拆解與回收'],
+['循環經濟×永續×淨零','舊衣服經回收變成纖維，再做成新衣服，這最符合哪個概念？',['衣到衣閉環回收','線性經濟','快時尚','一次性消費'],'衣到衣閉環回收'],
+['循環經濟×永續×淨零','講義指出，全球能成功回到紡織產業進行「衣到衣」閉環回收的材料約多少？',['超過50%','約20%','不到1%','100%'],'不到1%'],
+['循環經濟×永續×淨零','UNESCO 在2003年通過的公約，與哪一項最有關？',['保護非物質文化遺產公約','京都議定書','巴塞爾公約','MARPOL'],'保護非物質文化遺產公約'],
+['循環經濟×永續×淨零','無形文化資產的「集體性」是什麼意思？',['只有一個人知道','社群共同擁有、共同傳承','只能寫在書上','只能保存物品'],'社群共同擁有、共同傳承'],
+['循環經濟×永續×淨零','傳統技術順應天氣、土地與海洋等環境發展，最符合哪個特性？',['集體性','生態性','永續性','商業性'],'生態性'],
+['循環經濟×永續×淨零','現在仍有人使用、實踐與傳承，代表無形文化資產具有哪個特性？',['永續性','集體性','危險性','一次性'],'永續性'],
+['循環經濟×永續×淨零','新港標旗魚使用單點標槍、選擇性捕魚，較不破壞海底棲地，最能說明哪個觀念？',['傳統智慧也能友善環境','大量捕魚','一次性消費','都市建設'],'傳統智慧也能友善環境'],
+['循環經濟×永續×淨零','Charfia／沙菲爾漁法利用水流、地形與季節限制捕撈，主要展現哪種精神？',['順應自然並讓海洋休養','全年大量捕撈','完全不考慮環境','只追求速度'],'順應自然並讓海洋休養'],
+['循環經濟×永續×淨零','Anthropocentrism／人類中心主義認為什麼最重要？',['整個生態系','所有生命','人類','只有植物'],'人類'],
+['循環經濟×永續×淨零','Biocentrism／生命中心主義強調什麼？',['只有人類有價值','所有生命都有價值','只有經濟有價值','只有森林有價值'],'所有生命都有價值'],
+['循環經濟×永續×淨零','Ecocentrism／生態中心主義關心的範圍是什麼？',['只有人類','只有動物','整個生態系','只有經濟活動'],'整個生態系'],
+['循環經濟×永續×淨零','「自然對人類有用，所以我們應該保護它」較接近哪一種價值？',['Instrumental Value／工具性價值','Intrinsic Value／內在價值','CF','CCUS'],'Instrumental Value／工具性價值'],
+['循環經濟×永續×淨零','「生命本身就有價值，不必因為對人類有用才值得保護」較接近哪一個？',['Instrumental Value','Intrinsic Value／內在價值','Carbon Fee','Capacity Factor'],'Intrinsic Value／內在價值'],
+['循環經濟×永續×淨零','講義把地球想成有幾道 Planetary Boundaries／地球限度的安全界線？',['5道','7道','9道','12道'],'9道'],
+['循環經濟×永續×淨零','下列哪一項最符合「全民綠生活」？',['自備餐具、節約用水','每天購買新衣','使用更多一次性用品','不關燈讓房間一直亮著'],'自備餐具、節約用水'],
+['循環經濟×永續×淨零','鹽酸與漂白水（次氯酸鈉）混合，可能產生什麼危險物質？',['氧氣','氯氣','氫氣','氮氣'],'氯氣'],
+['循環經濟×永續×淨零','如果是 G6PD 缺乏症（蠶豆症）者，講義提醒應避免哪一類產品？',['萘丸相關產品','紙張','玻璃杯','棉質衣服'],'萘丸相關產品'],
+['循環經濟×永續×淨零','PVC 保鮮膜最重要的使用提醒是什麼？',['可以直接微波','不要拿 PVC 保鮮膜微波加熱','一定要高溫加熱','越熱越安全'],'不要拿 PVC 保鮮膜微波加熱'],
+['循環經濟×永續×淨零','PTFE／鐵氟龍不沾鍋使用時應記住什麼？',['不乾燒、不刮傷','一定要乾燒','用金屬刀大力刮','加熱到冒煙才好用'],'不乾燒、不刮傷'],
+['循環經濟×永續×淨零','非農地友善除草可以採用哪一種方法？',['人工與機械除草','大量使用不明化學品','把雜草全部燒掉','任由垃圾覆蓋'],'人工與機械除草'],
+['循環經濟×永續×淨零','下列哪一項屬於再生能源？',['離岸風電','燃煤','燃氣','柴油'],'離岸風電'],
+['循環經濟×永續×淨零','Capacity Factor（CF）／容量因子是在比較什麼？',['實際發電量與滿載發電量的比例','電價高低','發電機重量','電池大小'],'實際發電量與滿載發電量的比例'],
+['循環經濟×永續×淨零','依講義數字，哪一種發電方式的 CF 約為42%？',['離岸風電','太陽光電','地熱','核能'],'離岸風電'],
+['循環經濟×永續×淨零','依講義數字，太陽光電的 CF 約為多少？',['90%','73%','42%','15%'],'15%'],
+['循環經濟×永續×淨零','風電與太陽光電具有「間歇性」，因此通常需要搭配什麼？',['儲能','更多燃煤','更多一次性用品','更大的垃圾掩埋場'],'儲能'],
+['循環經濟×永續×淨零','Green Hydrogen／綠氫是利用再生能源做什麼製造的？',['電解水製造氫','燃燒煤炭製造氫','把塑膠熔化成氫','把海水直接變成汽油'],'電解水製造氫'],
+['循環經濟×永續×淨零','「淨零排放」最接近哪個意思？',['完全不能產生任何 CO₂','排放與吸收／移除互相抵銷，使淨排放接近0','只要少開燈就算淨零','只要種一棵樹就達成'],'排放與吸收／移除互相抵銷，使淨排放接近0'],
+['循環經濟×永續×淨零','台灣把「2050 淨零排放」目標正式寫入哪一部法律？',['氣候變遷因應法','森林法','道路交通管理處罰條例','文化資產保存法'],'氣候變遷因應法'],
+['循環經濟×永續×淨零','下列哪一組是講義的四大轉型？',['能源、產業、生活、社會','交通、教育、醫療、運動','農業、旅遊、娛樂、體育','住宅、學校、醫院、商店'],'能源、產業、生活、社會'],
+['循環經濟×永續×淨零','Justice Transition／公正轉型最重要的精神是什麼？',['不遺落任何人','只幫助大型企業','只發展城市','只增加能源價格'],'不遺落任何人'],
+['循環經濟×永續×淨零','碳費的基本概念是什麼？',['企業排放碳要付出相對應成本','企業排碳可以完全免費','政府把森林賣掉','只對家庭收費'],'企業排放碳要付出相對應成本'],
+['循環經濟×永續×淨零','自然碳匯是指什麼？',['大自然吸收並儲存 CO₂','工廠製造更多 CO₂','把垃圾全部掩埋','增加燃煤發電'],'大自然吸收並儲存 CO₂'],
+['循環經濟×永續×淨零','CCUS 的完整英文是什麼？',['Carbon Capture, Utilization and Storage','Climate Change Use and Safety','Carbon Control Under Solar','Circular Carbon Use System'],'Carbon Capture, Utilization and Storage'],
+['循環經濟×永續×淨零','CBAM 是什麼？',['歐盟的碳邊境調整機制','台灣的省水標章','聯合國濕地公約','一種再生能源設備'],'歐盟的碳邊境調整機制'],
+['循環經濟×永續×淨零','講義指出快時尚一年最多約有多少個新品週期？',['5個','20個','50個','100個'],'50個'],
+['循環經濟×永續×淨零','講義指出約有多少紡織品使用原生材料？',['27%','50%','73%','97%'],'97%'],
+['循環經濟×永續×淨零','講義指出約多少廢棄紡織品被焚化或掩埋？',['10%','30%','73%','97%'],'73%'],
+['循環經濟×永續×淨零','原資料整理 CO₂ 濃度由約320 ppm 上升到多少以上？',['350 ppm','380 ppm','420 ppm以上','500 ppm'],'420 ppm以上'],
+['循環經濟×永續×淨零','依講義，2023年9項 Planetary Boundaries 中有幾項超出安全負載界線？',['2/9','4/9','6/9','9/9'],'6/9']
 
 ["循環經濟", "小明的背包壞了，但只有拉鍊壞掉。如果產品設計時就能方便更換拉鍊，最符合哪個概念？", ["Design for Circularity／循環設計", "快時尚", "線性經濟", "一次性消費"], "Design for Circularity／循環設計"],
 ["循環經濟", "一件衣服盡量只使用同一種材料，讓回收時更容易拆解，這是在運用哪個概念？", ["Mono-material／單一材質", "快時尚", "自然碳匯", "綠氫"], "Mono-material／單一材質"],
@@ -540,10 +562,10 @@ function pickMatch(el,side){
 function updateMatch(){document.getElementById('mDone').textContent=mDone;document.getElementById('mScore').textContent=mScore;document.getElementById('mBar').style.width=(mDone/8*100)+'%'}
 let mainQuizMode='solo',mainDuoQuiz=[],mainDuoIndex=0,mainDuoScores=[0,0],mainDuoNames=['女兒','媽媽'],mainDuoTurn=0,mainSelected=null;
 function setMainQuizMode(mode){mainQuizMode=mode;document.getElementById('mainSoloBtn').classList.toggle('active',mode==='solo');document.getElementById('mainDuoBtn')?.classList.toggle('active',mode==='duo');document.getElementById('mainDuoSetup').style.display=mode==='duo'?'flex':'none';document.getElementById('mainDuoScore').style.display=mode==='duo'?'block':'none';if(mode==='solo'){document.getElementById('mainDuoSetup').style.display='none';document.getElementById('mainDuoScore').style.display='none';startQuiz();}else{document.getElementById('qArea').innerHTML='<div class="q">👩‍👧 同一裝置親子對戰</div><div class="explain">兩位玩家共用同一台手機／平板／電腦，輪流作答。每題按「確定送出」後才判定，適合外出使用。</div>';}}
-function startMainDuo(){document.getElementById('mainDuoSetup').style.display='none';document.getElementById('mainDuoScore').style.display='block';mainDuoNames=[document.getElementById('mainPlayerA').value.trim()||'女兒',document.getElementById('mainPlayerB').value.trim()||'媽媽'];mainDuoQuiz=shuffle(QUIZ).slice(0,10);mainDuoIndex=0;mainDuoScores=[0,0];mainDuoTurn=0;mainQuizMode='duo';document.getElementById('qTotal').textContent=10;document.getElementById('mainDuoScore').style.display='block';updateMainDuoScore();showMainDuo();}
+function startMainDuo(){document.getElementById('mainDuoSetup').style.display='none';document.getElementById('mainDuoScore').style.display='block';mainDuoNames=[document.getElementById('mainPlayerA').value.trim()||'女兒',document.getElementById('mainPlayerB').value.trim()||'媽媽'];const duoPool=filter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===filter);mainDuoQuiz=shuffle(duoPool.length>=10?duoPool:QUIZ).slice(0,10);mainDuoIndex=0;mainDuoScores=[0,0];mainDuoTurn=0;mainQuizMode='duo';document.getElementById('qTotal').textContent=10;document.getElementById('mainDuoScore').style.display='block';updateMainDuoScore();showMainDuo();}
 function updateMainDuoScore(){document.getElementById('mainDuoScore').innerHTML=`👧 ${mainDuoNames[0]}：${mainDuoScores[0]} 分　｜　👩 ${mainDuoNames[1]}：${mainDuoScores[1]} 分　｜　現在輪到：<b>${mainDuoNames[mainDuoTurn]}</b>`;}
 function showMainDuo(){if(mainDuoIndex>=mainDuoQuiz.length){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 親子競賽完成</div><div class="explain">${mainDuoNames[0]}：<b>${mainDuoScores[0]}</b> 分　｜　${mainDuoNames[1]}：<b>${mainDuoScores[1]}</b> 分</div>`;return;}const item=mainDuoQuiz[mainDuoIndex];mainSelected=null;document.getElementById('qNo').textContent=mainDuoIndex+1;document.getElementById('qBar').style.width=(mainDuoIndex/10*100)+'%';updateMainDuoScore();document.getElementById('qArea').innerHTML=`<span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="small">📌 第 ${mainDuoIndex+1} 題｜現在輪到：<b>${mainDuoNames[mainDuoTurn]}</b></div><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="mainDuoConfirm" class="action" disabled>✅ 確定送出</button><div id="qResult" class="result"></div>`;const bs=[...document.querySelectorAll('#qArea .opt')],cf=document.getElementById('mainDuoConfirm');bs.forEach(btn=>btn.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');mainSelected=btn;cf.disabled=false;}));cf.addEventListener('click',()=>{if(!mainSelected)return;const ok=mainSelected.textContent.trim()===item[3];if(ok)mainDuoScores[mainDuoTurn]++;mainSelected.classList.add(ok?'correct':'wrong');document.getElementById('qResult').innerHTML=ok?'✅ 答對！':'❌ 答錯了！';bs.forEach(x=>x.disabled=true);cf.disabled=true;updateMainDuoScore();setTimeout(()=>{mainDuoTurn=mainDuoTurn===0?1:0;if(mainDuoTurn===0)mainDuoIndex++;showMainDuo();},900);});}
-function startQuiz(){quiz=shuffle(QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=QUIZ.length;showQ()}
+function startQuiz(){const pool=filter==='全部'?QUIZ:QUIZ.filter(x=>x[0]===filter);quiz=shuffle(pool.length>=10?pool:QUIZ);qi=0;qs=0;document.getElementById('qTotal').textContent=10;document.getElementById('bankSize').textContent=quiz.length;showQ()}
 function showQ(){
   if(qi>=10){document.getElementById('qBar').style.width='100%';document.getElementById('qArea').innerHTML=`<div class="q">🎊 本回合完成</div><p>得分：<b>${qs}</b> / 10</p><div class="explain">${qs>=9?'你已經把多個主題的關鍵辨識點串起來了。':qs>=7?'主要觀念掌握不錯，可以再針對錯題主題複習。':'建議回到「重點圖鑑」依主題複習後再挑戰。'}</div>`;return}
   const item=quiz[qi],topic=item[0],question=item[1],opts=item[2],answer=item[3];
@@ -689,12 +711,6 @@ const EXTENDED_QUIZ=[
 let extMode='solo',extQuiz=[],extIndex=0,extScore=0,extSelected=null,extDuoNames=['女兒','媽媽'],extDuoScores=[0,0],extDuoTurn=0;
 function showLiveChallenge(btn){show('live',btn);window.scrollTo({top:0,left:0,behavior:'smooth'});}
 function showMainQuiz(){const b=[...document.querySelectorAll('.tab')].find(x=>x.textContent.includes('選擇題'));show('quiz',b||document.querySelector('.tab'));}
-function focusQuestions(){return shuffle(LECTURE_REINFORCEMENT_QUIZ).slice(0,30);}
-let focusQuiz=[],focusIndex=0,focusScore=0,focusSelected=null,focusDuoNames=['女兒','媽媽'],focusDuoScores=[0,0],focusDuoTurn=0;
-function startFocusSolo(){focusQuiz=focusQuestions();focusIndex=0;focusScore=0;focusSelected=null;const a=document.getElementById('focusArea');a.style.display='block';showFocusSolo();}
-function showFocusSolo(){const a=document.getElementById('focusArea');if(focusIndex>=focusQuiz.length){a.innerHTML=`<div class="q">🎊 30題完成！</div><div class="explain">本回合得分：<b>${focusScore} / 30</b></div><button class="action" onclick="startFocusSolo()">🔄 再挑戰一次（重新抽30題）</button>`;return;}const item=focusQuiz[focusIndex];focusSelected=null;a.innerHTML=`<div class="small">第 ${focusIndex+1} / 30 題　｜　專屬題庫</div><span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="focusConfirm" class="action" disabled>✅ 確定送出</button><div id="focusResult" class="result"></div>`;const bs=[...a.querySelectorAll('.opt')],cf=document.getElementById('focusConfirm');bs.forEach(btn=>btn.onclick=()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');focusSelected=btn;cf.disabled=false;});cf.onclick=()=>{if(!focusSelected)return;const ok=focusSelected.textContent.trim()===item[3];if(ok){focusScore++;focusSelected.classList.add('correct');document.getElementById('focusResult').innerHTML='✅ 答對！';}else{focusSelected.classList.add('wrong');document.getElementById('focusResult').innerHTML=`❌ 答錯！正確答案：<b>${item[3]}</b>`;}bs.forEach(x=>x.disabled=true);cf.disabled=true;setTimeout(()=>{focusIndex++;showFocusSolo();},800);};}
-function startFocusDuo(){focusQuiz=focusQuestions();focusIndex=0;focusDuoScores=[0,0];focusDuoTurn=0;focusDuoNames=['女兒','媽媽'];const a=document.getElementById('focusArea');a.style.display='block';showFocusDuo();}
-function showFocusDuo(){const a=document.getElementById('focusArea');if(focusIndex>=focusQuiz.length){a.innerHTML=`<div class="q">🎊 同一裝置30題完成</div><div class="explain">${focusDuoNames[0]}：<b>${focusDuoScores[0]}</b> 分　｜　${focusDuoNames[1]}：<b>${focusDuoScores[1]}</b> 分</div><button class="action" onclick="startFocusDuo()">🔄 再挑戰一次（重新抽30題）</button>`;return;}const item=focusQuiz[focusIndex];focusSelected=null;a.innerHTML=`<div class="small">第 ${focusIndex+1} / 30 題　｜　現在輪到：<b>${focusDuoNames[focusDuoTurn]}</b></div><span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="focusConfirm" class="action" disabled>✅ 確定送出</button><div id="focusResult" class="result"></div>`;const bs=[...a.querySelectorAll('.opt')],cf=document.getElementById('focusConfirm');bs.forEach(btn=>btn.onclick=()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');focusSelected=btn;cf.disabled=false;});cf.onclick=()=>{if(!focusSelected)return;const ok=focusSelected.textContent.trim()===item[3];if(ok)focusDuoScores[focusDuoTurn]++;focusSelected.classList.add(ok?'correct':'wrong');document.getElementById('focusResult').innerHTML=ok?`✅ ${focusDuoNames[focusDuoTurn]} 答對！`:`❌ ${focusDuoNames[focusDuoTurn]} 答錯！<br>正確答案：<b>${item[3]}</b>`;bs.forEach(x=>x.disabled=true);cf.disabled=true;setTimeout(()=>{focusDuoTurn=focusDuoTurn===0?1:0;if(focusDuoTurn===0)focusIndex++;showFocusDuo();},850);};}
 function setExtMode(mode){extMode=mode;document.getElementById('extSoloBtn').classList.toggle('active',mode==='solo');document.getElementById('extDuoBtn')?.classList.toggle('active',mode==='duo');document.getElementById('extDuoSetup').style.display=mode==='duo'?'flex':'none';document.getElementById('extDuoScore').style.display=mode==='duo'?'block':'none';if(mode==='solo'){document.getElementById('extDuoSetup').style.display='none';document.getElementById('extDuoScore').style.display='none';startExtSolo();}else{document.getElementById('extArea').innerHTML='<div class="q">👩‍👧 100題同一裝置親子對戰</div><div class="explain">兩位玩家共用同一台手機／平板／電腦，輪流作答100題。適合外出、旅行或只有一台裝置時使用。</div>';}}
 function startExtSolo(){extMode='solo';extQuiz=shuffle(EXTENDED_QUIZ).slice(0,100);extIndex=0;extScore=0;document.getElementById('extTotal').textContent=extQuiz.length;document.getElementById('extBank').textContent=EXTENDED_QUIZ.length;document.getElementById('extDuoSetup').style.display='none';document.getElementById('extDuoScore').style.display='none';document.getElementById('extSoloBtn').classList.add('active');document.getElementById('extDuoBtn').classList.remove('active');showExtSolo();}
 function showExtSolo(){if(extIndex>=extQuiz.length){document.getElementById('extBar').style.width='100%';document.getElementById('extArea').innerHTML=`<div class="q">🎊 100題完成！</div><div class="explain">本回合得分：<b>${extScore} / ${extQuiz.length}</b></div>`;return;}const item=extQuiz[extIndex];extSelected=null;document.getElementById('extNo').textContent=extIndex+1;document.getElementById('extScore').textContent=extScore;document.getElementById('extBar').style.width=(extIndex/extQuiz.length*100)+'%';document.getElementById('extArea').innerHTML=`<span class="tag">${TOPICS[item[0]]||item[0]}</span><div class="q">${item[1]}</div><div class="opts">${shuffle(item[2]).map(o=>`<button type="button" class="opt">${o}</button>`).join('')}</div><button type="button" id="extConfirm" class="action" disabled>✅ 確定送出</button><div id="extResult" class="result"></div>`;const bs=[...document.querySelectorAll('#extArea .opt')],cf=document.getElementById('extConfirm');bs.forEach(btn=>btn.addEventListener('click',()=>{bs.forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');extSelected=btn;cf.disabled=false;}));cf.addEventListener('click',()=>{if(!extSelected)return;const ok=extSelected.textContent.trim()===item[3];if(ok){extScore++;document.getElementById('extResult').innerHTML='✅ 答對！';extSelected.classList.add('correct');bs.forEach(x=>x.disabled=true);cf.disabled=true;extIndex++;setTimeout(showExtSolo,650);}else{document.getElementById('extResult').innerHTML='❌ 答錯了！可以重新選擇後再送出。';extSelected.classList.add('wrong');extSelected=null;cf.disabled=true;}});}
@@ -788,7 +804,7 @@ function livePanel(mode,html){
  // 兩個入口區塊會同步顯示同一個表單，因此可能存在兩個相同 ID；liveGetInputValue() 會優先讀取目前可見或已填寫的欄位。
 }
 function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:['extLivePanel','entryExtLivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
-function liveQuestions(mode){return mode==='main'?shuffle(QUIZ).slice(0,30):shuffle(LECTURE_REINFORCEMENT_QUIZ).slice(0,30);}
+function liveQuestions(mode){return mode==='main'?shuffle(QUIZ).slice(0,10):shuffle(EXTENDED_QUIZ).slice(0,100);}
 function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:item[2],index:0};}
 function liveRoomRef(code){return liveDb.collection('liveMatches').doc(code);}
 async function openLiveMatch(mode,action){
@@ -808,13 +824,13 @@ async function openLiveMatch(mode,action){
  }catch(e){console.error(e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'登入或連線失敗')}<br><span class="small">請確認 Firebase Authentication 已開啟 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span></div>`);}
 }
 async function liveShowJoin(mode){
- livePanel(mode,`<b>🔑 加入30題對戰房間</b><div class="live-form"><input id="liveJoinCode" maxlength="5" placeholder="輸入5碼房間代碼" autocomplete="off" autocapitalize="characters" spellcheck="false"><input id="liveJoinName" maxlength="12" placeholder="你的暱稱"><button class="action" onclick="liveJoinRoom('${mode}')">加入房間</button></div><div class="small">例如：A7K2P。請把房主顯示的5碼代碼貼到上面的欄位，再按「加入房間」。</div>`);
+ livePanel(mode,`<b>🔑 加入${mode==='ext'?'100題':''}對戰房間</b><div class="live-form"><input id="liveJoinCode" maxlength="5" placeholder="輸入5碼房間代碼" autocomplete="off" autocapitalize="characters" spellcheck="false"><input id="liveJoinName" maxlength="12" placeholder="你的暱稱"><button class="action" onclick="liveJoinRoom('${mode}')">加入房間</button></div><div class="small">例如：A7K2P。請把房主顯示的5碼代碼貼到上面的欄位，再按「加入房間」。</div>`);
  const input=document.getElementById('liveJoinCode');
  if(input) input.addEventListener('input',()=>{input.value=input.value.normalize('NFKC').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,5);});
 }
 async function liveCreateRoom(mode){
  const defaultName=liveUser.displayName||'玩家1';
- livePanel(mode,`<b>🏠 建立30題對戰房間</b><div class="live-form"><input id="liveHostName" maxlength="12" value="${liveEsc(defaultName)}" placeholder="你的暱稱"><button class="action" onclick="liveCreateRoomNow('${mode}')">建立房間</button></div><div class="small">建立後把房間代碼傳給另一位玩家。</div>`);
+ livePanel(mode,`<b>🏠 建立${mode==='ext'?'100題':''}對戰房間</b><div class="live-form"><input id="liveHostName" maxlength="12" value="${liveEsc(defaultName)}" placeholder="你的暱稱"><button class="action" onclick="liveCreateRoomNow('${mode}')">建立房間</button></div><div class="small">建立後把房間代碼傳給另一位玩家。</div>`);
 }
 function liveGetInputValue(id,fallback=''){
  const els=[...document.querySelectorAll('#'+id)];
@@ -871,7 +887,7 @@ function liveRenderState(d,mode){
  if(!d)return;
  const me=d[liveRole], other=d[liveRole==='host'?'guest':'host'];
  if(!other){liveRenderWaiting();return;}
- if(d.status==='waiting'){livePanel(mode,`<div class="live-code">${liveRoom}</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(d.host.name)}</b><br>${d.host.ready?'🟢 已準備':'🟡 尚未準備'}</div><div class="live-player"><b>👤 ${liveEsc(d.guest.name)}</b><br>${d.guest.ready?'🟢 已準備':'🟡 尚未準備'}</div></div>${liveRole==='host'?'<button class="action" onclick="liveSetReady(true)">🚦 我已準備／開始</button>':'<button class="action" onclick="liveSetReady(true)">🚦 我已準備</button>'}<div class="small">房間：<b>${liveRoom}</b>　｜　30題模式</div>`);return;}
+ if(d.status==='waiting'){livePanel(mode,`<div class="live-code">${liveRoom}</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(d.host.name)}</b><br>${d.host.ready?'🟢 已準備':'🟡 尚未準備'}</div><div class="live-player"><b>👤 ${liveEsc(d.guest.name)}</b><br>${d.guest.ready?'🟢 已準備':'🟡 尚未準備'}</div></div>${liveRole==='host'?'<button class="action" onclick="liveSetReady(true)">🚦 我已準備／開始</button>':'<button class="action" onclick="liveSetReady(true)">🚦 我已準備</button>'}<div class="small">房間：<b>${liveRoom}</b>　｜　${mode==='ext'?'100題模式':'10題模式'}</div>`);return;}
  if(d.status==='playing')liveRenderPlaying(d,mode);
  if(d.status==='finished')liveRenderFinished(d,mode);
 }
@@ -885,13 +901,8 @@ async function liveStartQuestion(d){
 function liveRenderPlaying(d,mode){
  const q=d.question;const me=d[liveRole];const other=d[liveRole==='host'?'guest':'host'];
  let opts=(q.options||[]).map((o,i)=>`<button type="button" class="opt ${me.answer===o&&!me.submitted?'selected':''} ${d.result&&d.result.answer===o?'correct':''} ${d.result&&me.answer===o&&d.result.correctByUid&&d.result.correctByUid[liveUser.uid]===false?'wrong':''}" ${me.submitted?'disabled':''} onclick="livePick('${liveEsc(o).replace(/'/g,"&#39;")}')">${liveEsc(o)}</button>`).join('');
- let result='';
- if(d.result){
-   const hOk=!!(d.result.correctByUid&&d.result.correctByUid[d.host.uid]);
-   const gOk=!!(d.result.correctByUid&&d.result.correctByUid[d.guest.uid]);
-   result=`<div class="result live-dual-result"><b>📊 本題結果</b><br><span>👤 ${liveEsc(d.host.name)}：${hOk?'✅ 答對':'❌ 答錯'}</span>　｜　<span>👤 ${liveEsc(d.guest.name)}：${gOk?'✅ 答對':'❌ 答錯'}</span>${d.result.correctAnswer?`<br>正確答案：<b>${liveEsc(d.result.correctAnswer)}</b>`:''}</div>`;
- }
- livePanel(mode,`<div class="small">第 ${d.questionNo+1} / 30 題　｜　你：${liveEsc(me.name)} ${me.submitted?'🟢 已送出':'🟡 作答中'}　｜　對手：${liveEsc(other.name)} ${other.submitted?'🟢 已送出':'🟡 尚未送出'}</div><div class="live-score">${liveEsc(me.name)}：${me.score||0} 分　｜　${liveEsc(other.name)}：${other.score||0} 分</div><div class="q">${liveEsc(q.text)}</div><div class="opts">${opts}</div><div class="live-answer-note">🔒 按「確定送出」前，<b>不會公布對錯</b>；兩位玩家都送出後才同時揭曉。</div><button type="button" class="action" ${me.submitted?'disabled':''} onclick="liveSubmit()">${me.submitted?'✅ 已確定送出':'✅ 確定送出'}</button>${result}${d.result&&liveRole==='host'?'<div class="actions"><button class="action" onclick="liveNextQuestion()">➡️ 下一題</button></div>':''}`);
+ let result=d.result?`<div class="result">${d.result.correctAnswer?`正確答案：<b>${liveEsc(d.result.correctAnswer)}</b><br>`:''}${d.result.correctByUid&&d.result.correctByUid[liveUser.uid]?'✅ 你答對了！':'❌ 你答錯了。'}</div>`:'';
+ livePanel(mode,`<div class="small">第 ${d.questionNo+1} / ${mode==='ext'?100:10} 題　｜　你：${liveEsc(me.name)} ${me.submitted?'🟢 已送出':'🟡 作答中'}　｜　對手：${liveEsc(other.name)} ${other.submitted?'🟢 已送出':'🟡 尚未送出'}</div><div class="live-score">${liveEsc(me.name)}：${me.score||0} 分　｜　${liveEsc(other.name)}：${other.score||0} 分</div><div class="q">${liveEsc(q.text)}</div><div class="opts">${opts}</div><div class="live-answer-note">🔒 按「確定送出」前，<b>不會公布對錯</b>；兩位玩家都送出後才同時揭曉。</div><button type="button" class="action" ${me.submitted?'disabled':''} onclick="liveSubmit()">${me.submitted?'✅ 已確定送出':'✅ 確定送出'}</button>${result}${d.result&&liveRole==='host'?'<div class="actions"><button class="action" onclick="liveNextQuestion()">➡️ 下一題</button></div>':''}`);
 }
 async function livePick(answer){const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(!d||d.status!=='playing'||d[liveRole].submitted)return;await liveRoomRef(liveRoom).update({[liveRole+'.answer']:answer});}
 async function liveSubmit(){
