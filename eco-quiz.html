@@ -811,11 +811,32 @@ function livePanel(mode,html){
 function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:mode==='ext'?['extLivePanel','entryExtLivePanel']:['battle30LivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
 function liveQuestions(mode,topic='全部'){
  const base=mode==='ext'?EXTENDED_QUIZ:QUIZ;
- const source=topic==='全部'?base:base.filter(x=>x[0]===topic);
- const pool=source.length?source:base;
+ const wanted=String(topic||'全部').trim();
+ const normalizeTopic=v=>String(v??'').trim().replace(/\s+/g,'');
+ let source;
+ if(wanted==='全部'){
+   source=base.slice();
+ }else{
+   const target=normalizeTopic(wanted);
+   source=base.filter(x=>normalizeTopic(x[0])===target);
+   // 題庫可能使用顯示名稱而不是 TOPICS 的 key，提供雙向比對。
+   if(!source.length){
+     const key=Object.keys(TOPICS).find(k=>normalizeTopic(k)===target || normalizeTopic(TOPICS[k])===target);
+     if(key) source=base.filter(x=>normalizeTopic(x[0])===normalizeTopic(key) || normalizeTopic(TOPICS[x[0]])===normalizeTopic(TOPICS[key]));
+   }
+ }
  const count=mode==='battle30'?30:mode==='ext'?100:10;
- let out=shuffle(pool).slice(0,Math.min(pool.length,count));
- while(out.length<count){ out.push(...shuffle(pool).slice(0,Math.min(pool.length,count-out.length))); }
+ // 指定主題時絕不偷偷改成綜合題庫；該主題沒有題目就回傳空陣列，讓建立房間顯示明確訊息。
+ if(!source.length) return [];
+ // 題目不足回合數時，循環使用同一主題的題目；不混入其他主題。
+ let out=[];
+ while(out.length<count){
+   const round=shuffle(source.slice());
+   for(const item of round){
+     if(out.length>=count) break;
+     out.push(item);
+   }
+ }
  return out.slice(0,count);
 }
 function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:item[2],index:0};}
@@ -837,15 +858,31 @@ async function openLiveMatch(mode,action){
  }catch(e){console.error(e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'登入或連線失敗')}<br><span class="small">請確認 Firebase Authentication 已開啟 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span></div>`);}
 }
 function liveShowTopicChooser(mode){
- const opts=['全部',...Object.keys(TOPICS)].map(t=>`<option value="${liveEsc(t)}">${liveEsc(t==='全部'?'🌏 綜合全部主題':TOPICS[t])}</option>`).join('');
+ const topics=['全部',...Object.keys(TOPICS)];
+ const base=mode==='ext'?EXTENDED_QUIZ:QUIZ;
  const count=mode==='battle30'?30:mode==='ext'?100:10;
+ const opts=topics.map((t,i)=>{
+   const n=t==='全部'?base.length:base.filter(x=>String(x[0]??'').trim()===String(t).trim()).length;
+   return `<option value="${i}">${liveEsc(t==='全部'?'🌏 綜合全部主題':TOPICS[t])}（題庫 ${n} 題）</option>`;
+ }).join('');
  const title=mode==='battle30'?'🌟 建立30題即時對戰':mode==='ext'?'🌱 建立100題即時對戰':'🏆 建立10題即時對戰';
- livePanel(mode,`<b>${title}</b><div class="live-form"><label>題目範圍　<select id="liveBattleTopic" style="padding:10px 12px;border:1px solid #c8dad4;border-radius:10px;font-size:16px">${opts}</select></label><input id="liveHostName" maxlength="12" value="${liveEsc(liveUser.displayName||'玩家1')}" placeholder="你的暱稱"><button class="action" onclick="liveCreateBattle('${mode}')">🏠 建立房間</button></div><div class="small">可選「🌏 綜合全部主題」或指定主題。系統會從所選題庫隨機產生 ${count} 題；每題雙方都送出後，<b>先顯示兩人的作答與答對／答錯</b>，接著顯示正確答案，最後由房主進入下一題。</div>`);
+ livePanel(mode,`<b>${title}</b><div class="live-form"><label>題目範圍　<select id="liveBattleTopic" style="padding:10px 12px;border:1px solid #c8dad4;border-radius:10px;font-size:16px">${opts}</select></label><input id="liveHostName" maxlength="12" value="${liveEsc(liveUser.displayName||'玩家1')}" placeholder="你的暱稱"><button class="action" onclick="liveCreateBattle('${mode}')">🏠 建立房間</button></div><div class="small">可選綜合或指定主題。括號會顯示該主題實際題數；即使不足 ${count} 題，也只會從該主題循環抽題，不會混入其他主題。每題雙方都送出後，<b>先顯示兩人的作答與答對／答錯</b>，接著顯示正確答案。</div>`);
+ // 用選項索引傳遞主題，避免中文、×、／等特殊字元造成 value 解析問題。
+ window.__liveTopicOptions=topics;
 }
 async function liveCreateBattle(mode){
- const topic=liveGetInputValue('liveBattleTopic','全部')||'全部';
+ const rawTopic=liveGetInputValue('liveBattleTopic','0');
+ const topicIndex=Number(rawTopic);
+ const topicOptions=Array.isArray(window.__liveTopicOptions)?window.__liveTopicOptions:['全部',...Object.keys(TOPICS)];
+ const topic=Number.isInteger(topicIndex)&&topicOptions[topicIndex] ? topicOptions[topicIndex] : '全部';
  const name=(liveGetInputValue('liveHostName',liveUser.displayName||'玩家1')).trim().slice(0,12)||'玩家1';
- const code=liveRoomCode(); const quiz=liveQuestions(mode,topic); const first=quiz[0];
+ const code=liveRoomCode(); const quiz=liveQuestions(mode,topic);
+ if(!quiz.length){
+   const label=topic==='全部'?'綜合全部主題':(TOPICS[topic]||topic);
+   livePanel(mode,`<div class="live-error">⚠️ 「${liveEsc(label)}」目前沒有可用的對戰題目。<br><span class="small">請先確認該主題已加入選擇題題庫；系統不會把其他主題混進來。</span></div>`);
+   return;
+ }
+ const first=quiz[0];
  liveLocalQuiz=quiz;liveHostAnswers=quiz.map(x=>x[3]);sessionStorage.setItem('liveHost_'+code,JSON.stringify({quiz,mode,topic}));
  const data={version:'V10.0',mode,topic,status:'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),host:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0},guest:null,questionNo:0,question:liveQuestionPayload(first),result:null};
  await liveRoomRef(code).set(data);liveRoom=code;liveRole='host';liveListen(code,mode);liveRenderWaiting();
