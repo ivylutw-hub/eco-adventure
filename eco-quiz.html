@@ -334,8 +334,7 @@ const LECTURE_REINFORCEMENT_QUIZ = [
 ['循環經濟×永續×淨零','講義指出約有多少紡織品使用原生材料？',['27%','50%','73%','97%'],'97%'],
 ['循環經濟×永續×淨零','講義指出約多少廢棄紡織品被焚化或掩埋？',['10%','30%','73%','97%'],'73%'],
 ['循環經濟×永續×淨零','原資料整理 CO₂ 濃度由約320 ppm 上升到多少以上？',['350 ppm','380 ppm','420 ppm以上','500 ppm'],'420 ppm以上'],
-['循環經濟×永續×淨零','依講義，2023年9項 Planetary Boundaries 中有幾項超出安全負載界線？',['2/9','4/9','6/9','9/9'],'6/9']
-
+['循環經濟×永續×淨零','依講義，2023年9項 Planetary Boundaries 中有幾項超出安全負載界線？',['2/9','4/9','6/9','9/9'],'6/9'],
 ["循環經濟", "小明的背包壞了，但只有拉鍊壞掉。如果產品設計時就能方便更換拉鍊，最符合哪個概念？", ["Design for Circularity／循環設計", "快時尚", "線性經濟", "一次性消費"], "Design for Circularity／循環設計"],
 ["循環經濟", "一件衣服盡量只使用同一種材料，讓回收時更容易拆解，這是在運用哪個概念？", ["Mono-material／單一材質", "快時尚", "自然碳匯", "綠氫"], "Mono-material／單一材質"],
 ["循環經濟", "如果舊衣被回收成纖維，再製成新的衣服，這比直接掩埋更符合哪種想法？", ["循環經濟", "線性經濟", "一次性使用", "快時尚"], "循環經濟"],
@@ -729,17 +728,29 @@ function liveEsc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<'
 function liveInit(){
  if(liveAuth&&liveDb)return true;
  try{
-   if(typeof firebase==='undefined') throw new Error('Firebase SDK 未載入。請確認 GitHub Pages 可以連線到 www.gstatic.com。');
-   if(!window.ECO_FIREBASE_CONFIG) throw new Error('Firebase 設定未載入（ECO_FIREBASE_CONFIG）。');
-   if(!firebase.apps.length){ firebase.initializeApp(window.ECO_FIREBASE_CONFIG); }
-   liveAuth=firebase.auth();
-   liveDb=firebase.firestore();
+   // 使用較安全的初始化方式，避免 Firebase 尚未完整載入時出現
+   //「Cannot read properties of undefined (reading '0')」這類不易判斷的錯誤。
+   if(typeof window.firebase==='undefined') throw new Error('Firebase SDK 未載入。請確認 GitHub Pages 可以連線到 www.gstatic.com。');
+   if(typeof firebase.initializeApp!=='function') throw new Error('Firebase App SDK 尚未完成載入。');
+   if(typeof firebase.auth!=='function') throw new Error('Firebase Authentication SDK 尚未完成載入。');
+   if(typeof firebase.firestore!=='function') throw new Error('Firebase Firestore SDK 尚未完成載入。');
+   if(!window.ECO_FIREBASE_CONFIG || typeof window.ECO_FIREBASE_CONFIG!=='object') throw new Error('Firebase 設定未載入（ECO_FIREBASE_CONFIG）。');
+
+   const apps = Array.isArray(firebase.apps) ? firebase.apps : [];
+   if(apps.length===0){
+     firebase.initializeApp(window.ECO_FIREBASE_CONFIG);
+   }
+   const app = (Array.isArray(firebase.apps) && firebase.apps.length>0) ? firebase.apps[0] : null;
+   if(!app) throw new Error('Firebase App 初始化失敗，找不到 Firebase App。');
+
+   liveAuth=firebase.auth(app);
+   liveDb=firebase.firestore(app);
    if(!liveAuth||!liveDb) throw new Error('Firebase Authentication 或 Firestore 未載入。');
    return true;
  }catch(e){
    console.error('liveInit failed:',e);
    const msg=liveEsc(e&&e.message?e.message:String(e));
-   ['mainLivePanel','entryMainLivePanel','extLivePanel','entryExtLivePanel'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML='<div class="live-error">⚠️ Firebase 初始化失敗<br><b>'+msg+'</b><br><span class="small">請重新整理頁面；若仍失敗，請檢查 GitHub Pages 是否能載入 Firebase SDK。</span></div>';}});
+   ['mainLivePanel','entryMainLivePanel','extLivePanel','entryExtLivePanel','battle30LivePanel'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.display='block';el.innerHTML='<div class="live-error">⚠️ Firebase 初始化失敗<br><b>'+msg+'</b><br><span class="small">如果這個錯誤出現在 GitHub Pages，請重新整理一次；若仍出現，請確認 Firebase SDK 三個檔案都能載入。</span></div>';}});
    return false;
  }
 }
@@ -749,25 +760,27 @@ async function liveSignIn(){
  const u=await new Promise((resolve,reject)=>{const un=liveAuth.onAuthStateChanged(x=>{un();x?resolve(x):reject(new Error('需要登入'));});});
  liveUser=u;return u;
 }
+function liveIsMobile(){return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');}
 async function liveGoogleLogin(){
  if(!liveInit())throw new Error('Firebase 初始化失敗');
  if(liveAuth.currentUser){liveUser=liveAuth.currentUser;return liveUser;}
  const provider=new firebase.auth.GoogleAuthProvider();
  provider.setCustomParameters({prompt:'select_account'});
- // GitHub Pages + firebaseapp.com 的 redirect 流程在新版 Chrome 可能因第三方儲存空間分割而失敗。
- // 因此這裡刻意只使用「由使用者按鈕觸發」的 Popup，不再 fallback 到 signInWithRedirect。
  try{
+   if(liveIsMobile()){
+     const pending=window.__livePendingAction;
+     if(pending) sessionStorage.setItem('livePendingAuth',JSON.stringify(pending));
+     await liveAuth.signInWithRedirect(provider);
+     return null;
+   }
    const r=await liveAuth.signInWithPopup(provider);
    if(r&&r.user){liveUser=r.user;return r.user;}
    throw new Error('Google 登入沒有回傳使用者');
  }catch(e){
-   console.warn('Google popup login:',e);
-   if(e && e.code==='auth/popup-blocked'){
-     throw new Error('Chrome 封鎖了 Google 登入視窗。請允許此網站的彈出式視窗後，再按一次「重新登入 Google」。');
-   }
-   if(e && e.code==='auth/popup-closed-by-user'){
-     throw new Error('Google 登入視窗已關閉，請重新按「重新登入 Google」。');
-   }
+   console.warn('Google login:',e);
+   if(e && e.code==='auth/popup-blocked') throw new Error('Chrome 封鎖了 Google 登入視窗。請允許此網站的彈出式視窗後，再按一次。');
+   if(e && e.code==='auth/popup-closed-by-user') throw new Error('Google 登入視窗已關閉，請重新登入。');
+   if(e && e.code==='auth/unauthorized-domain') throw new Error('目前 GitHub Pages 網域尚未加入 Firebase Authentication 的「授權網域」。');
    throw e;
  }
 }
@@ -810,7 +823,9 @@ function livePanel(mode,html){
 }
 function liveHide(mode){(mode==='main'?['mainLivePanel','entryMainLivePanel']:mode==='ext'?['extLivePanel','entryExtLivePanel']:['battle30LivePanel']).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
 function liveQuestions(mode,topic='全部'){
- const base=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ const rawBase=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ // 防止題庫中偶發的空白元素造成「Cannot read properties of undefined (reading '0')」
+ const base=Array.isArray(rawBase)?rawBase.filter(x=>Array.isArray(x)&&x.length>=4&&Array.isArray(x[2])&&x[2].length>0):[];
  const wanted=String(topic||'全部').trim();
  const normalizeTopic=v=>String(v??'').trim().replace(/\s+/g,'');
  let source;
@@ -819,16 +834,13 @@ function liveQuestions(mode,topic='全部'){
  }else{
    const target=normalizeTopic(wanted);
    source=base.filter(x=>normalizeTopic(x[0])===target);
-   // 題庫可能使用顯示名稱而不是 TOPICS 的 key，提供雙向比對。
    if(!source.length){
      const key=Object.keys(TOPICS).find(k=>normalizeTopic(k)===target || normalizeTopic(TOPICS[k])===target);
      if(key) source=base.filter(x=>normalizeTopic(x[0])===normalizeTopic(key) || normalizeTopic(TOPICS[x[0]])===normalizeTopic(TOPICS[key]));
    }
  }
  const count=mode==='battle30'?30:mode==='ext'?100:10;
- // 指定主題時絕不偷偷改成綜合題庫；該主題沒有題目就回傳空陣列，讓建立房間顯示明確訊息。
  if(!source.length) return [];
- // 題目不足回合數時，循環使用同一主題的題目；不混入其他主題。
  let out=[];
  while(out.length<count){
    const round=shuffle(source.slice());
@@ -839,53 +851,72 @@ function liveQuestions(mode,topic='全部'){
  }
  return out.slice(0,count);
 }
-function liveQuestionPayload(item){return {topic:item[0],text:item[1],options:item[2],index:0};}
+function liveQuestionPayload(item){
+ if(!Array.isArray(item)||item.length<4) throw new Error('目前選擇的題目沒有正確載入，請重新選擇主題後再建立房間。');
+ return {topic:item[0],text:item[1],options:Array.isArray(item[2])?item[2]:[],index:0};
+}
+function liveTopicList(mode){
+ const rawBase=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ const base=Array.isArray(rawBase)?rawBase.filter(x=>Array.isArray(x)&&x.length>=4&&Array.isArray(x[2])&&x[2].length>0):[];
+ const fromBank=base.map(x=>String(x[0]??'').trim()).filter(Boolean);
+ return ['全部',...Array.from(new Set([...Object.keys(TOPICS),...fromBank]))];
+}
+function liveTopicLabel(t){return t==='全部'?'🌏 綜合全部主題':(TOPICS[t]||t);}
 function liveRoomRef(code){return liveDb.collection('liveMatches').doc(code);}
 async function openLiveMatch(mode,action){
- liveMode=mode;
+ liveMode=mode; window.__livePendingAction={mode,action};
  const liveSection=document.getElementById('live');
  if(liveSection){ liveSection.classList.add('live-in-match'); liveSection.classList.toggle('live-mode-main',mode==='main'); liveSection.classList.toggle('live-mode-ext',mode==='ext'); liveSection.classList.toggle('live-mode-battle30',mode==='battle30'); }
  try{
    let u=await liveGoogleLogin();
+   if(!u && liveIsMobile()) return;
    if(!u)u=await liveWaitForAuth();
    if(!u){
      livePanel(mode,'<b>🔐 Google 登入尚未完成</b><br>請先完成 Google 登入；如果沒有跳轉，請再按一次下面按鈕。<br><button class="action" type="button" onclick="openLiveMatch(\''+mode+'\',\''+action+'\')">🔑 重新登入 Google</button>');
      return;
    }
-   liveUser=u;
+   liveUser=u; sessionStorage.removeItem('livePendingAuth'); window.__livePendingAction=null;
    if(action==='create'){ liveShowTopicChooser(mode); return; }
    if(action==='join') await liveShowJoin(mode);
  }catch(e){console.error(e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'登入或連線失敗')}<br><span class="small">請確認 Firebase Authentication 已開啟 Google，且 GitHub Pages 網域已加入 Firebase「授權網域」。</span></div>`);}
 }
+async function liveResumeAfterRedirect(){
+ if(!liveInit()) return;
+ try{ const r=await liveAuth.getRedirectResult(); if(r&&r.user) liveUser=r.user; }
+ catch(e){ console.error('Firebase redirect login:',e); livePanel('battle30',`<div class="live-error">⚠️ Google 登入失敗<br><b>${liveEsc(e.message||'登入失敗')}</b></div>`); return; }
+ if(!liveUser) return;
+ let pending=null; try{pending=JSON.parse(sessionStorage.getItem('livePendingAuth')||'null');}catch(e){}
+ if(!pending||!pending.mode||!pending.action) return;
+ sessionStorage.removeItem('livePendingAuth'); window.__livePendingAction=null; liveMode=pending.mode;
+ const sec=document.getElementById('live');
+ if(sec){sec.classList.add('live-in-match');sec.classList.toggle('live-mode-main',pending.mode==='main');sec.classList.toggle('live-mode-ext',pending.mode==='ext');sec.classList.toggle('live-mode-battle30',pending.mode==='battle30');}
+ if(pending.action==='create') liveShowTopicChooser(pending.mode); else await liveShowJoin(pending.mode);
+}
 function liveShowTopicChooser(mode){
- const topics=['全部',...Object.keys(TOPICS)];
- const base=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ const topics=liveTopicList(mode);
+ const rawBase=mode==='ext'?EXTENDED_QUIZ:QUIZ;
+ const base=Array.isArray(rawBase)?rawBase.filter(x=>Array.isArray(x)&&x.length>=4&&Array.isArray(x[2])&&x[2].length>0):[];
  const count=mode==='battle30'?30:mode==='ext'?100:10;
- const opts=topics.map((t,i)=>{
-   const n=t==='全部'?base.length:base.filter(x=>String(x[0]??'').trim()===String(t).trim()).length;
-   return `<option value="${i}">${liveEsc(t==='全部'?'🌏 綜合全部主題':TOPICS[t])}（題庫 ${n} 題）</option>`;
- }).join('');
+ const normalizeTopic=v=>String(v??'').trim().replace(/\s+/g,'');
+ const opts=topics.map((t,i)=>{const n=t==='全部'?base.length:base.filter(x=>normalizeTopic(x[0])===normalizeTopic(t)).length;return `<option value="${i}">${liveEsc(liveTopicLabel(t))}（題庫 ${n} 題）</option>`;}).join('');
  const title=mode==='battle30'?'🌟 建立30題即時對戰':mode==='ext'?'🌱 建立100題即時對戰':'🏆 建立10題即時對戰';
- livePanel(mode,`<b>${title}</b><div class="live-form"><label>題目範圍　<select id="liveBattleTopic" style="padding:10px 12px;border:1px solid #c8dad4;border-radius:10px;font-size:16px">${opts}</select></label><input id="liveHostName" maxlength="12" value="${liveEsc(liveUser.displayName||'玩家1')}" placeholder="你的暱稱"><button class="action" onclick="liveCreateBattle('${mode}')">🏠 建立房間</button></div><div class="small">可選綜合或指定主題。括號會顯示該主題實際題數；即使不足 ${count} 題，也只會從該主題循環抽題，不會混入其他主題。每題雙方都送出後，<b>先顯示兩人的作答與答對／答錯</b>，接著顯示正確答案。</div>`);
- // 用選項索引傳遞主題，避免中文、×、／等特殊字元造成 value 解析問題。
+ livePanel(mode,`<b>${title}</b><div class="live-form"><label>題目範圍　<select id="liveBattleTopic" style="padding:10px 12px;border:1px solid #c8dad4;border-radius:10px;font-size:16px">${opts}</select></label><input id="liveHostName" maxlength="12" value="${liveEsc(liveUser.displayName||'玩家1')}" placeholder="你的暱稱"><button class="action" onclick="liveCreateBattle('${mode}')">🏠 建立房間</button></div><div class="small">可選「🌏 綜合全部主題」或任何實際存在的單一主題。括號顯示該主題題數；即使不足 ${count} 題，也只會從該主題循環抽題，不會混入其他主題。每題雙方都送出後，先顯示兩人的作答與答對／答錯，再揭曉正確答案。</div>`);
  window.__liveTopicOptions=topics;
 }
 async function liveCreateBattle(mode){
- const rawTopic=liveGetInputValue('liveBattleTopic','0');
- const topicIndex=Number(rawTopic);
- const topicOptions=Array.isArray(window.__liveTopicOptions)?window.__liveTopicOptions:['全部',...Object.keys(TOPICS)];
- const topic=Number.isInteger(topicIndex)&&topicOptions[topicIndex] ? topicOptions[topicIndex] : '全部';
- const name=(liveGetInputValue('liveHostName',liveUser.displayName||'玩家1')).trim().slice(0,12)||'玩家1';
- const code=liveRoomCode(); const quiz=liveQuestions(mode,topic);
- if(!quiz.length){
-   const label=topic==='全部'?'綜合全部主題':(TOPICS[topic]||topic);
-   livePanel(mode,`<div class="live-error">⚠️ 「${liveEsc(label)}」目前沒有可用的對戰題目。<br><span class="small">請先確認該主題已加入選擇題題庫；系統不會把其他主題混進來。</span></div>`);
-   return;
- }
- const first=quiz[0];
- liveLocalQuiz=quiz;liveHostAnswers=quiz.map(x=>x[3]);sessionStorage.setItem('liveHost_'+code,JSON.stringify({quiz,mode,topic}));
- const data={version:'V10.0',mode,topic,status:'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),host:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0},guest:null,questionNo:0,question:liveQuestionPayload(first),result:null};
- await liveRoomRef(code).set(data);liveRoom=code;liveRole='host';liveListen(code,mode);liveRenderWaiting();
+ try{
+  const rawTopic=liveGetInputValue('liveBattleTopic','0');
+  const topicIndex=Number(rawTopic);
+  const topicOptions=Array.isArray(window.__liveTopicOptions)?window.__liveTopicOptions:liveTopicList(mode);
+  const topic=Number.isInteger(topicIndex)&&topicOptions[topicIndex] ? topicOptions[topicIndex] : '全部';
+  const name=(liveGetInputValue('liveHostName',liveUser?.displayName||'玩家1')).trim().slice(0,12)||'玩家1';
+  const quiz=liveQuestions(mode,topic);
+  if(!quiz.length){livePanel(mode,`<div class="live-error">⚠️ 「${liveEsc(liveTopicLabel(topic))}」目前沒有可用的對戰題目。<br><span class="small">請確認該主題在目前題庫中有題目；系統不會把其他主題混進來。</span></div>`);return;}
+  if(!Array.isArray(quiz[0])||quiz[0].length<4) throw new Error('第一題資料格式不正確，請重新整理頁面。');
+  const code=liveRoomCode();liveLocalQuiz=quiz;liveHostAnswers=quiz.map(x=>x[3]);sessionStorage.setItem('liveHost_'+code,JSON.stringify({quiz,mode,topic}));
+  const data={version:'V10.1',mode,topic,status:'waiting',createdAt:firebase.firestore.FieldValue.serverTimestamp(),host:{uid:liveUser.uid,name,ready:false,submitted:false,answer:null,score:0},guest:null,questionNo:0,question:liveQuestionPayload(quiz[0]),result:null};
+  await liveRoomRef(code).set(data);liveRoom=code;liveRole='host';liveListen(code,mode);liveRenderWaiting();
+ }catch(e){console.error('liveCreateBattle failed:',e);livePanel(mode,`<div class="live-error">⚠️ ${liveEsc(e.message||'建立對戰房間失敗')}<br><span class="small">請重新選擇主題後再建立一次。</span></div>`);}
 }
 async function liveCreateBattle30(){ return liveCreateBattle('battle30'); }
 async function liveShowJoin(mode){
@@ -961,7 +992,7 @@ async function liveSetReady(v){const ref=liveRoomRef(liveRoom);const field=liveR
 async function liveStartQuestion(d){
  const stored=JSON.parse(sessionStorage.getItem('liveHost_'+liveRoom)||'null');if(liveRole!=='host'&&!stored)return;
  if(!stored&&liveRole==='host'){livePanel(liveMode,'<div class="live-error">房主的題目資料遺失，請重新建立房間。</div>');return;}
- const q=stored.quiz[d.questionNo];liveLocalQuiz=stored.quiz;liveHostAnswers=stored.quiz.map(x=>x[3]);
+ const q=stored.quiz?.[d.questionNo];if(!Array.isArray(q)||q.length<4){livePanel(liveMode,'<div class="live-error">⚠️ 題目資料遺失或格式錯誤，請重新建立房間。</div>');return;}liveLocalQuiz=stored.quiz;liveHostAnswers=stored.quiz.map(x=>Array.isArray(x)?x[3]:null);
  await liveRoomRef(liveRoom).update({status:'playing',questionNo:d.questionNo,question:liveQuestionPayload(q),result:null,'host.submitted':false,'guest.submitted':false,'host.answer':null,'guest.answer':null});
 }
 function liveRenderPlaying(d,mode){
@@ -999,11 +1030,11 @@ async function liveRevealAnswer(){
  await liveRoomRef(liveRoom).update({'result.revealAnswer':true});
 }
 async function liveNextQuestion(){
- const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(liveRole!=='host'||!d.result)return;const stored=JSON.parse(sessionStorage.getItem('liveHost_'+liveRoom)||'null');if(!stored){livePanel(liveMode,'<div class="live-error">房主題庫資料已遺失，請重新建立房間。</div>');return;}const next=d.questionNo+1;if(next>=stored.quiz.length){await liveRoomRef(liveRoom).update({status:'finished'});return;}const q=stored.quiz[next];await liveRoomRef(liveRoom).update({status:'playing',questionNo:next,question:liveQuestionPayload(q),result:null,'host.submitted':false,'guest.submitted':false,'host.answer':null,'guest.answer':null});}
+ const snap=await liveRoomRef(liveRoom).get();const d=snap.data();if(liveRole!=='host'||!d.result)return;const stored=JSON.parse(sessionStorage.getItem('liveHost_'+liveRoom)||'null');if(!stored){livePanel(liveMode,'<div class="live-error">房主題庫資料已遺失，請重新建立房間。</div>');return;}const next=d.questionNo+1;if(next>=stored.quiz.length){await liveRoomRef(liveRoom).update({status:'finished'});return;}const q=stored.quiz?.[next];if(!Array.isArray(q)||q.length<4){livePanel(liveMode,'<div class="live-error">⚠️ 下一題資料遺失，請重新建立房間。</div>');return;}await liveRoomRef(liveRoom).update({status:'playing',questionNo:next,question:liveQuestionPayload(q),result:null,'host.submitted':false,'guest.submitted':false,'host.answer':null,'guest.answer':null});}
 function liveRenderFinished(d,mode){const a=d.host,b=d.guest;livePanel(mode,`<div class="q">🎊 對戰完成！</div><div class="live-player-grid"><div class="live-player"><b>👤 ${liveEsc(a.name)}</b><br>總分：<b>${a.score||0}</b></div><div class="live-player"><b>👤 ${liveEsc(b.name)}</b><br>總分：<b>${b.score||0}</b></div></div><div class="explain">本回合已完成。可以關閉房間或重新建立下一場比賽。</div><button class="action secondary" onclick="liveClose()">關閉對戰面板</button>`);}
 function liveClose(){if(liveUnsub)liveUnsub();liveUnsub=null;liveRoom=null;liveRole=null;liveMode=null;liveLastDoc=null;liveHide('main');liveHide('ext');const liveSection=document.getElementById('live');if(liveSection){liveSection.classList.remove('live-in-match','live-mode-main','live-mode-ext','live-mode-battle30');}}
 
-renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();
+renderFilters();renderTopicSections();renderGuide();newMatch();startQuiz();setTimeout(liveResumeAfterRedirect,0);
 </script>
 </body>
 </html>
