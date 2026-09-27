@@ -880,7 +880,6 @@ function liveRenderWaiting(message=''){
  const code=String(liveRoom||'').trim().toUpperCase();
  livePanel(liveMode,`<div class="live-code-label">房間代碼</div><div class="live-code-wrap"><div class="live-code" id="liveRoomCodeDisplay">${liveEsc(code||'-----')}</div><button class="action live-copy-btn" type="button" onclick="liveCopyRoomCode()">📋 複製代碼</button></div>${message?`<div class="live-copy-ok">${message}</div>`:''}<span class="live-role">${liveRole==='host'?'房主':'玩家2'}</span><div class="live-wait">⏳ 等待另一位玩家加入…</div><div class="small">模式：<b>30題</b>　｜　主題：<b>${liveEsc(liveLastDoc?.topic==='all'?'綜合全部主題':(liveLastDoc?.topic||'綜合全部主題'))}</b></div><div class="small">把上面的5碼代碼傳給另一台裝置。兩位玩家都登入後即可開始。</div>`);
 }
-}
 function liveRenderState(d,mode){
  if(!d)return;
  const me=d[liveRole], other=d[liveRole==='host'?'guest':'host'];
